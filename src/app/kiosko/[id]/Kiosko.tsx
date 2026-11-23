@@ -2,19 +2,21 @@
 /* eslint-disable @next/next/no-img-element, @typescript-eslint/no-explicit-any */
 import { useCallback, useEffect, useRef, useState, useTransition } from 'react'
 import QRCode from 'qrcode'
+import { ArrowLeft, ArrowRight, ArrowsLeftRight, CalendarCheck, Camera, Check, Drop, Moon, ScanSmiley, ShieldCheck, Sun, Trash, X } from '@phosphor-icons/react'
 import { analizarKiosko, type Seguridad } from './actions'
 
-// Recorrido de la clienta en el iPad del mostrador:
-// reclamo → 4 preguntas de seguridad → consentimiento → foto → análisis → resultado → vuelta al reclamo.
+// Recorrido de la clienta en el iPad del mostrador. Dirección visual: clínica, fondo claro,
+// un único acento verde farmacia, Geist + números tabulares, iconos Phosphor.
+// reclamo → 4 preguntas de seguridad → consentimiento → foto → análisis → informe → vuelta al reclamo
 
 type Paso = 'reclamo' | 'preguntas' | 'consentimiento' | 'camara' | 'mejorar' | 'analizando' | 'resultado' | 'menor'
 type Props = { farmaciaId: string; farmacia: string; precio: string }
 
 const PREGUNTAS: { id: keyof Seguridad; t: string; nota: string; ops: [string, string][] }[] = [
-  { id: 'edad', t: '¿Qué edad tienes?', nota: 'Hay ingredientes que dependen de la edad.', ops: [['-14', 'Menos de 14'], ['14-17', '14 a 17'], ['18-24', '18 a 24'], ['25-39', '25 a 39'], ['40-49', '40 a 49'], ['50+', '50 o más']] },
-  { id: 'embarazo', t: '¿Estás embarazada o dando el pecho?', nota: 'En el embarazo y la lactancia hay ingredientes que no se usan.', ops: [['si', 'Sí'], ['no', 'No / no aplica']] },
-  { id: 'receta', t: '¿Usas algún tratamiento para la piel que te haya mandado un médico?', nota: 'Si es así, no pondremos activos encima de tu tratamiento.', ops: [['no', 'No'], ['si', 'Sí']] },
-  { id: 'reactiva', t: 'Cuando pruebas un producto nuevo, ¿tu piel reacciona?', nota: 'Picor, rojez o escozor. Así sabemos si empezar por lo más suave.', ops: [['nunca', 'Casi nunca'], ['a_veces', 'A veces'], ['siempre', 'Casi siempre']] },
+  { id: 'edad', t: '¿Qué edad tienes?', nota: 'Algunos ingredientes dependen de la edad.', ops: [['-14', 'Menos de 14'], ['14-17', '14 a 17'], ['18-24', '18 a 24'], ['25-39', '25 a 39'], ['40-49', '40 a 49'], ['50+', '50 o más']] },
+  { id: 'embarazo', t: '¿Estás embarazada o en periodo de lactancia?', nota: 'Hay ingredientes que no se recomiendan en el embarazo ni en la lactancia.', ops: [['si', 'Sí'], ['no', 'No, o no aplica']] },
+  { id: 'receta', t: '¿Sigues algún tratamiento para la piel indicado por un médico?', nota: 'Si es así, no añadiremos activos que interfieran con él.', ops: [['no', 'No'], ['si', 'Sí']] },
+  { id: 'reactiva', t: '¿Tu piel reacciona cuando pruebas un producto nuevo?', nota: 'Picor, rojez o escozor. Así sabemos si empezar por lo más suave.', ops: [['nunca', 'Casi nunca'], ['a_veces', 'A veces'], ['siempre', 'Casi siempre']] },
 ]
 
 const MEJORAR: [string, string][] = [
@@ -22,9 +24,9 @@ const MEJORAR: [string, string][] = [
   ['firmeza', 'Firmeza'], ['textura', 'Textura'], ['rojez', 'Rojeces'], ['hidratacion', 'Sequedad'], ['ojeras', 'Ojeras'],
 ]
 const NOMBRE: Record<string, string> = Object.fromEntries(MEJORAR)
-const MENSAJES = ['Localizando tu rostro…', 'Midiendo poros y textura…', 'Buscando manchas y rojeces…', 'Analizando arrugas y firmeza…', 'Eligiendo ingredientes para ti…', 'Buscando productos en esta farmacia…', 'Preparando tu simulación…']
-const TURNO: Record<string, string> = { AM: 'Mañana', PM: 'Noche', AMPM: 'Mañana y noche' }
+const PASOS_ANALISIS = ['Detectar el rostro', 'Medir poros, textura y brillo', 'Medir manchas, rojeces y ojeras', 'Medir arrugas y firmeza', 'Elegir ingredientes', 'Buscar productos en esta farmacia', 'Generar la simulación']
 const eur = (n: number | null | undefined) => (n == null ? '' : n.toLocaleString('es-ES', { style: 'currency', currency: 'EUR' }))
+const nivelDe = (v: number) => (v >= 70 ? 'Marcado' : v >= 50 ? 'Moderado' : v >= 25 ? 'Leve' : 'Bien')
 const INACTIVIDAD_MS = 150_000
 
 export function Kiosko({ farmaciaId, farmacia, precio }: Props) {
@@ -40,7 +42,7 @@ export function Kiosko({ farmaciaId, farmacia, precio }: Props) {
     setPaso('reclamo'); setI(0); setSeg({}); setFoto(null); setRes(null); setError('')
   }, [])
 
-  // Privacidad: si nadie toca la pantalla, vuelve al inicio y borra todo
+  // Privacidad: sin interacción, vuelve al inicio y descarta todo
   useEffect(() => {
     if (paso === 'reclamo' || paso === 'analizando') return
     let t = setTimeout(reiniciar, INACTIVIDAD_MS)
@@ -50,8 +52,7 @@ export function Kiosko({ farmaciaId, farmacia, precio }: Props) {
   }, [paso, reiniciar])
 
   function responder(id: keyof Seguridad, v: string) {
-    const s = { ...seg, [id]: v }
-    setSeg(s)
+    setSeg({ ...seg, [id]: v })
     if (id === 'edad' && v === '-14') return setPaso('menor')
     if (i < PREGUNTAS.length - 1) setI(i + 1)
     else setPaso('consentimiento')
@@ -62,99 +63,142 @@ export function Kiosko({ farmaciaId, farmacia, precio }: Props) {
     setPaso('analizando')
     start(async () => {
       const r = await analizarKiosko(farmaciaId, seg as Seguridad, fotoB64, mejorar)
-      if ('error' in r) { setError(r.error ?? 'Error'); setPaso(fotoB64 ? 'camara' : 'mejorar'); return }
+      if ('error' in r) { setError(r.error ?? 'No se ha podido completar el análisis.'); setPaso(fotoB64 ? 'camara' : 'mejorar'); return }
       setRes(r)
       setPaso('resultado')
     })
   }
 
   return (
-    <div className="min-h-dvh relative overflow-hidden">
+    <div className="min-h-[100dvh] flex flex-col">
       <Estilos />
-      <Fondo />
-      {paso !== 'reclamo' && paso !== 'analizando' && (
-        <button onClick={reiniciar} className="absolute top-5 right-6 z-20 text-sm text-[#f5efe6]/60 hover:text-[#f5efe6]">✕ Salir</button>
-      )}
-      <div key={paso + i} className="relative z-10 aparecer">
-        {paso === 'reclamo' && <Reclamo farmacia={farmacia} precio={precio} onEmpezar={() => setPaso('preguntas')} />}
+      <header className="h-16 shrink-0 flex items-center gap-3 px-6 md:px-10 border-b border-[var(--k-line)] bg-white">
+        <span className="w-7 h-7 rounded-md bg-[var(--k-accent)] grid place-items-center text-white text-sm font-semibold">S</span>
+        <span className="font-semibold tracking-tight">SkinCheck</span>
+        <span className="text-[var(--k-muted)]">{farmacia}</span>
+        {paso !== 'reclamo' && paso !== 'analizando' && (
+          <button onClick={reiniciar} className="ml-auto inline-flex items-center gap-2 text-sm text-[var(--k-muted)] h-11 px-3 rounded-xl hover:bg-[var(--k-soft)]">
+            <X size={18} /> Salir
+          </button>
+        )}
+      </header>
+      <main key={paso + i} className="flex-1 flex entrar">
+        {paso === 'reclamo' && <Reclamo precio={precio} onEmpezar={() => setPaso('preguntas')} />}
         {paso === 'preguntas' && <Pregunta q={PREGUNTAS[i]} n={i} valor={seg[PREGUNTAS[i].id]} onResp={(v) => responder(PREGUNTAS[i].id, v)} onAtras={() => (i ? setI(i - 1) : setPaso('reclamo'))} />}
         {paso === 'menor' && (
-          <Centro>
-            <h2 className="titulo text-4xl">Para menores de 14 años, mejor en persona</h2>
-            <p className="text-lg text-[#f5efe6]/70 max-w-xl">Pide consejo en el mostrador: te atenderán con un adulto.</p>
-            <Boton onClick={reiniciar}>Volver al inicio</Boton>
-          </Centro>
+          <Bloque>
+            <h2 className="titulo">Para menores de 14 años, mejor en persona</h2>
+            <p className="texto">Pide consejo en el mostrador. Te atenderán junto a un adulto.</p>
+            <button onClick={reiniciar} className="boton">Volver al inicio</button>
+          </Bloque>
         )}
-        {paso === 'consentimiento' && (
-          <Centro>
-            <p className="etiqueta">Antes de la foto</p>
-            <h2 className="titulo text-4xl md:text-5xl max-w-2xl">Tu foto se usa solo para analizar tu piel</h2>
-            <ul className="text-lg text-[#f5efe6]/75 max-w-xl space-y-2 text-left">
-              <li>· La farmacia no guarda tu foto ni tu nombre.</li>
-              <li>· El servicio de análisis la borra tras un tiempo limitado.</li>
-              <li>· Es un análisis cosmético orientativo, no un diagnóstico médico.</li>
-            </ul>
-            <div className="flex flex-wrap gap-4 justify-center">
-              <Boton onClick={() => setPaso('camara')}>Acepto, hacer la foto</Boton>
-              <Boton secundario onClick={() => setPaso('mejorar')}>Prefiero sin foto</Boton>
-            </div>
-          </Centro>
-        )}
+        {paso === 'consentimiento' && <Consentimiento onFoto={() => setPaso('camara')} onSinFoto={() => setPaso('mejorar')} />}
         {paso === 'camara' && <Camara error={error} onFoto={(b64, url) => { setFoto(url); analizar(b64) }} />}
         {paso === 'mejorar' && <Mejorar error={error} onListo={(m) => analizar(null, m)} />}
         {paso === 'analizando' && <Analizando foto={foto} />}
-        {paso === 'resultado' && res && <Resultado res={res} foto={foto} farmacia={farmacia} onFin={reiniciar} />}
-      </div>
+        {paso === 'resultado' && res && <Informe res={res} foto={foto} farmacia={farmacia} onFin={reiniciar} />}
+      </main>
     </div>
   )
 }
 
 /* ---------- Pantallas ---------- */
 
-function Reclamo({ farmacia, precio, onEmpezar }: { farmacia: string; precio: string; onEmpezar: () => void }) {
+function Reclamo({ precio, onEmpezar }: { precio: string; onEmpezar: () => void }) {
   return (
-    <button onClick={onEmpezar} className="w-full min-h-dvh grid md:grid-cols-[1.1fr_1fr] items-center gap-10 px-10 md:px-16 py-12 text-left">
-      <div className="space-y-8">
-        <p className="etiqueta">{farmacia} · Análisis de piel con IA</p>
-        <h1 className="titulo text-5xl md:text-7xl leading-[1.02]">
-          Descubre lo que tu piel <em className="text-[#e8b48a]">necesita de verdad</em>
-        </h1>
-        <p className="text-xl text-[#f5efe6]/75 max-w-lg">
-          Una foto, dos minutos. Ve lo que la IA detecta en tu piel, cómo podría verse con la rutina adecuada y qué productos de esta farmacia te funcionan.
-        </p>
-        <div className="flex flex-wrap items-center gap-5">
-          <span className="boton-principal pulso">Toca para empezar</span>
-          <span className="text-lg"><b className="text-2xl">{precio}</b> <span className="text-[#f5efe6]/60">· pregunta en el mostrador</span></span>
+    <div className="w-full max-w-6xl mx-auto px-6 md:px-10 py-10 grid gap-10 content-center">
+      <div className="grid md:grid-cols-[1fr_minmax(0,420px)] gap-10 items-center">
+        <div className="space-y-6">
+          <h1 className="text-4xl md:text-6xl font-semibold tracking-tight leading-[1.05]">Descubre qué necesita tu piel</h1>
+          <p className="texto max-w-[34ch]">Análisis facial con IA en dos minutos y una rutina con productos de esta farmacia.</p>
+          <div className="flex flex-wrap items-center gap-5 pt-2">
+            <button onClick={onEmpezar} className="boton">Empezar análisis <ArrowRight size={20} weight="bold" /></button>
+            <span className="text-lg"><span className="font-semibold num">{precio}</span> <span className="text-[var(--k-muted)]">en el mostrador</span></span>
+          </div>
         </div>
-        <ol className="flex flex-wrap gap-6 text-sm text-[#f5efe6]/60 pt-2">
-          <li><b className="text-[#e8b48a]">1</b> Foto</li>
-          <li><b className="text-[#e8b48a]">2</b> Análisis de 11 aspectos</li>
-          <li><b className="text-[#e8b48a]">3</b> Tu antes y después</li>
-          <li><b className="text-[#e8b48a]">4</b> Tu rutina</li>
-        </ol>
+        <Espejo />
       </div>
-      <div className="relative mx-auto w-[min(80vw,440px)] aspect-[3/4]">
-        <CaraEscaneo />
+      <ul className="grid sm:grid-cols-3 gap-4 border-t border-[var(--k-line)] pt-8">
+        <Ventaja icono={<Camera size={24} />} titulo="Foto guiada" texto="Te indicamos cómo colocarte para medir bien." />
+        <Ventaja icono={<ScanSmiley size={24} />} titulo="11 parámetros" texto="Poros, manchas, rojeces, arrugas, hidratación y más." />
+        <Ventaja icono={<Drop size={24} />} titulo="Rutina disponible hoy" texto="Solo productos que esta farmacia tiene en stock." />
+      </ul>
+    </div>
+  )
+}
+
+// Vista previa en vivo de la cámara frontal: la clienta se ve en el iPad. No se graba ni se envía.
+function Espejo() {
+  const video = useRef<HTMLVideoElement>(null)
+  const [ok, setOk] = useState(true)
+  useEffect(() => {
+    let stream: MediaStream | null = null
+    navigator.mediaDevices?.getUserMedia({ video: { facingMode: 'user' }, audio: false })
+      .then((s) => { stream = s; if (video.current) video.current.srcObject = s })
+      .catch(() => setOk(false))
+    if (!navigator.mediaDevices) setOk(false)
+    return () => stream?.getTracks().forEach((t) => t.stop())
+  }, [])
+  return (
+    <figure className="space-y-3">
+      <div className="relative aspect-[4/5] rounded-2xl overflow-hidden bg-[var(--k-soft)] border border-[var(--k-line)]">
+        {ok ? <video ref={video} autoPlay playsInline muted className="absolute inset-0 w-full h-full object-cover -scale-x-100" /> : (
+          <div className="absolute inset-0 grid place-items-center text-[var(--k-muted)]"><ScanSmiley size={96} weight="thin" /></div>
+        )}
+        <Esquinas />
       </div>
-    </button>
+      <figcaption className="text-sm text-[var(--k-muted)] flex items-center gap-2"><ShieldCheck size={16} /> Vista previa. No se graba nada hasta que tú lo aceptes.</figcaption>
+    </figure>
+  )
+}
+
+function Ventaja({ icono, titulo, texto }: { icono: React.ReactNode; titulo: string; texto: string }) {
+  return (
+    <li className="flex gap-4">
+      <span className="w-11 h-11 shrink-0 rounded-xl bg-[var(--k-accent-soft)] text-[var(--k-accent)] grid place-items-center">{icono}</span>
+      <span><span className="block font-medium">{titulo}</span><span className="block text-[var(--k-muted)]">{texto}</span></span>
+    </li>
   )
 }
 
 function Pregunta({ q, n, valor, onResp, onAtras }: { q: (typeof PREGUNTAS)[number]; n: number; valor?: string; onResp: (v: string) => void; onAtras: () => void }) {
   return (
-    <Centro>
-      <div className="flex gap-2">{PREGUNTAS.map((_, k) => <span key={k} className={`h-1.5 w-10 rounded-full ${k <= n ? 'bg-[#e8b48a]' : 'bg-[#f5efe6]/15'}`} />)}</div>
-      <p className="etiqueta">Pregunta {n + 1} de {PREGUNTAS.length}</p>
-      <h2 className="titulo text-4xl md:text-5xl max-w-3xl">{q.t}</h2>
-      <p className="text-lg text-[#f5efe6]/60 max-w-xl">{q.nota}</p>
-      <div className="grid grid-cols-2 md:grid-cols-3 gap-4 w-full max-w-3xl">
+    <Bloque>
+      <div className="w-full max-w-2xl flex items-center gap-4 text-sm text-[var(--k-muted)]">
+        <span className="num">{n + 1} de {PREGUNTAS.length}</span>
+        <span className="flex-1 h-1 rounded-full bg-[var(--k-line)] overflow-hidden"><span className="block h-full bg-[var(--k-accent)] transition-[width] duration-200" style={{ width: `${((n + 1) / PREGUNTAS.length) * 100}%` }} /></span>
+      </div>
+      <h2 className="titulo max-w-2xl">{q.t}</h2>
+      <p className="texto max-w-2xl">{q.nota}</p>
+      <div className="w-full max-w-2xl grid grid-cols-2 md:grid-cols-3 gap-3">
         {q.ops.map(([v, t]) => (
-          <button key={v} onClick={() => onResp(v)} className={`opcion ${valor === v ? 'opcion-activa' : ''}`}>{t}</button>
+          <button key={v} onClick={() => onResp(v)} className={`opcion ${valor === v ? 'opcion-sel' : ''}`}>{t}</button>
         ))}
       </div>
-      <button onClick={onAtras} className="text-[#f5efe6]/50 text-sm">← Atrás</button>
-    </Centro>
+      <button onClick={onAtras} className="inline-flex items-center gap-2 h-11 px-3 rounded-xl text-[var(--k-muted)] hover:bg-[var(--k-soft)]"><ArrowLeft size={18} /> Atrás</button>
+    </Bloque>
   )
+}
+
+function Consentimiento({ onFoto, onSinFoto }: { onFoto: () => void; onSinFoto: () => void }) {
+  return (
+    <Bloque>
+      <h2 className="titulo max-w-2xl">Antes de la foto</h2>
+      <ul className="w-full max-w-2xl grid gap-3">
+        <Punto icono={<ShieldCheck size={22} />} texto="La farmacia no guarda tu foto ni tu nombre." />
+        <Punto icono={<Trash size={22} />} texto="El servicio de análisis la elimina tras un periodo limitado." />
+        <Punto icono={<ScanSmiley size={22} />} texto="Es un análisis cosmético orientativo, no un diagnóstico médico." />
+      </ul>
+      <div className="w-full max-w-2xl flex flex-wrap gap-3">
+        <button onClick={onFoto} className="boton"><Camera size={20} /> Acepto, hacer la foto</button>
+        <button onClick={onSinFoto} className="boton-sec">Continuar sin foto</button>
+      </div>
+    </Bloque>
+  )
+}
+
+function Punto({ icono, texto }: { icono: React.ReactNode; texto: string }) {
+  return <li className="flex items-center gap-4 rounded-2xl bg-white border border-[var(--k-line)] p-4 text-lg"><span className="text-[var(--k-accent)]">{icono}</span>{texto}</li>
 }
 
 function Camara({ error, onFoto }: { error: string; onFoto: (b64: string, dataUrl: string) => void }) {
@@ -196,16 +240,27 @@ function Camara({ error, onFoto }: { error: string; onFoto: (b64: string, dataUr
   }, [cuenta, onFoto])
 
   return (
-    <div className="min-h-dvh flex flex-col items-center justify-center gap-6 p-6">
-      <div className="relative h-[72dvh] aspect-[3/4] max-w-full overflow-hidden rounded-[2rem] bg-black shadow-2xl">
+    <div className="w-full max-w-6xl mx-auto px-6 md:px-10 py-8 grid md:grid-cols-[minmax(0,1fr)_320px] gap-10 items-center">
+      <div className="relative h-[min(72dvh,680px)] aspect-[3/4] max-w-full mx-auto rounded-2xl overflow-hidden bg-[#0f1b1d]">
         <video ref={video} autoPlay playsInline muted className="absolute inset-0 w-full h-full object-cover -scale-x-100" />
-        <div className="absolute inset-0 pointer-events-none mascara-ovalo" />
-        <div className="absolute left-[14%] right-[14%] top-[9%] bottom-[13%] rounded-[50%] border-[3px] border-[#e8b48a] pointer-events-none" />
-        {cuenta != null && cuenta > 0 && <div className="absolute inset-0 flex items-center justify-center titulo text-[10rem] text-white/90 drop-shadow-lg">{cuenta}</div>}
+        <div className="absolute inset-0 pointer-events-none velo-ovalo" />
+        <div className="absolute left-[15%] right-[15%] top-[10%] bottom-[13%] rounded-[50%] border-2 border-white/90 pointer-events-none" />
+        {cuenta != null && cuenta > 0 && <div className="absolute inset-0 grid place-items-center text-white text-9xl font-semibold num">{cuenta}</div>}
       </div>
-      {(error || fallo) && <p className="bg-[#7a2e1f] text-white rounded-xl px-5 py-3 max-w-xl text-center">{fallo || error}</p>}
-      <p className="text-lg text-[#f5efe6]/70 text-center">Acércate hasta llenar el óvalo · Mira de frente · Sin gafas · Pelo fuera de la frente</p>
-      {!fallo && <button onClick={() => setCuenta(3)} disabled={cuenta != null} className="boton-principal disabled:opacity-50">{error ? 'Repetir la foto' : 'Hacer la foto'}</button>}
+      <div className="space-y-6">
+        <h2 className="text-3xl font-semibold tracking-tight">Coloca tu cara dentro del óvalo</h2>
+        <ul className="space-y-3 text-lg text-[var(--k-muted)]">
+          {['Acércate hasta llenarlo', 'Mira de frente, sin sonreír', 'Sin gafas y con la frente despejada', 'Mejor sin maquillaje'].map((t) => (
+            <li key={t} className="flex gap-3"><Check size={22} className="text-[var(--k-accent)] shrink-0 mt-0.5" />{t}</li>
+          ))}
+        </ul>
+        {(error || fallo) && <p role="alert" className="rounded-xl bg-[var(--k-warn-soft)] text-[var(--k-warn)] p-4">{fallo || error}</p>}
+        {!fallo && (
+          <button onClick={() => setCuenta(3)} disabled={cuenta != null} className="boton w-full">
+            <Camera size={20} /> {error ? 'Repetir la foto' : 'Hacer la foto'}
+          </button>
+        )}
+      </div>
     </div>
   )
 }
@@ -214,236 +269,259 @@ function Mejorar({ error, onListo }: { error: string; onListo: (m: string[]) => 
   const [sel, setSel] = useState<string[]>([])
   const alternar = (v: string) => setSel(sel.includes(v) ? sel.filter((x) => x !== v) : [...sel, v])
   return (
-    <Centro>
-      <p className="etiqueta">Sin foto</p>
-      <h2 className="titulo text-4xl md:text-5xl">¿Qué te gustaría mejorar?</h2>
-      <p className="text-lg text-[#f5efe6]/60">Marca todo lo que quieras.</p>
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-3 w-full max-w-3xl">
-        {MEJORAR.map(([v, t]) => <button key={v} onClick={() => alternar(v)} className={`opcion ${sel.includes(v) ? 'opcion-activa' : ''}`}>{t}</button>)}
+    <Bloque>
+      <h2 className="titulo max-w-2xl">¿Qué te gustaría mejorar?</h2>
+      <p className="texto max-w-2xl">Marca todo lo que quieras.</p>
+      <div className="w-full max-w-2xl grid grid-cols-2 md:grid-cols-3 gap-3">
+        {MEJORAR.map(([v, t]) => <button key={v} onClick={() => alternar(v)} className={`opcion ${sel.includes(v) ? 'opcion-sel' : ''}`}>{t}</button>)}
       </div>
-      {error && <p className="bg-[#7a2e1f] text-white rounded-xl px-5 py-3">{error}</p>}
-      <Boton onClick={() => onListo(sel)} disabled={!sel.length}>Ver mi rutina</Boton>
-    </Centro>
+      {error && <p role="alert" className="w-full max-w-2xl rounded-xl bg-[var(--k-warn-soft)] text-[var(--k-warn)] p-4">{error}</p>}
+      <div className="w-full max-w-2xl"><button onClick={() => onListo(sel)} disabled={!sel.length} className="boton">Ver mi rutina <ArrowRight size={20} weight="bold" /></button></div>
+    </Bloque>
   )
 }
 
-function Analizando({ foto }: { foto: string | null }) {
-  const [m, setM] = useState(0)
-  useEffect(() => { const t = setInterval(() => setM((x) => Math.min(x + 1, MENSAJES.length - 1)), 4500); return () => clearInterval(t) }, [])
+export function Analizando({ foto }: { foto: string | null }) {
+  const [hechos, setHechos] = useState(0)
+  useEffect(() => { const t = setInterval(() => setHechos((x) => Math.min(x + 1, PASOS_ANALISIS.length - 1)), 4500); return () => clearInterval(t) }, [])
   return (
-    <Centro>
-      <div className="relative w-[min(70vw,360px)] aspect-[3/4] rounded-[2rem] overflow-hidden bg-black/40 shadow-2xl">
-        {foto ? <img src={foto} alt="" className="absolute inset-0 w-full h-full object-cover -scale-x-100 opacity-80" /> : <CaraEscaneo />}
+    <div className="w-full max-w-5xl mx-auto px-6 md:px-10 py-10 grid md:grid-cols-[360px_1fr] gap-12 items-center">
+      <div className="relative aspect-[3/4] rounded-2xl overflow-hidden bg-[var(--k-soft)] border border-[var(--k-line)]">
+        {foto && <img src={foto} alt="" className="absolute inset-0 w-full h-full object-cover -scale-x-100" />}
         <div className="linea-escaneo" />
-        <div className="absolute inset-0 rejilla" />
+        <Esquinas />
       </div>
-      <p key={m} className="titulo text-3xl aparecer">{MENSAJES[m]}</p>
-      <div className="w-72 h-1.5 bg-[#f5efe6]/10 rounded-full overflow-hidden"><div className="h-full bg-[#e8b48a] barra-progreso" /></div>
-    </Centro>
+      <div className="space-y-6">
+        <h2 className="text-3xl font-semibold tracking-tight">Analizando tu piel</h2>
+        <ol className="space-y-3 text-lg">
+          {PASOS_ANALISIS.map((t, k) => (
+            <li key={t} className={`flex items-center gap-3 transition-colors duration-200 ${k < hechos ? 'text-[var(--k-text)]' : k === hechos ? 'text-[var(--k-accent)]' : 'text-[var(--k-muted)]/60'}`}>
+              <span className={`w-6 h-6 rounded-full grid place-items-center border ${k < hechos ? 'bg-[var(--k-accent)] border-[var(--k-accent)] text-white' : k === hechos ? 'border-[var(--k-accent)]' : 'border-[var(--k-line)]'}`}>
+                {k < hechos ? <Check size={14} weight="bold" /> : k === hechos ? <span className="w-2 h-2 rounded-full bg-[var(--k-accent)] latido" /> : null}
+              </span>
+              {t}
+            </li>
+          ))}
+        </ol>
+        <p className="text-[var(--k-muted)]">Tarda hasta un minuto.</p>
+      </div>
+    </div>
   )
 }
 
-function Resultado({ res, foto, farmacia, onFin }: { res: any; foto: string | null; farmacia: string; onFin: () => void }) {
+export function Informe({ res, foto, farmacia, onFin }: { res: any; foto: string | null; farmacia: string; onFin: () => void }) {
   const R = res.rutinas
   const F = res.foto
   const [nivel, setNivel] = useState<'basica' | 'media' | 'completa'>('media')
   const [qr, setQr] = useState('')
-  if (R?.sin_rutina) return <Centro><h2 className="titulo text-4xl max-w-2xl">{R.sin_rutina}</h2><Boton onClick={onFin}>Terminar</Boton></Centro>
+  if (R?.sin_rutina) return <Bloque><h2 className="titulo max-w-2xl">{R.sin_rutina}</h2><button onClick={onFin} className="boton">Terminar</button></Bloque>
+
   const rut = R.rutinas[nivel]
   const aspectos: [string, number][] = F ? Object.entries(F.puntuaciones as Record<string, number>).sort((a, b) => b[1] - a[1]) : []
-  const destacados = aspectos.filter(([, v]) => v >= 40).slice(0, 3)
+  const prioridades = aspectos.filter(([, v]) => v >= 40).slice(0, 3).map(([a]) => NOMBRE[a]?.toLowerCase()).filter(Boolean)
   const marcas: string | undefined = F?.imagenes?.marcas?.find((u: string) => u !== F.imagenes.despues)
   const ingredientes = (R.rutinas.completa.ingredientes ?? []).slice(0, 4)
   const productos = (rut.productos ?? []).filter((p: any) => p.producto)
+  const manana = productos.filter((p: any) => p.turno === 'AM' || p.turno === 'AMPM')
+  const noche = productos.filter((p: any) => p.turno === 'PM' || p.turno === 'AMPM')
 
   async function generarQr() {
-    const lineas = [`Mi rutina SkinCheck · ${farmacia}`, '']
-    for (const p of productos) lineas.push(`${TURNO[p.turno] ?? p.turno}: ${p.marca} ${p.producto}${p.precio ? ` (${eur(p.precio)})` : ''}`)
-    lineas.push('', `Total: ${eur(rut.total)}`, 'Vuelve en 6 semanas para comparar tu piel.')
-    setQr(await QRCode.toDataURL(`https://wa.me/?text=${encodeURIComponent(lineas.join('\n'))}`, { margin: 1, width: 360, errorCorrectionLevel: 'L' }))
+    const lineas = [`Mi rutina SkinCheck (${farmacia})`, '']
+    if (manana.length) lineas.push('Mañana:', ...manana.map((p: any) => `- ${p.marca} ${p.producto}`), '')
+    if (noche.length) lineas.push('Noche:', ...noche.map((p: any) => `- ${p.marca} ${p.producto}`), '')
+    lineas.push(`Total: ${eur(rut.total)}`, 'Repite el análisis en 6 semanas para comparar.')
+    setQr(await QRCode.toDataURL(`https://wa.me/?text=${encodeURIComponent(lineas.join('\n'))}`, { margin: 1, width: 400, errorCorrectionLevel: 'L', color: { dark: '#0f1b1d', light: '#ffffff' } }))
   }
 
   return (
-    <div className="max-w-6xl mx-auto px-6 md:px-12 py-14 space-y-14">
-      <header className="space-y-3">
-        <p className="etiqueta">Tu análisis</p>
-        <h2 className="titulo text-4xl md:text-6xl">
-          {destacados.length ? <>Tu piel pide trabajar <em className="text-[#e8b48a]">{destacados.map(([a]) => NOMBRE[a]?.toLowerCase()).join(', ')}</em></> : 'Esto es lo que necesita tu piel'}
-        </h2>
-        {F && (F.edad_piel != null || F.puntuacion_global != null) && (
-          <p className="text-lg text-[#f5efe6]/70">
-            {F.puntuacion_global != null && <>Puntuación de tu piel: <b className="text-[#f5efe6]">{F.puntuacion_global}/100</b></>}
-            {F.edad_piel != null && <> · Edad aparente de la piel: <b className="text-[#f5efe6]">{F.edad_piel}</b></>}
-          </p>
-        )}
-      </header>
-
-      {F && (
-        <section className="grid md:grid-cols-2 gap-8 items-start">
-          {foto && F.imagenes?.despues ? (
-            <AntesDespues antes={foto} despues={F.imagenes.despues} />
-          ) : marcas ? (
-            <img src={marcas} alt="Zonas analizadas" className="w-full rounded-[2rem]" />
-          ) : foto ? (
-            <img src={foto} alt="" className="w-full rounded-[2rem] -scale-x-100" />
-          ) : null}
-          <div className="space-y-6">
-            {marcas && F.imagenes?.despues && (
-              <figure className="space-y-2">
-                <img src={marcas} alt="Zonas analizadas" className="w-48 rounded-2xl" />
-                <figcaption className="text-sm text-[#f5efe6]/55">Zonas que ha detectado el análisis</figcaption>
-              </figure>
-            )}
-            <ul className="space-y-3">
+    <div className="w-full max-w-6xl mx-auto px-6 md:px-10 py-10 space-y-16">
+      <section className="grid md:grid-cols-[minmax(0,1fr)_minmax(0,1fr)] gap-10 items-start">
+        <div>
+          {foto && F?.imagenes?.despues ? <AntesDespues antes={foto} despues={F.imagenes.despues} />
+            : marcas ? <img src={marcas} alt="Zonas analizadas" className="w-full rounded-2xl border border-[var(--k-line)]" />
+            : foto ? <img src={foto} alt="Tu foto" className="w-full rounded-2xl -scale-x-100" /> : null}
+        </div>
+        <div className="space-y-8">
+          <div className="space-y-3">
+            <h2 className="text-4xl font-semibold tracking-tight leading-tight">Tu informe de piel</h2>
+            <p className="texto">{prioridades.length ? `Lo que más conviene trabajar: ${prioridades.join(', ')}.` : 'Tu rutina se ha calculado con tus respuestas.'}</p>
+          </div>
+          {F && (F.puntuacion_global != null || F.edad_piel != null) && (
+            <dl className="grid grid-cols-2 gap-4">
+              {F.puntuacion_global != null && <Dato etiqueta="Puntuación de la piel" valor={`${F.puntuacion_global}`} unidad="/100" />}
+              {F.edad_piel != null && <Dato etiqueta="Edad aparente de la piel" valor={`${F.edad_piel}`} unidad="años" />}
+            </dl>
+          )}
+          {aspectos.length > 0 && (
+            <ul className="grid gap-2.5">
               {aspectos.map(([a, v]) => (
-                <li key={a} className="grid grid-cols-[7.5rem_1fr_2.5rem] items-center gap-3">
-                  <span className="text-[#f5efe6]/85">{NOMBRE[a] ?? a}</span>
-                  <span className="h-2.5 bg-[#f5efe6]/10 rounded-full overflow-hidden"><span className="block h-full rounded-full" style={{ width: `${v}%`, background: v >= 40 ? '#e8b48a' : '#8aa89a' }} /></span>
-                  <span className="text-right text-sm text-[#f5efe6]/55">{v}</span>
+                <li key={a} className="grid grid-cols-[8rem_1fr_5.5rem] items-center gap-4">
+                  <span>{NOMBRE[a] ?? a}</span>
+                  <span className="h-1.5 rounded-full bg-[var(--k-line)] overflow-hidden"><span className="block h-full rounded-full" style={{ width: `${Math.max(4, v)}%`, background: v >= 50 ? 'var(--k-accent)' : 'var(--k-accent-mid)' }} /></span>
+                  <span className={`text-sm text-right ${v >= 50 ? 'text-[var(--k-text)] font-medium' : 'text-[var(--k-muted)]'}`}>{nivelDe(v)}</span>
                 </li>
               ))}
             </ul>
-            <p className="text-sm text-[#f5efe6]/45">Cuanto más larga la barra, más marcado. La simulación es orientativa, generada con IA: no es una promesa de resultado.</p>
-          </div>
-        </section>
-      )}
+          )}
+          {marcas && F?.imagenes?.despues && (
+            <figure className="flex items-center gap-4">
+              <img src={marcas} alt="Zonas detectadas" className="w-24 rounded-xl border border-[var(--k-line)]" />
+              <figcaption className="text-sm text-[var(--k-muted)]">Zonas detectadas por el análisis.</figcaption>
+            </figure>
+          )}
+        </div>
+      </section>
 
       {ingredientes.length > 0 && (
         <section className="space-y-6">
-          <h3 className="titulo text-3xl md:text-4xl">Los ingredientes que tu piel necesita</h3>
-          <div className="grid sm:grid-cols-2 gap-4">
+          <h3 className="text-3xl font-semibold tracking-tight">Ingredientes recomendados</h3>
+          <ol className="grid md:grid-cols-2 gap-x-10 gap-y-6">
             {ingredientes.map((o: any, k: number) => (
-              <div key={k} className="tarjeta space-y-2">
-                <p className="text-xs uppercase tracking-widest text-[#e8b48a]">{k === 0 ? 'Prioridad' : o.turno ? TURNO[o.turno] ?? o.turno : 'Ingrediente'}</p>
-                <p className="titulo text-2xl">{o.nombre}</p>
-                <p className="text-[#f5efe6]/70">{o.por_que}</p>
-              </div>
+              <li key={k} className="grid grid-cols-[2.25rem_1fr] gap-3">
+                <span className="w-9 h-9 rounded-full bg-[var(--k-accent-soft)] text-[var(--k-accent)] grid place-items-center font-semibold num">{k + 1}</span>
+                <span>
+                  <span className="block text-xl font-medium">{o.nombre}</span>
+                  <span className="block text-[var(--k-muted)] leading-relaxed">{o.por_que}</span>
+                </span>
+              </li>
             ))}
-          </div>
+          </ol>
         </section>
       )}
 
       <section className="space-y-6">
-        <div className="flex flex-wrap items-end gap-4">
-          <h3 className="titulo text-3xl md:text-4xl">Tu rutina, con productos de esta farmacia</h3>
-          <div className="ml-auto flex rounded-full bg-[#f5efe6]/8 p-1">
+        <div className="flex flex-wrap items-center gap-4">
+          <h3 className="text-3xl font-semibold tracking-tight">Tu rutina en esta farmacia</h3>
+          <div role="tablist" className="md:ml-auto inline-flex rounded-xl border border-[var(--k-line)] bg-white p-1">
             {(['basica', 'media', 'completa'] as const).map((k) => (
-              <button key={k} onClick={() => { setNivel(k); setQr('') }} className={`px-5 py-2.5 rounded-full text-sm ${nivel === k ? 'bg-[#f5efe6] text-[#14110f]' : 'text-[#f5efe6]/70'}`}>
-                {R.rutinas[k].nombre} · {eur(R.rutinas[k].total)}
+              <button key={k} role="tab" aria-selected={nivel === k} onClick={() => { setNivel(k); setQr('') }}
+                className={`h-11 px-4 rounded-lg text-sm ${nivel === k ? 'bg-[var(--k-accent)] text-white' : 'text-[var(--k-muted)] hover:text-[var(--k-text)]'}`}>
+                {R.rutinas[k].nombre} <span className="num">{eur(R.rutinas[k].total)}</span>
               </button>
             ))}
           </div>
         </div>
-        <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
-          {productos.map((p: any, k: number) => (
-            <div key={k} className="tarjeta flex flex-col gap-2">
-              <p className="text-xs uppercase tracking-widest text-[#e8b48a]">{p.paso} · {TURNO[p.turno] ?? p.turno}</p>
-              <p className="text-sm text-[#f5efe6]/60">{p.marca}</p>
-              <p className="titulo text-xl leading-snug">{p.producto}</p>
-              <p className="text-[#f5efe6]/65 text-sm flex-1">{p.para}</p>
-              <p className="text-xl">{eur(p.precio)}</p>
-            </div>
-          ))}
-        </div>
-        {!productos.length && <p className="text-[#f5efe6]/60">Pide al farmacéutico que te enseñe los productos de tu rutina.</p>}
+        {productos.length ? (
+          <div className="grid md:grid-cols-2 gap-6">
+            <Turno icono={<Sun size={20} />} titulo="Mañana" productos={manana} />
+            <Turno icono={<Moon size={20} />} titulo="Noche" productos={noche} />
+          </div>
+        ) : <p className="texto">Pide al farmacéutico que te enseñe los productos de tu rutina.</p>}
       </section>
 
-      <section className="tarjeta grid md:grid-cols-[1fr_auto] gap-8 items-center">
+      <section className="rounded-2xl bg-white border border-[var(--k-line)] p-6 md:p-8 grid md:grid-cols-[1fr_auto] gap-8 items-center">
         <div className="space-y-3">
-          <h3 className="titulo text-3xl">Llévatela y vuelve en 6 semanas</h3>
-          <p className="text-[#f5efe6]/70 text-lg">Escanea el código con tu móvil para guardar tu rutina en WhatsApp. En 6 semanas, repite el análisis y compara tu piel con la de hoy.</p>
-          <p className="text-[#f5efe6]/50">Enseña esta pantalla en el mostrador para que te preparen los productos.</p>
+          <h3 className="text-2xl font-semibold tracking-tight flex items-center gap-3"><CalendarCheck size={26} className="text-[var(--k-accent)]" /> Llévatela y repite en 6 semanas</h3>
+          <p className="texto">Escanea el código con tu móvil para guardar la rutina en WhatsApp. En 6 semanas, repite el análisis y compara tu piel con la de hoy.</p>
+          <p className="text-[var(--k-muted)]">Enseña esta pantalla en el mostrador para que te preparen los productos.</p>
         </div>
-        {qr ? <img src={qr} alt="Código QR de tu rutina" className="w-48 h-48 rounded-xl bg-white p-2" /> : <Boton onClick={generarQr}>Ver mi código</Boton>}
+        {qr ? <img src={qr} alt="Código QR con tu rutina" className="w-44 h-44 rounded-xl border border-[var(--k-line)]" /> : <button onClick={generarQr} className="boton-sec">Ver mi código</button>}
       </section>
 
-      <div className="flex justify-center pb-6"><Boton secundario onClick={onFin}>Terminar y borrar mis datos</Boton></div>
+      <div className="flex justify-center pb-4">
+        <button onClick={onFin} className="boton-sec"><Trash size={20} /> Terminar y borrar mis datos</button>
+      </div>
+      <p className="text-sm text-[var(--k-muted)] text-center pb-6">Análisis cosmético orientativo. La simulación está generada con IA y no es una promesa de resultado.</p>
     </div>
   )
 }
 
 /* ---------- Piezas ---------- */
 
+function Turno({ icono, titulo, productos }: { icono: React.ReactNode; titulo: string; productos: any[] }) {
+  return (
+    <div className="rounded-2xl bg-white border border-[var(--k-line)] p-6 space-y-4">
+      <p className="flex items-center gap-2 font-medium text-[var(--k-accent)]">{icono} {titulo}</p>
+      <ol className="space-y-4">
+        {productos.map((p: any, k: number) => (
+          <li key={k} className="grid grid-cols-[1fr_auto] gap-x-4 gap-y-0.5">
+            <span className="text-sm text-[var(--k-muted)]">{k + 1}. {p.paso}</span>
+            <span className="row-span-2 self-center font-medium num">{eur(p.precio)}</span>
+            <span className="text-lg leading-snug">{p.marca} {p.producto}</span>
+          </li>
+        ))}
+        {!productos.length && <li className="text-[var(--k-muted)]">Sin productos en este turno.</li>}
+      </ol>
+    </div>
+  )
+}
+
+function Dato({ etiqueta, valor, unidad }: { etiqueta: string; valor: string; unidad: string }) {
+  return (
+    <div className="rounded-2xl bg-white border border-[var(--k-line)] p-5">
+      <dt className="text-sm text-[var(--k-muted)]">{etiqueta}</dt>
+      <dd className="mt-1"><span className="text-4xl font-semibold num">{valor}</span> <span className="text-[var(--k-muted)]">{unidad}</span></dd>
+    </div>
+  )
+}
+
 function AntesDespues({ antes, despues }: { antes: string; despues: string }) {
   const [x, setX] = useState(50)
+  const mover = (e: React.PointerEvent<HTMLDivElement>) => {
+    const r = e.currentTarget.getBoundingClientRect()
+    setX(Math.max(0, Math.min(100, ((e.clientX - r.left) / r.width) * 100)))
+  }
   return (
-    <div className="space-y-3">
-      <div className="relative w-full aspect-[3/4] rounded-[2rem] overflow-hidden bg-black touch-none"
-        onPointerMove={(e) => { if (e.buttons || e.pointerType === 'touch') { const r = e.currentTarget.getBoundingClientRect(); setX(Math.max(0, Math.min(100, ((e.clientX - r.left) / r.width) * 100))) } }}>
-        <img src={despues} alt="Simulación del después" className="absolute inset-0 w-full h-full object-cover" />
-        <div className="absolute inset-0 overflow-hidden" style={{ clipPath: `inset(0 ${100 - x}% 0 0)` }}>
-          <img src={antes} alt="Hoy" className="absolute inset-0 w-full h-full object-cover -scale-x-100" />
+    <figure className="space-y-3">
+      <div className="relative w-full aspect-[3/4] rounded-2xl overflow-hidden bg-[var(--k-soft)] touch-none cursor-ew-resize"
+        onPointerDown={(e) => { e.currentTarget.setPointerCapture(e.pointerId); mover(e) }}
+        onPointerMove={(e) => { if (e.buttons) mover(e) }}>
+        <img src={despues} alt="Simulación con la rutina" className="absolute inset-0 w-full h-full object-cover" />
+        <img src={antes} alt="Hoy" className="absolute inset-0 w-full h-full object-cover -scale-x-100" style={{ clipPath: `inset(0 ${100 - x}% 0 0)` }} />
+        <div className="absolute top-0 bottom-0 w-px bg-white" style={{ left: `${x}%` }}>
+          <span className="absolute top-1/2 -translate-y-1/2 -translate-x-1/2 w-11 h-11 rounded-full bg-white text-[var(--k-text)] grid place-items-center shadow-[0_4px_16px_rgba(15,27,29,.18)]"><ArrowsLeftRight size={20} /></span>
         </div>
-        <div className="absolute top-0 bottom-0 w-0.5 bg-white/90" style={{ left: `${x}%` }}>
-          <div className="absolute top-1/2 -translate-y-1/2 -translate-x-1/2 w-12 h-12 rounded-full bg-white text-[#14110f] flex items-center justify-center shadow-lg">⇆</div>
-        </div>
-        <span className="absolute top-4 left-4 text-xs uppercase tracking-widest bg-black/50 rounded-full px-3 py-1">Hoy</span>
-        <span className="absolute top-4 right-4 text-xs uppercase tracking-widest bg-black/50 rounded-full px-3 py-1">Con tu rutina · IA</span>
       </div>
-      <input type="range" min={0} max={100} value={x} onChange={(e) => setX(+e.target.value)} className="w-full accent-[#e8b48a]" aria-label="Comparar antes y después" />
-    </div>
+      <figcaption className="flex justify-between text-sm text-[var(--k-muted)]"><span>Hoy</span><span>Simulación con tu rutina (IA)</span></figcaption>
+    </figure>
   )
 }
 
-function CaraEscaneo() {
+function Esquinas() {
+  const c = 'absolute w-8 h-8 border-[var(--k-accent)] pointer-events-none'
   return (
-    <div className="absolute inset-0 rounded-[2.5rem] overflow-hidden bg-gradient-to-b from-[#2a211c] to-[#1a1512] border border-[#f5efe6]/10">
-      <svg viewBox="0 0 300 400" className="absolute inset-0 w-full h-full" fill="none" stroke="#e8b48a" strokeOpacity=".55" strokeWidth="1.2">
-        <ellipse cx="150" cy="190" rx="95" ry="130" />
-        <path d="M100 165 q20 -12 40 0 M160 165 q20 -12 40 0" />
-        <path d="M150 180 v45 q-10 8 0 10" />
-        <path d="M120 270 q30 20 60 0" />
-        {[...Array(28)].map((_, k) => <circle key={k} cx={95 + ((k * 37) % 110)} cy={110 + ((k * 53) % 170)} r="1.8" fill="#e8b48a" className="punto" style={{ animationDelay: `${(k % 7) * 0.4}s` }} />)}
-      </svg>
-      <div className="linea-escaneo" />
-      <div className="absolute inset-0 rejilla" />
-      <div className="absolute left-6 bottom-6 right-6 flex justify-between text-[11px] uppercase tracking-widest text-[#f5efe6]/60">
-        <span>Poros · Manchas · Arrugas</span><span>IA</span>
-      </div>
-    </div>
+    <>
+      <span className={`${c} top-4 left-4 border-t-2 border-l-2 rounded-tl-lg`} />
+      <span className={`${c} top-4 right-4 border-t-2 border-r-2 rounded-tr-lg`} />
+      <span className={`${c} bottom-4 left-4 border-b-2 border-l-2 rounded-bl-lg`} />
+      <span className={`${c} bottom-4 right-4 border-b-2 border-r-2 rounded-br-lg`} />
+    </>
   )
 }
 
-function Centro({ children }: { children: React.ReactNode }) {
-  return <div className="min-h-dvh flex flex-col items-center justify-center text-center gap-7 px-8 py-16">{children}</div>
+function Bloque({ children }: { children: React.ReactNode }) {
+  return <div className="w-full px-6 md:px-10 py-12 flex flex-col items-center justify-center gap-6 [&>*]:w-full [&>*]:max-w-2xl">{children}</div>
 }
 
-function Boton({ children, onClick, secundario, disabled }: { children: React.ReactNode; onClick: () => void; secundario?: boolean; disabled?: boolean }) {
-  return <button onClick={onClick} disabled={disabled} className={`${secundario ? 'boton-secundario' : 'boton-principal'} disabled:opacity-40`}>{children}</button>
-}
-
-function Fondo() {
-  return (
-    <div className="pointer-events-none absolute inset-0">
-      <div className="absolute -top-40 -left-40 w-[60vw] h-[60vw] rounded-full bg-[#e8b48a]/10 blur-3xl" />
-      <div className="absolute -bottom-52 -right-40 w-[55vw] h-[55vw] rounded-full bg-[#8aa89a]/10 blur-3xl" />
-    </div>
-  )
-}
-
-function Estilos() {
+export function Estilos() {
   return (
     <style>{`
-      .titulo { font-family: var(--font-serif), Georgia, serif; font-weight: 400; letter-spacing: -0.02em; }
-      .titulo em { font-style: italic; }
-      .etiqueta { text-transform: uppercase; letter-spacing: .22em; font-size: .8rem; color: #e8b48a; }
-      .boton-principal { display:inline-flex; align-items:center; justify-content:center; background:#e8b48a; color:#14110f; border-radius:999px; padding:1.1rem 2.4rem; font-size:1.2rem; font-weight:600; }
-      .boton-secundario { display:inline-flex; align-items:center; justify-content:center; border:1px solid rgba(245,239,230,.3); color:#f5efe6; border-radius:999px; padding:1.1rem 2.2rem; font-size:1.1rem; }
-      .opcion { border:1px solid rgba(245,239,230,.18); background:rgba(245,239,230,.04); border-radius:1.25rem; padding:1.4rem 1rem; font-size:1.2rem; transition: all .15s; }
-      .opcion:active, .opcion-activa { background:#f5efe6; color:#14110f; border-color:#f5efe6; }
-      .tarjeta { background:rgba(245,239,230,.05); border:1px solid rgba(245,239,230,.1); border-radius:1.5rem; padding:1.5rem; }
-      .mascara-ovalo { background: radial-gradient(ellipse 36% 39% at 50% 48%, transparent 98%, rgba(20,17,15,.55) 100%); }
-      .rejilla { background-image: linear-gradient(rgba(232,180,138,.07) 1px, transparent 1px), linear-gradient(90deg, rgba(232,180,138,.07) 1px, transparent 1px); background-size: 24px 24px; }
-      .linea-escaneo { position:absolute; left:0; right:0; height:3px; background: linear-gradient(90deg, transparent, #e8b48a, transparent); box-shadow: 0 0 24px 6px rgba(232,180,138,.45); animation: escaneo 3.2s ease-in-out infinite; }
-      @keyframes escaneo { 0%,100% { top: 8%; } 50% { top: 90%; } }
-      .punto { animation: parpadeo 2.8s ease-in-out infinite; }
-      @keyframes parpadeo { 0%,100% { opacity:.15 } 50% { opacity:1 } }
-      .pulso { animation: pulso 2.4s ease-in-out infinite; }
-      @keyframes pulso { 0%,100% { box-shadow: 0 0 0 0 rgba(232,180,138,.5) } 50% { box-shadow: 0 0 0 18px rgba(232,180,138,0) } }
-      .aparecer { animation: aparecer .5s ease-out both; }
-      @keyframes aparecer { from { opacity:0; transform: translateY(12px) } to { opacity:1; transform:none } }
-      .barra-progreso { animation: progreso 40s cubic-bezier(.1,.6,.3,1) forwards; }
-      @keyframes progreso { from { width: 4% } to { width: 96% } }
+      .kiosko {
+        --k-bg:#fbfcfc; --k-soft:#f1f5f5; --k-line:#e1e7e7; --k-text:#0f1b1d; --k-muted:#5a696b;
+        --k-accent:#0b6e5b; --k-accent-mid:#7fb5a9; --k-accent-soft:#e5f2ee; --k-warn:#8a3b12; --k-warn-soft:#fbeee6;
+      }
+      .num { font-variant-numeric: tabular-nums; }
+      .titulo { font-size: clamp(2rem, 3.6vw, 3rem); font-weight: 600; letter-spacing: -0.02em; line-height: 1.1; }
+      .texto { font-size: 1.25rem; line-height: 1.55; color: var(--k-muted); }
+      .boton, .boton-sec { display:inline-flex; align-items:center; justify-content:center; gap:.6rem; height:3.5rem; padding:0 1.75rem; border-radius:.875rem; font-size:1.125rem; font-weight:500; white-space:nowrap; transition: background-color 140ms cubic-bezier(.23,1,.32,1), transform 80ms ease-out; }
+      .boton { background: var(--k-accent); color: #fff; }
+      .boton:hover { background: #095c4c; }
+      .boton-sec { background: #fff; color: var(--k-text); border: 1px solid var(--k-line); }
+      .boton-sec:hover { background: var(--k-soft); }
+      .boton:active, .boton-sec:active, .opcion:active { transform: scale(.97); }
+      .boton:disabled { opacity: .4; pointer-events: none; }
+      .boton:focus-visible, .boton-sec:focus-visible, .opcion:focus-visible, .kiosko button:focus-visible { outline: 2px solid var(--k-accent); outline-offset: 2px; }
+      .opcion { min-height: 4.5rem; padding: 1rem; border-radius: .875rem; background: #fff; border: 1px solid var(--k-line); font-size: 1.15rem; transition: background-color 140ms ease-out, border-color 140ms ease-out, transform 80ms ease-out; }
+      .opcion:hover { border-color: var(--k-accent-mid); }
+      .opcion-sel { background: var(--k-accent-soft); border-color: var(--k-accent); color: var(--k-accent); font-weight: 500; }
+      .velo-ovalo { background: radial-gradient(ellipse 35% 38.5% at 50% 48.5%, transparent 99%, rgba(15,27,29,.45) 100%); }
+      .linea-escaneo { position:absolute; left:0; right:0; height:2px; background: var(--k-accent); box-shadow: 0 0 0 1px rgba(255,255,255,.5); animation: escaneo 2.8s cubic-bezier(.45,0,.55,1) infinite; }
+      @keyframes escaneo { 0%,100% { top: 10% } 50% { top: 88% } }
+      .latido { animation: latido 1.2s ease-in-out infinite; }
+      @keyframes latido { 0%,100% { opacity: .35 } 50% { opacity: 1 } }
+      .entrar { animation: entrar 220ms cubic-bezier(.23,1,.32,1) both; }
+      @keyframes entrar { from { opacity: 0; transform: translateY(6px) } to { opacity: 1; transform: none } }
+      @media (prefers-reduced-motion: reduce) { .linea-escaneo, .latido, .entrar { animation: none } }
     `}</style>
   )
 }
