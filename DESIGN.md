@@ -1,132 +1,140 @@
 # DESIGN.md · Landing pública de SkinCheck (`/`)
 
-> Botica de laboratorio: rigor de ficha técnica sobre papel cálido. La página se lee como una etiqueta bien hecha, no como un folleto de software.
+> Instrumento clínico: blanco, preciso y medido. La página se lee como la hoja de resultados de un equipo de laboratorio bien diseñado, no como un folleto de software.
 
 Alcance: solo la landing pública (`src/app/page.tsx`, `src/components/web/*`, `Logo.tsx`). El panel interno, el login y el modo iPad siguen con su sistema actual (`globals.css`: Geist + `--color-*`). Todos los tokens de este documento viven bajo el ámbito `.lp` (wrapper de la landing) con prefijo `--lp-`, para que nada se filtre a la app.
 
+Versión 2 (23/11): sustituye a "Botica de laboratorio" (papel crema + serifa), descartada por Hugo por parecerse demasiado a la estética de Claude.
+
 ## 1. Tema visual y atmósfera
 
-**Estilo:** Botica de laboratorio (editorial clínico, papel y tinta).
-**Palabras clave:** ficha técnica, papel cálido, tinta, filete fino, escala graduada, etiqueta de botica, sobriedad, cercanía.
-**Tono:** riguroso y cercano. NO startup de IA, NO spa de lujo, NO hospital frío.
-**Sensación:** como abrir el cuaderno de laboratorio de una farmacia que cuida su lineal de dermo: todo medido, todo anotado, nada gritado.
+**Estilo:** Instrumento clínico (blanco clínico, tecnológico, medido).
+**Palabras clave:** hoja de resultados, escala graduada, rejilla milimétrica, precisión, blanco, filete fino, datos tabulares, sobriedad.
+**Tono:** riguroso, clínico y tecnológico, sin frialdad de hospital. NO startup de IA, NO spa de lujo, NO estética editorial crema.
+**Sensación:** la pantalla de un equipo médico bien diseñado: todo alineado, todo medido, nada decorativo.
 
 **Recursos de firma (solo de SkinCheck):**
-1. **La ficha.** Bloque con doble filete superior (1 px + 3 px de aire + 1 px), campos numerados y pie con fecha o lote. Se usa para la ficha de consejo del hero, la ficha INCI y la tarjeta de precio. Inspirada en la etiqueta de una fórmula magistral.
-2. **La escala graduada.** Regla de 0 a 100 con marcas cada 10 y marca larga cada 50. Sustituye a las barras redondeadas genéricas en la lectura de la piel.
-3. **La lámina.** Ilustración en línea fina (SVG) de la superficie de la piel vista de cerca: puntos para poros, trazos para líneas. Sustituye fotos ausentes y da el estado sin fotos del comparador.
+1. **La hoja.** Bloque blanco con borde de 1 px, cabecera en gris clínico (qué es, para quién, fecha) y filas separadas por filetes. Cierra con un filete en tinta (como un total). Se usa para la lectura de piel del hero, la hoja INCI y la tarjeta de precio.
+2. **La escala graduada.** Regla de 0 a 100 con marcas cada 10 y una aguja vertical en el valor. Verde cuando el valor es alto (lo que conviene trabajar), tinta cuando no. Sustituye a las barras redondeadas genéricas.
+3. **La lámina técnica.** Ilustración SVG sobre rejilla milimétrica: círculos para poros, trazos para líneas. Sustituye fotos ausentes y da el estado sin fotos del comparador.
+4. **La etiqueta de stock.** Pastilla pequeña en verde suave ("6 en stock") junto a cada producto: el diferencial hecho dato.
 
-**Nivel de interacción:** L1+ (estático cuidado con 4 animaciones de entrada con intención). Sin dependencias: solo CSS y un IntersectionObserver mínimo si hace falta.
+**Nivel de interacción:** L1+ (estático cuidado con 4 animaciones de entrada con intención). Sin dependencias: solo CSS.
 
 ## 2. Paleta y roles
 
 ```css
 .lp {
   /* Fondos */
-  --lp-papel: #F5F1E8;        /* fondo de página: papel cálido */
-  --lp-papel-claro: #FBF9F4;  /* fichas y superficies */
-  --lp-papel-hondo: #EAE3D5;  /* bandas alternas, carril de escalas */
-  --lp-tinta-fondo: #1B2420;  /* una banda oscura por página como mucho (el criterio) */
+  --lp-blanco: #FFFFFF;        /* fondo de página */
+  --lp-clinico: #F3F6F7;       /* bandas alternas, cabecera de hojas */
+  --lp-tinta-fondo: #0E1A1F;   /* una banda oscura por página como mucho (el criterio) */
 
-  /* Filetes */
-  --lp-filete: #D9D1C1;       /* separadores y bordes */
-  --lp-filete-fuerte: #1B2420;/* doble filete de las fichas */
+  /* Líneas */
+  --lp-rejilla: #E6ECEE;       /* rejilla milimétrica, carril de escalas, filetes internos */
+  --lp-linea: #D5DDE0;         /* bordes y separadores */
+  --lp-linea-fuerte: #0E1A1F;  /* filete de sección y de total */
 
   /* Texto */
-  --lp-tinta: #1B2420;        /* titulares y texto importante (14,1:1 sobre papel) */
-  --lp-tinta-2: #545B55;      /* cuerpo secundario (6,2:1) */
-  --lp-tinta-3: #63675F;      /* notas y pies; solo ≥ 14 px (5,2:1) */
+  --lp-tinta: #0E1A1F;         /* titulares y texto importante (17,7:1 sobre blanco) */
+  --lp-tinta-2: #4A575D;       /* cuerpo secundario (7,5:1) */
+  --lp-tinta-3: #66747A;       /* notas; solo sobre blanco y ≥ 13 px (4,8:1) */
 
-  /* Acento: verde frasco (acción) */
-  --lp-verde: #1F5144;        /* CTA, enlaces, estados activos (8,0:1 sobre papel; blanco encima 9,1:1) */
-  --lp-verde-hover: #163D33;
-  --lp-verde-suave: #DDE6DF;  /* fondos de estado, foco */
-
-  /* Marca de medida: arcilla (tono piel) */
-  --lp-arcilla: #9C4426;      /* señala lo medido: marca en la escala, activo resaltado (5,7:1) */
-  --lp-arcilla-suave: #F0DCD0;
+  /* Acento único: verde SkinCheck (el mismo de la app) */
+  --lp-verde: #0B6E5B;         /* CTA, enlaces, valores altos, stock (6,2:1; blanco encima 6,2:1) */
+  --lp-verde-hover: #095C4C;
+  --lp-verde-suave: #E4F1ED;   /* etiqueta de stock, foco, estados */
 
   /* RGB auxiliares */
-  --lp-tinta-rgb: 27, 36, 32;
-  --lp-verde-rgb: 31, 81, 68;
-  --lp-papel-rgb: 245, 241, 232;
+  --lp-tinta-rgb: 14, 26, 31;
+  --lp-verde-rgb: 11, 110, 91;
 
   /* Semánticos */
-  --lp-ok: #1F5144;
-  --lp-error: #8E2F1F;
-  --lp-error-suave: #F6E1DA;
+  --lp-ok: #0B6E5B;
+  --lp-error: #A3341F;
+  --lp-error-suave: #FBEAE5;
 }
 ```
 
 **Reglas de color**
 - Todo color sale de un token `--lp-*`. Nada de hex en los componentes.
-- El verde es para actuar (botones, enlaces, foco). La arcilla es para medir (la marca en la escala, el activo resaltado). Nunca se intercambian.
+- Un solo acento: el verde de la marca, igual que en la app. Se usa para actuar (botones, enlaces, foco) y para el dato que importa (valor alto, stock).
 - Una única banda oscura (`--lp-tinta-fondo`) en toda la página: la sección del criterio.
-- Sin degradados, sin brillos, sin transparencias sobre imagen, sin blanco puro como fondo de página.
-- Texto `--lp-tinta-3` solo a partir de 14 px. Por debajo, `--lp-tinta-2`.
+- Sin degradados, sin brillos, sin transparencias sobre imagen, sin fondos crema o beis.
+- `--lp-tinta-3` solo sobre blanco. Sobre gris clínico, `--lp-tinta-2`.
 
 ## 3. Tipografía
 
 ```css
 /* Cargadas con next/font/google en layout.tsx como variables, sin aplicarlas al body de la app */
---lp-serif: var(--font-newsreader), 'Iowan Old Style', Georgia, serif;
---lp-sans: var(--font-schibsted), 'Helvetica Neue', Arial, sans-serif;
+--lp-display: var(--font-archivo), 'Helvetica Neue', Arial, sans-serif;   /* con font-variation-settings: 'wdth' 112 */
+--lp-texto: var(--font-public-sans), 'Helvetica Neue', Arial, sans-serif;
 ```
-Equivalente @import: `https://fonts.googleapis.com/css2?family=Newsreader:opsz,wght@6..72,400..600&family=Schibsted+Grotesk:wght@400..700&display=swap`
+Equivalente @import: `https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,100..900&family=Public+Sans:wght@400..700&display=swap`
 
-**Por qué este par:** Newsreader es una serifa de prensa con tamaño óptico: a 72 px se vuelve fina y editorial, a 16 px es robusta. Da rigor de publicación sin el aire "artesano blando" de Fraunces. Schibsted Grotesk nació para un periódico: grotesca con carácter, números claros y una "g" de dos pisos; nada que ver con Inter o Geist.
+**Por qué este par:** Archivo semiexpandida (ancho 112) tiene el aire de la rotulación de un equipo o de un envase farmacéutico: técnica, ancha y firme, sin parecerse a Inter ni a Geist. Public Sans nació para webs de administración pública: neutra, muy legible a 16 px y con números claros. Las dos son sin serifa: el carácter lo pone el ancho de Archivo, no un contraste de estilos.
 
 | Rol | Fuente | Tamaño (móvil → escritorio) | Peso | Interlínea | Tracking |
 |---|---|---|---|---|---|
-| H1 hero | Newsreader (opsz 72) | 40 → 76 px `clamp(2.5rem, 1.4rem + 4.6vw, 4.75rem)` | 400 | 1.02 | -0.02em |
-| H2 sección | Newsreader (opsz 60) | 32 → 52 px `clamp(2rem, 1.4rem + 2.4vw, 3.25rem)` | 400 | 1.06 | -0.015em |
-| H3 | Schibsted Grotesk | 19 → 21 px | 600 | 1.3 | -0.005em |
-| Entradilla | Newsreader (opsz 20) | 19 → 22 px | 400 | 1.45 | 0 |
-| Cuerpo | Schibsted Grotesk | 16 → 17 px | 400 | 1.6 | 0 |
-| Etiqueta de campo / nota | Schibsted Grotesk | 13 → 14 px | 500 | 1.4 | 0.01em |
-| Cifras de medida | Schibsted Grotesk, `tabular-nums` | según contexto | 500 | 1 | 0 |
-| INCI | Newsreader (opsz 14) | 15 px | 400 | 1.5 | 0 |
+| H1 hero | Archivo, wdth 112 | 40 → 72 px `clamp(2.5rem, 1.5rem + 4.2vw, 4.5rem)` | 600 | 1.0 | -0.025em |
+| H2 sección | Archivo, wdth 112 | 30 → 48 px `clamp(1.875rem, 1.3rem + 2.4vw, 3rem)` | 600 | 1.06 | -0.02em |
+| H3 | Archivo, wdth 108 | 19 → 22 px | 600 | 1.25 | -0.01em |
+| Entradilla | Public Sans | 18 → 20 px | 400 | 1.5 | 0 |
+| Cuerpo | Public Sans | 16 → 17 px | 400 | 1.6 | 0 |
+| Nota / etiqueta | Public Sans | 13 → 14 px | 500 | 1.4 | 0 |
+| Cifras de medida | Public Sans, `tabular-nums` | según contexto | 600 | 1 | 0 |
+| Número de sección | Archivo, wdth 112 | 14 px | 600 | 1 | 0 |
 
 **Reglas tipográficas**
-- Titulares en serifa, todo lo demás en grotesca. La serifa nunca va en botones ni formularios.
-- Sin monoespaciada en ningún sitio. Las cifras usan `tabular-nums` de Schibsted.
+- Titulares, números de sección y nombres de hoja en Archivo; todo lo demás en Public Sans.
+- Sin serifa y sin monoespaciada en ninguna parte. Las cifras usan `tabular-nums` de Public Sans.
 - Sin etiquetas en mayúsculas, sin palabras en cursiva de acento, sin "eyebrows" encima del H1.
-- Ancho de línea máximo 62 caracteres en cuerpo y 18 palabras en titulares.
-- Prohibidas: Inter, Geist, Fraunces, Instrument Serif, Playfair, cualquier monoespaciada.
+- Ancho de línea máximo 62 caracteres en cuerpo.
+- Prohibidas: Inter, Geist, Fraunces, Instrument Serif, Playfair, Newsreader y cualquier monoespaciada.
 
 ## 4. Componentes
 
 ```css
 /* Botón principal */
 .lp-btn { display:inline-flex; align-items:center; justify-content:center; gap:.5rem;
-  min-height:3rem; padding:0 1.375rem; border-radius:.375rem;
-  background:var(--lp-verde); color:var(--lp-papel-claro); font:500 1rem/1 var(--lp-sans);
+  min-height:3rem; padding:0 1.375rem; border-radius:.25rem;
+  background:var(--lp-verde); color:var(--lp-blanco); font:600 1rem/1 var(--lp-texto);
   transition: background-color 160ms cubic-bezier(.2,.7,.2,1), transform 120ms cubic-bezier(.2,.7,.2,1); }
 .lp-btn:hover { background:var(--lp-verde-hover); }
 .lp-btn:active { transform: translateY(1px); }
 .lp-btn:focus-visible { outline:2px solid var(--lp-verde); outline-offset:3px; }
 .lp-btn:disabled { opacity:.5; cursor:not-allowed; }
 
-/* Botón secundario: texto con filete inferior, no caja */
-.lp-enlace { color:var(--lp-tinta); text-decoration:underline; text-decoration-color:var(--lp-filete);
-  text-underline-offset:.3em; text-decoration-thickness:1px; transition:text-decoration-color 160ms ease-out; }
-.lp-enlace:hover { text-decoration-color:var(--lp-tinta); }
-.lp-enlace:focus-visible { outline:2px solid var(--lp-verde); outline-offset:3px; border-radius:2px; }
+/* Botón secundario: contorno de 1 px, mismo alto */
+.lp-btn-sec { display:inline-flex; align-items:center; justify-content:center; min-height:3rem; padding:0 1.25rem;
+  border-radius:.25rem; border:1px solid var(--lp-linea); background:var(--lp-blanco); color:var(--lp-tinta); font:500 1rem/1 var(--lp-texto);
+  transition:border-color 160ms ease-out, background-color 160ms ease-out; }
+.lp-btn-sec:hover { border-color:var(--lp-tinta); }
+.lp-btn-sec:active { background:var(--lp-clinico); }
+.lp-btn-sec:focus-visible { outline:2px solid var(--lp-verde); outline-offset:3px; }
 
-/* Ficha (recurso de firma) */
-.lp-ficha { background:var(--lp-papel-claro); border:1px solid var(--lp-filete); border-radius:.25rem;
-  box-shadow: inset 0 3px 0 -2px var(--lp-filete-fuerte), inset 0 6px 0 -5px var(--lp-filete-fuerte); }
-/* Campos de la ficha: fila con número de campo a la izquierda (01, 02…) en tinta-3 y valor a la derecha */
+/* Enlace de texto */
+.lp-enlace { color:var(--lp-verde); text-decoration:underline; text-underline-offset:.25em; text-decoration-thickness:1px; }
+.lp-enlace:hover { color:var(--lp-verde-hover); }
+
+/* Hoja (recurso de firma) */
+.lp-hoja { background:var(--lp-blanco); border:1px solid var(--lp-linea); border-radius:.375rem; overflow:hidden; }
+.lp-hoja-cab { display:flex; justify-content:space-between; padding:.75rem 1.25rem; background:var(--lp-clinico);
+  border-bottom:1px solid var(--lp-linea); font:500 .8125rem var(--lp-texto); color:var(--lp-tinta-2); }
+/* Filas: filete --lp-rejilla entre filas; total con filete --lp-linea-fuerte */
+
+/* Etiqueta de stock */
+.lp-stock { font:500 .8125rem var(--lp-texto); color:var(--lp-verde); background:var(--lp-verde-suave); padding:.125rem .5rem; border-radius:.1875rem; }
 
 /* Campo de formulario */
 .lp-campo { width:100%; min-height:3rem; padding:.75rem .875rem; border-radius:.25rem;
-  background:var(--lp-papel-claro); border:1px solid var(--lp-filete); color:var(--lp-tinta); font:400 1rem var(--lp-sans); }
+  background:var(--lp-blanco); border:1px solid var(--lp-linea); color:var(--lp-tinta); font:400 1rem var(--lp-texto); }
 .lp-campo:hover { border-color:var(--lp-tinta-3); }
 .lp-campo:focus { outline:none; border-color:var(--lp-verde); box-shadow:0 0 0 3px var(--lp-verde-suave); }
 .lp-campo[aria-invalid="true"] { border-color:var(--lp-error); }
-.lp-campo:disabled { background:var(--lp-papel-hondo); }
+.lp-campo:disabled { background:var(--lp-clinico); }
 
-/* Navegación: barra de papel con filete inferior; enlaces en tinta-2, actual/hover en tinta */
+/* Navegación: barra blanca opaca con filete inferior; enlaces en tinta-2, actual/hover en tinta */
 /* Acordeón: filas separadas por filete, signo +/− dibujado con dos líneas (no icono), área táctil ≥ 48 px */
 ```
 
@@ -135,24 +143,25 @@ Equivalente @import: `https://fonts.googleapis.com/css2?family=Newsreader:opsz,w
 - Contenedor: `max-width: 76rem` (1216 px), márgenes laterales 20 px (móvil), 32 px (tablet), 48 px (escritorio).
 - Rejilla de 12 columnas, medianil de 24 px. Las secciones alternan composiciones: 7/5, 5/7, 4/8, ancho completo con índice. Nunca tres tarjetas iguales en fila.
 - Escala de espaciado (rem): 0.25 · 0.5 · 0.75 · 1 · 1.5 · 2 · 3 · 4 · 6 · 8. Separación entre secciones: 6 rem en móvil, 8–9 rem en escritorio.
-- Separadores: filete de 1 px `--lp-filete` a ancho de contenedor, con el número de sección (01–08) en tinta-3 a la izquierda, como en una ficha técnica.
-- Radios: 4 px fichas y campos, 6 px botones, 0 en bandas. Nada de 16–32 px.
+- Separadores: filete de 1 px `--lp-linea-fuerte` a ancho de contenedor, con el número de sección (01–08) en Archivo a la izquierda, como en un informe técnico.
+- Radios: 4 px botones y campos, 6 px hojas, 0 en bandas. Nada de 16–32 px.
+- La rejilla milimétrica (20 px, `--lp-rejilla`) solo aparece dentro de las láminas, nunca de fondo de página.
 
 ## 6. Profundidad
 
-Casi plana: el papel no flota.
+Casi plana: precisión antes que volumen.
 ```css
---lp-sombra-ficha: 0 1px 0 rgba(var(--lp-tinta-rgb), .04), 0 12px 32px -20px rgba(var(--lp-tinta-rgb), .22);
+--lp-sombra-hoja: 0 24px 48px -28px rgba(var(--lp-tinta-rgb), .25);
 ```
-- Solo las fichas del hero y del precio llevan `--lp-sombra-ficha`. Lo demás se separa con filetes y papel hondo.
-- Sin glassmorphism, sin `backdrop-filter` (la cabecera es papel opaco).
+- Solo las hojas del hero y del precio llevan sombra. Lo demás se separa con filetes y bandas de gris clínico.
+- Sin glassmorphism, sin `backdrop-filter` (la cabecera es blanca y opaca).
 
 ## 7. Movimiento e interacción
 
 Nivel L1+. Cuatro movimientos, todos dentro de `@media (prefers-reduced-motion: no-preference)`:
 1. `sc-sube` (existe): entrada de los bloques del hero, 600 ms, `cubic-bezier(.16,1,.3,1)`, escalonado 70 ms.
-2. `sc-barra` (existe, se adapta): la marca de arcilla se desliza por la escala hasta su valor, 900 ms, escalonado 50 ms.
-3. `sc-escaneo` (existe, se reduce): una sola pasada de una línea fina sobre la lámina del comparador al entrar en vista, no en bucle.
+2. `sc-barra` (existe, se adapta): la aguja se desliza por la escala hasta su valor, 900 ms, escalonado 50 ms.
+3. `sc-escaneo` (existe, se reduce): una sola pasada de una línea fina sobre la lámina técnica del comparador al entrar en vista, no en bucle.
 4. `sc-aro` (existe): se mantiene para la puntuación global del panel, convertido en arco de escala.
 
 Interacción: hover de botón 160 ms; acordeón con altura animada vía `grid-template-rows` 220 ms; comparador arrastrable con puntero y teclado (flechas ±5, Mayús+flecha ±10, Inicio/Fin), sin bloquear el scroll vertical en móvil (`touch-action: pan-y`).
@@ -163,15 +172,15 @@ Con `prefers-reduced-motion: reduce`: todo aparece en su estado final, sin despl
 **Sí**
 1. Una idea por sección y una composición distinta en cada una.
 2. Mostrar el producto funcionando con datos de ejemplo, siempre rotulados como tales.
-3. Escalas graduadas y cifras alineadas para todo lo que se mide.
+3. Escalas graduadas y cifras tabulares alineadas para todo lo que se mide.
 4. Hablar de "lo que tienes en tu estantería" antes que de "IA".
-5. Ilustración en línea fina donde falte una foto, con un pie que diga qué foto irá ahí.
+5. Lámina técnica donde falte una foto, con un pie que diga qué foto irá ahí.
 6. Áreas táctiles de 44 px como mínimo, también en el pie y en la casilla de consentimiento.
 7. Un solo CTA principal por pantalla ("Pedir una demo").
 8. Rotular cada simulación como simulación.
 
 **No**
-1. Ni Inter, ni Geist, ni monoespaciada, ni Fraunces.
+1. Ni Inter, ni Geist, ni monoespaciada, ni serifas editoriales, ni fondos crema.
 2. Ni iconos dentro de cajitas, ni rejillas de iconos con título y descripción.
 3. Ni degradados, ni glassmorphism, ni neón, ni sombras de plantilla.
 4. Ni bento genérico, ni fila de "4 cifras grandes".
@@ -184,8 +193,8 @@ Con `prefers-reduced-motion: reduce`: todo aparece en su estado final, sin despl
 
 | Punto | Ancho | Cambios |
 |---|---|---|
-| Móvil | < 640 px | Una columna. El hero muestra la ficha de consejo recortada justo debajo del CTA (la parte superior se ve en el primer pliegue a 390 × 844). CTA a ancho completo; el secundario es un enlace, así no hay dos botones de ancho distinto. Navegación: logo + "Acceso" + "Demo". |
-| Tablet | 640–1023 px | Hero en una columna con la ficha a 80 % de ancho; secciones 5/7 se apilan con el texto primero. |
+| Móvil | < 640 px | Una columna. El hero muestra la hoja de lectura recortada justo debajo del CTA (la parte superior se ve en el primer pliegue a 390 × 844). CTA a ancho completo; el secundario es un enlace, así no hay dos botones de ancho distinto. Navegación: logo + "Acceso" + "Demo". |
+| Tablet | 640–1023 px | Hero en una columna con la hoja a 80 % de ancho; secciones 5/7 se apilan con el texto primero. |
 | Escritorio | ≥ 1024 px | Composición completa de 12 columnas. |
 | Ancho | ≥ 1440 px | El contenedor se queda en 1216 px; las bandas llegan a los bordes. |
 
