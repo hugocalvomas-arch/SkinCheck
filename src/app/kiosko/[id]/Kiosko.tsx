@@ -1,5 +1,6 @@
 'use client'
 /* eslint-disable @next/next/no-img-element, @typescript-eslint/no-explicit-any */
+import { MallaFacial, type EstadoCara } from './MallaFacial'
 import { useCallback, useEffect, useRef, useState, useTransition } from 'react'
 import QRCode from 'qrcode'
 import { ArrowLeft, ArrowRight, ArrowsLeftRight, CalendarCheck, Camera, Check, Drop, Moon, ScanSmiley, ShieldCheck, Sparkle, Sun, Trash, X } from '@phosphor-icons/react'
@@ -143,7 +144,7 @@ function Espejo() {
   return (
     <figure className="space-y-3">
       <div className="relative aspect-[4/5] rounded-2xl overflow-hidden bg-[var(--k-soft)] border border-[var(--k-line)]">
-        {ok ? <video ref={video} autoPlay playsInline muted className="absolute inset-0 w-full h-full object-cover -scale-x-100" /> : (
+        {ok ? <><video ref={video} autoPlay playsInline muted className="absolute inset-0 w-full h-full object-cover -scale-x-100" /><MallaFacial video={video} /></> : (
           <div className="absolute inset-0 grid place-items-center text-[var(--k-muted)]"><ScanSmiley size={96} weight="thin" /></div>
         )}
         <Esquinas />
@@ -206,6 +207,7 @@ function Camara({ error, onFoto }: { error: string; onFoto: (b64: string, dataUr
   const video = useRef<HTMLVideoElement>(null)
   const [cuenta, setCuenta] = useState<number | null>(null)
   const [fallo, setFallo] = useState('')
+  const [cara, setCara] = useState<EstadoCara>('buscando')
   const hecha = useRef(false)
 
   useEffect(() => {
@@ -246,7 +248,13 @@ function Camara({ error, onFoto }: { error: string; onFoto: (b64: string, dataUr
       <div className="relative h-[min(72dvh,680px)] aspect-[3/4] max-w-full mx-auto rounded-2xl overflow-hidden bg-[#0f1b1d]">
         <video ref={video} autoPlay playsInline muted className="absolute inset-0 w-full h-full object-cover -scale-x-100" />
         <div className="absolute inset-0 pointer-events-none velo-ovalo" />
-        <div className="absolute left-[15%] right-[15%] top-[10%] bottom-[13%] rounded-[50%] border-2 border-white/90 pointer-events-none" />
+        <div className={`absolute left-[15%] right-[15%] top-[10%] bottom-[13%] rounded-[50%] border-2 pointer-events-none transition-colors duration-300 ${cara === 'lista' ? 'border-[#7fd6c2]' : 'border-white/70'}`} />
+        <MallaFacial video={video} onEstado={setCara} />
+        {cuenta == null && (
+          <p className="absolute top-4 left-1/2 -translate-x-1/2 rounded-full bg-[#0f1b1d]/70 backdrop-blur px-4 py-2 text-white text-sm font-medium whitespace-nowrap">
+            {{ buscando: 'Buscando tu cara', lejos: 'Acércate un poco', descentrada: 'Céntrate en el óvalo', lista: 'Perfecto, no te muevas' }[cara]}
+          </p>
+        )}
         {cuenta != null && cuenta > 0 && <div className="absolute inset-0 grid place-items-center text-white text-9xl font-semibold num">{cuenta}</div>}
       </div>
       <div className="space-y-6">
