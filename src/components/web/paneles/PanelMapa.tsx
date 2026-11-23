@@ -24,7 +24,7 @@ const DER: Zona[] = [
 const TODA = ['Textura', 'Hidratación', 'Luminosidad']
 const MOVIL = [...DER, ...IZQ].sort((x, y) => valor(y.a) - valor(x.a))
 
-function Cara() {
+export function Cara() {
   return (
     <g>
       <path d={MALLA} fill="none" stroke="var(--color-accent-mid)" strokeOpacity={0.45} strokeWidth={0.5} vectorEffect="non-scaling-stroke" />

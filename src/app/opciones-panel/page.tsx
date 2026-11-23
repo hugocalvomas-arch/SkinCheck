@@ -3,11 +3,13 @@ import { PanelAnalisis } from '@/components/web/PanelAnalisis'
 import { PanelMapa } from '@/components/web/paneles/PanelMapa'
 import { PanelInforme } from '@/components/web/paneles/PanelInforme'
 import { PanelDial } from '@/components/web/paneles/PanelDial'
+import { PanelFotoRadar } from '@/components/web/paneles/PanelFotoRadar'
 
 // Página temporal para elegir el panel de la portada. Se borra al decidir.
 export const metadata: Metadata = { title: 'Opciones del panel · SkinCheck', robots: { index: false } }
 
 const OPCIONES = [
+  ['D', 'Cara y radar', 'A la izquierda la cara con las zonas que marca el análisis; a la derecha, las once medidas en radar.', <PanelFotoRadar key="e" />],
   ['A', 'Mapa facial', 'Cada medida señalada en su zona de la cara, con la malla del iPad.', <PanelMapa key="a" />],
   ['B', 'Informe con rango', 'Como una analítica: cada medida sobre las bandas bien, leve, moderado y marcado.', <PanelInforme key="b" />],
   ['C', 'Esfera', 'La puntuación en el centro y las once medidas en radios.', <PanelDial key="c" />],
