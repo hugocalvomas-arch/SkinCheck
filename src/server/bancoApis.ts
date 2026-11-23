@@ -42,8 +42,14 @@ const PROVEEDORES: Proveedor[] = [
       f.set('api_key', process.env.FACEPP_API_KEY!)
       f.set('api_secret', process.env.FACEPP_API_SECRET!)
       f.set('image_base64', jpg.toString('base64'))
-      const r = await fetch('https://api-us.faceplusplus.com/facepp/v1/skinanalyze', { method: 'POST', body: f, signal: AbortSignal.timeout(30000) })
-      const d = await r.json()
+      // La clave gratis admite pocas llamadas por segundo: si responde CONCURRENCY_LIMIT_EXCEEDED, se espera y se reintenta
+      let r: Response, d: any // eslint-disable-line @typescript-eslint/no-explicit-any
+      for (let i = 0; ; i++) {
+        r = await fetch('https://api-us.faceplusplus.com/facepp/v1/skinanalyze', { method: 'POST', body: f, signal: AbortSignal.timeout(30000) })
+        d = await r.json()
+        if (d.error_message !== 'CONCURRENCY_LIMIT_EXCEEDED' || i >= 4) break
+        await new Promise((ok) => setTimeout(ok, 1500))
+      }
       if (!r.ok || d.error_message) throw new Error(d.error_message ?? `HTTP ${r.status}`)
       return Object.entries(d.result ?? {}).map(([clave, v]: [string, any]) => { // eslint-disable-line @typescript-eslint/no-explicit-any
         if (clave === 'skin_type') return { clave, aspecto: null, valor: `tipo: ${TIPO_PIEL[v?.skin_type] ?? v?.skin_type}` }
@@ -73,6 +79,6 @@ export async function probar(id: string): Promise<Prueba[]> {
     }
   }
   // Queda en los registros de Vercel para poder actualizar la comparativa (solo caras de IA, sin datos de clientas)
-  console.log('[banco-apis]', JSON.stringify(out))
+  for (const x of out) console.log('[banco-apis]', x.proveedor, x.cara, x.error ?? x.medidas.map((m) => `${m.clave}=${m.valor}`).join(' '))
   return out
 }
