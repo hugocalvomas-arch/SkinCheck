@@ -1,29 +1,56 @@
 'use client'
 /* eslint-disable @next/next/no-img-element */
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { DESTACADAS, EDAD, GLOBAL, PRIMERO, nivel, valor } from './ejemplo'
+import { CONTORNO, MALLA, PUNTOS, RASGOS } from './mallaCara'
 
-// El análisis "en directo": escaneo de la cara y, zona a zona, un barrido que pinta lo que detecta la API
-// (sus imágenes reales) mientras su punta del radar sube. Al final, el resultado completo. En bucle; al tocar un paso se queda fijo.
+// El análisis "en directo", como un vídeo continuo y en bucle: la malla aparece y se ajusta a la cara,
+// y después un barrido va pintando lo que detecta la API (sus imágenes reales) mientras el radar se llena.
+// Todo sale de un único reloj, así que nunca se para ni salta.
 
-// Las primeras V zonas tienen imagen con algo visible; el resto (sin marca clara en la foto) entra en el radar al final.
+// Las primeras V zonas tienen imagen con algo visible; el resto entra en el radar con el resultado.
 const ZONAS: [string, string][] = [
   ['Arrugas', 'arrugas'], ['Manchas', 'manchas'], ['Textura', 'textura'], ['Rojez', 'rojez'], ['Brillo', 'brillo'], ['Firmeza', 'firmeza'],
   ['Hidratación', 'hidratacion'], ['Poros', ''], ['Ojeras', ''], ['Acné', ''], ['Luminosidad', ''],
 ]
 const N = ZONAS.length
 const V = ZONAS.filter(([, f]) => f).length
-const PASOS = V + 2 // 0 = escaneo, 1..V = zonas con imagen, V+1 = resultado
-const FIN = V + 1
-const DURACION = (p: number) => (p === 0 ? 2200 : p === FIN ? 5600 : 2600)
+
+// Línea de tiempo (segundos)
+const L = 25 // duración del bucle
+const MALLA_FIN = 3.4 // la malla termina de ajustarse
+const Z0 = 3.6 // empieza la primera zona
+const D = 2.3 // cada zona
+const BARRIDO = 1.1 // lo que tarda el barrido de una zona
+const R0 = Z0 + V * D + 0.3 // empieza el resultado
+const VACIADO = 1.0 // al reiniciar, el radar se vacía suave
+
+const IMG_W = 900
+const IMG_H = 1125
+const MENTA = '127,214,194'
+
+const clamp = (x: number) => Math.max(0, Math.min(1, x))
+const suave = (x: number) => { const c = clamp(x); return c * c * (3 - 2 * c) }
+const salida = (x: number) => 1 - Math.pow(1 - clamp(x), 3)
+const inicioZona = (i: number) => Z0 + i * D
+const barrido = (t: number, i: number) => clamp((t - inicioZona(i)) / BARRIDO)
+
+function valoresEn(t: number) {
+  return ZONAS.map(([a, f], k) => {
+    const v = valor(a)
+    if (t < VACIADO) return v * (1 - suave(t / VACIADO))
+    if (f) return v * salida((t - inicioZona(k)) / 1.2)
+    return v * salida((t - R0 - 0.2 - (k - V) * 0.15) / 1.0)
+  })
+}
 
 // Radar
 const C = 250
 const R = 180
 const PASO_ANG = 360 / N
 const pol = (rad: number, k: number) => {
-  const t = ((k * PASO_ANG - 90) * Math.PI) / 180
-  return [C + rad * Math.cos(t), C + rad * Math.sin(t)] as const
+  const a = ((k * PASO_ANG - 90) * Math.PI) / 180
+  return [C + rad * Math.cos(a), C + rad * Math.sin(a)] as const
 }
 const anillo = (v: number) => ZONAS.map((_, k) => pol((R * v) / 100, k).join(',')).join(' ')
 const ANILLOS: [number, string][] = [[25, 'Leve'], [50, 'Moderado'], [70, 'Marcado'], [100, '']]
@@ -66,100 +93,128 @@ function Radar({ vals, actual, nombres = true }: { vals: number[]; actual: numbe
   )
 }
 
-export function PanelEnVivo() {
-  const [paso, setPaso] = useState(FIN)
-  const [fijo, setFijo] = useState(false)
-  const [vals, setVals] = useState<number[]>(() => ZONAS.map(([a]) => valor(a)))
-  const [global, setGlobal] = useState(GLOBAL)
-  const [quieto, setQuieto] = useState(true)
+// Malla sobre la foto: al principio llega descolocada y se va ajustando; luego queda tenue, respirando.
+function dibujarMalla(ctx: CanvasRenderingContext2D, w: number, h: number, t: number) {
+  ctx.clearRect(0, 0, w, h)
+  let op: number
+  if (t < 0.5) op = suave(t / 0.5)
+  else if (t < MALLA_FIN) op = 1
+  else if (t < MALLA_FIN + 1.2) op = 1 - 0.8 * suave((t - MALLA_FIN) / 1.2)
+  else if (t < R0) op = 0.2
+  else op = 0.2 * (1 - suave((t - R0) / 1.2))
+  if (op <= 0.01) return
+  const e = Math.max(w / IMG_W, h / IMG_H)
+  const ox = (w - IMG_W * e) / 2
+  const oy = (h - IMG_H * e) / 2
+  const ajuste = salida(t / (MALLA_FIN - 0.4)) // 0 = descolocada, 1 = sobre la cara
+  const desv = 1 - ajuste
+  const cx = 0.52, cy = 0.6
+  const giro = -0.14 * desv + 0.012 * Math.sin(t * 1.3)
+  const esc = 1 - 0.16 * desv
+  const dx = 0.05 * desv, dy = -0.06 * desv
+  const cos = Math.cos(giro), sin = Math.sin(giro)
+  const n = PUNTOS.length / 2
+  const xs = new Float32Array(n), ys = new Float32Array(n)
+  for (let i = 0; i < n; i++) {
+    let x = PUNTOS[i * 2] - cx, y = PUNTOS[i * 2 + 1] - cy
+    const r1 = x * cos - y * sin, r2 = x * sin + y * cos
+    const ruido = 0.022 * desv + 0.0012
+    x = cx + r1 * esc + dx + ruido * Math.sin(t * 3.1 + i * 1.7)
+    y = cy + r2 * esc + dy + ruido * Math.cos(t * 2.7 + i * 2.3)
+    xs[i] = ox + x * IMG_W * e
+    ys[i] = oy + y * IMG_H * e
+  }
+  const lineas = (pares: number[], color: string, grosor: number) => {
+    ctx.beginPath()
+    for (let k = 0; k < pares.length; k += 2) { ctx.moveTo(xs[pares[k]], ys[pares[k]]); ctx.lineTo(xs[pares[k + 1]], ys[pares[k + 1]]) }
+    ctx.strokeStyle = color; ctx.lineWidth = grosor; ctx.stroke()
+  }
+  lineas(MALLA, `rgba(${MENTA},${0.32 * op})`, 0.6)
+  lineas(RASGOS, `rgba(${MENTA},${0.75 * op})`, 1)
+  ctx.save(); ctx.shadowColor = `rgba(${MENTA},${0.8 * op})`; ctx.shadowBlur = 8
+  lineas(CONTORNO, `rgba(${MENTA},${0.95 * op})`, 1.6)
+  ctx.restore()
+  ctx.fillStyle = `rgba(255,255,255,${0.85 * op})`
+  for (let i = 0; i < n; i += 4) {
+    const parpadeo = 0.5 + 0.5 * Math.sin(t * 6 + i)
+    const r = 0.8 + 0.9 * parpadeo * (desv + 0.3)
+    ctx.beginPath(); ctx.arc(xs[i], ys[i], r, 0, Math.PI * 2); ctx.fill()
+  }
+}
 
-  // Arranca la secuencia (si el usuario no pide menos movimiento)
+export function PanelEnVivo() {
+  const [t, setT] = useState(R0 + 2.5) // sin movimiento: el resultado completo
+  const lienzo = useRef<HTMLCanvasElement>(null)
+  const caja = useRef<HTMLDivElement>(null)
+
   useEffect(() => {
     if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return
-    const t = setTimeout(() => { setQuieto(false); setPaso(0) }, 300)
-    return () => clearTimeout(t)
+    let raf = 0
+    let visible = true
+    const ini = performance.now()
+    const io = new IntersectionObserver(([e]) => { visible = e.isIntersecting })
+    if (caja.current) io.observe(caja.current)
+    const frame = (ahora: number) => {
+      raf = requestAnimationFrame(frame)
+      if (!visible) return
+      const tt = ((ahora - ini) / 1000) % L
+      setT(tt)
+      const c = lienzo.current
+      const ctx = c?.getContext('2d')
+      if (c && ctx) {
+        const dpr = Math.min(2, window.devicePixelRatio || 1)
+        const w = c.clientWidth, h = c.clientHeight
+        if (c.width !== Math.round(w * dpr) || c.height !== Math.round(h * dpr)) { c.width = Math.round(w * dpr); c.height = Math.round(h * dpr) }
+        ctx.setTransform(dpr, 0, 0, dpr, 0, 0)
+        dibujarMalla(ctx, w, h, tt)
+      }
+    }
+    raf = requestAnimationFrame(frame)
+    return () => { cancelAnimationFrame(raf); io.disconnect() }
   }, [])
 
-  // Avance automático
-  useEffect(() => {
-    if (fijo || quieto) return
-    const t = setTimeout(() => setPaso((p) => (p + 1) % PASOS), DURACION(paso))
-    return () => clearTimeout(t)
-  }, [paso, fijo, quieto])
-
-  // Valores del radar y puntuación, animados hacia su objetivo en cada paso
-  useEffect(() => {
-    const objetivo = ZONAS.map(([a], k) => (paso === FIN || k < paso ? valor(a) : 0))
-    const objGlobal = paso === FIN ? GLOBAL : 0
-    let raf = 0
-    const ini = performance.now()
-    const desde = [...vals]
-    const desdeG = global
-    const dur = quieto ? 1 : paso === 0 ? 400 : 1000
-    const tick = (t: number) => {
-      const e = Math.min(1, (t - ini) / dur)
-      const s = 1 - Math.pow(1 - e, 3)
-      setVals(desde.map((d, k) => d + (objetivo[k] - d) * s))
-      setGlobal(desdeG + (objGlobal - desdeG) * s)
-      if (e < 1) raf = requestAnimationFrame(tick)
-    }
-    raf = requestAnimationFrame(tick)
-    return () => cancelAnimationFrame(raf)
-  }, [paso, quieto]) // eslint-disable-line react-hooks/exhaustive-deps
-
-  const zona = paso >= 1 && paso <= V ? paso - 1 : -1
-  const fin = paso === FIN
-  const imagen = (p: number) => (p >= 1 && p <= V ? ZONAS[p - 1][1] : '')
-  const anterior = paso === 0 ? 0 : paso - 1
-  const capas = paso === 0 ? [] : [
-    ...(anterior >= 1 ? [{ f: imagen(anterior), clave: `c${anterior}`, nueva: false }] : []),
-    { f: imagen(paso), clave: `c${paso}`, nueva: true },
-  ]
-  const rotulo = paso === 0 ? 'Escaneando la cara…' : fin ? 'Análisis completo' : `Analizando ${ZONAS[zona][0].toLowerCase()}…`
+  const vals = valoresEn(t)
+  const zona = t >= Z0 && t < R0 ? Math.min(V - 1, Math.floor((t - Z0) / D)) : -1
+  const fin = t >= R0
+  const global = GLOBAL * salida((t - R0) / 1.4)
+  const rotulo = t < Z0 ? 'Detectando la cara…' : fin ? 'Análisis completo' : `Analizando ${ZONAS[zona][0].toLowerCase()}…`
+  const zoom = 1.035 + 0.03 * Math.sin((2 * Math.PI * t) / L)
+  const rz = zona >= 0 ? barrido(t, zona) : 0
 
   return (
-    <figure className="m-0" aria-label="Demostración del análisis facial: la foto se escanea, se analizan las once zonas y sale el resultado">
+    <figure className="m-0" aria-label="Demostración del análisis facial: la malla se ajusta a la cara, se analizan las zonas y sale el resultado">
       <div className="grid md:grid-cols-[minmax(0,5fr)_minmax(0,7fr)] border border-linea rounded-[var(--radius-card)] bg-papel overflow-hidden">
-        {/* Foto con las zonas */}
-        <div className="relative aspect-[4/5] md:aspect-auto md:min-h-[34rem] bg-suave overflow-hidden border-b md:border-b-0 md:border-r border-linea">
-          <img src="/ejemplos/zonas/foto.webp" alt="Cara de ejemplo generada con IA" className="absolute inset-0 w-full h-full object-cover" />
-          {/* Capa anterior debajo y la nueva barriendo encima, como si se fuera detectando */}
-          {capas.map(({ f, clave, nueva }) => (
-            <img key={clave} src={f ? `/ejemplos/zonas/${f}.webp` : '/ejemplos/zonas/foto.webp'} alt="" aria-hidden
-              className={`absolute inset-0 w-full h-full object-cover ${nueva && !quieto ? 'sc-revela' : ''}`} style={{ zIndex: nueva ? 2 : 1 }} />
-          ))}
-          {!quieto && paso > 0 && (
-            <span key={`l${paso}`} aria-hidden className="sc-linea absolute inset-0 z-[3] pointer-events-none">
-              <span className="block h-[3px]" style={{ background: 'var(--color-face-ready)', boxShadow: '0 0 18px 4px rgba(127,214,194,.7)' }} />
-            </span>
-          )}
-          {/* Precarga */}
-          <span className="hidden">{ZONAS.filter(([, f]) => f).map(([, f]) => <img key={f} src={`/ejemplos/zonas/${f}.webp`} alt="" loading="eager" />)}</span>
-          {/* Encuadre y escaneo */}
-          <div aria-hidden className="pointer-events-none absolute z-10 inset-x-6 top-6 bottom-14 transition-opacity duration-500" style={{ opacity: fin ? 0 : 1 }}>
-            {['top-0 left-0 border-t-2 border-l-2 rounded-tl-lg', 'top-0 right-0 border-t-2 border-r-2 rounded-tr-lg', 'bottom-0 left-0 border-b-2 border-l-2 rounded-bl-lg', 'bottom-0 right-0 border-b-2 border-r-2 rounded-br-lg'].map((c) => (
-              <span key={c} className={`absolute w-8 h-8 border-white/90 ${c}`} />
-            ))}
-            {paso === 0 && <span className="absolute inset-0 overflow-hidden"><span className="sc-escaneo block h-full border-b-2 border-white" style={{ background: 'linear-gradient(to bottom, transparent 70%, rgba(255,255,255,.35))' }} /></span>}
-          </div>
-          {/* Rótulo del paso */}
-          <div className="absolute z-10 left-4 top-4 bg-papel/95 border border-linea rounded-[var(--radius-input)] px-3 py-2 text-sm" aria-live="polite">
-            <span className="flex items-center gap-2 text-gris">
-              <span className={`size-2 rounded-full ${fin ? 'bg-marca' : 'bg-marca animate-pulse'}`} />{rotulo}
-            </span>
-            {zona >= 0 && <span className="block font-medium mt-0.5">{ZONAS[zona][0]} <span className="cifra text-marca">{valor(ZONAS[zona][0])}</span> <span className="text-gris font-normal">{nivel(valor(ZONAS[zona][0]))}</span></span>}
-          </div>
-          {/* Progreso por pasos */}
-          <div className="absolute z-10 inset-x-4 bottom-4 flex gap-1" role="tablist" aria-label="Pasos del análisis">
-            {Array.from({ length: PASOS }, (_, p) => {
-              const nombre = p === 0 ? 'Escaneo' : p === FIN ? 'Resultado' : ZONAS[p - 1][0]
+        {/* Foto, malla y zonas */}
+        <div ref={caja} className="relative aspect-[4/5] md:aspect-auto md:min-h-[34rem] bg-camara overflow-hidden border-b md:border-b-0 md:border-r border-linea">
+          <div className="absolute inset-0" style={{ transform: `scale(${zoom})`, transformOrigin: '52% 48%' }}>
+            <img src="/ejemplos/zonas/foto.webp" alt="Cara de ejemplo generada con IA" className="absolute inset-0 w-full h-full object-cover" />
+            {ZONAS.slice(0, V).map(([n, f], i) => {
+              const r = barrido(t, i)
+              const siguienteCompleta = i < V - 1 && barrido(t, i + 1) >= 1
+              const op = i === V - 1 ? 1 - suave((t - R0) / 1.2) : 1
+              const ver = t >= inicioZona(i) && !siguienteCompleta && op > 0
               return (
-                <button key={p} role="tab" aria-selected={p === paso} aria-label={nombre} title={nombre}
-                  onClick={() => { setPaso(p); setFijo(true) }} className="group flex-1 h-6 grid items-center">
-                  <span className={`block h-1 rounded-full transition-colors ${p <= paso ? 'bg-white' : 'bg-white/40'} group-hover:bg-white`} />
-                </button>
+                <img key={f} src={`/ejemplos/zonas/${f}.webp`} alt={ver ? `Zonas de ${n.toLowerCase()} marcadas por el análisis` : ''} aria-hidden={!ver}
+                  className="absolute inset-0 w-full h-full object-cover" loading="eager"
+                  style={{ opacity: ver ? op : 0, clipPath: `inset(0 0 ${(1 - suave(r)) * 100}% 0)`, zIndex: i + 1 }} />
               )
             })}
+            <canvas ref={lienzo} aria-hidden className="absolute inset-0 w-full h-full z-[20] pointer-events-none" />
+            {rz > 0 && rz < 1 && (
+              <span aria-hidden className="absolute inset-x-0 z-[21] h-[3px] pointer-events-none" style={{ top: `${suave(rz) * 100}%`, background: `rgb(${MENTA})`, boxShadow: `0 0 18px 4px rgba(${MENTA},.7)` }} />
+            )}
+            {t < MALLA_FIN && (
+              <span aria-hidden className="absolute inset-x-0 z-[21] h-[2px] pointer-events-none" style={{ top: `${(((t / MALLA_FIN) * 2) % 1) * 100}%`, background: `rgba(${MENTA},.9)`, boxShadow: `0 0 14px 3px rgba(${MENTA},.5)` }} />
+            )}
+          </div>
+          {/* Rótulo */}
+          <div className="absolute z-[30] left-4 top-4 bg-papel/95 border border-linea rounded-[var(--radius-input)] px-3 py-2 text-sm">
+            <span className="flex items-center gap-2 text-gris"><span className={`size-2 rounded-full bg-marca ${fin ? '' : 'animate-pulse'}`} />{rotulo}</span>
+            {zona >= 0 && <span className="block font-medium mt-0.5">{ZONAS[zona][0]} <span className="cifra text-marca">{Math.round(vals[zona])}</span> <span className="text-gris font-normal">{nivel(valor(ZONAS[zona][0]))}</span></span>}
+          </div>
+          {/* Progreso continuo */}
+          <div aria-hidden className="absolute z-[30] inset-x-4 bottom-4 h-1 rounded-full bg-white/35 overflow-hidden">
+            <span className="block h-full bg-white" style={{ width: `${(t / L) * 100}%` }} />
           </div>
         </div>
 
@@ -168,7 +223,7 @@ export function PanelEnVivo() {
           <div className="flex flex-wrap items-end justify-between gap-x-8 gap-y-4">
             <div>
               <p className="text-sm text-gris m-0">Puntuación de la piel</p>
-              <p className="cifra text-[4rem] leading-none font-medium text-tinta mt-2 mb-0">{fin || global > 0.5 ? Math.round(global) : '–'}<span className="text-lg text-gris font-normal tracking-normal"> /100</span></p>
+              <p className="cifra text-[4rem] leading-none font-medium text-tinta mt-2 mb-0">{global > 0.5 ? Math.round(global) : '–'}<span className="text-lg text-gris font-normal tracking-normal"> /100</span></p>
             </div>
             <dl className="flex gap-8 text-sm m-0 transition-opacity duration-500" style={{ opacity: fin ? 1 : 0.35 }}>
               <div><dt className="text-gris">Edad aparente</dt><dd className="m-0 mt-1 text-lg font-medium">{fin ? <><span className="cifra">{EDAD}</span> años</> : '…'}</dd></div>
