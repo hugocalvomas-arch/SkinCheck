@@ -520,6 +520,24 @@ function Dato({ etiqueta, valor, unidad }: { etiqueta: string; valor: string; un
 
 function AntesDespues({ antes, despues }: { antes: string; despues: string }) {
   const [x, setX] = useState(50)
+  const [tocado, setTocado] = useState(false)
+  // Al aparecer, el deslizador se mueve solo una vez para que se vea que se puede arrastrar
+  useEffect(() => {
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return
+    const pasos = [50, 78, 22, 50]
+    const ini = performance.now() + 700, dur = 2200
+    let id = 0
+    const f = (t: number) => {
+      const k = Math.min(1, Math.max(0, (t - ini) / dur)) * (pasos.length - 1)
+      const i = Math.min(pasos.length - 2, Math.floor(k)), u = k - i, e = u * u * (3 - 2 * u)
+      setX(pasos[i] + (pasos[i + 1] - pasos[i]) * e)
+      if (k < pasos.length - 1) id = requestAnimationFrame(f)
+    }
+    id = requestAnimationFrame(f)
+    const parar = () => cancelAnimationFrame(id)
+    window.addEventListener('pointerdown', parar, { once: true })
+    return () => { parar(); window.removeEventListener('pointerdown', parar) }
+  }, [])
   const mover = (e: React.PointerEvent<HTMLDivElement>) => {
     const r = e.currentTarget.getBoundingClientRect()
     setX(Math.max(0, Math.min(100, ((e.clientX - r.left) / r.width) * 100)))
@@ -527,15 +545,16 @@ function AntesDespues({ antes, despues }: { antes: string; despues: string }) {
   return (
     <figure className="space-y-3">
       <div className="relative w-full aspect-[3/4] rounded-[var(--radius-card)] overflow-hidden bg-[var(--k-soft)] touch-none cursor-ew-resize"
-        onPointerDown={(e) => { e.currentTarget.setPointerCapture(e.pointerId); mover(e) }}
+        onPointerDown={(e) => { e.currentTarget.setPointerCapture(e.pointerId); setTocado(true); mover(e) }}
         onPointerMove={(e) => { if (e.buttons) mover(e) }}>
-        <img src={despues} alt="Simulación con la rutina" className="absolute inset-0 w-full h-full object-cover" />
+        {/* Las dos en espejo, como la ve la clienta en la cámara; si solo se gira una, no coinciden */}
+        <img src={despues} alt="Simulación con la rutina" className="absolute inset-0 w-full h-full object-cover -scale-x-100" />
         <img src={antes} alt="Hoy" className="absolute inset-0 w-full h-full object-cover -scale-x-100" style={{ clipPath: `inset(0 ${100 - x}% 0 0)` }} />
         <div className="absolute top-0 bottom-0 w-px bg-sobre-marca" style={{ left: `${x}%` }}>
           <span className="absolute top-1/2 -translate-y-1/2 -translate-x-1/2 w-11 h-11 rounded-full bg-papel text-[var(--k-text)] grid place-items-center shadow-pomo"><ArrowsLeftRight size={20} /></span>
         </div>
       </div>
-      <figcaption className="flex justify-between text-sm text-[var(--k-muted)]"><span>Hoy</span><span>Simulación con tu rutina (IA)</span></figcaption>
+      <figcaption className="flex justify-between text-sm text-[var(--k-muted)]"><span>Hoy</span><span className={`transition-opacity ${tocado ? 'opacity-0' : ''}`}>Desliza para comparar</span><span>Con tu rutina (simulación IA)</span></figcaption>
     </figure>
   )
 }
