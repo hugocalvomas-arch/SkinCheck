@@ -9,7 +9,7 @@ import { PanelFotoRadar } from '@/components/web/paneles/PanelFotoRadar'
 export const metadata: Metadata = { title: 'Opciones del panel · SkinCheck', robots: { index: false } }
 
 const OPCIONES = [
-  ['D', 'Cara y radar', 'A la izquierda la cara con las zonas que marca el análisis; a la derecha, las once medidas en radar.', <PanelFotoRadar key="e" />],
+  ['D', 'Cara y radar', 'Las imágenes reales que devuelve el análisis, pasando zona a zona, y a la derecha las once medidas en radar.', <PanelFotoRadar key="e" />],
   ['A', 'Mapa facial', 'Cada medida señalada en su zona de la cara, con la malla del iPad.', <PanelMapa key="a" />],
   ['B', 'Informe con rango', 'Como una analítica: cada medida sobre las bandas bien, leve, moderado y marcado.', <PanelInforme key="b" />],
   ['C', 'Esfera', 'La puntuación en el centro y las once medidas en radios.', <PanelDial key="c" />],
