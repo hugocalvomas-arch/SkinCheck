@@ -1,0 +1,1122 @@
+{
+ "isdin-isdinceutics-melatonik": {
+  "pvp_eur": null,
+  "formato_ml": 30,
+  "fuente": "https://incidecoder.com/products/isdin-isdinceutics-melatonik",
+  "estado": "no encontrado",
+  "nota": "Melatonik es el nombre de EE. UU.; no aparece en tiendas españolas. En España ISDIN vende Flavo-C Melatonin (ampollas, 19,95-20,86 en Druni), que es otro formato."
+ },
+ "uriage-bariesun-fluido-antimanchas-spf50": {
+  "pvp_eur": 23.49,
+  "formato_ml": 40,
+  "fuente": "https://www.primor.eu/es_es/uriage-bariesun-fluido-antimanchas-spf50-124594.html",
+  "estado": "encontrado",
+  "nota": "Agotado en Primor al consultar; la web de Uriage no muestra precio. farma2go marca PVP 23,20."
+ },
+ "purito-daily-go-to-sunscreen-spf50": {
+  "pvp_eur": 23,
+  "formato_ml": 60,
+  "fuente": "https://www.lookfantastic.es/purito-daily-go-to-sunscreen-60ml/13455612.html",
+  "estado": "encontrado",
+  "nota": "Lookfantastic lo lista ahora como 'Daily Sun Lotion' (la descripción menciona Daily Go-To). Notino sin stock y sin precio."
+ },
+ "isdin-fotoprotector-fusion-water-spf50": {
+  "pvp_eur": 26.95,
+  "formato_ml": 50,
+  "fuente": "https://farma2go.com/products/isdin-fusion-water-magic-spf-50-50ml",
+  "estado": "encontrado",
+  "nota": "Nombre actual 'Fusion Water Magic'. PVP de referencia; precio rebajado 17,90. La URL fichada es solo de ingredientes."
+ },
+ "isdin-fotoprotector-fusion-water-color-spf50": {
+  "pvp_eur": 27.89,
+  "formato_ml": 50,
+  "fuente": "https://farma2go.com/products/isdin-fusion-water-magic-color-medium-spf50-50ml",
+  "estado": "encontrado",
+  "nota": "Tono Medium de 'Fusion Water Magic Color'. PVP de referencia; rebajado 21,64."
+ },
+ "isdin-foto-ultra-age-repair-fusion-water-spf50": {
+  "pvp_eur": 31.61,
+  "formato_ml": 50,
+  "fuente": "https://farma2go.com/products/isdin-fusion-water-magic-repair-spf50-fotoprotector-50ml",
+  "estado": "encontrado",
+  "nota": "Se vende ahora como 'Fusion Water Magic Repair' (sucesor del Age Repair; comprobar equivalencia). PVP de referencia; rebajado 26,06."
+ },
+ "isdin-fotoprotector-gel-cream-spf50": {
+  "pvp_eur": 30.58,
+  "formato_ml": 250,
+  "fuente": "https://farma2go.com/products/isdin-fotoprotector-gel-cream-wet-skin-spf-50-250ml",
+  "estado": "encontrado",
+  "nota": "Listado como 'Gel Cream Wet Skin SPF 50+' 250 ml. PVP de referencia; rebajado 22,14."
+ },
+ "eucerin-sun-fluid-pigment-control-spf50": {
+  "pvp_eur": 25.55,
+  "formato_ml": 50,
+  "fuente": "https://farma2go.com/products/eucerin-sun-fluid-pigment-control-fps-50-50ml",
+  "estado": "encontrado",
+  "nota": "PVP de referencia; rebajado 22,33."
+ },
+ "isdin-isdinceutics-flavo-c-ultraglican": {
+  "pvp_eur": 22.88,
+  "formato_ml": 20,
+  "fuente": "https://farma2go.com/products/isdinceutics-flavo-c-ultraglican-10x2ml-ampollas",
+  "estado": "encontrado",
+  "nota": "10 ampollas x 2 ml. PVP de referencia; rebajado 16,85. Primor (URL fichada) marca 19,95 sin indicar formato y sin stock."
+ },
+ "neoretin-discrom-control-serum-booster-fluid": {
+  "pvp_eur": 38.5,
+  "formato_ml": 30,
+  "fuente": "https://farma2go.com/products/neoretin-discrom-control-serum-booster-fluid-despigmentante-30ml",
+  "estado": "encontrado",
+  "nota": "PVP de referencia; rebajado 31,83. Cantabria Labs no muestra precio."
+ },
+ "neoretin-discrom-control-ultra-emulsion": {
+  "pvp_eur": 54.95,
+  "formato_ml": 30,
+  "fuente": "https://farma2go.com/products/neoretin-discrom-control-ultra-emulsion-despigmentante-30ml",
+  "estado": "encontrado",
+  "nota": "PVP de referencia; rebajado 45,26."
+ },
+ "instituto-espanol-crema-facial-pieles-atopicas": {
+  "pvp_eur": 3.65,
+  "formato_ml": 75,
+  "fuente": "https://www.espaniashop.com/tubo_crema_facial_atopica_3_ceramides_75_ml",
+  "estado": "encontrado",
+  "nota": "Tienda oficial de la marca. Primor: 3,50."
+ },
+ "cosrx-salicylic-acid-daily-gentle-cleanser": {
+  "pvp_eur": 16.1,
+  "formato_ml": 150,
+  "fuente": "https://www.lookfantastic.es/p/cosrx-cleanser-makeup-remover-salicylic-acid-daily-gentle-cleanser-150ml/14685771/",
+  "estado": "encontrado",
+  "nota": "PVP recomendado; rebajado 12,88. Sin stock en Lookfantastic y Notino."
+ },
+ "round-lab-birch-juice-moisturizing-sunscreen-spf50": {
+  "pvp_eur": 15.22,
+  "formato_ml": 50,
+  "fuente": "https://farma2go.com/products/round-lab-birch-juice-sunscreen-spf50-pa-50ml",
+  "estado": "encontrado",
+  "nota": "PVP de referencia; rebajado 14,84. Notino sin stock y sin precio."
+ },
+ "bulldog-sensitive-aftershave-balm": {
+  "pvp_eur": 6.6,
+  "formato_ml": 100,
+  "fuente": "https://www.notino.es/bulldog/sensitive-aftershave-balm-balsamo-after-shave-con-aloe-vera/",
+  "estado": "encontrado",
+  "nota": "En stock en Notino. Lookfantastic.es: 5,75 (agotado). Web de marca solo en libras."
+ },
+ "proraso-after-shave-balm-sensitive": {
+  "pvp_eur": 6.99,
+  "formato_ml": 100,
+  "fuente": "https://www.primor.eu/es_es/proraso-balsamo-post-afeitado-te-y-avena-71571.html",
+  "estado": "encontrado",
+  "nota": "Precio normal; rebajado 6,50. Agotado en Primor al consultar."
+ },
+ "proraso-after-shave-lotion-refresh": {
+  "pvp_eur": 6.99,
+  "formato_ml": 100,
+  "fuente": "https://www.primor.eu/es_es/proraso-locion-after-shave-aceite-y-mentol-70676.html",
+  "estado": "encontrado",
+  "nota": "Precio normal; rebajado 6,49. Agotado en Primor al consultar."
+ },
+ "clinique-for-men-post-shave-soother": {
+  "pvp_eur": 31.05,
+  "formato_ml": 75,
+  "fuente": "https://www.lookfantastic.es/clinique-for-men-post-shave-soother-75ml/10365864.html",
+  "estado": "encontrado",
+  "nota": ""
+ },
+ "loreal-men-expert-hydra-sensitive-balsamo-post-afeitado": {
+  "pvp_eur": null,
+  "formato_ml": 100,
+  "fuente": "https://www.notino.es/loreal-paris/men-expert-hydra-sensitive-balsamo-after-shave-para-pieles-sensibles/",
+  "estado": "no encontrado",
+  "nota": "Notino lo lista (100 ml) sin stock y sin precio; Primor y Maquillalia dan 404/410; Amazon, Druni y Perfumes Club bloquean la lectura."
+ },
+ "acqua-di-parma-barbiere-after-shave-balm": {
+  "pvp_eur": 82,
+  "formato_ml": 100,
+  "fuente": "https://www.acquadiparma.com/es/es/refreshing-after-shave-emulsion/BARBIEREASEMULSION.html",
+  "estado": "encontrado",
+  "nota": "La web española de la marca vende ahora 'Emulsión Refrescante After Shave' de la colección Barbiere; no hay un 'After Shave Balm' Barbiere con ese nombre. Comprobar equivalencia."
+ },
+ "recipe-for-men-pore-minimizing-anti-shine-toner": {
+  "pvp_eur": 25.9,
+  "formato_ml": 100,
+  "fuente": "https://recipeformen.com/products/pore-minimizing-anti-shine-toner",
+  "estado": "encontrado",
+  "nota": "Web de la marca (Suecia), precio en euros; sin tienda española."
+ },
+ "bulldog-oil-control-blemish-targeter": {
+  "pvp_eur": null,
+  "formato_ml": 15,
+  "fuente": "https://incidecoder.com/products/bulldog-oil-control-blemish-targeter",
+  "estado": "no encontrado",
+  "nota": "Solo aparece en tiendas suecas (15 ml); no está en Notino.es ni Lookfantastic.es."
+ },
+ "lab-series-oil-control-clearing-water-lotion": {
+  "pvp_eur": 36.8,
+  "formato_ml": 200,
+  "fuente": "https://lookfantastic.es/p/lab-series-oil-control-clearing-water-lotion-200ml/13412592",
+  "estado": "encontrado",
+  "nota": "Agotado en Lookfantastic.es al consultar."
+ },
+ "bulldog-original-moisturiser": {
+  "pvp_eur": 8.2,
+  "formato_ml": 100,
+  "fuente": "https://www.notino.es/bulldog/original-crema-hidratante-para-el-rostro/",
+  "estado": "encontrado",
+  "nota": "También formato 30 ml a 3,40."
+ },
+ "bulldog-sensitive-moisturiser": {
+  "pvp_eur": 8.2,
+  "formato_ml": 100,
+  "fuente": "https://www.notino.es/bulldog/sensitive-crema-hidratante-para-el-rostro/",
+  "estado": "encontrado",
+  "nota": ""
+ },
+ "clinique-for-men-maximum-hydrator-72h": {
+  "pvp_eur": 49,
+  "formato_ml": 50,
+  "fuente": "https://farma2go.com/products/clinique-men-maximum-hydrator-gel-crema-50ml",
+  "estado": "encontrado",
+  "nota": "PVP de referencia; rebajado 28,39."
+ },
+ "recipe-for-men-ultra-sensitive-moisturizer": {
+  "pvp_eur": 29.9,
+  "formato_ml": null,
+  "fuente": "https://recipeformen.com/products/ultra-sensitive-moisturizer",
+  "estado": "encontrado",
+  "nota": "Web de la marca (Suecia), precio en euros. La página no indica ml (solo peso 95 g); otras tiendas lo listan como 75 ml, sin verificar."
+ },
+ "bulldog-sensitive-face-wash": {
+  "pvp_eur": 6,
+  "formato_ml": 150,
+  "fuente": "https://www.notino.es/bulldog/sensitive-gel-limpiador-para-el-rostro/",
+  "estado": "encontrado",
+  "nota": ""
+ },
+ "lab-series-max-ls-daily-renewing-cleanser": {
+  "pvp_eur": null,
+  "formato_ml": null,
+  "fuente": "https://incidecoder.com/products/lab-series-max-ls-daily-renewing-cleanser",
+  "estado": "no encontrado",
+  "nota": "No aparece en Lookfantastic.es, Notino.es ni otras tiendas españolas."
+ },
+ "recipe-for-men-facial-cleanser": {
+  "pvp_eur": 19.9,
+  "formato_ml": 100,
+  "fuente": "https://recipeformen.com/products/facial-cleanser",
+  "estado": "encontrado",
+  "nota": "Web de la marca (Suecia), precio en euros; sin tienda española."
+ },
+ "laneige-balance-mode-rice-foaming-deep-cleanser": {
+  "pvp_eur": 26,
+  "formato_ml": 250,
+  "fuente": "https://www.sephora.es/p/balance-mode-rice-foaming-deep-cleanser---limpiador-espumoso-para-pieles-grasas-P1000214944.html",
+  "estado": "encontrado",
+  "nota": ""
+ },
+ "laneige-balance-mode-shine-control-weightless-moisturizer": {
+  "pvp_eur": 28,
+  "formato_ml": 80,
+  "fuente": "https://www.sephora.es/p/balance-mode-shine-control-weightless-moisturizer---fluido-hidratante-P1000214942.html",
+  "estado": "encontrado",
+  "nota": ""
+ },
+ "laneige-bouncy-firm-serum": {
+  "pvp_eur": 45,
+  "formato_ml": 30,
+  "fuente": "https://www.sephora.es/p/bouncy-firm-serum---serum-rellenador-y-reafirmante-P10061781.html",
+  "estado": "encontrado",
+  "nota": ""
+ },
+ "laneige-water-bank-blue-hyaluronic-cream-moisturizer": {
+  "pvp_eur": 37.38,
+  "formato_ml": 50,
+  "fuente": "https://www.lookfantastic.es/p/water-bank-blue-hyaluronic-cream-moisturizer-50ml/13631945/",
+  "estado": "encontrado",
+  "nota": "Agotado en Lookfantastic.es. Sephora.es lo vende ('Water Bank Cream Moisturizer') pero solo mostró el formato 20 ml a 20,00."
+ },
+ "laneige-multi-deep-clean-cleanser": {
+  "pvp_eur": null,
+  "formato_ml": null,
+  "fuente": "https://www.sephora.es/p/multi-deep-clean-cleanser---limpiador-multi-accion-P3663020.html",
+  "estado": "no encontrado",
+  "nota": "La ficha sigue en Sephora.es pero sin precio ni formato y no sale en el listado actual de la marca; posiblemente retirado."
+ },
+ "laneige-perfect-renew-3x-cream-advanced": {
+  "pvp_eur": null,
+  "formato_ml": null,
+  "fuente": "https://int.laneige.com/products/perfect-renew-3x-cream",
+  "estado": "no encontrado",
+  "nota": "Laneige: no está en Sephora.es (único distribuidor español con la marca) ni en otra tienda española; int.laneige.com no muestra precio en euros. Solo en tiendas coreanas con precio en USD."
+ },
+ "laneige-perfect-renew-3x-emulsion-advanced": {
+  "pvp_eur": null,
+  "formato_ml": null,
+  "fuente": "https://int.laneige.com/products/perfect-renew-3x-emulsion",
+  "estado": "no encontrado",
+  "nota": "Laneige: no está en Sephora.es (único distribuidor español con la marca) ni en otra tienda española; int.laneige.com no muestra precio en euros."
+ },
+ "laneige-perfect-renew-3x-signature-serum-advanced": {
+  "pvp_eur": null,
+  "formato_ml": null,
+  "fuente": "https://int.laneige.com/products/perfect-renew-3x-signature-serum-advanced",
+  "estado": "no encontrado",
+  "nota": "Laneige: no está en Sephora.es (único distribuidor español con la marca) ni en otra tienda española; int.laneige.com no muestra precio en euros."
+ },
+ "laneige-perfect-renew-nourishing-oil-to-foam-cleanser": {
+  "pvp_eur": null,
+  "formato_ml": null,
+  "fuente": "https://int.laneige.com/products/perfect-renew-nourishing-oil-to-foam-cleanser",
+  "estado": "no encontrado",
+  "nota": "Laneige: no está en Sephora.es (único distribuidor español con la marca) ni en otra tienda española; int.laneige.com no muestra precio en euros."
+ },
+ "laneige-radian-c-cream": {
+  "pvp_eur": null,
+  "formato_ml": null,
+  "fuente": "https://int.laneige.com/products/radian-c-cream",
+  "estado": "no encontrado",
+  "nota": "Laneige: no está en Sephora.es (único distribuidor español con la marca) ni en otra tienda española; int.laneige.com no muestra precio en euros. Solo aparece en tiendas de Reino Unido."
+ },
+ "laneige-radian-c-spot-serum": {
+  "pvp_eur": null,
+  "formato_ml": null,
+  "fuente": "https://int.laneige.com/products/radian-c-spot-serum",
+  "estado": "no encontrado",
+  "nota": "Sin página con precio en tienda española (Sephora.es no lo lista; web int.laneige.com no muestra precio). Formato 10 g; solo en tiendas coreanas de importación en USD."
+ },
+ "laneige-water-bank-blue-hyaluronic-cleansing-foam": {
+  "pvp_eur": null,
+  "formato_ml": null,
+  "fuente": "https://int.laneige.com/products/water-bank-blue-hyaluronic-cleansing-foam",
+  "estado": "no encontrado",
+  "nota": "Sin página con precio en tienda española (Sephora.es no lo lista; web int.laneige.com no muestra precio)."
+ },
+ "laneige-water-bank-blue-hyaluronic-cleansing-oil": {
+  "pvp_eur": null,
+  "formato_ml": null,
+  "fuente": "https://int.laneige.com/products/water-bank-blue-hyaluronic-cleansing-oil",
+  "estado": "no encontrado",
+  "nota": "Sin página con precio en tienda española (Sephora.es no lo lista; web int.laneige.com no muestra precio)."
+ },
+ "laneige-water-bank-blue-hyaluronic-emulsion-for-combination-to-oily-skin": {
+  "pvp_eur": null,
+  "formato_ml": null,
+  "fuente": "https://int.laneige.com/products/water-bank-blue-hyaluronic-emulsion-for-combination-to-oily-skin",
+  "estado": "no encontrado",
+  "nota": "Sin página con precio en tienda española (Sephora.es no lo lista; web int.laneige.com no muestra precio)."
+ },
+ "laneige-water-bank-blue-hyaluronic-emulsion-for-normal-to-dry-skin": {
+  "pvp_eur": null,
+  "formato_ml": null,
+  "fuente": "https://int.laneige.com/products/water-bank-blue-hyaluronic-emulsion-for-normal-to-dry-skin",
+  "estado": "no encontrado",
+  "nota": "Sin página con precio en tienda española (Sephora.es no lo lista; web int.laneige.com no muestra precio)."
+ },
+ "laneige-water-bank-blue-hyaluronic-gel-moisturizer": {
+  "pvp_eur": 40,
+  "formato_ml": 50,
+  "fuente": "https://www.sephora.es/p/water-bank-gel-moisturizer---gel-hidratante-P10057927.html",
+  "estado": "encontrado",
+  "nota": "Sephora.es; existe también formato pequeño más barato."
+ },
+ "laneige-water-bank-blue-hyaluronic-intensive-moisturizer": {
+  "pvp_eur": 40,
+  "formato_ml": 50,
+  "fuente": "https://www.sephora.es/p/water-bank-intensive-moisturizer---crema-hidratante-rica-P10057928.html",
+  "estado": "encontrado",
+  "nota": "Sephora.es; existe también formato pequeño más barato."
+ },
+ "laneige-water-bank-blue-hyaluronic-serum": {
+  "pvp_eur": 32.95,
+  "formato_ml": 50,
+  "fuente": "https://www.primor.eu/es_es/laneige-water-bank-blue-hyaluronic-serum-140066.html",
+  "estado": "encontrado",
+  "nota": "Primor; figuraba agotado al consultar."
+ },
+ "laneige-water-bank-gentle-gel-cleanser": {
+  "pvp_eur": 29,
+  "formato_ml": 250,
+  "fuente": "https://www.sephora.es/p/water-bank---gel-limpiador-suave-750988.html",
+  "estado": "encontrado",
+  "nota": ""
+ },
+ "drunk-elephant-protini-polypeptide-cream-limited-edition-big-size": {
+  "pvp_eur": null,
+  "formato_ml": null,
+  "fuente": "https://www.sephora.es/p/protini%E2%84%A2---crema-de-polipeptidos-P10013694.html",
+  "estado": "no encontrado",
+  "nota": "Sephora.es solo muestra el precio del 50 ml (70 €); el tamaño grande de edición limitada no aparece con precio."
+ },
+ "drunk-elephant-exfoliating-aha-bha-night-serum": {
+  "pvp_eur": 91,
+  "formato_ml": 30,
+  "fuente": "https://www.sephora.es/buscar?q=drunk+elephant",
+  "estado": "encontrado",
+  "nota": "T.L.C. Framboos; precio del listado de Sephora.es."
+ },
+ "drunk-elephant-gentle-gel-face-cleanser-for-all-skin": {
+  "pvp_eur": 39,
+  "formato_ml": 150,
+  "fuente": "https://www.sephora.es/buscar?q=drunk+elephant",
+  "estado": "encontrado",
+  "nota": "Beste No. 9; listado Sephora.es (hay 60 ml a 17 €)."
+ },
+ "drunk-elephant-gentle-exfoliating-facial-cleansing-bar": {
+  "pvp_eur": null,
+  "formato_ml": null,
+  "fuente": "https://www.sephora.es/buscar?q=drunk+elephant+juju",
+  "estado": "no encontrado",
+  "nota": "Juju Bar no aparece en Sephora.es; solo en tiendas UK/EEUU."
+ },
+ "drunk-elephant-gentle-calming-cream-cleanser-for-all-skin": {
+  "pvp_eur": 39,
+  "formato_ml": 150,
+  "fuente": "https://www.sephora.es/buscar?q=drunk+elephant",
+  "estado": "encontrado",
+  "nota": "Mello Marula; listado Sephora.es."
+ },
+ "drunk-elephant-nourishing-makeup-melting-cleansing-balm": {
+  "pvp_eur": 44,
+  "formato_ml": null,
+  "fuente": "https://www.sephora.es/buscar?q=drunk+elephant",
+  "estado": "encontrado",
+  "nota": "Slaai; formato 110 g (no ml); listado Sephora.es."
+ },
+ "drunk-elephant-24-hour-moisture-barrier-repair-cream": {
+  "pvp_eur": 66,
+  "formato_ml": 50,
+  "fuente": "https://www.sephora.es/p/bora-barrier-crema-reparadora---crema-facial-rica-en-lipidos-y-ceramidas-P10055965.html",
+  "estado": "encontrado",
+  "nota": "Bora Barrier 50 ml en Sephora.es; la página no deja claro si 66 € es el tarro o la recarga."
+ },
+ "drunk-elephant-nourishing-and-moisturizing-ceramide-cream": {
+  "pvp_eur": null,
+  "formato_ml": null,
+  "fuente": "https://www.sephora.es/p/lala-retro%E2%84%A2---crema-batida-P10013693.html",
+  "estado": "no encontrado",
+  "nota": "Lala Retro: Sephora.es solo deja leer el formato 15 ml (25 € en ficha, 'desde 38 €' en listado); precio del 50 ml no visible."
+ },
+ "drunk-elephant-firming-and-moisturizing-peptide-cream": {
+  "pvp_eur": 70,
+  "formato_ml": 50,
+  "fuente": "https://www.sephora.es/p/protini%E2%84%A2---crema-de-polipeptidos-P10013694.html",
+  "estado": "encontrado",
+  "nota": "Protini 50 ml en Sephora.es."
+ },
+ "drunk-elephant-bora-barrier-repair-cream": {
+  "pvp_eur": null,
+  "formato_ml": 50,
+  "fuente": "https://www.sephora.es/p/bora-barrier-crema-reparadora---crema-facial-rica-en-lipidos-y-ceramidas-P10055965.html",
+  "estado": "no encontrado",
+  "nota": "Recarga de Bora Barrier: Sephora.es indica 2 formatos pero solo se lee un precio (66 €), sin distinguir recarga."
+ },
+ "drunk-elephant-glass-skin-with-amino-rain-serum": {
+  "pvp_eur": 56,
+  "formato_ml": 30,
+  "fuente": "https://www.sephora.es/buscar?q=drunk+elephant",
+  "estado": "encontrado",
+  "nota": "Amino Rain; listado Sephora.es."
+ },
+ "drunk-elephant-golden-serum-drops-with-5-niacinamide": {
+  "pvp_eur": 41,
+  "formato_ml": 30,
+  "fuente": "https://www.sephora.es/buscar?q=drunk+elephant&page=2",
+  "estado": "encontrado",
+  "nota": "B-Goldi; listado Sephora.es."
+ },
+ "drunk-elephant-hydrating-and-illuminating-vitamin-b-serum": {
+  "pvp_eur": 54,
+  "formato_ml": 50,
+  "fuente": "https://www.sephora.es/buscar?q=drunk+elephant",
+  "estado": "encontrado",
+  "nota": "B-Hydra; listado Sephora.es."
+ },
+ "drunk-elephant-brightening-firming-15-vitamin-c-serum": {
+  "pvp_eur": 81,
+  "formato_ml": 28,
+  "fuente": "https://www.sephora.es/buscar?q=drunk+elephant",
+  "estado": "encontrado",
+  "nota": "C-Firma Fresh; listado Sephora.es."
+ },
+ "drunk-elephant-hydrating-clarifying-10-vitamin-c-serum": {
+  "pvp_eur": 72,
+  "formato_ml": 30,
+  "fuente": "https://www.sephora.es/buscar?q=drunk+elephant",
+  "estado": "encontrado",
+  "nota": "C-Luma; listado Sephora.es."
+ },
+ "drunk-elephant-exfoliating-lactic-acid-serum": {
+  "pvp_eur": 89,
+  "formato_ml": 30,
+  "fuente": "https://www.sephora.es/buscar?q=drunk+elephant&page=2",
+  "estado": "encontrado",
+  "nota": "Protini Powerpeptide; listado Sephora.es."
+ },
+ "paula-s-choice-25-aha-2-bha-peeling-exfoliante": {
+  "pvp_eur": 49,
+  "formato_ml": 30,
+  "fuente": "https://www.paulaschoice.es/es/25perc-aha-and-2perc-bha-exfoliant-peel/m9565.html",
+  "estado": "encontrado",
+  "nota": "Rebajado a 41,65 €. Figuraba agotado al consultar."
+ },
+ "paula-s-choice-booster-10-acido-azelaico": {
+  "pvp_eur": 49,
+  "formato_ml": 30,
+  "fuente": "https://www.paulaschoice.es/es/aa-booster/m7750.html",
+  "estado": "encontrado",
+  "nota": "Figuraba agotado al consultar."
+ },
+ "paula-s-choice-protector-solar-avanzado-hidratante-spf-50": {
+  "pvp_eur": 47,
+  "formato_ml": 60,
+  "fuente": "https://www.paulaschoice.es/es/advanced-sun-protection-daily-moisturizer/m2390.html",
+  "estado": "encontrado",
+  "nota": "Rebajado a 39,95 €. Figuraba agotado al consultar."
+ },
+ "paula-s-choice-c5-super-boost-hidratante": {
+  "pvp_eur": 58,
+  "formato_ml": 50,
+  "fuente": "https://www.paulaschoice.es/es/c5-super-boost-moisturizer/m2900.html",
+  "estado": "encontrado",
+  "nota": "Rebajado a 49,30 €. Figuraba agotado al consultar."
+ },
+ "paula-s-choice-clear-2-nbsp-bha-exfoliante-extrafuerte": {
+  "pvp_eur": 39,
+  "formato_ml": 118,
+  "fuente": "https://www.paulaschoice.es/es/clear-extra-strength-anti-redness-exfoliating-solution-salicylic-acid/m6211.html",
+  "estado": "encontrado",
+  "nota": "Figuraba agotado al consultar."
+ },
+ "paula-s-choice-clear-hidratante-oil-free": {
+  "pvp_eur": 42,
+  "formato_ml": 60,
+  "fuente": "https://www.paulaschoice.es/es/clear-oil-free-moisturizer/m3800.html",
+  "estado": "encontrado",
+  "nota": "Figuraba agotado al consultar."
+ },
+ "paula-s-choice-clear-limpiador": {
+  "pvp_eur": 29,
+  "formato_ml": 177,
+  "fuente": "https://www.paulaschoice.es/es/clear-pore-normalizing-cleanser/m6001.html",
+  "estado": "encontrado",
+  "nota": "Precio asumido para el tamaño estándar 177 ml; hay 30 ml y recarga 355 ml."
+ },
+ "paula-s-choice-clear-2-nbsp-bha-exfoliante-normal": {
+  "pvp_eur": 39,
+  "formato_ml": 118,
+  "fuente": "https://www.paulaschoice.es/es/clear-regular-strength-anti-redness-exfoliating-solution-salicylic-acid/m6201.html",
+  "estado": "encontrado",
+  "nota": "Figuraba agotado al consultar."
+ },
+ "paula-s-choice-clear-hidratante-spf-nbsp-30": {
+  "pvp_eur": 47,
+  "formato_ml": 60,
+  "fuente": "https://www.paulaschoice.es/es/clear-ultra-light-daily-hydrating-fluid-spf-30/m6130.html",
+  "estado": "encontrado",
+  "nota": ""
+ },
+ "paula-s-choice-clinical-hidratante-con-ceramidas": {
+  "pvp_eur": 72,
+  "formato_ml": 50,
+  "fuente": "https://www.paulaschoice.es/es/clinical-ceramide-enriched-firming-moisturizer/m2120.html",
+  "estado": "encontrado",
+  "nota": "Rebajado a 61,20 €. Figuraba agotado al consultar."
+ },
+ "paula-s-choice-clinical-pro-retinal-dual-treatment": {
+  "pvp_eur": 75,
+  "formato_ml": 30,
+  "fuente": "https://www.paulaschoice.es/es/clinical-pro-retinaldehyde-dual-retinoid-treatment/m1500.html",
+  "estado": "encontrado",
+  "nota": "Rebajado a 60 €. Figuraba agotado al consultar."
+ },
+ "paula-s-choice-defense-essential-glow-moisturizer-spf-30-full-size": {
+  "pvp_eur": 47,
+  "formato_ml": 60,
+  "fuente": "https://www.paulaschoice.es/es/defense-essential-glow-moisturizer-spf-30/m2230.html",
+  "estado": "encontrado",
+  "nota": "Figuraba agotado al consultar."
+ },
+ "paula-s-choice-defense-limpiador": {
+  "pvp_eur": 32,
+  "formato_ml": 198,
+  "fuente": "https://www.paulaschoice.es/es/defense-hydrating-gel-to-cream-cleanser/m2210.html",
+  "estado": "encontrado",
+  "nota": "Figuraba agotado al consultar."
+ },
+ "paula-s-choice-booster-aacute-cido-hialur-oacute-nico": {
+  "pvp_eur": 49,
+  "formato_ml": 15,
+  "fuente": "https://www.paulaschoice.es/es/hyaluronic-acid-booster/m7860.html",
+  "estado": "encontrado",
+  "nota": "Figuraba agotado al consultar."
+ },
+ "paula-s-choice-clinical-treatment-20-niacinamida": {
+  "pvp_eur": 63,
+  "formato_ml": 20,
+  "fuente": "https://www.paulaschoice.es/es/niacinamide-treatment/m8030.html",
+  "estado": "encontrado",
+  "nota": "Rebajado a 53,55 €. Figuraba agotado al consultar."
+ },
+ "paula-s-choice-resist-hidratante-antienvejecimiento-restauradora-spf-50": {
+  "pvp_eur": 47,
+  "formato_ml": 60,
+  "fuente": "https://www.paulaschoice.es/es/resist-anti-ageing-skin-restoring-moisturizer/m7970.html",
+  "estado": "encontrado",
+  "nota": "PVP; rebajado a 37,60 en la página"
+ },
+ "paula-s-choice-serum-antienvejecimiento-ultraligero": {
+  "pvp_eur": 57,
+  "formato_ml": 30,
+  "fuente": "https://www.paulaschoice.es/es/resist-anti-ageing-ultra-light-super-antioxidant-concentrate-serum/m7740.html",
+  "estado": "encontrado",
+  "nota": "PVP; rebajado a 48,45; agotado"
+ },
+ "paula-s-choice-resist-hidratante-purificante-antienvejecimiento": {
+  "pvp_eur": 48,
+  "formato_ml": 50,
+  "fuente": "https://www.paulaschoice.es/es/resist-anti-aging-clear-skin-hydrator/m7690.html",
+  "estado": "encontrado",
+  "nota": "Agotado"
+ },
+ "paula-s-choice-resist-2-bha-exfoliante-antienvejecimiento": {
+  "pvp_eur": 44,
+  "formato_ml": 88,
+  "fuente": "https://www.paulaschoice.es/es/resist-anti-aging-daily-pore-refining-treatment-bha/m7820.html",
+  "estado": "encontrado",
+  "nota": "PVP; rebajado a 37,40"
+ },
+ "paula-s-choice-resist-s-eacute-rum-antienvejecimiento-con-retinol": {
+  "pvp_eur": 57,
+  "formato_ml": 30,
+  "fuente": "https://www.paulaschoice.es/es/resist-anti-aging-intensive-wrinkle-repair-retinol-serum/m7710.html",
+  "estado": "encontrado",
+  "nota": "PVP; rebajado a 48,45; agotado"
+ },
+ "paula-s-choice-limpiador-antienvejecimiento-en-espuma": {
+  "pvp_eur": 32,
+  "formato_ml": 190,
+  "fuente": "https://www.paulaschoice.es/es/resist-anti-aging-perfectly-balanced-foaming-cleanser/m7830.html",
+  "estado": "encontrado",
+  "nota": "PVP; rebajado a 27,20"
+ },
+ "paula-s-choice-hidratante-avanzada-reparadora-barrera": {
+  "pvp_eur": 49,
+  "formato_ml": 50,
+  "fuente": "https://www.paulaschoice.es/es/resist-barrier-repair-advanced-moisturizer/m2240.html",
+  "estado": "encontrado",
+  "nota": "PVP; rebajado a 39,20"
+ },
+ "paula-s-choice-skin-balancing-t-oacute-nico": {
+  "pvp_eur": 36,
+  "formato_ml": 190,
+  "fuente": "https://www.paulaschoice.es/es/skin-balancing-pore-reducing-toner/m1350.html",
+  "estado": "encontrado",
+  "nota": "Precio del tamaño normal (190 ml); agotado"
+ },
+ "paula-s-choice-exfoliante-aha-6-mandelico-2-lactico": {
+  "pvp_eur": 39,
+  "formato_ml": 88,
+  "fuente": "https://www.paulaschoice.es/es/skin-perfecting-6pct-mandelic-acid-2pct-lactic-acid-liquid-exfoliant/m1470.html",
+  "estado": "encontrado",
+  "nota": "PVP; rebajado a 31,20"
+ },
+ "paula-s-choice-skin-perfecting-2-bha-exfoliante-liquido": {
+  "pvp_eur": 39,
+  "formato_ml": 118,
+  "fuente": "https://www.paulaschoice.es/es/skin-perfecting-bha-liquid-exfoliant/m2010.html",
+  "estado": "encontrado",
+  "nota": "Precio del tamaño normal (118 ml); agotado"
+ },
+ "paula-s-choice-hidratante-con-electrolitos": {
+  "pvp_eur": 49,
+  "formato_ml": 50,
+  "fuente": "https://www.paulaschoice.es/es/water-infusing-electrolyte-moisturizer/m7000.html",
+  "estado": "encontrado",
+  "nota": ""
+ },
+ "paula-s-choice-resist-hidratante-fluida-antienvejecimiento-spf-nbsp-50": {
+  "pvp_eur": 47,
+  "formato_ml": 60,
+  "fuente": "https://www.paulaschoice.es/es/youth-extending-hydrating-fluid-spf-50/m7800.html",
+  "estado": "encontrado",
+  "nota": "PVP; rebajado a 39,95; agotado"
+ },
+ "uriage-cica-daily-serum-reparador-intenso-falta-de-confort-imperfecciones-rojeces-marcas": {
+  "pvp_eur": 35.5,
+  "formato_ml": 30,
+  "fuente": "https://farma2go.com/collections/uriage?page=9",
+  "estado": "encontrado",
+  "nota": "Precio tachado en farma2go (actual 18,57)"
+ },
+ "uriage-bariesun-100-spf50-piel-intolerante-al-sol-la-maxima-proteccion-para-pieles-intolerantes-al-sol": {
+  "pvp_eur": 15.28,
+  "formato_ml": 50,
+  "fuente": "https://farma2go.com/collections/uriage?page=8",
+  "estado": "encontrado",
+  "nota": "Precio tachado en farma2go (actual 13,78); el tachado parece bajo para ser PVP oficial"
+ },
+ "uriage-bariesun-fluido-mat-spf50-piel-acneica-tecnologia-barrera-de-la-piel-proteccion-ultra": {
+  "pvp_eur": 19.45,
+  "formato_ml": 50,
+  "fuente": "https://farma2go.com/collections/uriage?page=7",
+  "estado": "encontrado",
+  "nota": "Precio tachado en farma2go (actual 10,43)"
+ },
+ "uriage-bariesun-fluido-ultra-ligero-spf50-tecnologia-barrera-de-la-piel-proteccion-ultra": {
+  "pvp_eur": 15,
+  "formato_ml": 30,
+  "fuente": "https://www.primor.eu/es_ea/uriage-bariesun-fluido-ultra-ligero-spf50-124601.html",
+  "estado": "encontrado",
+  "nota": "Primor: 15,00 de referencia, 14,99 actual; agotado"
+ },
+ "uriage-roseliane-tratamiento-antirojeces-calma-unifica-e-hidrata-efecto-inmediato": {
+  "pvp_eur": 19.68,
+  "formato_ml": 40,
+  "fuente": "https://farma2go.com/collections/uriage?page=1",
+  "estado": "encontrado",
+  "nota": "Precio tachado en farma2go (actual 14,43)"
+ },
+ "uriage-hyseac-sos-gel-secante-imperfecciones-marcas-en-la-piel": {
+  "pvp_eur": 14.9,
+  "formato_ml": 15,
+  "fuente": "https://farma2go.com/products/uriage-hyseac-gel-sos-15ml",
+  "estado": "encontrado",
+  "nota": "Precio tachado (actual 8,26). Ojo: la url_producto fichada apunta al Sérum Piel Nueva Booster, no al gel SOS"
+ },
+ "uriage-xemose-c8-cerato-relipidizante-anti-picor-tratamiento-relipidizante-con-propiedades-calmantes": {
+  "pvp_eur": 26.5,
+  "formato_ml": 200,
+  "fuente": "https://www.promofarma.com/es/xemose-cerato-200ml/p-151014",
+  "estado": "encontrado",
+  "nota": "PVP recomendado en PromoFarma (actual 15,69)"
+ },
+ "uriage-xemose-c8-crema-relipidizante-anti-irritaciones-nutre-repara-y-calma-inmediatamente-48h-anti-reaparicion": {
+  "pvp_eur": 25,
+  "formato_ml": 400,
+  "fuente": "https://farma2go.com/collections/uriage?page=1",
+  "estado": "encontrado",
+  "nota": "Precio tachado en farma2go para 400 ml (actual 15,69); existe también 200 ml"
+ },
+ "uriage-ds-gel-limpiador-gel-espumoso-con-funcion-reguladora": {
+  "pvp_eur": 15.61,
+  "formato_ml": 150,
+  "fuente": "https://farma2go.com/collections/uriage?page=3",
+  "estado": "encontrado",
+  "nota": "Precio tachado en farma2go (actual 11,12)"
+ },
+ "uriage-pruriced-crema-calmante-zonas-de-piel-seca": {
+  "pvp_eur": 11.68,
+  "formato_ml": 100,
+  "fuente": "https://farma2go.com/collections/uriage?page=6",
+  "estado": "encontrado",
+  "nota": "Precio tachado en farma2go (actual 10,53)"
+ },
+ "uriage-keratosane-30-gel-cremoso-para-combatir-las-callosidades": {
+  "pvp_eur": 11.98,
+  "formato_ml": 75,
+  "fuente": "https://farma2go.com/collections/uriage?page=8",
+  "estado": "encontrado",
+  "nota": "Precio tachado en farma2go (actual 10,34)"
+ },
+ "uriage-crema-lavante-gel-espumoso-sin-jabon": {
+  "pvp_eur": 17.9,
+  "formato_ml": 1000,
+  "fuente": "https://farma2go.com/collections/uriage?page=2",
+  "estado": "encontrado",
+  "nota": "Precio tachado en farma2go para 1000 ml (actual 11,30); no vi precio de 200/500 ml"
+ },
+ "uriage-pruriced-gel-calmante-zonas-intimas-externas-zonas-con-pelo-pliegues-cutaneos": {
+  "pvp_eur": 17.77,
+  "formato_ml": 100,
+  "fuente": "https://cosmetis.com/es/uriage-pruriced-gel-100ml",
+  "estado": "encontrado",
+  "nota": "Precio tachado en Cosmetis España (actual 10,89)"
+ },
+ "uriage-bariesun-crema-spf30-tecnologia-barrera-de-la-piel-proteccion-ultra": {
+  "pvp_eur": 19.5,
+  "formato_ml": 50,
+  "fuente": "https://farma2go.com/collections/uriage?page=11",
+  "estado": "encontrado",
+  "nota": "Precio tachado en farma2go (actual 9,32)"
+ },
+ "uriage-bariesun-leche-spf50-tecnologia-barrera-de-la-piel-proteccion-ultra": {
+  "pvp_eur": 20.9,
+  "formato_ml": 100,
+  "fuente": "https://farma2go.com/collections/uriage?page=11",
+  "estado": "encontrado",
+  "nota": "Precio tachado en farma2go para 100 ml (actual 20,05); 200 ml: 23,20"
+ },
+ "uriage-depiderm-cuidado-de-dia-antimanchas-spf50-manchas-tez-apagada": {
+  "pvp_eur": 27.9,
+  "formato_ml": 30,
+  "fuente": "https://farma2go.com/products/uriage-depiderm-cuidado-de-dia-antimanchas-spf50-30ml",
+  "estado": "encontrado",
+  "nota": "Precio tachado (actual 16,94); agotado"
+ },
+ "uriage-depiderm-espuma-limpiadora-iluminadora-tez-apagada": {
+  "pvp_eur": 14.9,
+  "formato_ml": 100,
+  "fuente": "https://farma2go.com/collections/uriage?page=5",
+  "estado": "encontrado",
+  "nota": "Precio tachado en farma2go (actual 9,95)"
+ },
+ "uriage-leche-desmaquillante-leche-desmaquillante": {
+  "pvp_eur": 12.03,
+  "formato_ml": 250,
+  "fuente": "https://farma2go.com/products/uriage-leche-desmaquillante-250-ml",
+  "estado": "encontrado",
+  "nota": "Precio tachado (actual 11,12); agotado"
+ },
+ "glow-recipe-pomegranate-peptide-firming-serum": {
+  "pvp_eur": 49,
+  "formato_ml": 30,
+  "fuente": "https://www.sephora.es/buscar?q=glow+recipe",
+  "estado": "encontrado",
+  "nota": "Sephora.es"
+ },
+ "glow-recipe-banana-souffle-moisture-cream": {
+  "pvp_eur": null,
+  "formato_ml": 50,
+  "fuente": "https://www.sephora.es/buscar?q=glow+recipe",
+  "estado": "no encontrado",
+  "nota": "No aparece en Sephora.es (único distribuidor español localizado); glowrecipe.com solo muestra precio en USD."
+ },
+ "glow-recipe-vitamin-c-brightening-korean-toner-pads": {
+  "pvp_eur": null,
+  "formato_ml": null,
+  "fuente": "https://www.sephora.es/buscar?q=glow+recipe",
+  "estado": "no encontrado",
+  "nota": "No aparece en Sephora.es (único distribuidor español localizado); glowrecipe.com solo muestra precio en USD."
+ },
+ "glow-recipe-lha-aha-korean-watermelon-toner-pads": {
+  "pvp_eur": null,
+  "formato_ml": null,
+  "fuente": "https://www.sephora.es/buscar?q=glow+recipe",
+  "estado": "no encontrado",
+  "nota": "No aparece en Sephora.es (único distribuidor español localizado); glowrecipe.com solo muestra precio en USD."
+ },
+ "glow-recipe-strawberry-smooth-bha-aha-salicylic-serum": {
+  "pvp_eur": 46,
+  "formato_ml": 30,
+  "fuente": "https://www.sephora.es/buscar?q=glow+recipe",
+  "estado": "encontrado",
+  "nota": "Sephora.es"
+ },
+ "glow-recipe-prickly-pear-peptide-mucin": {
+  "pvp_eur": 42,
+  "formato_ml": 40,
+  "fuente": "https://www.sephora.es/buscar?q=glow+recipe",
+  "estado": "encontrado",
+  "nota": "Sephora.es"
+ },
+ "glow-recipe-cloudberry-bright-refillable-moisture-cream": {
+  "pvp_eur": 44,
+  "formato_ml": 50,
+  "fuente": "https://www.sephora.es/buscar?q=glow+recipe",
+  "estado": "encontrado",
+  "nota": "Sephora.es"
+ },
+ "glow-recipe-watermelon-glow-niacinamide-dew-drops-jumbo": {
+  "pvp_eur": null,
+  "formato_ml": 80,
+  "fuente": "https://www.sephora.es/buscar?q=glow+recipe",
+  "estado": "no encontrado",
+  "nota": "Sephora.es solo lista Dew Drops en 40 ml (38 €) y 15 ml; el formato Jumbo 80 ml no aparece."
+ },
+ "glow-recipe-blackberry-retinol-blemish-serum": {
+  "pvp_eur": 56,
+  "formato_ml": 30,
+  "fuente": "https://www.sephora.es/buscar?q=glow+recipe",
+  "estado": "encontrado",
+  "nota": "Sephora.es"
+ },
+ "glow-recipe-avocado-ceramide-moisture-barrier-cleanser": {
+  "pvp_eur": null,
+  "formato_ml": 150,
+  "fuente": "https://www.sephora.es/buscar?q=glow+recipe",
+  "estado": "no encontrado",
+  "nota": "No aparece en Sephora.es (único distribuidor español localizado); glowrecipe.com solo muestra precio en USD."
+ },
+ "glow-recipe-watermelon-glow-pink-juice-oil-free-refillable-moisturizer": {
+  "pvp_eur": 36,
+  "formato_ml": 50,
+  "fuente": "https://www.sephora.es/p/watermelon-glow---crema-hidratante-jugo-rosado-716605.html",
+  "estado": "encontrado",
+  "nota": "OJO: 36 € es la recarga de 50 ml; el frasco completo de 50 ml no aparecía con precio. Mini 25 ml: 22 €."
+ },
+ "glow-recipe-cloudberry-bright-essence-toner": {
+  "pvp_eur": 41,
+  "formato_ml": 75,
+  "fuente": "https://www.sephora.es/p/cloudberry-bright---tonico-unificador-P10055712.html",
+  "estado": "encontrado",
+  "nota": ""
+ },
+ "glow-recipe-plum-plump-hyaluronic-cream": {
+  "pvp_eur": 43,
+  "formato_ml": 50,
+  "fuente": "https://www.sephora.es/p/plum-plump%E2%84%A2-hyaluronic----hidratante-mini-P10024312.html",
+  "estado": "encontrado",
+  "nota": "Mini 20 ml: 22 €."
+ },
+ "glow-recipe-guava-vitamin-c-dark-spot-serum": {
+  "pvp_eur": 49,
+  "formato_ml": 30,
+  "fuente": "https://www.sephora.es/p/guava-vitamin-c---serum-antimanchas-marrones-570833.html",
+  "estado": "encontrado",
+  "nota": "Precio leído en el listado de búsqueda de Sephora.es."
+ },
+ "glow-recipe-avocado-ceramide-recovery-serum": {
+  "pvp_eur": 49,
+  "formato_ml": 30,
+  "fuente": "https://www.sephora.es/p/avocado-ceramide---serum-antirrojeces-548189.html",
+  "estado": "encontrado",
+  "nota": "Precio leído en el listado de búsqueda de Sephora.es."
+ },
+ "glow-recipe-plum-plump-hyaluronic-serum": {
+  "pvp_eur": 49,
+  "formato_ml": 30,
+  "fuente": "https://www.sephora.es/p/plum-plump-hyaluronic---serum-hidratante-544227.html",
+  "estado": "encontrado",
+  "nota": "Precio leído en el listado de búsqueda de Sephora.es."
+ },
+ "summer-fridays-cloud-dew-gel-cream-moisturizer": {
+  "pvp_eur": 19,
+  "formato_ml": 15,
+  "fuente": "https://www.sephora.es/p/cloud-dew-gel-cream-moisturizer---gel-crema-hidratante-P1000211780.html",
+  "estado": "encontrado",
+  "nota": "OJO: solo se veía el precio del mini de 15 ml; existe 50 ml pero sin precio visible."
+ },
+ "summer-fridays-pink-dew-gel-cleanser": {
+  "pvp_eur": 33,
+  "formato_ml": 150,
+  "fuente": "https://www.sephora.es/p/pink-dew%E2%84%A2-gel-cleanser---gel-limpiador-facial-P1000211781.html",
+  "estado": "encontrado",
+  "nota": "El listado indica 'desde 18 €' (hay formato mini)."
+ },
+ "summer-fridays-gentle-reset-daily-exfoliating-pads": {
+  "pvp_eur": 47,
+  "formato_ml": null,
+  "fuente": "https://www.sephora.es/p/gentle-reset%E2%84%A2-daily-exfoliating-pads---discos-exfoliantes-diarios-776534.html",
+  "estado": "encontrado",
+  "nota": "Discos; precio leído en el listado de Sephora.es."
+ },
+ "summer-fridays-jet-lag-deep-hydration-serum": {
+  "pvp_eur": 50,
+  "formato_ml": 30,
+  "fuente": "https://www.sephora.es/p/jet-lag---serum-hidratante-en-profundidad-744337.html",
+  "estado": "encontrado",
+  "nota": "Precio leído en el listado de Sephora.es."
+ },
+ "summer-fridays-midnight-ritual-retinol-renewal-serum": {
+  "pvp_eur": null,
+  "formato_ml": null,
+  "fuente": "",
+  "estado": "no encontrado",
+  "nota": "No aparece en Sephora.es (único distribuidor en España)."
+ },
+ "summer-fridays-cc-me-serum-with-vitamin-c-niacinamide": {
+  "pvp_eur": 67.99,
+  "formato_ml": 30,
+  "fuente": "https://www.sephora.es/p/cc-me-serum---serum-iluminador-528354.html",
+  "estado": "encontrado",
+  "nota": "Precio leído en el listado de Sephora.es."
+ },
+ "summer-fridays-super-amino-gel-cleanser": {
+  "pvp_eur": null,
+  "formato_ml": null,
+  "fuente": "",
+  "estado": "no encontrado",
+  "nota": "No aparece en Sephora.es; probablemente sustituido por Pink Dew Gel Cleanser."
+ },
+ "rhode-pocket-pearl-gemini": {
+  "pvp_eur": null,
+  "formato_ml": null,
+  "fuente": "",
+  "estado": "no encontrado",
+  "nota": "No está en el surtido Rhode de Sephora.es; la web de marca solo dio precios en USD."
+ },
+ "rhode-pocket-pearl-monet": {
+  "pvp_eur": null,
+  "formato_ml": null,
+  "fuente": "",
+  "estado": "no encontrado",
+  "nota": "No está en el surtido Rhode de Sephora.es; la web de marca solo dio precios en USD."
+ },
+ "rhode-pocket-pearl-monaco": {
+  "pvp_eur": null,
+  "formato_ml": null,
+  "fuente": "",
+  "estado": "no encontrado",
+  "nota": "No está en el surtido Rhode de Sephora.es; la web de marca solo dio precios en USD."
+ },
+ "rhode-peptide-glazing-fluid": {
+  "pvp_eur": 42,
+  "formato_ml": 50,
+  "fuente": "https://www.sephora.es/p/peptide-glazing-fluid---serum-en-gel-con-efecto-rocio-821692.html",
+  "estado": "encontrado",
+  "nota": "Precio leído en el listado de Sephora.es. Mini 15 ml: 26 €."
+ },
+ "peace-out-acne-gel-moisturizer": {
+  "pvp_eur": null,
+  "formato_ml": null,
+  "fuente": "",
+  "estado": "no encontrado",
+  "nota": "Sephora.es solo vende parches y Pore Perfector de Peace Out."
+ },
+ "peace-out-acne-serum": {
+  "pvp_eur": null,
+  "formato_ml": null,
+  "fuente": "",
+  "estado": "no encontrado",
+  "nota": "Sephora.es solo vende parches y Pore Perfector de Peace Out."
+ },
+ "fenty-skin-fenty-skin-total-cleansr-remove-it-all-cleanser": {
+  "pvp_eur": 30,
+  "formato_ml": null,
+  "fuente": "https://www.sephora.es/p/total-cleansr---limpiador-facial-P10013035.html",
+  "estado": "encontrado",
+  "nota": "OJO: 30 € es el precio 'desde' (3 formatos); la página mezcla 145 ml y 190 ml, tamaño no confirmado."
+ },
+ "fenty-skin-dew-n-plump-hydrating-nectar-glow-serum": {
+  "pvp_eur": 35,
+  "formato_ml": 30,
+  "fuente": "https://www.sephora.es/p/dew-n-plump-hydrating-nectar-glow---serum-luminosidad-con-nectar-hidratante-765581.html",
+  "estado": "encontrado",
+  "nota": "Precio leído en el listado de Sephora.es."
+ },
+ "fenty-skin-cherry-dub-bha-toner-with-salicylic-acid-aloe-juice": {
+  "pvp_eur": 35,
+  "formato_ml": 150,
+  "fuente": "https://www.sephora.es/p/cherry-dub---tonico-bha-748288.html",
+  "estado": "encontrado",
+  "nota": "Precio leído en el listado de Sephora.es."
+ },
+ "fenty-skin-cherry-dub-pore-purify-r-gel-cleanser-with-niacinamide-aloe-juice": {
+  "pvp_eur": 33,
+  "formato_ml": 190,
+  "fuente": "https://www.sephora.es/p/cherry-dub---gel-limpiador-purificante-748287.html",
+  "estado": "encontrado",
+  "nota": "Precio leído en el listado de Sephora.es."
+ },
+ "fenty-skin-watch-ya-tone-niacinamide-dark-spot-serum": {
+  "pvp_eur": null,
+  "formato_ml": null,
+  "fuente": "",
+  "estado": "no encontrado",
+  "nota": "No aparece en Sephora.es."
+ },
+ "fenty-skin-fat-water-niacinamide-pore-refining-toner-serum-with-barbados-cherry": {
+  "pvp_eur": 36,
+  "formato_ml": 150,
+  "fuente": "https://www.sephora.es/p/fat-water---locion-y-serum-tonificante-533409.html",
+  "estado": "encontrado",
+  "nota": "Precio leído en el listado de Sephora.es. Mini 50 ml: 18 €."
+ },
+ "supergoop-every-single-face-watery-lotion-spf-50-gift": {
+  "pvp_eur": null,
+  "formato_ml": null,
+  "fuente": "",
+  "estado": "no encontrado",
+  "nota": "Es un artículo de regalo (GIFT) de la web de EE. UU.; no está en Sephora.es."
+ },
+ "supergoop-city-sunscreen-serum-spf-30": {
+  "pvp_eur": null,
+  "formato_ml": null,
+  "fuente": "",
+  "estado": "no encontrado",
+  "nota": "No está en el surtido Supergoop de Sephora.es; solo tiendas de EE. UU."
+ },
+ "supergoop-superscreen-hydrating-daily-cream-spf-40": {
+  "pvp_eur": null,
+  "formato_ml": null,
+  "fuente": "",
+  "estado": "no encontrado",
+  "nota": "No está en el surtido Supergoop de Sephora.es."
+ },
+ "first-aid-beauty-hello-fab-coconut-water-cream": {
+  "pvp_eur": null,
+  "formato_ml": null,
+  "fuente": "",
+  "estado": "no encontrado",
+  "nota": "Solo en la web de EE. UU. (36 USD, edición limitada); no en Lookfantastic.es ni Sephora.es."
+ },
+ "first-aid-beauty-ultra-gentle-pure-skin-face-cleanser": {
+  "pvp_eur": null,
+  "formato_ml": null,
+  "fuente": "",
+  "estado": "no encontrado",
+  "nota": "Lookfantastic.es vende 'Ultra Gentle Cream-to-Foam Cleanser 6oz' a 26,45 €; no confirmado que sea el mismo producto."
+ },
+ "first-aid-beauty-brighten-glow-exfoliating-gel-cleanser-with-aha-and-jojoba-pearls": {
+  "pvp_eur": null,
+  "formato_ml": null,
+  "fuente": "",
+  "estado": "no encontrado",
+  "nota": "No está en Lookfantastic.es ni en Sephora.es."
+ },
+ "first-aid-beauty-brighten-glow-facial-radiance-pads-with-glycolic-lactic-acids": {
+  "pvp_eur": 39.1,
+  "formato_ml": null,
+  "fuente": "https://www.lookfantastic.es/p/first-aid-beauty-brighten-glow-facial-radiance-pads-60-count/17659264/",
+  "estado": "encontrado",
+  "nota": "60 discos. También 28 discos por 23 €."
+ },
+ "first-aid-beauty-ultra-repair-retinol-serum-with-0-3-retinol-complex-peptides": {
+  "pvp_eur": 50.6,
+  "formato_ml": 30,
+  "fuente": "https://www.lookfantastic.es/p/first-aid-beauty-0.3-retinol-complex-serum-with-peptides-30ml/15066872/",
+  "estado": "encontrado",
+  "nota": ""
+ },
+ "first-aid-beauty-acne-clearing-pads-with-2-salicylic-acid": {
+  "pvp_eur": null,
+  "formato_ml": null,
+  "fuente": "",
+  "estado": "no encontrado",
+  "nota": "No está en Lookfantastic.es ni en Sephora.es."
+ },
+ "first-aid-beauty-daily-resurfacing-lotion-with-2-niacinamide": {
+  "pvp_eur": null,
+  "formato_ml": null,
+  "fuente": "",
+  "estado": "no encontrado",
+  "nota": "No está en Lookfantastic.es ni en Sephora.es."
+ },
+ "first-aid-beauty-hydrating-dewy-gel-cream-moisturizer-with-hyaluronic-acid-ceramides": {
+  "pvp_eur": null,
+  "formato_ml": null,
+  "fuente": "",
+  "estado": "no encontrado",
+  "nota": "No está en Lookfantastic.es ni en Sephora.es."
+ },
+ "first-aid-beauty-ultra-repair-rescue-barrier-balm-with-dimethicone": {
+  "pvp_eur": null,
+  "formato_ml": null,
+  "fuente": "",
+  "estado": "no encontrado",
+  "nota": "No está en Lookfantastic.es ni en Sephora.es."
+ },
+ "first-aid-beauty-ultra-repair-hydration-boost-serum-with-colloidal-oatmeal-hyaluronic-acid": {
+  "pvp_eur": null,
+  "formato_ml": null,
+  "fuente": "",
+  "estado": "no encontrado",
+  "nota": "No está en Lookfantastic.es ni en Sephora.es."
+ },
+ "first-aid-beauty-hydrating-toner-with-squalane-oats": {
+  "pvp_eur": null,
+  "formato_ml": null,
+  "fuente": "",
+  "estado": "no encontrado",
+  "nota": "No está en Lookfantastic.es ni en Sephora.es."
+ },
+ "first-aid-beauty-ultra-repair-face-lotion-with-colloidal-oatmeal": {
+  "pvp_eur": 28.75,
+  "formato_ml": 50,
+  "fuente": "https://www.lookfantastic.es/p/first-aid-beauty-ultra-repair-face-lotion-1.7oz/17659265/",
+  "estado": "encontrado",
+  "nota": ""
+ }
+}

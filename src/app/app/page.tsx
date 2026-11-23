@@ -17,7 +17,10 @@ export default async function Inicio() {
           <li key={f.id} className="bg-white rounded-xl p-5 shadow-sm space-y-3">
             <div className="font-medium">{f.nombre}</div>
             <div className="text-sm text-neutral-500">{f.programa_gestion ?? 'Programa sin indicar'}</div>
-            <Link href={`/app/f/${f.id}/stock`} className="inline-block text-sm bg-neutral-900 text-white rounded-lg px-3 py-1.5">Stock</Link>
+            <div className="flex gap-2">
+              <Link href={`/app/f/${f.id}/consejo`} className="inline-block text-sm bg-neutral-900 text-white rounded-lg px-3 py-1.5">Nuevo consejo</Link>
+              <Link href={`/app/f/${f.id}/stock`} className="inline-block text-sm border rounded-lg px-3 py-1.5">Stock</Link>
+            </div>
           </li>
         ))}
       </ul>
