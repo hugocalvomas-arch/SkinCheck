@@ -4,7 +4,7 @@ import { useState } from 'react'
 import { ArrowsLeftRight, UserFocus } from '@phosphor-icons/react'
 
 // Comparador antes/después con barra deslizable. Sin imágenes, muestra un hueco neutro.
-export function AntesDespues({ antes, despues, etiquetaAntes = 'Hoy', etiquetaDespues = 'Simulación a 8 semanas' }: { antes?: string; despues?: string; etiquetaAntes?: string; etiquetaDespues?: string }) {
+export function AntesDespues({ antes, despues, etiquetaAntes = 'Hoy', etiquetaDespues = 'Simulación a 8 semanas', escaneo = false }: { antes?: string; despues?: string; etiquetaAntes?: string; etiquetaDespues?: string; escaneo?: boolean }) {
   const [x, setX] = useState(50)
   const mover = (e: React.PointerEvent<HTMLDivElement>) => {
     const r = e.currentTarget.getBoundingClientRect()
@@ -26,6 +26,14 @@ export function AntesDespues({ antes, despues, etiquetaAntes = 'Hoy', etiquetaDe
           <div className="absolute inset-0 grid place-items-center bg-[#e9efee] text-marca-media"><UserFocus size={120} weight="thin" /></div>
           <div className="absolute inset-0 grid place-items-center bg-marca-suave text-marca" style={{ clipPath: `inset(0 0 0 ${x}%)` }}><UserFocus size={120} weight="thin" /></div>
         </>
+      )}
+      {escaneo && (
+        <div aria-hidden className="pointer-events-none absolute inset-6">
+          {['top-0 left-0 border-t-2 border-l-2 rounded-tl-lg', 'top-0 right-0 border-t-2 border-r-2 rounded-tr-lg', 'bottom-0 left-0 border-b-2 border-l-2 rounded-bl-lg', 'bottom-0 right-0 border-b-2 border-r-2 rounded-br-lg'].map((c) => (
+            <span key={c} className={`absolute w-7 h-7 border-white/90 ${c}`} />
+          ))}
+          <span className="absolute inset-0 overflow-hidden"><span className="sc-escaneo block h-full border-b border-white bg-gradient-to-b from-transparent to-white/25 opacity-0" /></span>
+        </div>
       )}
       <div className="absolute top-0 bottom-0 w-px bg-white" style={{ left: `${x}%` }}>
         <span className="absolute top-1/2 -translate-y-1/2 -translate-x-1/2 w-11 h-11 rounded-full bg-white text-tinta grid place-items-center shadow-[0_4px_16px_rgba(15,27,29,.18)]"><ArrowsLeftRight size={20} /></span>

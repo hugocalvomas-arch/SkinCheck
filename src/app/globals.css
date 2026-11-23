@@ -48,3 +48,15 @@ body {
   .tarjeta { background: #fff; border: 1px solid var(--color-linea); border-radius: 1rem; }
   :where(a, button, input, select, textarea, summary):focus-visible { outline: 2px solid var(--color-marca); outline-offset: 2px; }
 }
+
+/* Portada: animaciones de entrada del panel de análisis (solo si el usuario no pide menos movimiento) */
+@media (prefers-reduced-motion: no-preference) {
+  @keyframes sc-barra { from { transform: scaleX(0); } }
+  @keyframes sc-aro { from { stroke-dashoffset: var(--aro-total); } }
+  @keyframes sc-escaneo { 0% { transform: translateY(-100%); opacity: 0; } 15%, 85% { opacity: 1; } 100% { transform: translateY(0); opacity: 0; } }
+  @keyframes sc-sube { from { opacity: 0; transform: translateY(12px); } }
+  .sc-barra { transform-origin: left; animation: sc-barra 900ms cubic-bezier(.16,1,.3,1) both; animation-delay: calc(var(--i, 0) * 60ms + 300ms); }
+  .sc-aro { animation: sc-aro 1400ms cubic-bezier(.16,1,.3,1) both 200ms; }
+  .sc-escaneo { animation: sc-escaneo 3.2s cubic-bezier(.45,0,.55,1) infinite; }
+  .sc-sube { animation: sc-sube 700ms cubic-bezier(.16,1,.3,1) both; animation-delay: calc(var(--i, 0) * 80ms); }
+}
