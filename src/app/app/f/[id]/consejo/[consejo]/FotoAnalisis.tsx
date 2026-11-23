@@ -12,8 +12,8 @@ export function FotoAnalisis({ f }: { f: ResultadoFoto }) {
     <section className="bg-papel rounded-[var(--radius-card)] border border-linea p-6 space-y-4">
       <div className="flex flex-wrap items-baseline gap-3">
         <h2 className="font-medium">Lo que vemos en tu piel</h2>
-        {f.edad_piel != null && <span className="text-sm text-gris">Edad aparente de la piel: {f.edad_piel}</span>}
-        {f.puntuacion_global != null && <span className="text-sm text-gris">Puntuación global: {f.puntuacion_global}/100</span>}
+        {f.edad_piel != null && <span className="text-sm text-gris">Edad aparente de la piel: {Math.round(f.edad_piel)}</span>}
+        {f.puntuacion_global != null && <span className="text-sm text-gris">Puntuación global: {Math.round(f.puntuacion_global)}/100</span>}
       </div>
       {vigentes && (marcas.length > 0 || f.imagenes.despues) && (
         <div className="grid sm:grid-cols-2 gap-4">

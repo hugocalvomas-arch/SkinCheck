@@ -4,8 +4,8 @@ import { MallaFacial, type EstadoCara } from './MallaFacial'
 import { aTrabajar, nivelPiel, notaPiel } from '@/lib/escalaPiel'
 import { useCallback, useEffect, useRef, useState, useTransition } from 'react'
 import QRCode from 'qrcode'
-import { ArrowLeft, ArrowRight, ArrowsLeftRight, CalendarCheck, Camera, Check, Drop, Moon, ScanSmiley, ShieldCheck, Sparkle, Sun, Trash, X } from '@phosphor-icons/react'
-import { analizarKiosko, type Seguridad } from './actions'
+import { ArrowLeft, ArrowRight, ArrowsLeftRight, CalendarCheck, Camera, Check, Drop, EnvelopeSimple, Moon, ScanSmiley, ShieldCheck, Sparkle, Sun, Trash, X } from '@phosphor-icons/react'
+import { analizarKiosko, enviarInformeEmail, type Seguridad } from './actions'
 import { Logo } from '@/components/Logo'
 
 // Recorrido de la clienta en el iPad del mostrador. Dirección visual: clínica, fondo claro,
@@ -15,9 +15,10 @@ import { Logo } from '@/components/Logo'
 type Paso = 'reclamo' | 'preguntas' | 'consentimiento' | 'camara' | 'mejorar' | 'analizando' | 'resultado' | 'menor'
 type Props = { farmaciaId: string; farmacia: string; precio: string }
 
-const PREGUNTAS: { id: keyof Seguridad; t: string; nota: string; ops: [string, string][] }[] = [
+const PREGUNTAS: { id: keyof Seguridad; t: string; nota: string; ops: [string, string][]; si?: (s: Partial<Seguridad>) => boolean }[] = [
   { id: 'edad', t: '¿Qué edad tienes?', nota: 'Algunos ingredientes dependen de la edad.', ops: [['-14', 'Menos de 14'], ['14-17', '14 a 17'], ['18-24', '18 a 24'], ['25-39', '25 a 39'], ['40-49', '40 a 49'], ['50+', '50 o más']] },
-  { id: 'embarazo', t: '¿Estás embarazada o en periodo de lactancia?', nota: 'Hay ingredientes que no se recomiendan en el embarazo ni en la lactancia.', ops: [['si', 'Sí'], ['no', 'No, o no aplica']] },
+  { id: 'sexo', t: '¿Eres mujer u hombre?', nota: 'El análisis de la foto no lo distingue, y cambia algunos productos (por ejemplo, el afeitado).', ops: [['mujer', 'Mujer'], ['hombre', 'Hombre'], ['nd', 'Prefiero no decirlo']] },
+  { id: 'embarazo', si: (s) => s.sexo !== 'hombre' && s.edad !== '50+', t: '¿Estás embarazada o en periodo de lactancia?', nota: 'Hay ingredientes que no se recomiendan en el embarazo ni en la lactancia.', ops: [['si', 'Sí'], ['no', 'No, o no aplica']] },
   { id: 'receta', t: '¿Sigues algún tratamiento para la piel indicado por un médico?', nota: 'Si es así, no añadiremos activos que interfieran con él.', ops: [['no', 'No'], ['si', 'Sí']] },
   { id: 'reactiva', t: '¿Tu piel reacciona cuando pruebas un producto nuevo?', nota: 'Picor, rojez o escozor. Así sabemos si empezar por lo más suave.', ops: [['nunca', 'Casi nunca'], ['a_veces', 'A veces'], ['siempre', 'Casi siempre']] },
 ]
@@ -27,7 +28,12 @@ const MEJORAR: [string, string][] = [
   ['firmeza', 'Firmeza'], ['textura', 'Textura'], ['rojez', 'Rojeces'], ['hidratacion', 'Sequedad'], ['ojeras', 'Ojeras'],
 ]
 const NOMBRE: Record<string, string> = Object.fromEntries(MEJORAR)
+// En el resultado, los mismos nombres que la web y el vídeo
+const NOMBRE_RESULTADO: Record<string, string> = { ...NOMBRE, tono: 'Luminosidad', hidratacion: 'Hidratación' }
 const PASOS_ANALISIS = ['Detectar el rostro', 'Medir poros, textura y brillo', 'Medir manchas, rojeces y ojeras', 'Medir arrugas y firmeza', 'Elegir ingredientes', 'Preparar tu rutina', 'Generar la simulación']
+// "Vitamina C pura" y "vitamina C estable" cuentan como el mismo ingrediente al buscarlo en la rutina
+const raiz = (t: string) => t.toLowerCase().replace(/\s+(pura|estable)$/, '')
+const lista = (l: string[]) => (l.length > 1 ? `${l.slice(0, -1).join(', ')} y ${l[l.length - 1]}` : l[0] ?? '')
 const eur = (n: number | null | undefined) => (n == null ? '' : n.toLocaleString('es-ES', { style: 'currency', currency: 'EUR' }))
 const INACTIVIDAD_MS = 150_000
 
@@ -53,10 +59,17 @@ export function Kiosko({ farmaciaId, farmacia, precio }: Props) {
     return () => { clearTimeout(t); window.removeEventListener('pointerdown', tocar) }
   }, [paso, reiniciar])
 
+  // Siguiente pregunta que aplica (el embarazo no se pregunta a hombres ni a partir de 50 años)
+  const siguiente = (desde: number, s: Partial<Seguridad>) => { let k = desde; while (k < PREGUNTAS.length && PREGUNTAS[k].si && !PREGUNTAS[k].si!(s)) k++; return k }
+  const anterior = (desde: number, s: Partial<Seguridad>) => { let k = desde; while (k >= 0 && PREGUNTAS[k].si && !PREGUNTAS[k].si!(s)) k--; return k }
+
   function responder(id: keyof Seguridad, v: string) {
-    setSeg({ ...seg, [id]: v })
+    const s = { ...seg, [id]: v }
+    if (PREGUNTAS[i + 1]?.si && !PREGUNTAS[i + 1].si!(s)) (s as Partial<Seguridad>).embarazo = 'no'
+    setSeg(s)
     if (id === 'edad' && v === '-14') return setPaso('menor')
-    if (i < PREGUNTAS.length - 1) setI(i + 1)
+    const k = siguiente(i + 1, s)
+    if (k < PREGUNTAS.length) setI(k)
     else setPaso('consentimiento')
   }
 
@@ -85,7 +98,7 @@ export function Kiosko({ farmaciaId, farmacia, precio }: Props) {
       </header>
       <main key={paso + i} className="flex-1 flex entrar">
         {paso === 'reclamo' && <Reclamo precio={precio} onEmpezar={() => setPaso('preguntas')} />}
-        {paso === 'preguntas' && <Pregunta q={PREGUNTAS[i]} n={i} valor={seg[PREGUNTAS[i].id]} onResp={(v) => responder(PREGUNTAS[i].id, v)} onAtras={() => (i ? setI(i - 1) : setPaso('reclamo'))} />}
+        {paso === 'preguntas' && <Pregunta q={PREGUNTAS[i]} n={i} valor={seg[PREGUNTAS[i].id]} onResp={(v) => responder(PREGUNTAS[i].id, v)} onAtras={() => { const k = anterior(i - 1, seg); return k >= 0 ? setI(k) : setPaso('reclamo') }} />}
         {paso === 'menor' && (
           <Bloque>
             <h2 className="titulo">Para menores de 14 años, mejor en persona</h2>
@@ -320,6 +333,7 @@ export function Analizando({ foto }: { foto: string | null }) {
 }
 
 export function Informe({ res, foto, farmacia, onFin }: { res: any; foto: string | null; farmacia: string; onFin: () => void }) {
+  // Resumen para leer en menos de un minuto en el iPad. El detalle completo va en el PDF que se envía por email.
   const R = res.rutinas
   const F = res.foto
   const [nivel, setNivel] = useState<'basica' | 'media' | 'completa'>('media')
@@ -327,11 +341,12 @@ export function Informe({ res, foto, farmacia, onFin }: { res: any; foto: string
   if (R?.sin_rutina) return <Bloque><h2 className="titulo max-w-2xl">{R.sin_rutina}</h2><button onClick={onFin} className="boton">Terminar</button></Bloque>
 
   const rut = R.rutinas[nivel]
-  const aspectos: [string, number][] = F ? Object.entries(F.puntuaciones as Record<string, number>).sort((a, b) => b[1] - a[1]) : []
-  const prioridades = aspectos.filter(([, v]) => v >= 40).slice(0, 3).map(([a]) => NOMBRE[a]?.toLowerCase()).filter(Boolean)
-  const marcas: string | undefined = F?.imagenes?.marcas?.find((u: string) => u !== F.imagenes.despues)
-  const ingredientes = (R.rutinas.completa.ingredientes ?? []).slice(0, 4)
+  const objetivos: any[] = res.lectura?.objetivos ?? []
   const productos = (rut.productos ?? []).filter((p: any) => p.producto)
+  const conProducto = (g: any) => productos.find((p: any) => p.activo && raiz(p.activo) === raiz(g.nombre))
+  // Los 3 ingredientes clave: primero los que ya van en la rutina de este nivel
+  const clave: any[] = [...(res.lectura?.ingredientes ?? [])].sort((a, b) => Number(!!conProducto(b)) - Number(!!conProducto(a))).slice(0, 3)
+  const marcas: string | undefined = F?.imagenes?.marcas?.find((u: string) => u !== F.imagenes.despues)
   const manana = productos.filter((p: any) => p.turno === 'AM' || p.turno === 'AMPM')
   const noche = productos.filter((p: any) => p.turno === 'PM' || p.turno === 'AMPM')
 
@@ -344,68 +359,67 @@ export function Informe({ res, foto, farmacia, onFin }: { res: any; foto: string
   }
 
   return (
-    <div className="w-full max-w-6xl mx-auto px-6 md:px-10 py-10 space-y-16">
-      <section className="grid md:grid-cols-[minmax(0,1fr)_minmax(0,1fr)] gap-10 items-start">
-        <div>
+    <div className="w-full max-w-6xl mx-auto px-6 md:px-10 py-8 space-y-12">
+      {/* 1. El resultado de un vistazo */}
+      <section className="grid md:grid-cols-[minmax(0,5fr)_minmax(0,7fr)] gap-8 md:gap-12 items-center">
+        <div className="max-w-md w-full mx-auto">
           {foto && F?.imagenes?.despues ? <AntesDespues antes={foto} despues={F.imagenes.despues} />
             : marcas ? <img src={marcas} alt="Zonas analizadas" className="w-full rounded-[var(--radius-card)] border border-[var(--k-line)]" />
             : foto ? <img src={foto} alt="Tu foto" className="w-full rounded-[var(--radius-card)] -scale-x-100" /> : null}
         </div>
         <div className="space-y-8">
-          <div className="space-y-3">
-            <h2 className="text-[clamp(2.5rem,4.5vw,3.5rem)] leading-[1.02]">Tu informe de piel</h2>
-            <p className="texto">{prioridades.length ? `Lo que más conviene trabajar: ${prioridades.join(', ')}.` : 'Tu rutina se ha calculado con tus respuestas.'}</p>
-          </div>
-          {F && (F.puntuacion_global != null || F.edad_piel != null) && (
-            <dl className="grid grid-cols-2 border-y border-[var(--k-line)] m-0">
-              {F.puntuacion_global != null && <Dato etiqueta="Puntuación de la piel" valor={`${F.puntuacion_global}`} unidad="/100" />}
-              {F.edad_piel != null && <Dato etiqueta="Edad aparente de la piel" valor={`${F.edad_piel}`} unidad="años" />}
-            </dl>
-          )}
-          {aspectos.length > 0 && (
-            <ul className="grid gap-3 list-none p-0 m-0">
-              {aspectos.map(([a, v]) => {
-                const n = notaPiel(v)
-                return (
-                  <li key={a} className="grid grid-cols-[8rem_1fr_2.5rem_5.5rem] items-center gap-4">
-                    <span>{NOMBRE[a] ?? a}</span>
-                    <span className="escala"><i /><b data-alto={aTrabajar(n) ? '' : undefined} style={{ width: `${Math.max(4, n)}%` }} /></span>
-                    <span className="num text-sm text-right">{n}</span>
-                    <span className={`text-sm text-right ${aTrabajar(n) ? 'text-[var(--k-text)] font-medium' : 'text-[var(--k-muted)]'}`}>{nivelPiel(n)}</span>
+          <p className="text-[var(--k-muted)]">Tu resultado</p>
+          {F?.puntuacion_global != null ? (
+            <div className="flex flex-wrap items-end gap-x-10 gap-y-4 -mt-4">
+              <p className="m-0 leading-none"><span className="cifra text-[clamp(5rem,10vw,7.5rem)] tracking-[-0.05em]">{Math.round(F.puntuacion_global)}</span><span className="text-2xl text-[var(--k-muted)]">/100</span></p>
+              {F.edad_piel != null && <p className="m-0 pb-3"><span className="block text-sm text-[var(--k-muted)]">Edad de tu piel</span><span className="cifra text-3xl">{Math.round(F.edad_piel)}</span> <span className="text-[var(--k-muted)]">años</span></p>}
+            </div>
+          ) : <h2 className="titulo">Tu rutina</h2>}
+          {objetivos.length > 0 && (
+            <div className="space-y-3">
+              <p className="text-xl font-medium">Lo primero que conviene trabajar</p>
+              <ul className="grid gap-2.5 list-none p-0 m-0">
+                {objetivos.map((o: any, k: number) => (
+                  <li key={o.aspecto} className="grid grid-cols-[1.5rem_8.5rem_1fr_2.5rem] items-center gap-3">
+                    <span className="cifra text-[var(--k-accent)]">{k + 1}</span>
+                    <span className="text-lg">{o.nombre}</span>
+                    {o.nota != null ? <span className="escala"><i /><b data-alto={aTrabajar(o.nota) ? '' : undefined} style={{ width: `${Math.max(4, o.nota)}%` }} /></span> : <span />}
+                    <span className="cifra text-lg text-right">{o.nota ?? ''}</span>
                   </li>
-                )
-              })}
-            </ul>
-          )}
-          {marcas && F?.imagenes?.despues && (
-            <figure className="flex items-center gap-4">
-              <img src={marcas} alt="Zonas detectadas" className="w-24 rounded-[var(--radius-input)] border border-[var(--k-line)]" />
-              <figcaption className="text-sm text-[var(--k-muted)]">Zonas detectadas por el análisis.</figcaption>
-            </figure>
+                ))}
+              </ul>
+            </div>
           )}
         </div>
       </section>
 
-      {ingredientes.length > 0 && (
-        <section className="space-y-6">
-          <h3 className="text-[2.25rem] leading-[1.05] tracking-[-0.03em]">Ingredientes recomendados</h3>
-          <ol className="grid md:grid-cols-2 gap-x-10 list-none p-0 m-0 border-t border-[var(--k-text)]">
-            {ingredientes.map((o: any, k: number) => (
-              <li key={k} className="grid grid-cols-[2.5rem_1fr] gap-3 py-5 border-b border-[var(--k-line)]">
-                <span className="cifra text-3xl leading-none text-[var(--k-accent)]">{k + 1}</span>
-                <span>
-                  <span className="block text-xl font-medium">{o.nombre}</span>
-                  <span className="block text-[var(--k-muted)] leading-relaxed">{o.por_que}</span>
-                </span>
-              </li>
-            ))}
+      {/* 2. Ingredientes clave, por qué y con qué producto */}
+      {clave.length > 0 && (
+        <section className="space-y-5">
+          <h3 className="text-[2rem] leading-[1.05] tracking-[-0.03em]">Tus ingredientes clave</h3>
+          <ol className="grid md:grid-cols-3 gap-4 list-none p-0 m-0">
+            {clave.map((g: any) => {
+              const pr = conProducto(g)
+              return (
+                <li key={g.nombre} className="rounded-[var(--radius-card)] border border-[var(--k-line)] bg-[var(--k-bg)] p-5 grid grid-rows-[auto_auto_1fr_auto] gap-2">
+                  <span className="inline-flex items-center gap-1.5 text-sm text-[var(--k-muted)]">{g.turno === 'PM' ? <Moon size={16} /> : <Sun size={16} />}{g.turno === 'PM' ? 'Noche' : 'Mañana'}</span>
+                  <span className="text-2xl font-medium tracking-[-0.02em]">{g.nombre}</span>
+                  <span className="text-[var(--k-muted)] leading-snug"><span className="text-[var(--k-accent)] font-medium">Para {lista(g.para.map((n: string) => n.toLowerCase()))}.</span> {g.frase ?? g.por_que}</span>
+                  <span className="mt-2 pt-3 border-t border-[var(--k-line)] flex items-baseline justify-between gap-3">
+                    {pr ? <><span className="leading-snug"><span className="block text-sm text-[var(--k-muted)]">{pr.marca}</span>{pr.producto}</span><span className="cifra text-lg whitespace-nowrap">{eur(pr.precio)}</span></>
+                      : <span className="text-sm text-[var(--k-muted)]">{g.ahora ? 'Pide en el mostrador un producto con este ingrediente.' : g.motivo ?? 'Entra más adelante.'}</span>}
+                  </span>
+                </li>
+              )
+            })}
           </ol>
         </section>
       )}
 
-      <section className="space-y-6">
+      {/* 3. La rutina completa, compacta */}
+      <section className="space-y-5">
         <div className="flex flex-wrap items-center gap-4">
-          <h3 className="text-[2.25rem] leading-[1.05] tracking-[-0.03em]">Tu rutina</h3>
+          <h3 className="text-[2rem] leading-[1.05] tracking-[-0.03em]">Tu rutina</h3>
           <div role="tablist" aria-label="Nivel de la rutina" className="md:ml-auto inline-flex rounded-[var(--radius-card)] border border-[var(--k-line)] bg-[var(--k-bg)] p-1">
             {(['basica', 'media', 'completa'] as const).map((k) => (
               <button key={k} role="tab" aria-selected={nivel === k} onClick={() => { setNivel(k); setQr('') }}
@@ -423,19 +437,54 @@ export function Informe({ res, foto, farmacia, onFin }: { res: any; foto: string
         ) : <p className="texto">Pide al farmacéutico que te enseñe los productos de tu rutina.</p>}
       </section>
 
-      <section className="rounded-[var(--radius-card)] bg-[var(--k-accent-soft)] p-6 md:p-10 grid md:grid-cols-[1fr_auto] gap-8 items-center">
-        <div className="space-y-3">
-          <h3 className="text-[1.75rem] leading-tight tracking-[-0.025em] flex items-center gap-3"><CalendarCheck size={26} className="text-[var(--k-accent)]" /> Llévatela y repite en 6 semanas</h3>
-          <p className="texto">Escanea el código con tu móvil para guardar la rutina en WhatsApp. En 6 semanas, repite el análisis y compara tu piel con la de hoy.</p>
-          <p className="text-[var(--k-text)]">Enseña esta pantalla en el mostrador para que te preparen los productos.</p>
+      {/* 4. Llevársela: informe completo por email y rutina en el móvil */}
+      <section className="grid md:grid-cols-2 gap-4">
+        <InformeEmail consejo={res.id} foto={foto} nivel={nivel} />
+        <div className="rounded-[var(--radius-card)] bg-[var(--k-accent-soft)] p-6 grid grid-cols-[1fr_auto] gap-6 items-center">
+          <div className="space-y-2">
+            <p className="text-xl font-medium flex items-center gap-2"><CalendarCheck size={22} className="text-[var(--k-accent)]" /> Llévatela en el móvil</p>
+            <p className="text-[var(--k-muted)] leading-relaxed">Guarda la rutina en WhatsApp y repite el análisis en 6 semanas. Enseña esta pantalla en el mostrador para que te preparen los productos.</p>
+          </div>
+          {qr ? <img src={qr} alt="Código QR con tu rutina" className="w-36 h-36 rounded-[var(--radius-input)] border border-[var(--k-line)]" /> : <button onClick={generarQr} className="boton-sec">Ver código</button>}
         </div>
-        {qr ? <img src={qr} alt="Código QR con tu rutina" className="w-44 h-44 rounded-[var(--radius-input)] border border-[var(--k-line)]" /> : <button onClick={generarQr} className="boton-sec">Ver mi código</button>}
       </section>
 
-      <div className="flex justify-center pb-4">
+      <div className="flex justify-center pb-2">
         <button onClick={onFin} className="boton-sec"><Trash size={20} /> Terminar y borrar mis datos</button>
       </div>
-      <p className="text-sm text-[var(--k-muted)] text-center pb-6">Análisis cosmético orientativo. La simulación está generada con IA y no es una promesa de resultado.</p>
+      <p className="text-sm text-[var(--k-muted)] text-center pb-6">Análisis cosmético orientativo, no un diagnóstico médico. La simulación está generada con IA y no es una promesa de resultado.</p>
+    </div>
+  )
+}
+
+function InformeEmail({ consejo, foto, nivel }: { consejo: string; foto: string | null; nivel: string }) {
+  const [email, setEmail] = useState('')
+  const [acepta, setAcepta] = useState(false)
+  const [estado, setEstado] = useState<'' | 'enviando' | 'ok' | string>('')
+  const valido = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(email.trim())
+  async function enviar() {
+    setEstado('enviando')
+    const r = await enviarInformeEmail(consejo, email.trim(), foto, nivel)
+    setEstado('error' in r ? (r.error ?? 'error') : 'ok')
+  }
+  return (
+    <div className="rounded-[var(--radius-card)] border border-[var(--k-line)] bg-[var(--k-bg)] p-6 space-y-3">
+      <p className="text-xl font-medium flex items-center gap-2"><EnvelopeSimple size={22} className="text-[var(--k-accent)]" /> Informe completo por email</p>
+      {estado === 'ok' ? <p className="text-[var(--k-muted)] leading-relaxed">Enviado a {email.trim()}. Revisa también la carpeta de spam.</p> : (
+        <>
+          <p className="text-[var(--k-muted)] leading-relaxed">Un PDF con tus fotos por zona, cada medida explicada, los ingredientes y la rutina paso a paso.</p>
+          <div className="flex gap-2">
+            <input type="email" inputMode="email" autoComplete="off" value={email} onChange={(e) => setEmail(e.target.value)} placeholder="tu@email.com"
+              className="flex-1 min-w-0 h-12 px-4 rounded-[var(--radius-input)] border border-[var(--k-line)] bg-[var(--k-bg)] text-lg" />
+            <button onClick={enviar} disabled={!valido || !acepta || estado === 'enviando'} className="boton !h-12">{estado === 'enviando' ? 'Enviando…' : 'Enviar'}</button>
+          </div>
+          <label className="flex items-start gap-2 text-sm text-[var(--k-muted)]">
+            <input type="checkbox" checked={acepta} onChange={(e) => setAcepta(e.target.checked)} className="mt-0.5 w-5 h-5 accent-[var(--k-accent)]" />
+            Acepto recibir mi informe en este email. Solo se usa para enviarlo: no se guarda.
+          </label>
+          {estado && estado !== 'enviando' && <p className="text-sm text-[var(--k-warn)]">{estado}</p>}
+        </>
+      )}
     </div>
   )
 }
@@ -471,6 +520,24 @@ function Dato({ etiqueta, valor, unidad }: { etiqueta: string; valor: string; un
 
 function AntesDespues({ antes, despues }: { antes: string; despues: string }) {
   const [x, setX] = useState(50)
+  const [tocado, setTocado] = useState(false)
+  // Al aparecer, el deslizador se mueve solo una vez para que se vea que se puede arrastrar
+  useEffect(() => {
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return
+    const pasos = [50, 78, 22, 50]
+    const ini = performance.now() + 700, dur = 2200
+    let id = 0
+    const f = (t: number) => {
+      const k = Math.min(1, Math.max(0, (t - ini) / dur)) * (pasos.length - 1)
+      const i = Math.min(pasos.length - 2, Math.floor(k)), u = k - i, e = u * u * (3 - 2 * u)
+      setX(pasos[i] + (pasos[i + 1] - pasos[i]) * e)
+      if (k < pasos.length - 1) id = requestAnimationFrame(f)
+    }
+    id = requestAnimationFrame(f)
+    const parar = () => cancelAnimationFrame(id)
+    window.addEventListener('pointerdown', parar, { once: true })
+    return () => { parar(); window.removeEventListener('pointerdown', parar) }
+  }, [])
   const mover = (e: React.PointerEvent<HTMLDivElement>) => {
     const r = e.currentTarget.getBoundingClientRect()
     setX(Math.max(0, Math.min(100, ((e.clientX - r.left) / r.width) * 100)))
@@ -478,15 +545,16 @@ function AntesDespues({ antes, despues }: { antes: string; despues: string }) {
   return (
     <figure className="space-y-3">
       <div className="relative w-full aspect-[3/4] rounded-[var(--radius-card)] overflow-hidden bg-[var(--k-soft)] touch-none cursor-ew-resize"
-        onPointerDown={(e) => { e.currentTarget.setPointerCapture(e.pointerId); mover(e) }}
+        onPointerDown={(e) => { e.currentTarget.setPointerCapture(e.pointerId); setTocado(true); mover(e) }}
         onPointerMove={(e) => { if (e.buttons) mover(e) }}>
-        <img src={despues} alt="Simulación con la rutina" className="absolute inset-0 w-full h-full object-cover" />
+        {/* Las dos en espejo, como la ve la clienta en la cámara; si solo se gira una, no coinciden */}
+        <img src={despues} alt="Simulación con la rutina" className="absolute inset-0 w-full h-full object-cover -scale-x-100" />
         <img src={antes} alt="Hoy" className="absolute inset-0 w-full h-full object-cover -scale-x-100" style={{ clipPath: `inset(0 ${100 - x}% 0 0)` }} />
         <div className="absolute top-0 bottom-0 w-px bg-sobre-marca" style={{ left: `${x}%` }}>
           <span className="absolute top-1/2 -translate-y-1/2 -translate-x-1/2 w-11 h-11 rounded-full bg-papel text-[var(--k-text)] grid place-items-center shadow-pomo"><ArrowsLeftRight size={20} /></span>
         </div>
       </div>
-      <figcaption className="flex justify-between text-sm text-[var(--k-muted)]"><span>Hoy</span><span>Simulación con tu rutina (IA)</span></figcaption>
+      <figcaption className="flex justify-between text-sm text-[var(--k-muted)]"><span>Hoy</span><span className={`transition-opacity ${tocado ? 'opacity-0' : ''}`}>Desliza para comparar</span><span>Con tu rutina (simulación IA)</span></figcaption>
     </figure>
   )
 }

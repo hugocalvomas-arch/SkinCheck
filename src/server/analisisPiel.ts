@@ -43,8 +43,21 @@ const SIMULACION: Record<string, string> = {
   textura: 'texture', rojez: 'redness', ojeras: 'dark_circle',
 }
 
+/**
+ * Objetivos de la clienta a partir de la foto, del más marcado al menos.
+ * Entran todos los que pasan su umbral y, si no llegan a 3, se completa con los siguientes más marcados
+ * que no estén en "Bien" (intensidad 25 o más, es decir, nota de Perfect Corp de 75 o menos).
+ * Así una piel joven sin nada marcado también recibe una rutina orientada a lo suyo.
+ */
+export function aspectosObjetivo(p: Puntuaciones, umbrales = UMBRALES_POR_DEFECTO, minimo = 3) {
+  const orden = umbrales.filter((u) => p[u.aspecto] != null).sort((a, b) => (p[b.aspecto] ?? 0) - (p[a.aspecto] ?? 0))
+  const fijos = orden.filter((u) => (p[u.aspecto] ?? 0) >= u.umbral)
+  const extra = orden.filter((u) => !fijos.includes(u) && (p[u.aspecto] ?? 0) >= 25).slice(0, Math.max(0, minimo - fijos.length))
+  return orden.filter((u) => fijos.includes(u) || extra.includes(u))
+}
+
 export function problemasDesdeFoto(p: Puntuaciones, umbrales = UMBRALES_POR_DEFECTO) {
-  return [...new Set(umbrales.filter((u) => (p[u.aspecto] ?? 0) >= u.umbral).map((u) => u.problema))]
+  return [...new Set(aspectosObjetivo(p, umbrales).map((u) => u.problema))]
 }
 
 const BASE = 'https://yce-api-01.makeupar.com'
