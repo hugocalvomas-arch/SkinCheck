@@ -48,9 +48,9 @@ export async function GET(req: NextRequest) {
   const { esAdmin } = await usuarioActual()
   if (!esAdmin) return new NextResponse('Solo administradores.', { status: 403 })
   if (req.nextUrl.searchParams.get('confirmar') !== '1') {
-    return pagina(`<h1 style="font-size:1.4rem">Analizar la cara de ejemplo</h1><img src="/ejemplos/cara-ia-analisis.jpg" alt="" style="width:9rem;border-radius:8px"><p>Pasa esta foto (generada con IA) una vez por Perfect Corp. Gasta unas 18 unidades y tarda hasta un minuto. Al terminar se descarga un .zip con las imágenes.</p><form><input type="hidden" name="confirmar" value="1"><button style="font:inherit;padding:.7rem 1.2rem;background:#0b6e5b;color:#fff;border:0;border-radius:8px">Analizar y descargar</button></form>`)
+    return pagina(`<h1 style="font-size:1.4rem">Analizar la cara de ejemplo</h1><img src="/ejemplos/cara-ia-55.jpg" alt="" style="width:9rem;border-radius:8px"><p>Pasa esta foto (generada con IA) una vez por Perfect Corp. Gasta unas 18 unidades y tarda hasta un minuto. Al terminar se descarga un .zip con las imágenes.</p><form><input type="hidden" name="confirmar" value="1"><button style="font:inherit;padding:.7rem 1.2rem;background:#0b6e5b;color:#fff;border:0;border-radius:8px">Analizar y descargar</button></form>`)
   }
-  const foto = await fetch(new URL('/ejemplos/cara-ia-analisis.jpg', req.url))
+  const foto = await fetch(new URL('/ejemplos/cara-ia-55.jpg', req.url))
   if (!foto.ok) return new NextResponse('No encuentro la foto de ejemplo.', { status: 500 })
   const r = await analizarFoto(Buffer.from(await foto.arrayBuffer()).toString('base64'))
   if ('error' in r) return pagina(`<p>Error: ${r.error}</p>`)
