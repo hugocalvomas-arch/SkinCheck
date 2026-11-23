@@ -44,7 +44,7 @@ function resumen(out: any) {
     escalado: out.escalado,
     avisos: out.avisos,
     queda_fuera: out.queda_fuera,
-    ingredientes: (out.opciones ?? []).map((o: any) => ({ papel: o.papel, nombre: o.nombre, turno: o.turno, objetivos: o.objetivos, por_que: o.por_que, limite: o.limite, motivo: o.motivo })),
+    ingredientes: (out.opciones ?? []).map((o: any) => ({ papel: o.papel, nombre: o.nombre, ficha: o.ficha ?? null, turno: o.turno, objetivos: o.objetivos, por_que: o.por_que, limite: o.limite, motivo: o.motivo })),
     prioridad: out.prioridad ?? null,
   }
 }

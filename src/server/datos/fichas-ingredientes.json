@@ -1,0 +1,3060 @@
+{
+"acetil-glucosamina": {
+"nombre": "Acetil glucosamina",
+"inci": "Acetyl Glucosamine",
+"frase": "La acetil glucosamina es un azúcar que la piel usa para fabricar ácido hialurónico. Se pone en cremas para igualar el tono y apagar manchas, casi siempre con niacinamida.",
+"usos": [
+{
+"t": "Manchas y tono desigual",
+"nivel": "Evidencia media"
+},
+{
+"t": "Piel seca y descamación",
+"nivel": "Evidencia media"
+}
+],
+"resumen": {
+"Qué es": "Azúcar aminado",
+"Dosis estudiada": "1–2%",
+"Cuándo usar": "Mañana y noche · resultados medidos a las 8 semanas",
+"Principal precaución": "Embarazo y lactancia: consúltalo antes",
+"Límite legal UE": "Sin límite legal en la UE"
+},
+"para_mi": {
+"v": "Sí, si tienes manchas del sol o tono desigual",
+"s": "Mejor en una fórmula con niacinamida. En melasma, la evidencia es escasa."
+}
+},
+"acido-azelaico": {
+"nombre": "Ácido azelaico",
+"inci": "Azelaic Acid",
+"frase": "El ácido azelaico se usa en cremas para granitos, rojeces y manchas: calma la piel y frena el pigmento.",
+"usos": [
+{
+"t": "Granitos e imperfecciones",
+"nivel": "En fórmulas combinadas"
+},
+{
+"t": "Rojeces y piel reactiva",
+"nivel": "Evidencia media"
+},
+{
+"t": "Manchas y tono desigual",
+"nivel": "En fórmulas combinadas"
+}
+],
+"resumen": {
+"Qué es": "Ácido dicarboxílico",
+"Dosis estudiada": "5–10% dosis en cosmética probada frente a la misma crema sin el activo",
+"Cuándo usar": "Día o noche · cambios medidos en 4–8 semanas",
+"Límite legal UE": "Sin límite legal UE"
+},
+"para_mi": {
+"v": "Sí, si tienes granitos, rojeces o marcas oscuras",
+"s": "En rosácea o acné, los buenos ensayos son con el medicamento."
+}
+},
+"acido-dioico": {
+"nombre": "Ácido dioico",
+"inci": "Octadecenedioic Acid",
+"frase": "El ácido dioico es un ácido de origen graso que se usa para aclarar manchas y melasma.",
+"usos": [
+{
+"t": "Melasma y manchas de la cara",
+"nivel": "Evidencia media"
+},
+{
+"t": "Tono más claro y uniforme",
+"nivel": "Evidencia media"
+},
+{
+"t": "Marcas oscuras de granos",
+"nivel": "En estudio"
+},
+{
+"t": "Granos y grasa",
+"nivel": "En estudio"
+}
+],
+"resumen": {
+"Qué es": "Ácido con dos grupos ácidos",
+"Dosis estudiada": "1%",
+"Cuándo usar": "Mañana y noche · primeros cambios en 4–8 semanas",
+"Principal precaución": "Embarazo y lactancia: consúltalo antes",
+"Límite legal UE": "Sin límite legal en la UE"
+},
+"para_mi": {
+"v": "Sí, si tienes melasma o manchas en la cara",
+"s": "Es una opción cosmética con pocos estudios."
+}
+},
+"acido-elagico": {
+"nombre": "Ácido elágico",
+"inci": "Ellagic Acid",
+"frase": "El ácido elágico es un antioxidante de origen vegetal que se usa en cremas para manchas y tono desigual.",
+"usos": [
+{
+"t": "Manchas y tono desigual",
+"nivel": "Evidencia media"
+},
+{
+"t": "Melasma",
+"nivel": "En estudio"
+},
+{
+"t": "Antioxidante frente al sol",
+"nivel": "En estudio"
+}
+],
+"resumen": {
+"Qué es": "Polifenol vegetal",
+"Dosis estudiada": "0,5–1%",
+"Cuándo usar": "Dos veces al día en los estudios · cambios medidos a las 12 semanas",
+"Límite legal UE": "Sin límite legal en la UE"
+},
+"para_mi": {
+"v": "Sí, si tienes manchas del sol o tono desigual",
+"s": "Los mejores datos son de la marca, con fórmulas de varios activos."
+}
+},
+"acido-ferulico": {
+"nombre": "Ácido ferúlico",
+"inci": "Ferulic Acid",
+"frase": "El ácido ferúlico es una sustancia de las plantas que frena parte del daño del sol dentro de tu piel.",
+"usos": [
+{
+"t": "Más protección frente al sol",
+"nivel": "Evidencia alta"
+},
+{
+"t": "Manchas y tono apagado",
+"nivel": "Evidencia media"
+},
+{
+"t": "Rojez y barrera en la rosácea",
+"nivel": "Evidencia media"
+},
+{
+"t": "Arrugas y firmeza",
+"nivel": "En fórmulas combinadas"
+}
+],
+"resumen": {
+"Qué es": "Antioxidante vegetal",
+"Dosis estudiada": "0,5–3%",
+"Cuándo usar": "De día, debajo del protector",
+"Límite legal UE": "Sin límite legal UE"
+},
+"para_mi": {
+"v": "Sí, si quieres un antioxidante de día además del protector",
+"s": "Casi siempre va dentro de un sérum de vitamina C."
+}
+},
+"acido-fitico": {
+"nombre": "Ácido fítico",
+"inci": "Phytic Acid",
+"frase": "El ácido fítico es un ácido de las semillas que se usa en sérums y peelings para manchas y luminosidad.",
+"usos": [
+{
+"t": "Manchas del sol, con vitamina C",
+"nivel": "Evidencia media"
+},
+{
+"t": "Melasma y marcas de granos, en peeling",
+"nivel": "En estudio"
+},
+{
+"t": "Tono apagado y textura",
+"nivel": "En estudio"
+}
+],
+"resumen": {
+"Qué es": "Quelante de origen vegetal",
+"Dosis estudiada": "0,2–2%",
+"Cuándo usar": "Dos veces al día en los estudios con sérum · cambios medidos en 4–12 semanas",
+"Principal precaución": "Embarazo y lactancia: consúltalo antes",
+"Límite legal UE": "Sin límite legal en la UE"
+},
+"para_mi": {
+"v": "Sí, si tienes manchas del sol o tono apagado",
+"s": "Va de acompañante, en sérums con vitamina C o con ácidos."
+}
+},
+"acido-glicolico": {
+"nombre": "Ácido glicólico",
+"inci": "Glycolic Acid",
+"frase": "El ácido glicólico es un exfoliante que afloja las células muertas de la superficie para que se suelten antes.",
+"usos": [
+{
+"t": "Textura áspera por el sol",
+"nivel": "Evidencia media"
+},
+{
+"t": "Manchas y tono desigual",
+"nivel": "Evidencia media"
+},
+{
+"t": "Granos leves",
+"nivel": "Evidencia media"
+}
+],
+"resumen": {
+"Dosis estudiada": "5–10%",
+"Cuándo usar": "Día o noche, con protector solar · cambios medidos en 6–22 semanas",
+"Límite legal UE": "Sin límite legal UE"
+},
+"para_mi": {
+"v": "Sí, si tienes la piel áspera por el sol o granos leves",
+"s": "Los estudios sobre el sol se hicieron sobre todo en pieles claras."
+}
+},
+"acido-hialuronico": {
+"nombre": "Ácido hialurónico",
+"inci": "Sodium Hyaluronate · Hyaluronic Acid",
+"frase": "El ácido hialurónico hidrata porque atrae y retiene agua en la capa de fuera de la piel.",
+"usos": [
+{
+"t": "Hidratación de la capa externa",
+"nivel": "Evidencia media"
+},
+{
+"t": "Líneas finas y elasticidad",
+"nivel": "Evidencia media"
+},
+{
+"t": "Después de un tratamiento estético",
+"nivel": "Evidencia media"
+}
+],
+"resumen": {
+"Dosis estudiada": "0,1–1,5%",
+"Cuándo usar": "Día y noche · cambios medidos en 4–8 semanas",
+"Límite legal UE": "Sin límite legal UE"
+},
+"para_mi": {
+"v": "Sí, casi cualquier piel",
+"s": "Sobre todo si notas tirantez o sequedad."
+}
+},
+"acido-hipocloroso": {
+"nombre": "Ácido hipocloroso",
+"inci": "Hypochlorous Acid",
+"frase": "El ácido hipocloroso es un antimicrobiano suave, de sprays y tónicos, para granos y piel irritada.",
+"usos": [
+{
+"t": "Granos",
+"nivel": "Evidencia media"
+},
+{
+"t": "Piel irritada y picor",
+"nivel": "En estudio"
+}
+],
+"resumen": {
+"Qué es": "Antimicrobiano",
+"Dosis estudiada": "0,01–0,02% (100–200 ppm)",
+"Cuándo usar": "Tras limpiar la cara · guárdalo bien cerrado",
+"Límite legal UE": "Sin límite legal anotado en la UE"
+},
+"para_mi": {
+"v": "Si tienes granos inflamados o la piel se te irrita",
+"s": "Los datos en personas son escasos."
+}
+},
+"acido-kojico": {
+"nombre": "Ácido kójico",
+"inci": "Kojic Acid",
+"frase": "El ácido kójico se usa para las manchas: frena el pigmento de la piel y deja el tono algo más parejo.",
+"usos": [
+{
+"t": "Melasma",
+"nivel": "Evidencia media"
+},
+{
+"t": "Tono irregular, junto a otros activos",
+"nivel": "En fórmulas combinadas"
+},
+{
+"t": "Manchas del sol (léntigos)",
+"nivel": "En fórmulas combinadas"
+}
+],
+"resumen": {
+"Dosis estudiada": "0,75–1%",
+"Cuándo usar": "Solo cara y manos · se midió a las 12 semanas",
+"Principal precaución": "Protector solar cada día",
+"Límite legal UE": "Máximo 1%"
+},
+"para_mi": {
+"v": "Sí, si ya sigues un plan de manchas con protector diario",
+"s": "Con melasma, es apoyo cosmético, no tratamiento."
+}
+},
+"acido-lactico": {
+"nombre": "Ácido láctico",
+"inci": "Lactic Acid",
+"frase": "El ácido láctico es un exfoliante que suelta las células muertas de la superficie y deja la piel menos áspera.",
+"usos": [
+{
+"t": "Textura y daño solar",
+"nivel": "Evidencia media"
+},
+{
+"t": "Manchas y tono desigual",
+"nivel": "Evidencia media"
+},
+{
+"t": "Piel áspera del cuerpo y piel de fresa",
+"nivel": "Evidencia media"
+}
+],
+"resumen": {
+"Dosis estudiada": "5–10%",
+"Cuándo usar": "Día o noche, con protector solar · cambios medidos en 4–22 semanas",
+"Límite legal UE": "Sin límite legal UE"
+},
+"para_mi": {
+"v": "Sí, si tienes la piel áspera por el sol o piel de fresa",
+"s": "El ensayo de daño solar se hizo en mujeres de 40 a 70 años."
+}
+},
+"acido-lactobionico": {
+"nombre": "Ácido lactobiónico",
+"inci": "Lactobionic Acid",
+"frase": "El ácido lactobiónico es un ácido suave que atrae agua y en un estudio irritó menos que el glicólico.",
+"usos": [
+{
+"t": "Más suave que el glicólico",
+"nivel": "Evidencia media"
+},
+{
+"t": "Hidratación",
+"nivel": "Sin diferencia frente a placebo"
+},
+{
+"t": "Firmeza y signos de edad",
+"nivel": "Evidencia media"
+},
+{
+"t": "Barrera de la piel",
+"nivel": "Datos de laboratorio"
+}
+],
+"resumen": {
+"Qué es": "PHA (ácido biónico)",
+"Dosis estudiada": "5–10%",
+"Cuándo usar": "Mañana y noche en los estudios · cambios medidos en 2–12 semanas",
+"Límite legal UE": "Sin límite legal UE"
+},
+"para_mi": {
+"v": "Sí, si tienes la piel seca o sensible",
+"s": "Se toleró mejor que el glicólico."
+}
+},
+"acido-mandelico": {
+"nombre": "Ácido mandélico",
+"inci": "Mandelic Acid",
+"frase": "El ácido mandélico es un exfoliante que en un estudio dio menos rojez que el glicólico, otro ácido de su familia.",
+"usos": [
+{
+"t": "Hidratación y suavidad",
+"nivel": "Evidencia media"
+},
+{
+"t": "Firmeza y elasticidad",
+"nivel": "Evidencia media"
+},
+{
+"t": "Granos",
+"nivel": "Evidencia media"
+},
+{
+"t": "Manchas",
+"nivel": "Estudiado como medicamento o en consulta"
+}
+],
+"resumen": {
+"Dosis estudiada": "5–10%",
+"Cuándo usar": "Día o noche, con protector solar · cambios medidos en 4–8 semanas",
+"Límite legal UE": "Sin límite legal UE"
+},
+"para_mi": {
+"v": "Sí, si tienes la piel áspera o deshidratada, también sensible",
+"s": "En granos y manchas, los datos son sobre todo de peelings."
+}
+},
+"acido-poliglutamico": {
+"nombre": "Ácido poliglutámico",
+"inci": "Polyglutamic Acid · Sodium Polyglutamate",
+"frase": "El ácido poliglutámico es un hidratante que atrae agua y deja una película fina sobre la piel.",
+"usos": [
+{
+"t": "Hidratación de la superficie",
+"nivel": "Evidencia media"
+},
+{
+"t": "Barrera de la piel",
+"nivel": "Datos de laboratorio"
+},
+{
+"t": "Elasticidad",
+"nivel": "Evidencia media"
+}
+],
+"resumen": {
+"Dosis estudiada": "0,1–0,4%",
+"Cuándo usar": "Día y noche",
+"Principal precaución": "Alergia al natto: consúltalo antes",
+"Límite legal UE": "Sin límite legal UE"
+},
+"para_mi": {
+"v": "Sí, si notas tirantez y quieres un hidratante ligero",
+"s": "Hay pocos estudios en personas."
+}
+},
+"acido-salicilico": {
+"nombre": "Ácido salicílico",
+"inci": "Salicylic Acid",
+"frase": "El ácido salicílico ayuda a soltar las células muertas, también dentro del poro, donde nacen los puntos negros.",
+"usos": [
+{
+"t": "Puntos negros y granos leves",
+"nivel": "Evidencia media"
+},
+{
+"t": "Menos grasa",
+"nivel": "Estudiado como medicamento o en consulta"
+}
+],
+"resumen": {
+"Dosis estudiada": "0,5–2%",
+"Cuándo usar": "Día o noche · cambios medidos en 8–12 semanas",
+"Principal precaución": "No en productos para menores de 3 años",
+"Límite legal UE": "Máximo en cremas y limpiadores de cara: 2%"
+},
+"para_mi": {
+"v": "Sí, si tienes puntos negros o granos leves a moderados",
+"s": ""
+}
+},
+"acido-shikimico": {
+"nombre": "Ácido shikímico",
+"inci": "Shikimic Acid",
+"frase": "El ácido shikímico es un ácido del anís estrellado que aparece en sérums y peelings para piel grasa y con poros.",
+"usos": [
+{
+"t": "Grasa y poros",
+"nivel": "En estudio"
+},
+{
+"t": "Granos",
+"nivel": "En estudio"
+},
+{
+"t": "Textura",
+"nivel": "En estudio"
+}
+],
+"resumen": {
+"Qué es": "Ácido de origen vegetal",
+"Dosis estudiada": "0,5–1,5%",
+"Cuándo usar": "Dos veces al día en el estudio de la marca · cambios medidos en 1–21 días",
+"Límite legal UE": "Sin límite legal en la UE"
+},
+"para_mi": {
+"v": "Sí, si tienes la piel grasa o mixta, con poros o textura irregular",
+"s": "Los datos son de mezclas con otros activos."
+}
+},
+"acido-succinico": {
+"nombre": "Ácido succínico",
+"inci": "Succinic Acid",
+"frase": "El ácido succínico es un ácido que se usa en tratamientos para granos y piel grasa.",
+"usos": [
+{
+"t": "Granos",
+"nivel": "En estudio"
+},
+{
+"t": "Grasa y brillos",
+"nivel": "En estudio"
+}
+],
+"resumen": {
+"Qué es": "Ácido orgánico",
+"Dosis estudiada": "2%",
+"Cuándo usar": "Mañana y noche en los estudios · cambios medidos en 4–8 semanas",
+"Límite legal UE": "Sin límite legal en la UE"
+},
+"para_mi": {
+"v": "Sí, si tienes la piel grasa con granos leves o moderados",
+"s": "Sirve para cara, espalda o pecho. La evidencia es escasa."
+}
+},
+"acido-tranexamico": {
+"nombre": "Ácido tranexámico",
+"inci": "Tranexamic Acid",
+"frase": "El ácido tranexámico va en cremas para las manchas: frena un aviso del sol que empuja a la piel a fabricar pigmento.",
+"usos": [
+{
+"t": "Melasma y manchas",
+"nivel": "Sin diferencia frente a placebo"
+},
+{
+"t": "Marcas oscuras después de un grano",
+"nivel": "Evidencia media"
+},
+{
+"t": "Rojeces y piel reactiva",
+"nivel": "Evidencia media"
+}
+],
+"resumen": {
+"Qué es": "Análogo de la lisina",
+"Dosis estudiada": "2–5% dosis cosmética de los ensayos en la cara",
+"Cuándo usar": "Día y noche · se midió a las 8 y 12 semanas",
+"Límite legal UE": "Sin límite legal UE"
+},
+"para_mi": {
+"v": "Sí, si ya sigues un plan de manchas con protector diario",
+"s": "En crema, el único ensayo frente a placebo no vio diferencia."
+}
+},
+"adapinoid": {
+"nombre": "Adapinoid",
+"inci": "Oleyl Adapalenate",
+"frase": "Adapinoid es un pariente del adapaleno pensado para cremas, que se usa para las arrugas y la rojez.",
+"usos": [
+{
+"t": "Arrugas",
+"nivel": "Evidencia media"
+},
+{
+"t": "Rojez de la cara",
+"nivel": "Evidencia media"
+},
+{
+"t": "Manchas y tono",
+"nivel": "En estudio"
+}
+],
+"resumen": {
+"Qué es": "Éster del adapaleno",
+"Dosis estudiada": "0,5%",
+"Cuándo usar": "Por la noche · primeros cambios en 8–12 semanas",
+"Principal precaución": "Embarazo y lactancia: consúltalo antes",
+"Límite legal UE": "Sin límite legal en la UE"
+},
+"para_mi": {
+"v": "Sí, si tienes arrugas finas y algo de rojez",
+"s": "Sobre todo si el retinol te pica. Para tratar el acné, mejor el adapaleno con receta."
+}
+},
+"adenosina": {
+"nombre": "Adenosina",
+"inci": "Adenosine",
+"frase": "La adenosina es un antiarrugas suave y muy bien tolerado, clásico de la cosmética coreana.",
+"usos": [
+{
+"t": "Arrugas del contorno de ojos y entrecejo",
+"nivel": "Evidencia media"
+},
+{
+"t": "Firmeza y densidad de la piel",
+"nivel": "En estudio"
+},
+{
+"t": "Pelo más grueso, en loción",
+"nivel": "Evidencia media"
+}
+],
+"resumen": {
+"Qué es": "Nucleósido",
+"Dosis estudiada": "0,04–1%",
+"Cuándo usar": "Dos veces al día en los estudios · cambios medidos en 3–8 semanas",
+"Límite legal UE": "Sin límite legal en la UE"
+},
+"para_mi": {
+"v": "Sí, si tienes arrugas finas en el contorno de ojos o el entrecejo",
+"s": "También para el pelo que se afina, en loción."
+}
+},
+"alantoina": {
+"nombre": "Alantoína",
+"inci": "Allantoin",
+"frase": "La alantoína va en muchas cremas porque cuida y protege la capa de fuera de la piel.",
+"usos": [
+{
+"t": "Calmar la piel irritada",
+"nivel": "Sin diferencia frente a placebo"
+},
+{
+"t": "Hidratación",
+"nivel": "En fórmulas combinadas"
+}
+],
+"resumen": {
+"Qué es": "Calmante y protector",
+"Dosis estudiada": "0,5–2% dosis habitual",
+"Cuándo usar": "Mañana y noche · estudios de 3 días a 6 semanas",
+"Principal precaución": "Embarazo y lactancia: consúltalo antes",
+"Límite legal UE": "Sin límite legal en la UE"
+},
+"para_mi": {
+"v": "Sí, si buscas una crema que se tolere bien",
+"s": "Quizá aporte algo de calma. No esperes grandes cambios: los estudios son pocos."
+}
+},
+"alfa-arbutina": {
+"nombre": "Alfa arbutina",
+"inci": "Alpha-Arbutin",
+"frase": "La alfa arbutina se usa para las manchas: frena la fabricación de pigmento en la piel.",
+"usos": [
+{
+"t": "Manchas de sol y tono irregular",
+"nivel": "Evidencia media"
+},
+{
+"t": "Melasma",
+"nivel": "Estudiado como medicamento o en consulta"
+}
+],
+"resumen": {
+"Qué es": "Glucósido de hidroquinona",
+"Dosis estudiada": "2% dosis de los estudios en personas dentro de la ley",
+"Cuándo usar": "Día y noche · se midió a las 8 y 12 semanas",
+"Principal precaución": "Embarazo y lactancia: consúltalo antes",
+"Límite legal UE": "Máximo 2%"
+},
+"para_mi": {
+"v": "Sí, si ya sigues un plan de manchas con protector diario",
+"s": "Sola tiene ensayos pequeños. Con melasma, es apoyo, no tratamiento."
+}
+},
+"aloe-vera": {
+"nombre": "Aloe vera",
+"inci": "Aloe Barbadensis Leaf Juice",
+"frase": "El gel de aloe vera hidrata y puede aliviar algo la rojez del sol.",
+"usos": [
+{
+"t": "Hidratación",
+"nivel": "Evidencia media"
+},
+{
+"t": "Rojez tras el sol",
+"nivel": "Evidencia media"
+},
+{
+"t": "Granos, junto a un tratamiento",
+"nivel": "Evidencia media"
+}
+],
+"resumen": {
+"Dosis estudiada": "30–97,5%",
+"Cuándo usar": "Mañana y noche · primeros cambios desde la 1.ª aplicación",
+"Principal precaución": "Embarazo y lactancia: consúltalo antes",
+"Límite legal UE": "Sin límite legal en la UE"
+},
+"para_mi": {
+"v": "Sí, si tienes la piel seca o buscas algo suave",
+"s": "No trata quemaduras, psoriasis ni eccema."
+}
+},
+"arbol-del-te": {
+"nombre": "Aceite de árbol del té",
+"inci": "Melaleuca Alternifolia Leaf Oil",
+"frase": "El aceite de árbol del té es un aceite esencial que ayudó con granos leves en ensayos con gel al 5%, pero puede dar alergia.",
+"usos": [
+{
+"t": "Granos leves",
+"nivel": "Evidencia media"
+},
+{
+"t": "Frena bacterias del acné",
+"nivel": "Datos de laboratorio"
+}
+],
+"resumen": {
+"Dosis estudiada": "5% dosis probada en personas",
+"Cuándo usar": "Sin pauta probada"
+},
+"para_mi": {
+"v": "Sí, si tienes granos leves y sabes qué esperar",
+"s": "Ayudó a una dosis mayor que la de una crema de cara."
+}
+},
+"argireline": {
+"nombre": "Argireline",
+"inci": "Acetyl Hexapeptide-8",
+"frase": "Argireline suaviza un poco las patas de gallo, aunque el efecto es pequeño y no siempre aparece.",
+"usos": [
+{
+"t": "Patas de gallo y arrugas de expresión",
+"nivel": "Evidencia alta"
+},
+{
+"t": "Barrera: menos pérdida de agua",
+"nivel": "Evidencia media"
+}
+],
+"resumen": {
+"Qué es": "Péptido sintético",
+"Dosis estudiada": "10% de solución",
+"Cuándo usar": "Dos veces al día · se midió a las 4 semanas",
+"Límite legal UE": "Sin límite legal UE"
+},
+"para_mi": {
+"v": "Sí, si tienes patas de gallo y quieres probar algo suave",
+"s": "No sustituye al bótox, que es un medicamento inyectable."
+}
+},
+"astaxantina": {
+"nombre": "Astaxantina",
+"inci": "Astaxanthin",
+"frase": "La astaxantina es el pigmento rojo del salmón: en laboratorio frena el desgaste de las células.",
+"usos": [
+{
+"t": "Arrugas finas e hidratación",
+"nivel": "En fórmulas combinadas"
+},
+{
+"t": "Rojez tras el sol",
+"nivel": "Datos de laboratorio"
+},
+{
+"t": "Manchas",
+"nivel": "En fórmulas combinadas"
+}
+],
+"resumen": {
+"Qué es": "Carotenoide",
+"Dosis estudiada": "No establecida dosis que funciona",
+"Cuándo usar": "Mañana o noche · se midió a las 8 semanas",
+"Límite legal UE": "Sin límite legal UE"
+},
+"para_mi": {
+"v": "Sí, si ya tienes lo básico y quieres sumar un antioxidante suave",
+"s": "En crema, las pruebas son pocas. No sustituye al protector solar."
+}
+},
+"avena-coloidal": {
+"nombre": "Avena coloidal",
+"inci": "Avena Sativa Kernel Flour",
+"frase": "La avena coloidal es avena molida muy fina que alivia la piel seca, atópica y con picor.",
+"usos": [
+{
+"t": "Piel atópica y picor",
+"nivel": "Evidencia media"
+},
+{
+"t": "Piel seca",
+"nivel": "En estudio"
+}
+],
+"resumen": {
+"Qué es": "Avena molida muy fina",
+"Dosis estudiada": "1%",
+"Cuándo usar": "Dos veces al día · primeras mejoras en 1 semana",
+"Principal precaución": "Bebés con piel atópica y alergia a la avena",
+"Límite legal UE": "Sin límite legal en la UE"
+},
+"para_mi": {
+"v": "Sí, si tienes la piel seca, con picor o atópica",
+"s": "En bebés con piel atópica, consúltalo antes."
+}
+},
+"azufre": {
+"nombre": "Azufre",
+"inci": "Sulfur",
+"frase": "El azufre es un mineral clásico de las mascarillas y los tratamientos para granos y piel grasa.",
+"usos": [
+{
+"t": "Caspa, en champú",
+"nivel": "Evidencia media"
+},
+{
+"t": "Granos",
+"nivel": "En estudio"
+}
+],
+"resumen": {
+"Qué es": "Elemento mineral",
+"Dosis estudiada": "2–10%",
+"Cuándo usar": "Dos veces al día en los estudios de granos · cambios medidos en 5–12 semanas",
+"Principal precaución": "Embarazo y lactancia: consúltalo antes",
+"Límite legal UE": "Sin límite legal en la UE"
+},
+"para_mi": {
+"v": "Sí, si tienes la piel grasa con granos",
+"s": "La evidencia es escasa. En champú, también para la caspa."
+}
+},
+"bakuchiol": {
+"nombre": "Bakuchiol",
+"inci": "Bakuchiol",
+"frase": "El bakuchiol se vende como «retinol natural», aunque es otra cosa: mejora un poco las arrugas y las manchas.",
+"usos": [
+{
+"t": "Líneas finas, textura y poro",
+"nivel": "Evidencia media"
+},
+{
+"t": "Manchas y marcas oscuras",
+"nivel": "Evidencia media"
+},
+{
+"t": "Granitos e imperfecciones",
+"nivel": "Evidencia media"
+}
+],
+"resumen": {
+"Qué es": "Meroterpeno fenólico",
+"Dosis estudiada": "0,5% dosis de los ensayos con comparación",
+"Cuándo usar": "Día o noche · se midió a las 12 semanas",
+"Principal precaución": "3 casos de alergia publicados",
+"Límite legal UE": "Sin límite legal UE"
+},
+"para_mi": {
+"v": "Sí, si el retinol te irrita o prefieres no usarlo",
+"s": "Si priorizas lo que tiene más pruebas, encaja mejor un retinoide."
+}
+},
+"beta-glucano": {
+"nombre": "Beta-glucano",
+"inci": "Beta-Glucan",
+"frase": "El beta-glucano es un azúcar de la avena, la levadura o las setas. Se pone en cremas para hidratar y calmar, con pocos ensayos y pequeños.",
+"usos": [
+{
+"t": "Piel recién tratada con láser",
+"nivel": "Media"
+},
+{
+"t": "Hidratación y barrera",
+"nivel": "En estudio"
+},
+{
+"t": "Rojeces y piel sensible",
+"nivel": "En estudio"
+},
+{
+"t": "Arrugas y líneas finas",
+"nivel": "En estudio"
+}
+],
+"resumen": {
+"Qué es": "Polisacárido",
+"Dosis estudiada": "0,25–0,5% dosis probada en personas",
+"Cuándo usar": "Mañana y noche",
+"Límite legal UE": "Sin límite legal en la UE"
+},
+"para_mi": {
+"v": "Sí, si tienes la piel seca, sensible o recién tratada",
+"s": "Busca un hidratante suave. Con más ensayos: glicerina o pantenol."
+}
+},
+"bisabolol": {
+"nombre": "Bisabolol",
+"inci": "Bisabolol",
+"frase": "El bisabolol viene de la manzanilla y se usa para calmar la piel y aclarar zonas oscuras.",
+"usos": [
+{
+"t": "Manchas y tono",
+"nivel": "Evidencia media"
+},
+{
+"t": "Rojez e irritación",
+"nivel": "Sin diferencia frente a placebo"
+}
+],
+"resumen": {
+"Qué es": "Alfa-bisabolol",
+"Dosis estudiada": "0,5–1%",
+"Cuándo usar": "Mañana y noche · resultados medidos a las 8 semanas",
+"Principal precaución": "Embarazo y lactancia: consúltalo antes",
+"Límite legal UE": "Sin límite legal en la UE"
+},
+"para_mi": {
+"v": "Sí, si tienes la piel sensible o seca y buscas una fórmula suave",
+"s": "Se suele tolerar bien."
+}
+},
+"butilresorcinol": {
+"nombre": "Butilresorcinol",
+"inci": "4-Butylresorcinol",
+"frase": "El butilresorcinol es un ingrediente que frena la fabricación de pigmento para aclarar manchas.",
+"usos": [
+{
+"t": "Melasma",
+"nivel": "Evidencia alta"
+},
+{
+"t": "Manchas de la edad",
+"nivel": "Evidencia media"
+},
+{
+"t": "Manchas, en sérums con otros despigmentantes",
+"nivel": "En fórmulas combinadas"
+}
+],
+"resumen": {
+"Qué es": "Despigmentante",
+"Dosis estudiada": "0,1–0,3%",
+"Cuándo usar": "Mañana y noche · primeros cambios en 4–8 semanas",
+"Principal precaución": "Protector solar cada día",
+"Límite legal UE": "Sin límite legal en la UE"
+},
+"para_mi": {
+"v": "Sí, si tienes manchas del sol, de la edad o melasma",
+"s": "Siempre con protector solar a diario."
+}
+},
+"cafeina": {
+"nombre": "Cafeína",
+"inci": "Caffeine",
+"frase": "La cafeína es la misma molécula del café: en crema lo mejor probado es la celulitis, y aun así con pocos estudios.",
+"usos": [
+{
+"t": "Celulitis (piel de naranja)",
+"nivel": "Evidencia media"
+},
+{
+"t": "Ojeras y bolsas bajo los ojos",
+"nivel": "En estudio"
+}
+],
+"resumen": {
+"Dosis estudiada": "0,5–3% dosis probada en personas",
+"Límite legal UE": "Sin límite legal en la UE"
+},
+"para_mi": {
+"v": "Sí, si buscas algo para la celulitis o el contorno de ojos",
+"s": "Algo moderado en celulitis; en ojeras, poco medido."
+}
+},
+"calendula": {
+"nombre": "Caléndula",
+"inci": "Calendula Officinalis Flower Extract",
+"frase": "La caléndula es un extracto de flor que puede hidratar la piel reseca y suele sentar bien.",
+"usos": [
+{
+"t": "Hidratación de la piel reseca",
+"nivel": "Evidencia media"
+},
+{
+"t": "Firmeza de la piel",
+"nivel": "Evidencia media"
+},
+{
+"t": "Rojez e irritación",
+"nivel": "Sin diferencia frente a placebo"
+}
+],
+"resumen": {
+"Dosis estudiada": "1–3%",
+"Cuándo usar": "Mañana y noche · primeros cambios en 4 días–8 semanas",
+"Principal precaución": "Embarazo y lactancia: consúltalo antes",
+"Límite legal UE": "Sin límite legal en la UE"
+},
+"para_mi": {
+"v": "Sí, si tienes la piel seca o reseca por jabones",
+"s": "En cara o cuerpo."
+}
+},
+"carnosina": {
+"nombre": "Carnosina",
+"inci": "Carnosine",
+"frase": "La carnosina es un dipéptido que se vende como antioxidante y contra la glicación, con datos solo de laboratorio.",
+"usos": [
+{
+"t": "Arrugas y glicación",
+"nivel": "En estudio"
+},
+{
+"t": "Protección frente al sol",
+"nivel": "En estudio"
+}
+],
+"resumen": {
+"Qué es": "Dipéptido",
+"Dosis estudiada": "0,2–2% en laboratorio",
+"Cuándo usar": "Sin pauta probada en personas",
+"Límite legal UE": "Sin límite legal en la UE"
+},
+"para_mi": {
+"v": "Si quieres un antioxidante más en tu rutina antiedad",
+"s": "No hay ensayos en personas con carnosina sola."
+}
+},
+"centella-asiatica": {
+"nombre": "Centella asiática",
+"inci": "Centella Asiatica Extract",
+"frase": "La centella asiática es la planta de la «cica»: en ensayos pequeños suavizó arrugas finas e hidrató la piel.",
+"usos": [
+{
+"t": "Arrugas finas",
+"nivel": "Evidencia alta"
+},
+{
+"t": "Hidratación y barrera",
+"nivel": "Evidencia media"
+},
+{
+"t": "Rojez e irritación",
+"nivel": "Evidencia media"
+},
+{
+"t": "Firmeza y elasticidad",
+"nivel": "Evidencia media"
+}
+],
+"resumen": {
+"Dosis estudiada": "0,05–0,5%",
+"Cuándo usar": "Mañana y noche · primeros cambios en 1–4 semanas",
+"Principal precaución": "Embarazo y lactancia: consúltalo antes",
+"Límite legal UE": "Sin límite legal en la UE"
+},
+"para_mi": {
+"v": "Sí, si tienes la piel seca, que se irrita fácil o con arrugas finas",
+"s": ""
+}
+},
+"ceramidas": {
+"nombre": "Ceramidas",
+"inci": "Ceramide NP",
+"frase": "Las ceramidas son grasas propias de tu piel que sellan su capa de fuera para que no pierda agua.",
+"usos": [
+{
+"t": "Hidratar la piel seca y frenar la pérdida de agua",
+"nivel": "Evidencia media"
+},
+{
+"t": "Manos castigadas y activos que resecan",
+"nivel": "Evidencia media"
+},
+{
+"t": "Piel con tendencia atópica",
+"nivel": "Evidencia media"
+}
+],
+"resumen": {
+"Qué es": "Lípido de barrera",
+"Dosis estudiada": "0,2% lo más alto declarado en cremas sin aclarado",
+"Cuándo usar": "Día y noche · hidratación medida en 2 a 24 h",
+"Límite legal UE": "Sin límite legal UE"
+},
+"para_mi": {
+"v": "Sí, si tienes la piel seca, tirante o con tendencia atópica",
+"s": "También si usas activos que resecan. Con piel grasa, textura ligera."
+}
+},
+"coenzima-q10": {
+"nombre": "Coenzima Q10",
+"inci": "Ubiquinone",
+"frase": "La coenzima Q10 la fabrica tu piel, y con la edad tiene menos: ayuda a frenar el desgaste de las células.",
+"usos": [
+{
+"t": "Arrugas finas alrededor de los ojos",
+"nivel": "Evidencia media"
+},
+{
+"t": "Más Q10 y menos oxidación en la piel",
+"nivel": "Evidencia media"
+},
+{
+"t": "Refuerzo del protector solar",
+"nivel": "En fórmulas combinadas"
+},
+{
+"t": "Manchas y ojeras",
+"nivel": "En fórmulas combinadas"
+}
+],
+"resumen": {
+"Dosis estudiada": "0,3–1%",
+"Cuándo usar": "Mañana y noche · arrugas: estudios de 5–6 meses",
+"Principal precaución": "Embarazo y lactancia: consúltalo antes",
+"Límite legal UE": "Sin límite legal en la UE"
+},
+"para_mi": {
+"v": "Sí, si tienes primeras arrugas finas, sobre todo junto a los ojos",
+"s": "Si buscas un efecto más claro, el retinol tiene más ensayos."
+}
+},
+"colageno": {
+"nombre": "Colágeno",
+"inci": "Collagen, Hydrolyzed Collagen, Soluble Collagen",
+"frase": "El colágeno es la proteína que da firmeza a la piel, pero en crema se queda en la superficie.",
+"usos": [
+{
+"t": "Arrugas finas del contorno de ojos",
+"nivel": "En estudio"
+},
+{
+"t": "Hidratación y capa protectora",
+"nivel": "En estudio"
+},
+{
+"t": "Firmeza y elasticidad",
+"nivel": "Sin diferencia frente a placebo"
+},
+{
+"t": "Piel sensible con tendencia atópica",
+"nivel": "En fórmulas combinadas"
+}
+],
+"resumen": {
+"Dosis estudiada": "0,5–2,5% dosis probada en personas",
+"Límite legal UE": "Sin límite legal en la UE"
+},
+"para_mi": {
+"v": "Si ya usas una crema con colágeno: hidrata la superficie, poco más",
+"s": "Para hidratar o arrugas, mira el ácido hialurónico y el retinol."
+}
+},
+"dmae": {
+"nombre": "DMAE",
+"inci": "Dimethyl MEA",
+"frase": "El DMAE es un ingrediente de cremas «tensoras» para firmeza y arrugas, con pocos estudios y dudas de seguridad.",
+"usos": [
+{
+"t": "Firmeza",
+"nivel": "En estudio"
+},
+{
+"t": "Arrugas",
+"nivel": "En estudio"
+}
+],
+"resumen": {
+"Qué es": "Aminoalcohol",
+"Dosis estudiada": "2,5% límite legal UE",
+"Cuándo usar": "Una vez al día en el ensayo de arrugas · cambios medidos a las 16 semanas"
+},
+"para_mi": {
+"v": "Si quieres probar un efecto tensor en flacidez o arrugas",
+"s": "Las pruebas son pocas. Con más estudios: el retinol."
+}
+},
+"ectoina": {
+"nombre": "Ectoína",
+"inci": "Ectoin",
+"frase": "La ectoína es una molécula de bacterias que viven en sitios muy salados. Ayuda a la piel a retener agua y calmarse.",
+"usos": [
+{
+"t": "Hidratación y barrera de la piel",
+"nivel": "Evidencia alta"
+},
+{
+"t": "Rojez después de un láser",
+"nivel": "Evidencia media"
+},
+{
+"t": "Piel atópica, como apoyo",
+"nivel": "Evidencia media"
+},
+{
+"t": "Protección frente a humo y sol, como extra",
+"nivel": "Evidencia media"
+},
+{
+"t": "Arrugas",
+"nivel": "En estudio"
+}
+],
+"resumen": {
+"Qué es": "Extremolito",
+"Dosis estudiada": "0,5–7%",
+"Cuándo usar": "Mañana y noche · primeros cambios en 1–4 semanas",
+"Límite legal UE": "Sin límite legal en la UE"
+},
+"para_mi": {
+"v": "Sí, si tienes la piel seca o sensible",
+"s": "También después de un láser. En piel atópica, como apoyo."
+}
+},
+"enzimas-exfoliantes": {
+"nombre": "Enzimas exfoliantes",
+"inci": "Papain · Bromelain · Protease",
+"frase": "Las enzimas exfoliantes cortan las proteínas que pegan las células muertas: una exfoliación suave con pocos ensayos.",
+"usos": [
+{
+"t": "Piel más lisa (exfoliación)",
+"nivel": "En estudio"
+}
+],
+"resumen": {
+"Qué es": "Enzimas que cortan proteínas",
+"Dosis estudiada": "Sin dosis en %",
+"Cuándo usar": "Sin pauta probada",
+"Principal precaución": "Pueden sensibilizar",
+"Límite legal UE": "Sin límite legal en la UE"
+},
+"para_mi": {
+"v": "Si quieres una exfoliación suave y no toleras bien los ácidos",
+"s": "Con la piel atópica o irritada, mejor otra opción."
+}
+},
+"ergotioneina": {
+"nombre": "Ergotioneína",
+"inci": "Ergothioneine",
+"frase": "La ergotioneína es un antioxidante que se vende para proteger la piel del sol, con pruebas casi solo de laboratorio.",
+"usos": [
+{
+"t": "Protección antioxidante",
+"nivel": "En estudio"
+},
+{
+"t": "Tono apagado",
+"nivel": "En estudio"
+}
+],
+"resumen": {
+"Qué es": "Antioxidante",
+"Dosis estudiada": "Sin dosis probada en personas",
+"Cuándo usar": "A diario en el único estudio · medido a las 8 semanas",
+"Límite legal UE": "Sin límite legal en la UE"
+},
+"para_mi": {
+"v": "Si buscas un antioxidante de apoyo y aceptas que las pruebas son de laboratorio",
+"s": "Para manchas o arrugas hay ingredientes con más estudios en personas."
+}
+},
+"escualano": {
+"nombre": "Escualano",
+"inci": "Squalane",
+"frase": "El escualano es un aceite ligero, pariente de la grasa de tu piel, que la deja más suave al momento.",
+"usos": [
+{
+"t": "Suavidad e hidratación",
+"nivel": "En fórmulas combinadas"
+},
+{
+"t": "Protección frente a la luz UVA",
+"nivel": "Datos de laboratorio"
+},
+{
+"t": "Llevar otros activos a la piel",
+"nivel": "Datos de laboratorio"
+}
+],
+"resumen": {
+"Qué es": "Emoliente",
+"Dosis estudiada": "96,8% lo más alto declarado en cosméticos",
+"Cuándo usar": "Día y noche · ensayos del escualano solo: ninguno",
+"Límite legal UE": "Sin límite legal UE"
+},
+"para_mi": {
+"v": "Sí, si tienes la piel seca o normal y quieres un aceite ligero",
+"s": "Con granos, no hay ensayos en personas."
+}
+},
+"espiculas": {
+"nombre": "Espículas de esponja",
+"inci": "Hydrolyzed Sponge · Spongilla Lacustris Spicule",
+"frase": "Las espículas de esponja son agujitas que pinchan la piel para que entre más producto, con muy pocos estudios en personas.",
+"usos": [
+{
+"t": "Granos",
+"nivel": "En estudio"
+},
+{
+"t": "Textura, poros y arrugas finas",
+"nivel": "En estudio"
+},
+{
+"t": "Que entren más otros activos",
+"nivel": "Datos de laboratorio"
+}
+],
+"resumen": {
+"Qué es": "Microagujas de sílice",
+"Dosis estudiada": "1–3% dosis probada en personas",
+"Cuándo usar": "Sin pauta probada",
+"Límite legal UE": "Sin límite legal propio en la UE"
+},
+"para_mi": {
+"v": "Si tienes la piel sin irritar y quieres probar la tendencia",
+"s": "La prueba es poca. El ensayo solo incluyó piel sana."
+}
+},
+"exosomas": {
+"nombre": "Exosomas",
+"inci": "… Extracellular Vesicles · … Exosomes",
+"frase": "Los exosomas son burbujitas que sueltan bacterias, plantas o la leche. Se ponen en sérums antiedad con muy pocos ensayos en personas.",
+"usos": [
+{
+"t": "Arrugas, elasticidad e hidratación",
+"nivel": "En estudio"
+},
+{
+"t": "Manchas y tono",
+"nivel": "En estudio"
+},
+{
+"t": "Barrera de la piel",
+"nivel": "En estudio"
+}
+],
+"resumen": {
+"Qué es": "Vesículas extracelulares",
+"Dosis estudiada": "Sin dosis en % dosis probada en personas",
+"Cuándo usar": "Mañana y noche",
+"Principal precaución": "Origen humano, prohibido en la UE"
+},
+"para_mi": {
+"v": "Si quieres probar un activo nuevo con poca prueba detrás",
+"s": "Para las arrugas, el retinol tiene más ensayos."
+}
+},
+"extracto-de-regaliz": {
+"nombre": "Extracto de regaliz",
+"inci": "Glycyrrhiza Glabra Root Extract",
+"frase": "El extracto de regaliz sale de la raíz del regaliz y, en estudios pequeños, ayudó a aclarar las manchas y a reducir la rojez.",
+"usos": [
+{
+"t": "Manchas y melasma",
+"nivel": "Evidencia alta"
+},
+{
+"t": "Rojez e irritación",
+"nivel": "Evidencia media"
+},
+{
+"t": "Granos",
+"nivel": "Evidencia media"
+}
+],
+"resumen": {
+"Dosis estudiada": "1–4%",
+"Cuándo usar": "Mañana y noche · primeros cambios en 4–12 semanas",
+"Principal precaución": "Embarazo y lactancia: consúltalo antes",
+"Límite legal UE": "Sin límite legal en la UE"
+},
+"para_mi": {
+"v": "Sí, si tienes manchas o tono irregular",
+"s": "Sobre todo si otros despigmentantes te irritan. También si te enrojeces fácil."
+}
+},
+"extracto-de-te-verde": {
+"nombre": "Extracto de té verde",
+"inci": "Camellia Sinensis Leaf Extract",
+"frase": "El extracto de té verde viene de las hojas del té y, en estudios pequeños, redujo los granos y los brillos; no protege del sol.",
+"usos": [
+{
+"t": "Granos",
+"nivel": "Evidencia alta"
+},
+{
+"t": "Brillos",
+"nivel": "Evidencia media"
+},
+{
+"t": "Menos daño del sol",
+"nivel": "Evidencia media"
+},
+{
+"t": "Textura y arrugas finas",
+"nivel": "Evidencia media"
+},
+{
+"t": "Rojez",
+"nivel": "En fórmulas combinadas"
+},
+{
+"t": "Estrías",
+"nivel": "Evidencia media"
+}
+],
+"resumen": {
+"Dosis estudiada": "2–6%",
+"Cuándo usar": "Mañana y noche · primeros cambios en 4–8 semanas",
+"Principal precaución": "Embarazo y lactancia: consúltalo antes",
+"Límite legal UE": "Sin límite legal en la UE"
+},
+"para_mi": {
+"v": "Sí, si tienes la piel grasa o granos leves",
+"s": "También como antioxidante debajo del protector solar."
+}
+},
+"eyeliss": {
+"nombre": "Eyeliss",
+"inci": "Dipeptide-2, Hesperidin Methyl Chalcone, Palmitoyl Tetrapeptide-7",
+"frase": "El Eyeliss es un activo de Sederma para contornos que se vende para las bolsas bajo los ojos.",
+"usos": [
+{
+"t": "Bolsas",
+"nivel": "En estudio"
+}
+],
+"resumen": {
+"Qué es": "Activo de fabricante",
+"Dosis estudiada": "3%",
+"Cuándo usar": "Dos veces al día · medido a las 4 y 8 semanas",
+"Límite legal UE": "Sin límite legal en la UE"
+},
+"para_mi": {
+"v": "Si tienes bolsas leves bajo los ojos",
+"s": "Su único estudio es del fabricante y no tiene placebo."
+}
+},
+"factores-de-crecimiento": {
+"nombre": "Factores de crecimiento",
+"inci": null,
+"frase": "Los factores de crecimiento son proteínas mensajeras que avisan a la piel de que toca renovarse.",
+"usos": [
+{
+"t": "Granos",
+"nivel": "Evidencia alta"
+},
+{
+"t": "Manchas y melasma",
+"nivel": "Evidencia media"
+},
+{
+"t": "Arrugas finas y textura",
+"nivel": "Evidencia media"
+},
+{
+"t": "Hidratación y barrera",
+"nivel": "Sin diferencia frente a placebo"
+},
+{
+"t": "Tras un láser",
+"nivel": "Sin diferencia frente a placebo"
+}
+],
+"resumen": {
+"Qué es": "Proteínas señal",
+"Dosis estudiada": "25 ppm",
+"Cuándo usar": "Mañana y noche · ensayos de 6–12 semanas",
+"Principal precaución": "Embarazo y lactancia: consúltalo antes"
+},
+"para_mi": {
+"v": "Si tienes granos leves o manchas y quieres probar algo nuevo",
+"s": "Los ensayos son pequeños. Para arrugas, la evidencia no da para tanto."
+}
+},
+"fermentos-prebioticos": {
+"nombre": "Fermentos y prebióticos",
+"inci": "Lactobacillus Ferment",
+"frase": "Los fermentos son restos de bacterias o levaduras inactivadas, y los prebióticos azúcares para la flora de la piel. Ayudan sobre todo a la barrera y la piel sensible.",
+"usos": [
+{
+"t": "Barrera y sequedad",
+"nivel": "Evidencia media"
+},
+{
+"t": "Piel atópica y picor",
+"nivel": "Evidencia media"
+},
+{
+"t": "Arrugas y firmeza",
+"nivel": "Evidencia media"
+},
+{
+"t": "Granos",
+"nivel": "Evidencia media"
+}
+],
+"resumen": {
+"Qué es": "Probióticos inactivados y prebióticos",
+"Dosis estudiada": "5% de lisado de Vitreoscilla",
+"Cuándo usar": "Una o dos veces al día · medido a las 4–8 semanas",
+"Límite legal UE": "Sin límite legal en la UE"
+},
+"para_mi": {
+"v": "Sí, si tienes la piel seca, sensible o con tendencia atópica",
+"s": "Cada estudio usa una cepa distinta y la etiqueta no dice cuál lleva tu crema."
+}
+},
+"fitoesfingosina": {
+"nombre": "Fitoesfingosina",
+"inci": "Phytosphingosine",
+"frase": "La fitoesfingosina es un lípido de la propia piel que se usa en cremas para granos y barrera.",
+"usos": [
+{
+"t": "Granos",
+"nivel": "Evidencia media"
+},
+{
+"t": "Barrera de la piel",
+"nivel": "En estudio"
+}
+],
+"resumen": {
+"Qué es": "Lípido de la piel",
+"Dosis estudiada": "No publicada",
+"Cuándo usar": "A diario · cambios medidos a los 60 días",
+"Límite legal UE": "Sin límite legal en la UE"
+},
+"para_mi": {
+"v": "Si tienes granos o la piel seca",
+"s": "En granos, como complemento. Los datos son pequeños y del fabricante."
+}
+},
+"floretina": {
+"nombre": "Floretina",
+"inci": "Phloretin",
+"frase": "La floretina es un antioxidante de la manzana que casi siempre va en sérums de vitamina C.",
+"usos": [
+{
+"t": "Granos y grasa",
+"nivel": "Evidencia media"
+},
+{
+"t": "Daño del sol, con vitamina C y ferúlico",
+"nivel": "En estudio"
+}
+],
+"resumen": {
+"Qué es": "Antioxidante (flavonoide)",
+"Dosis estudiada": "2%",
+"Cuándo usar": "A diario en los estudios",
+"Límite legal UE": "Sin límite legal en la UE"
+},
+"para_mi": {
+"v": "Sí, si ya usas protector y quieres sumar un sérum antioxidante",
+"s": "Casi siempre va con vitamina C. En puntos blancos, hay un solo ensayo."
+}
+},
+"galactomyces": {
+"nombre": "Galactomyces",
+"inci": "Galactomyces Ferment Filtrate",
+"frase": "El galactomyces es un fermento de levadura que se vende para hidratar, afinar los poros y unificar el tono.",
+"usos": [
+{
+"t": "Marcas oscuras de granos",
+"nivel": "En estudio"
+},
+{
+"t": "Poros y rojeces",
+"nivel": "En estudio"
+},
+{
+"t": "Hidratación, arrugas y manchas",
+"nivel": "En estudio"
+}
+],
+"resumen": {
+"Qué es": "Fermento de levadura",
+"Dosis estudiada": "Sin porcentaje publicado",
+"Cuándo usar": "Mañana y noche en los estudios · medido a las 4–8 semanas",
+"Límite legal UE": "Sin límite legal en la UE"
+},
+"para_mi": {
+"v": "Si quieres una esencia hidratante con un fermento y aceptas que las pruebas son flojas",
+"s": "Casi todos los estudios son de la marca y sin grupo de comparación."
+}
+},
+"glicerina": {
+"nombre": "Glicerina",
+"inci": "Glycerin",
+"frase": "La glicerina ya está en tu piel: atrae agua y la retiene, y es de los hidratantes mejor estudiados.",
+"usos": [
+{
+"t": "Hidratación",
+"nivel": "Evidencia alta"
+},
+{
+"t": "Piel muy seca y áspera",
+"nivel": "Evidencia alta"
+},
+{
+"t": "Barrera de la piel",
+"nivel": "Evidencia media"
+}
+],
+"resumen": {
+"Dosis estudiada": "10–30%",
+"Cuándo usar": "Mañana y noche · hidrata desde la primera aplicación",
+"Límite legal UE": "Sin límite legal en la UE"
+},
+"para_mi": {
+"v": "Sí, cualquier piel que quiera más hidratación",
+"s": "Sobre todo la piel seca o áspera."
+}
+},
+"gluconolactona": {
+"nombre": "Gluconolactona (PHA)",
+"inci": "Gluconolactone",
+"frase": "La gluconolactona es un exfoliante suave que además atrae agua, y en un estudio picó menos que el ácido glicólico.",
+"usos": [
+{
+"t": "Granos leves",
+"nivel": "Evidencia media"
+},
+{
+"t": "Barrera de la piel",
+"nivel": "Evidencia media"
+},
+{
+"t": "Suave con la piel",
+"nivel": "Evidencia media"
+},
+{
+"t": "Arrugas y firmeza",
+"nivel": "Evidencia media"
+},
+{
+"t": "Rojeces leves",
+"nivel": "Evidencia media"
+}
+],
+"resumen": {
+"Dosis estudiada": "5–14%",
+"Cuándo usar": "Mañana o noche, con protector solar · cambios medidos en 4–12 semanas",
+"Límite legal UE": "Sin límite legal UE"
+},
+"para_mi": {
+"v": "Sí, si tienes granos leves o toleras mal el glicólico",
+"s": ""
+}
+},
+"glutation": {
+"nombre": "Glutatión",
+"inci": "Glutathione · Oxidized Glutathione",
+"frase": "El glutatión es un antioxidante que tu piel ya tiene. En crema se usa para aclarar un poco el tono y unificarlo.",
+"usos": [
+{
+"t": "Tono algo más claro donde lo aplicas",
+"nivel": "Evidencia alta"
+},
+{
+"t": "Manchas",
+"nivel": "Evidencia media"
+},
+{
+"t": "Arrugas finas e hidratación",
+"nivel": "Evidencia media"
+}
+],
+"resumen": {
+"Qué es": "Antioxidante",
+"Dosis estudiada": "0,1–2%",
+"Cuándo usar": "Mañana y noche · primeros cambios en 1–2 semanas",
+"Límite legal UE": "Sin límite legal en la UE"
+},
+"para_mi": {
+"v": "Sí, si tienes el tono apagado o desigual",
+"s": "Los ensayos son de Filipinas e Indonesia, no de piel europea clara."
+}
+},
+"granactive-retinoid": {
+"nombre": "Granactive Retinoid",
+"inci": "Hydroxypinacolone Retinoate",
+"frase": "Granactive Retinoid es de la familia del retinol y se ha estudiado, siempre en mezclas, contra granos y arrugas.",
+"usos": [
+{
+"t": "Granos",
+"nivel": "Evidencia media"
+},
+{
+"t": "Arrugas finas y firmeza",
+"nivel": "En fórmulas combinadas"
+},
+{
+"t": "Manchas y tono",
+"nivel": "En fórmulas combinadas"
+}
+],
+"resumen": {
+"Qué es": "Retinoide HPR",
+"Dosis estudiada": "0,1%",
+"Cuándo usar": "Una o dos veces al día · primeros cambios en 4–16 semanas",
+"Principal precaución": "Embarazo y lactancia: consúltalo antes",
+"Límite legal UE": "Sin límite legal propio en la UE"
+},
+"para_mi": {
+"v": "Sí, si tienes granos leves o primeras arrugas",
+"s": "Busca un retinoide que se tolere bien. Los datos vienen de fórmulas mezcladas."
+}
+},
+"haloxyl": {
+"nombre": "Haloxyl",
+"inci": "Chrysin, N-Hydroxysuccinimide",
+"frase": "El Haloxyl es un activo de Sederma para contornos que se vende para las ojeras de color.",
+"usos": [
+{
+"t": "Ojeras",
+"nivel": "Evidencia media"
+}
+],
+"resumen": {
+"Qué es": "Activo de fabricante",
+"Dosis estudiada": "2%",
+"Cuándo usar": "Dos veces al día · resultado medido a las 8 semanas",
+"Límite legal UE": "Sin límite legal en la UE"
+},
+"para_mi": {
+"v": "Si tienes ojeras azuladas o violetas",
+"s": "Los datos vienen solo del fabricante."
+}
+},
+"heartleaf": {
+"nombre": "Heartleaf",
+"inci": "Houttuynia Cordata Extract",
+"frase": "El heartleaf es una planta asiática. Su extracto se pone en tónicos y cremas calmantes, con casi ningún estudio en personas.",
+"usos": [
+{
+"t": "Rojeces y piel sensible",
+"nivel": "En estudio"
+},
+{
+"t": "Granos",
+"nivel": "En estudio"
+}
+],
+"resumen": {
+"Qué es": "Extracto de planta",
+"Dosis estudiada": "Sin datos dosis probada en personas",
+"Cuándo usar": "Sin pauta probada",
+"Límite legal UE": "Sin límite legal en la UE"
+},
+"para_mi": {
+"v": "Si ya lo usas en un tónico o una crema: poco se sabe",
+"s": "Otros calmantes con ficha: centella asiática y bisabolol."
+}
+},
+"hesperidina": {
+"nombre": "Hesperidina",
+"inci": "Hesperidin Methyl Chalcone",
+"frase": "La hesperidina es un flavonoide de los cítricos que se vende para ojeras y bolsas, sin ensayos en personas que lo prueben.",
+"usos": [
+{
+"t": "Barrera de la piel",
+"nivel": "En estudio"
+},
+{
+"t": "Daño del sol",
+"nivel": "En estudio"
+},
+{
+"t": "Hidratación y elasticidad",
+"nivel": "En estudio"
+}
+],
+"resumen": {
+"Qué es": "Flavonoide de los cítricos",
+"Dosis estudiada": "2% en ratones",
+"Cuándo usar": "Sin pauta estudiada en personas",
+"Principal precaución": "La metil chalcona se ha descrito como alérgeno",
+"Límite legal UE": "Sin límite legal en la UE"
+},
+"para_mi": {
+"v": "Si quieres un contorno de ojos con un flavonoide de apoyo",
+"s": "No hay ensayos en personas con ella sola. Puede dar alergia."
+}
+},
+"hexilresorcinol": {
+"nombre": "Hexilresorcinol",
+"inci": "Hexylresorcinol",
+"frase": "El hexilresorcinol es un ingrediente que frena la fabricación de pigmento y se usa para aclarar manchas y unificar el tono.",
+"usos": [
+{
+"t": "Manchas del sol y marcas",
+"nivel": "Evidencia alta"
+},
+{
+"t": "Arrugas finas",
+"nivel": "Evidencia alta"
+},
+{
+"t": "Firmeza",
+"nivel": "Evidencia media"
+},
+{
+"t": "Tono y luminosidad",
+"nivel": "Evidencia media"
+}
+],
+"resumen": {
+"Qué es": "Despigmentante",
+"Dosis estudiada": "0,4–1%",
+"Cuándo usar": "Mañana y noche · primeros cambios en 2–4 semanas",
+"Principal precaución": "Embarazo y lactancia: consúltalo antes",
+"Límite legal UE": "Sin límite legal en la UE"
+},
+"para_mi": {
+"v": "Sí, si tienes manchas del sol, pecas, marcas de granos o arrugas finas",
+"s": "En melasma no hay ensayos."
+}
+},
+"isoflavonas": {
+"nombre": "Isoflavonas de soja",
+"inci": "Soy Isoflavones",
+"frase": "Las isoflavonas de soja son moléculas vegetales parecidas a los estrógenos que se venden para la piel madura, con un límite legal muy bajo.",
+"usos": [
+{
+"t": "Piel madura y menopausia",
+"nivel": "En estudio"
+},
+{
+"t": "Protección frente al sol",
+"nivel": "En estudio"
+},
+{
+"t": "Tono y manchas, con extracto de soja",
+"nivel": "Evidencia media"
+}
+],
+"resumen": {
+"Qué es": "Fitoestrógenos",
+"Dosis estudiada": "4% de genisteína, por encima del límite",
+"Cuándo usar": "A diario · medido a las 12–24 semanas",
+"Límite legal UE": "Máximo: genisteína 0,007% · daidzeína 0,02%"
+},
+"para_mi": {
+"v": "Si tienes la piel madura y buscas un activo de apoyo",
+"s": "A la dosis legal no hay ensayos en personas."
+}
+},
+"kojico-dipalmitato": {
+"nombre": "Dipalmitato kójico",
+"inci": "Kojic Dipalmitate",
+"frase": "El dipalmitato kójico es una versión grasa del ácido kójico que se pone en cremas para las manchas, con muy pocos estudios en personas.",
+"usos": [
+{
+"t": "Manchas y tono",
+"nivel": "En estudio"
+}
+],
+"resumen": {
+"Qué es": "Éster del ácido kójico",
+"Dosis estudiada": "Sin datos dosis probada en personas",
+"Cuándo usar": "Sin pauta probada",
+"Límite legal UE": "Sin límite legal propio en la UE"
+},
+"para_mi": {
+"v": "Si ya lo tienes en una crema de manchas: poco se sabe",
+"s": "La forma con ensayos en personas es el ácido kójico."
+}
+},
+"lha": {
+"nombre": "LHA",
+"inci": "Capryloyl Salicylic Acid",
+"frase": "El LHA es un pariente del ácido salicílico que ayuda a destapar los poros poco a poco.",
+"usos": [
+{
+"t": "Puntos negros y granos leves",
+"nivel": "Evidencia media"
+},
+{
+"t": "Piel más lisa con la edad",
+"nivel": "Evidencia media"
+},
+{
+"t": "Caspa y descamación",
+"nivel": "En fórmulas combinadas"
+}
+],
+"resumen": {
+"Qué es": "Derivado del salicílico",
+"Dosis estudiada": "1–2%",
+"Cuándo usar": "Día o noche; de día, con protector · cambios medidos en 2–12 semanas",
+"Principal precaución": "Embarazo: consúltalo antes",
+"Límite legal UE": "Sin límite legal propio en la UE"
+},
+"para_mi": {
+"v": "Sí, si tienes poros taponados, puntos negros o granos leves",
+"s": "También si tienes la piel áspera por la edad."
+}
+},
+"licochalcona-a": {
+"nombre": "Licochalcona A",
+"inci": "Glycyrrhiza Inflata Root Extract",
+"frase": "La licochalcona A es un extracto de regaliz que calma la piel enrojecida por el afeitado, el sol o los tratamientos del acné.",
+"usos": [
+{
+"t": "Calma la rojez de la piel irritada",
+"nivel": "Evidencia media"
+},
+{
+"t": "Granos leves, en cremas con más activos",
+"nivel": "Evidencia media"
+},
+{
+"t": "Tratamientos del acné más llevaderos",
+"nivel": "Evidencia media"
+},
+{
+"t": "Piel atópica: menos brotes",
+"nivel": "Evidencia media"
+},
+{
+"t": "Rojez persistente y rosácea",
+"nivel": "En estudio"
+}
+],
+"resumen": {
+"Qué es": "Extracto de raíz de regaliz",
+"Dosis estudiada": "0,025%",
+"Cuándo usar": "Mañana y noche",
+"Límite legal UE": "Sin límite legal en la UE"
+},
+"para_mi": {
+"v": "Sí, si tu piel se enrojece con el afeitado o el sol",
+"s": "También con granos leves o en tratamiento para el acné."
+}
+},
+"lisado-de-bifida": {
+"nombre": "Lisado de bífida",
+"inci": "Bifida Ferment Lysate",
+"frase": "El lisado de bífida está hecho de restos de bacterias, no de bacterias vivas, y ayuda a la piel sensible a aguantar mejor las agresiones.",
+"usos": [
+{
+"t": "Piel sensible o reactiva",
+"nivel": "Evidencia media"
+},
+{
+"t": "Barrera y sequedad",
+"nivel": "Evidencia media"
+}
+],
+"resumen": {
+"Qué es": "Posbiótico",
+"Dosis estudiada": "10%",
+"Cuándo usar": "Mañana y noche · primeros cambios en 4 semanas",
+"Límite legal UE": "Sin límite legal en la UE"
+},
+"para_mi": {
+"v": "Sí, si tienes la piel sensible, reactiva o seca",
+"s": "Para arrugas o manchas hay ingredientes con más estudios."
+}
+},
+"madecasosido": {
+"nombre": "Madecasósido",
+"inci": "Madecassoside",
+"frase": "El madecasósido es una molécula de la centella que se usa para calmar: casi siempre se ha probado con pantenol, no solo.",
+"usos": [
+{
+"t": "Recuperación y barrera después de un láser",
+"nivel": "Evidencia media"
+},
+{
+"t": "Manchas por el sol",
+"nivel": "Evidencia media"
+},
+{
+"t": "Piel sensible y marcas rojas del acné",
+"nivel": "En estudio"
+},
+{
+"t": "Arrugas y firmeza",
+"nivel": "En estudio"
+}
+],
+"resumen": {
+"Qué es": "Saponina triterpénica",
+"Dosis estudiada": "0,1%",
+"Cuándo usar": "Mañana y noche",
+"Límite legal UE": "Sin límite legal en la UE"
+},
+"para_mi": {
+"v": "Sí, si tienes la piel sensible o recién tratada con láser",
+"s": "Para arrugas o manchas, tiene más sentido la vitamina C o el retinol."
+}
+},
+"matrixyl": {
+"nombre": "Matrixyl",
+"inci": "Palmitoyl Pentapeptide-4",
+"frase": "Matrixyl es el nombre comercial de un trocito de proteína que, en un estudio, mejoró las arrugas finas.",
+"usos": [
+{
+"t": "Arrugas finas (Matrixyl)",
+"nivel": "Evidencia media"
+},
+{
+"t": "Arrugas con Matrixyl 3000",
+"nivel": "En fórmulas combinadas"
+},
+{
+"t": "Colágeno y fibras de la dermis",
+"nivel": "En fórmulas combinadas"
+}
+],
+"resumen": {
+"Qué es": "Marca de Sederma (Croda)",
+"Dosis estudiada": "3 ppm",
+"Cuándo usar": "Mañana o noche · se midió a las 8–12 semanas",
+"Límite legal UE": "Sin límite legal UE"
+},
+"para_mi": {
+"v": "Sí, si tienes líneas finas y quieres algo suave",
+"s": "También si no toleras bien los retinoides. Es un complemento, no un sustituto."
+}
+},
+"melasolv": {
+"nombre": "Melasolv",
+"inci": "Thymol Trimethoxycinnamate",
+"frase": "Melasolv es el activo aclarante propio de Amorepacific, con un único ensayo en personas, del fabricante.",
+"usos": [
+{
+"t": "Manchas y tono",
+"nivel": "En estudio"
+}
+],
+"resumen": {
+"Qué es": "Aclarante sintético",
+"Dosis estudiada": "0,1% dosis probada en personas",
+"Cuándo usar": "Mañana y noche",
+"Límite legal UE": "Sin límite legal propio en la UE"
+},
+"para_mi": {
+"v": "Si ya tienes un producto con él: algo en manchas, con un solo ensayo",
+"s": "Aclarantes con más estudios: niacinamida o ácido tranexámico."
+}
+},
+"melasyl": {
+"nombre": "Melasyl",
+"inci": "2-Mercaptonicotinoyl Glycine",
+"frase": "Melasyl es una molécula de L'Oréal que frena la fabricación del pigmento para que salgan menos manchas.",
+"usos": [
+{
+"t": "Frena el moreno que provoca el sol",
+"nivel": "Evidencia media"
+},
+{
+"t": "Frena el pigmento que deja la luz azul",
+"nivel": "Evidencia media"
+},
+{
+"t": "Melasma, en una fórmula con más activos",
+"nivel": "Evidencia media"
+},
+{
+"t": "Manchas y marcas de granos ya formadas",
+"nivel": "En estudio"
+}
+],
+"resumen": {
+"Qué es": "Molécula de síntesis",
+"Dosis estudiada": "0,5–1%",
+"Cuándo usar": "Mañana y noche · primeros cambios en 4 semanas",
+"Límite legal UE": "Sin límite legal en la UE"
+},
+"para_mi": {
+"v": "Sí, si tienes manchas del sol, melasma o marcas de granos",
+"s": "Probado en pieles claras y oscuras. Puede interesarte si la hidroquinona te irrita."
+}
+},
+"melatonina": {
+"nombre": "Melatonina",
+"inci": "Melatonin",
+"frase": "La melatonina es la molécula del sueño, pero en crema se usa como antioxidante para la piel.",
+"usos": [
+{
+"t": "Rojez por el sol, si la aplicas antes",
+"nivel": "Evidencia alta"
+},
+{
+"t": "Arrugas y firmeza",
+"nivel": "Evidencia media"
+},
+{
+"t": "Caída del pelo",
+"nivel": "Evidencia media"
+}
+],
+"resumen": {
+"Qué es": "Antioxidante",
+"Dosis estudiada": "0,1–12,5%",
+"Cuándo usar": "Antes del sol, no después",
+"Principal precaución": "No sustituye al protector solar",
+"Límite legal UE": "Sin límite legal en la UE"
+},
+"para_mi": {
+"v": "Sí, si te pones rojo con el sol y quieres un antioxidante extra",
+"s": "Siempre con protector. Como antiedad, la evidencia es escasa."
+}
+},
+"metoxisalicilato-potasico": {
+"nombre": "Metoxisalicilato potásico (4MSK)",
+"inci": "Potassium Methoxysalicylate",
+"frase": "El 4MSK es un aclarante de Shiseido, pariente del salicílico, para manchas y tono apagado.",
+"usos": [
+{
+"t": "Manchas",
+"nivel": "Evidencia media"
+},
+{
+"t": "Tono y luminosidad",
+"nivel": "Evidencia media"
+},
+{
+"t": "Textura",
+"nivel": "Evidencia media"
+}
+],
+"resumen": {
+"Qué es": "Despigmentante",
+"Dosis estudiada": "3%",
+"Cuándo usar": "Mañana y noche · cambios desde la semana 4",
+"Límite legal UE": "Sin límite legal anotado en la UE"
+},
+"para_mi": {
+"v": "Si tienes manchas del sol o el tono apagado",
+"s": "Los datos vienen de un solo ensayo del fabricante."
+}
+},
+"mucina-de-caracol": {
+"nombre": "Mucina de caracol",
+"inci": "Snail Secretion Filtrate",
+"frase": "La mucina de caracol es la baba del caracol: en estudios pequeños mejora un poco las arrugas del contorno de ojos.",
+"usos": [
+{
+"t": "Arrugas finas del contorno de ojos",
+"nivel": "Evidencia media"
+},
+{
+"t": "Recuperación de la piel después de un láser",
+"nivel": "Evidencia media"
+},
+{
+"t": "Granos con la mascarilla",
+"nivel": "En estudio"
+}
+],
+"resumen": {
+"Dosis estudiada": "8–40% dosis probada en personas",
+"Principal precaución": "Un caso publicado de alergia de contacto",
+"Límite legal UE": "Sin límite legal en la UE"
+},
+"para_mi": {
+"v": "Si ya usas un sérum de caracol: poco, y probado con un ingrediente concreto",
+"s": "Para arrugas, mira el retinol y la vitamina C."
+}
+},
+"myrtacine": {
+"nombre": "Myrtacine",
+"inci": "Myrtus Communis Leaf Extract",
+"frase": "Myrtacine es una mezcla de dos extractos de plantas para pieles con granos. El de mirto tiene algunos ensayos en personas; el de celastrol, casi solo laboratorio.",
+"usos": [
+{
+"t": "Granos",
+"nivel": "En estudio"
+},
+{
+"t": "Grasa y brillos",
+"nivel": "En estudio"
+}
+],
+"resumen": {
+"Qué es": "Extracto de hojas de mirto",
+"Dosis estudiada": "0,2% dosis probada en personas",
+"Cuándo usar": "Dos veces al día en los estudios",
+"Límite legal UE": "Sin límite legal propio en la UE"
+},
+"para_mi": {
+"v": "Sí, si tienes granos leves y buscas una crema de diario",
+"s": "Sola o junto a lo que te paute el dermatólogo."
+}
+},
+"nad": {
+"nombre": "NAD+",
+"inci": "Nicotinamide Adenine Dinucleotide",
+"frase": "El NAD+ es una molécula que tus células usan para obtener energía, y tu piel tiene menos con la edad.",
+"usos": [
+{
+"t": "Arrugas, colágeno y firmeza",
+"nivel": "Datos de laboratorio"
+},
+{
+"t": "Rojez: solo hay datos en enfermedades",
+"nivel": "Estudiado como medicamento o en consulta"
+},
+{
+"t": "Manchas, con microagujas",
+"nivel": "Estudiado como medicamento o en consulta"
+}
+],
+"resumen": {
+"Qué es": "Familia: Vitamina B3",
+"Dosis estudiada": "0,3–1%",
+"Cuándo usar": "Dos veces al día en los estudios",
+"Principal precaución": "Embarazo y lactancia: consúltalo antes",
+"Límite legal UE": "Sin límite legal en la UE"
+},
+"para_mi": {
+"v": "Si ya tienes una rutina básica y quieres probar algo nuevo",
+"s": "En crema aún no hay ensayos con comparación en arrugas."
+}
+},
+"neurosensine": {
+"nombre": "Neurosensine",
+"inci": "Acetyl Dipeptide-1 Cetyl Ester",
+"frase": "Neurosensine es un péptido pensado para calmar la piel sensible que pica, arde o se enrojece.",
+"usos": [
+{
+"t": "Menos molestia ante un roce o el calor",
+"nivel": "Evidencia media"
+},
+{
+"t": "Rojez y escozor en la rosácea leve",
+"nivel": "Evidencia media"
+},
+{
+"t": "Párpados irritados",
+"nivel": "En estudio"
+}
+],
+"resumen": {
+"Qué es": "Péptido calmante",
+"Dosis estudiada": "0,03%",
+"Cuándo usar": "Mañana y noche",
+"Límite legal UE": "Sin límite legal en la UE"
+},
+"para_mi": {
+"v": "Sí, si tu piel pica, arde o se enrojece con facilidad",
+"s": "También en rosácea leve con rojez."
+}
+},
+"niacinamida": {
+"nombre": "Niacinamida",
+"inci": "Niacinamide",
+"frase": "La niacinamida es una vitamina que ayuda a igualar el tono y a que la piel pierda menos agua.",
+"usos": [
+{
+"t": "Manchas y tono irregular",
+"nivel": "Evidencia alta"
+},
+{
+"t": "Arrugas finas",
+"nivel": "Evidencia alta"
+},
+{
+"t": "Barrera e hidratación",
+"nivel": "Evidencia media"
+},
+{
+"t": "Rojeces",
+"nivel": "Evidencia media"
+},
+{
+"t": "Grasa, brillo y poros",
+"nivel": "Evidencia media"
+},
+{
+"t": "Granos",
+"nivel": "Evidencia media"
+}
+],
+"resumen": {
+"Qué es": "Vitamina B3",
+"Dosis estudiada": "2–5%",
+"Cuándo usar": "Mañana y noche · primeros cambios en 4–8 semanas",
+"Principal precaución": "Embarazo y lactancia: consúltalo antes",
+"Límite legal UE": "Sin límite legal en la UE"
+},
+"para_mi": {
+"v": "Sí, si tienes manchas, primeras arrugas o piel seca",
+"s": "Con granos, como complemento."
+}
+},
+"palmitato-de-retinilo": {
+"nombre": "Palmitato de retinilo",
+"inci": "Retinyl Palmitate",
+"frase": "El palmitato de retinilo es vitamina A en su forma más suave: irrita poco, pero casi no tiene ensayos que prueben que mejore las arrugas.",
+"usos": [
+{
+"t": "Arrugas y textura",
+"nivel": "En estudio"
+},
+{
+"t": "Granos",
+"nivel": "En estudio"
+}
+],
+"resumen": {
+"Qué es": "Ésteres de la vitamina A",
+"Dosis estudiada": "0,3% ER máximo legal en la UE",
+"Cuándo usar": "Noche",
+"Principal precaución": "Embarazo y lactancia: consúltalo antes",
+"Límite legal UE": "Cuenta en el límite de la vitamina A"
+},
+"para_mi": {
+"v": "Si ya lo tienes en una crema: irrita poco y está poco probado",
+"s": "Retinoides con ensayos: retinol o retinaldehído."
+}
+},
+"pantenol": {
+"nombre": "Pantenol",
+"inci": "Panthenol",
+"frase": "El pantenol hidrata y ayuda a que la piel pierda menos agua, sobre todo si está seca o irritada.",
+"usos": [
+{
+"t": "Hidratación y barrera",
+"nivel": "Evidencia alta"
+},
+{
+"t": "Piel irritada y rojez",
+"nivel": "Evidencia media"
+},
+{
+"t": "Piel recién tratada con láser",
+"nivel": "Evidencia media"
+},
+{
+"t": "Pelo más resistente",
+"nivel": "Datos de laboratorio"
+}
+],
+"resumen": {
+"Qué es": "Provitamina B5",
+"Dosis estudiada": "1–5%",
+"Cuándo usar": "Mañana y noche · primeros cambios en 1–4 semanas",
+"Principal precaución": "Embarazo y lactancia: consúltalo antes",
+"Límite legal UE": "Sin límite legal en la UE"
+},
+"para_mi": {
+"v": "Sí, si tienes la piel seca, tirante o irritada",
+"s": "También justo después de un láser, con las pautas de quien te trata."
+}
+},
+"pdrn": {
+"nombre": "PDRN",
+"inci": "Sodium DNA",
+"frase": "El PDRN está hecho de trocitos de ADN de salmón y se usa para calmar la piel y ayudarla a recuperarse.",
+"usos": [
+{
+"t": "Arrugas finas y firmeza del contorno de ojos",
+"nivel": "Evidencia media"
+},
+{
+"t": "Barrera después de una irritación",
+"nivel": "Evidencia media"
+},
+{
+"t": "Arrugas, aplicado con microagujas",
+"nivel": "Evidencia media"
+},
+{
+"t": "Cicatrices de acné, tras láser",
+"nivel": "Evidencia media"
+}
+],
+"resumen": {
+"Qué es": "Fragmentos de ADN",
+"Dosis estudiada": "0,1–1%",
+"Cuándo usar": "Mañana y noche · primeros cambios en 2–4 semanas",
+"Principal precaución": "Embarazo y lactancia: consúltalo antes",
+"Límite legal UE": "Sin límite legal en la UE"
+},
+"para_mi": {
+"v": "Sí, si tienes arrugas finas en el contorno de ojos",
+"s": "O si te haces láser o microagujas y te lo aplican justo después."
+}
+},
+"peptidos-de-cobre": {
+"nombre": "Péptidos de cobre",
+"inci": "Copper Tripeptide-1",
+"frase": "Los péptidos de cobre son un trocito de proteína de tu piel unido a cobre: en laboratorio aumentan el colágeno, la proteína que da firmeza.",
+"usos": [
+{
+"t": "Arrugas y firmeza",
+"nivel": "Evidencia media"
+},
+{
+"t": "Textura, poro y luminosidad",
+"nivel": "En fórmulas combinadas"
+},
+{
+"t": "Caída del pelo",
+"nivel": "Estudiado como medicamento o en consulta"
+}
+],
+"resumen": {
+"Qué es": "Péptido unido a cobre",
+"Dosis estudiada": "No establecida dosis que funciona",
+"Cuándo usar": "Noche · se midió a las 8 semanas",
+"Límite legal UE": "Sin límite legal UE"
+},
+"para_mi": {
+"v": "Sí, si tienes la piel madura y ya haces lo básico",
+"s": "No sustituye al retinoide ni al protector solar."
+}
+},
+"peptidos-senal": {
+"nombre": "Péptidos señal",
+"inci": "Acetyl Tetrapeptide-5 · Hexapeptide-9 · Palmitoyl Hexapeptide-12…",
+"frase": "Los péptidos señal son cadenas cortas de aminoácidos que se venden para arrugas, firmeza y bolsas, con pocos datos por péptido.",
+"usos": [
+{
+"t": "Arrugas",
+"nivel": "En estudio"
+},
+{
+"t": "Bolsas de los ojos",
+"nivel": "En estudio"
+},
+{
+"t": "Firmeza y barrera",
+"nivel": "En estudio"
+}
+],
+"resumen": {
+"Qué es": "Péptidos de fabricante",
+"Dosis estudiada": "Depende del péptido",
+"Cuándo usar": "Mañana y noche · cambios medidos en 4–8 semanas",
+"Límite legal UE": "Sin límite legal en la UE"
+},
+"para_mi": {
+"v": "Si quieres una alternativa suave a los retinoides",
+"s": "Cada péptido tiene pocos estudios, casi todos del fabricante."
+}
+},
+"phe-resorcinol": {
+"nombre": "PhE-Resorcinol",
+"inci": "Phenylethyl Resorcinol",
+"frase": "El PhE-Resorcinol es un aclarante de manchas que frena la fabricación de pigmento en la piel.",
+"usos": [
+{
+"t": "Manchas del sol",
+"nivel": "Evidencia media"
+},
+{
+"t": "Melasma, marcas de granos y tono irregular",
+"nivel": "En estudio"
+},
+{
+"t": "Ojeras con pigmento",
+"nivel": "En estudio"
+}
+],
+"resumen": {
+"Qué es": "Despigmentante sintético",
+"Dosis estudiada": "0,5%",
+"Cuándo usar": "Una o dos veces al día · cambios medidos en 8–12 semanas",
+"Límite legal UE": "Sin límite legal en la UE"
+},
+"para_mi": {
+"v": "Sí, si tienes manchas del sol, melasma o marcas",
+"s": "Y ya usas protector solar a diario."
+}
+},
+"piroctona-olamina": {
+"nombre": "Piroctona olamina",
+"inci": "Piroctone Olamine",
+"frase": "La piroctona olamina es el antihongos de muchos champús anticaspa y de algunas cremas para la piel grasa que se enrojece y se descama.",
+"usos": [
+{
+"t": "Caspa",
+"nivel": "Evidencia alta"
+},
+{
+"t": "Rojez y descamación en la cara (dermatitis seborreica leve)",
+"nivel": "Evidencia media"
+},
+{
+"t": "Granos",
+"nivel": "En estudio"
+}
+],
+"resumen": {
+"Qué es": "Antifúngico",
+"Dosis estudiada": "0,2–1%",
+"Cuándo usar": "Champú: déjalo actuar unos minutos · cambios medidos en 3–4 semanas"
+},
+"para_mi": {
+"v": "Sí, si tienes caspa, en champú",
+"s": "También piel grasa con rojez y descamación en la cara."
+}
+},
+"polypodium-leucotomos": {
+"nombre": "Polypodium leucotomos",
+"inci": "Polypodium Leucotomos Leaf Extract",
+"frase": "El Polypodium leucotomos es un helecho antioxidante que se añade a protectores solares como complemento.",
+"usos": [
+{
+"t": "Menos rojez tras el sol",
+"nivel": "Evidencia media"
+},
+{
+"t": "Envejecimiento por el sol",
+"nivel": "En estudio"
+}
+],
+"resumen": {
+"Qué es": "Extracto de helecho",
+"Dosis estudiada": "Sin dato publicado en crema",
+"Cuándo usar": "Por la mañana, con el protector solar",
+"Límite legal UE": "Sin límite legal en la UE"
+},
+"para_mi": {
+"v": "Si buscas un protector solar con un antioxidante añadido",
+"s": "No sustituye a los filtros solares."
+}
+},
+"procerad": {
+"nombre": "Procerad",
+"inci": "2-Oleamido-1,3-Octadecanediol",
+"frase": "Procerad es una ceramida de laboratorio que La Roche-Posay pone en sus cremas para granos y marcas.",
+"usos": [
+{
+"t": "Marcas de granos",
+"nivel": "En estudio"
+},
+{
+"t": "Granos",
+"nivel": "En estudio"
+}
+],
+"resumen": {
+"Qué es": "Ceramida sintética",
+"Dosis estudiada": "No publicada dosis en los productos",
+"Cuándo usar": "Dos veces al día en los estudios · cambios medidos en 11–57 días",
+"Límite legal UE": "Sin límite legal en la UE"
+},
+"para_mi": {
+"v": "Sí, si tienes granos leves o moderados y marcas",
+"s": "Sobre todo si usas adapaleno y te irrita. Lo estudiado es la crema entera."
+}
+},
+"propoleo": {
+"nombre": "Propóleo",
+"inci": "Propolis Extract · Propolis Cera",
+"frase": "El propóleo es una resina de abejas que puede dar alergia y tiene muy pocos estudios en cosmética.",
+"usos": [
+{
+"t": "Arrugas",
+"nivel": "En estudio"
+},
+{
+"t": "Granos",
+"nivel": "En fórmulas combinadas"
+}
+],
+"resumen": {
+"Qué es": "Resina de abejas",
+"Dosis estudiada": "1,5–3% dosis probada en personas",
+"Cuándo usar": "Sin pauta probada",
+"Límite legal UE": "Sin límite legal en la UE"
+},
+"para_mi": {
+"v": "Si no has tenido alergias de contacto: se sabe poco",
+"s": "Calmantes con ficha propia: caléndula y bisabolol."
+}
+},
+"proxylane": {
+"nombre": "Proxylane",
+"inci": "Hydroxypropyl Tetrahydropyrantriol",
+"frase": "Proxylane es un azúcar modificado de L'Oréal que se usa en cremas para dar firmeza a la piel madura.",
+"usos": [
+{
+"t": "Firmeza y flacidez",
+"nivel": "Evidencia media"
+},
+{
+"t": "Arrugas",
+"nivel": "Evidencia media"
+},
+{
+"t": "Después de láser o ultrasonidos",
+"nivel": "Evidencia media"
+},
+{
+"t": "Hidratación de la piel",
+"nivel": "En estudio"
+}
+],
+"resumen": {
+"Qué es": "Azúcar modificado de síntesis",
+"Dosis estudiada": "3–12,5%",
+"Cuándo usar": "Mañana y noche · primeros cambios en 4–8 semanas",
+"Límite legal UE": "Sin límite legal en la UE"
+},
+"para_mi": {
+"v": "Sí, si tienes la piel madura que pierde firmeza",
+"s": "También tras la menopausia o tras láser o ultrasonidos. La evidencia es de fórmulas con varios activos."
+}
+},
+"resveratrol": {
+"nombre": "Resveratrol",
+"inci": "Resveratrol",
+"frase": "El resveratrol lo fabrican plantas como la uva roja: protege las células del desgaste y calma la piel.",
+"usos": [
+{
+"t": "Granos",
+"nivel": "Evidencia media"
+},
+{
+"t": "Manchas y tono",
+"nivel": "Evidencia media"
+},
+{
+"t": "Arrugas y firmeza",
+"nivel": "Sin diferencia frente a placebo"
+},
+{
+"t": "Rojeces e irritación",
+"nivel": "En fórmulas combinadas"
+}
+],
+"resumen": {
+"Qué es": "Familia: polifenoles",
+"Dosis estudiada": "1–1,5%",
+"Cuándo usar": "Mejor por la noche · estudios de 6–12 semanas",
+"Principal precaución": "Embarazo y lactancia: consúltalo antes",
+"Límite legal UE": "Sin límite legal en la UE"
+},
+"para_mi": {
+"v": "Sí, si tienes granos leves o manchas",
+"s": "Busca un antioxidante suave; la evidencia es corta. Para arrugas, el retinol tiene más ensayos."
+}
+},
+"retinaldehido": {
+"nombre": "Retinaldehído",
+"inci": "Retinal",
+"frase": "El retinaldehído es una forma de vitamina A que ayuda a suavizar las arrugas finas y puede irritar al empezar.",
+"usos": [
+{
+"t": "Arrugas finas y textura",
+"nivel": "Evidencia alta"
+},
+{
+"t": "Firmeza y grosor de la piel",
+"nivel": "Evidencia media"
+},
+{
+"t": "Manchas de sol",
+"nivel": "Evidencia media"
+},
+{
+"t": "Granos y marcas",
+"nivel": "Evidencia media"
+},
+{
+"t": "¿Tan bueno como la tretinoína?",
+"nivel": "Evidencia media"
+},
+{
+"t": "Rojez de la rosácea",
+"nivel": "Evidencia media"
+}
+],
+"resumen": {
+"Qué es": "Vitamina A",
+"Dosis estudiada": "0,05–0,1%",
+"Cuándo usar": "Por la noche · primeros cambios en 1–4 meses",
+"Principal precaución": "Embarazo y lactancia: consúltalo antes",
+"Límite legal UE": "Sin límite propio en la UE"
+},
+"para_mi": {
+"v": "Sí, si tienes arrugas finas, textura áspera o manchas de sol",
+"s": "Para granos leves, con ácido glicólico."
+}
+},
+"retinil-retinoato": {
+"nombre": "Retinil retinoato",
+"inci": "Retinyl Retinoate",
+"frase": "El retinil retinoato es un retinoide que une retinol y ácido retinoico, pensado para trabajar las arrugas irritando menos.",
+"usos": [
+{
+"t": "Arrugas del contorno de ojos",
+"nivel": "Evidencia media"
+},
+{
+"t": "Granos leves o moderados",
+"nivel": "Evidencia media"
+}
+],
+"resumen": {
+"Qué es": "Retinoide (éster)",
+"Dosis estudiada": "0,05–0,06%",
+"Cuándo usar": "Dos veces al día en los ensayos · primeros cambios en 4–8 semanas",
+"Principal precaución": "Embarazo y lactancia: consúltalo antes",
+"Límite legal UE": "Sin límite propio en la UE"
+},
+"para_mi": {
+"v": "Sí, si tienes arrugas finas en el contorno de ojos o granos leves",
+"s": "Si el retinol te irrita, puede ser una opción."
+}
+},
+"retinol": {
+"nombre": "Retinol",
+"inci": "Retinol",
+"frase": "El retinol es vitamina A en crema: mejora arrugas finas y aspereza, aunque puede irritar las primeras semanas.",
+"usos": [
+{
+"t": "Arrugas finas y textura",
+"nivel": "Evidencia alta"
+},
+{
+"t": "Manchas y tono irregular",
+"nivel": "Evidencia media"
+},
+{
+"t": "Colágeno y grosor de la piel",
+"nivel": "Evidencia media"
+},
+{
+"t": "¿Tan bueno como la tretinoína?",
+"nivel": "Evidencia media"
+},
+{
+"t": "Granos",
+"nivel": "Evidencia media"
+}
+],
+"resumen": {
+"Dosis estudiada": "0,04–0,3%",
+"Cuándo usar": "Noche · primeros cambios en 1–2 meses",
+"Principal precaución": "Embarazo y lactancia: consúltalo antes",
+"Límite legal UE": "Máximo 0,3%"
+},
+"para_mi": {
+"v": "Sí, si tienes arrugas finas, textura áspera o manchas de sol",
+"s": "No es primera opción en piel sensible."
+}
+},
+"rosa-mosqueta": {
+"nombre": "Aceite de rosa mosqueta",
+"inci": "Rosa Canina Fruit Oil · Rosa Rubiginosa Seed Oil · Rosa Moschata Seed Oil",
+"frase": "El aceite de rosa mosqueta sale del escaramujo y se usa en estrías y cicatrices, con poca prueba en personas.",
+"usos": [
+{
+"t": "Estrías y cicatrices",
+"nivel": "En fórmulas combinadas"
+},
+{
+"t": "Suavidad e hidratación",
+"nivel": "En estudio"
+}
+],
+"resumen": {
+"Qué es": "Aceite vegetal",
+"Dosis estudiada": "Sin datos dosis probada en personas",
+"Cuándo usar": "Sin pauta probada"
+},
+"para_mi": {
+"v": "Si buscas un aceite para estrías, cicatrices o piel seca: poco está probado",
+"s": "Con granos, no hay ensayos que digan cómo sienta."
+}
+},
+"salicilato-de-betaina": {
+"nombre": "Salicilato de betaína",
+"inci": "Betaine Salicylate",
+"frase": "El salicilato de betaína es ácido salicílico unido a otra molécula, la betaína. Se usa contra los granos con la promesa de irritar menos.",
+"usos": [
+{
+"t": "Granos",
+"nivel": "En estudio"
+}
+],
+"resumen": {
+"Qué es": "Exfoliante de la familia del salicílico",
+"Dosis estudiada": "≈54% salicílico que aporta",
+"Cuándo usar": "Mañana y noche · cambios medidos a las 4 semanas",
+"Principal precaución": "Embarazo y niños: consúltalo antes",
+"Límite legal UE": "Sin límite legal propio en la UE"
+},
+"para_mi": {
+"v": "Si tienes granos y quieres probar un pariente del salicílico",
+"s": "En personas casi no se ha estudiado. Con más ensayos: el ácido salicílico."
+}
+},
+"silicio-organico": {
+"nombre": "Silicio orgánico",
+"inci": "Methylsilanol Mannuronate · Silanetriol",
+"frase": "El silicio orgánico es un activo antiedad que promete firmeza, pero en crema casi todo está sin comprobar.",
+"usos": [
+{
+"t": "Firmeza y arrugas",
+"nivel": "En estudio"
+},
+{
+"t": "Recuperación tras láser",
+"nivel": "En estudio"
+}
+],
+"resumen": {
+"Qué es": "Silanol (derivado del silicio)",
+"Dosis estudiada": "No hay límite legal UE",
+"Cuándo usar": "Sin ensayos en crema frente a su base",
+"Límite legal UE": "Sin límite legal en la UE"
+},
+"para_mi": {
+"v": "Si tienes la piel madura y quieres probarlo",
+"s": "En crema no está demostrado."
+}
+},
+"superoxido-dismutasa": {
+"nombre": "Superóxido dismutasa",
+"inci": "Superoxide Dismutase",
+"frase": "La superóxido dismutasa es una enzima antioxidante que se pone en cremas para proteger la piel del daño del sol.",
+"usos": [
+{
+"t": "Un poco menos de rojez por el sol",
+"nivel": "Evidencia media"
+},
+{
+"t": "Picor",
+"nivel": "En estudio"
+}
+],
+"resumen": {
+"Qué es": "Enzima antioxidante",
+"Dosis estudiada": "12–300",
+"Cuándo usar": "Antes o justo después del sol",
+"Principal precaución": "No sustituye al protector solar",
+"Límite legal UE": "Sin límite legal en la UE"
+},
+"para_mi": {
+"v": "Sí, si tu piel clara se enrojece con el sol y quieres un extra",
+"s": "Siempre junto al protector. El efecto es pequeño."
+}
+},
+"syn-ake": {
+"nombre": "Syn-Ake",
+"inci": "Dipeptide Diaminobutyroyl Benzylamide Diacetate",
+"frase": "Syn-Ake es un péptido de laboratorio inspirado en un veneno de serpiente, para arrugas de expresión, con muy pocos estudios independientes en personas.",
+"usos": [
+{
+"t": "Arrugas de expresión",
+"nivel": "Evidencia media"
+}
+],
+"resumen": {
+"Qué es": "Péptido sintético",
+"Dosis estudiada": "4% de solución dosis del ensayo del fabricante",
+"Cuándo usar": "Dos veces al día",
+"Límite legal UE": "Sin límite legal anotado en la UE"
+},
+"para_mi": {
+"v": "Si ya lo tienes en un sérum de arrugas de expresión",
+"s": "Los ensayos con placebo son del fabricante."
+}
+},
+"teprenona": {
+"nombre": "Teprenona",
+"inci": "Teprenone",
+"frase": "La teprenona es un activo antiedad de laboratorio que se vende para arrugas, manchas y rojeces.",
+"usos": [
+{
+"t": "Rojeces",
+"nivel": "Evidencia media"
+},
+{
+"t": "Arrugas y firmeza",
+"nivel": "En estudio"
+},
+{
+"t": "Hidratación y barrera",
+"nivel": "En estudio"
+},
+{
+"t": "Manchas",
+"nivel": "En estudio"
+}
+],
+"resumen": {
+"Qué es": "Activo de fabricante",
+"Dosis estudiada": "3%",
+"Cuándo usar": "Dos veces al día en el estudio · cambios medidos en 1–6 meses",
+"Límite legal UE": "Sin límite legal en la UE"
+},
+"para_mi": {
+"v": "Si tienes la piel madura con arrugas y algo de rojez",
+"s": "Los datos vienen solo del fabricante."
+}
+},
+"tetrahidrocurcumina": {
+"nombre": "Tetrahidrocurcumina",
+"inci": "Tetrahydrodiferuloylmethane",
+"frase": "La tetrahidrocurcumina es una curcumina sin color que se vende para aclarar manchas.",
+"usos": [
+{
+"t": "Manchas y tono",
+"nivel": "En estudio"
+}
+],
+"resumen": {
+"Qué es": "Despigmentante",
+"Dosis estudiada": "0,25%",
+"Cuándo usar": "Dos veces al día en los estudios · 4 semanas",
+"Límite legal UE": "Sin límite legal anotado en la UE"
+},
+"para_mi": {
+"v": "Si quieres un activo sin color en tu crema",
+"s": "Sus estudios en personas son pocos y no coinciden."
+}
+},
+"thiamidol": {
+"nombre": "Thiamidol",
+"inci": "Isobutylamido Thiazolyl Resorcinol",
+"frase": "Thiamidol es una molécula de Eucerin que frena la fabricación de pigmento para aclarar manchas.",
+"usos": [
+{
+"t": "Melasma y manchas de la cara",
+"nivel": "Evidencia alta"
+},
+{
+"t": "Marcas oscuras de granos",
+"nivel": "Evidencia media"
+},
+{
+"t": "Prevenir manchas tras sol o láser",
+"nivel": "Evidencia media"
+},
+{
+"t": "Manchas del sol (léntigos)",
+"nivel": "En estudio"
+}
+],
+"resumen": {
+"Qué es": "Freno de la tirosinasa",
+"Dosis estudiada": "0,1–0,2%",
+"Cuándo usar": "Mañana y noche · primeros cambios en 2–4 semanas",
+"Principal precaución": "Embarazo y lactancia: consúltalo antes",
+"Límite legal UE": "Sin límite legal en la UE"
+},
+"para_mi": {
+"v": "Sí, si tienes melasma, manchas en la cara o marcas de granos",
+"s": "También en piel oscura."
+}
+},
+"urea": {
+"nombre": "Urea",
+"inci": "Urea",
+"frase": "La urea hidrata porque atrae y retiene agua, y suaviza la piel seca y áspera.",
+"usos": [
+{
+"t": "Piel seca y áspera",
+"nivel": "Evidencia alta"
+},
+{
+"t": "Barrera de la piel",
+"nivel": "Evidencia alta"
+},
+{
+"t": "Pies secos y talones ásperos",
+"nivel": "Evidencia alta"
+},
+{
+"t": "Piel de gallina en brazos",
+"nivel": "Evidencia media"
+}
+],
+"resumen": {
+"Dosis estudiada": "3–20%",
+"Cuándo usar": "Mañana y noche · primeros cambios en 2–4 semanas",
+"Principal precaución": "Embarazo y lactancia: consúltalo antes",
+"Límite legal UE": "Sin límite legal en la UE"
+},
+"para_mi": {
+"v": "Sí, si tienes la piel del cuerpo seca o áspera",
+"s": "También pies secos y talones ásperos. En la cara hay pocos datos."
+}
+},
+"viniferina": {
+"nombre": "Viniferina",
+"inci": "Palmitoyl Grapevine Shoot Extract",
+"frase": "La viniferina es el activo antimanchas de Caudalie, sacado de los sarmientos de la vid.",
+"usos": [
+{
+"t": "Manchas",
+"nivel": "En estudio"
+},
+{
+"t": "Luminosidad y tono apagado",
+"nivel": "En estudio"
+}
+],
+"resumen": {
+"Qué es": "Extracto de vid",
+"Dosis estudiada": "No publicada",
+"Cuándo usar": "Mañana y noche en el estudio de la marca · resultados medidos a las 8 semanas",
+"Límite legal UE": "Sin límite legal en la UE"
+},
+"para_mi": {
+"v": "Si tienes manchas o tono apagado y buscas una alternativa a la vitamina C",
+"s": "Casi todos los datos son de la marca."
+}
+},
+"vitamina-c": {
+"nombre": "Vitamina C",
+"inci": "Ascorbic Acid",
+"frase": "La vitamina C es la de la comida, puesta en la piel: puede suavizar arrugas finas tras meses de uso.",
+"usos": [
+{
+"t": "Arrugas finas y textura",
+"nivel": "Evidencia alta"
+},
+{
+"t": "Manchas por el sol",
+"nivel": "Evidencia media"
+},
+{
+"t": "Protección extra frente al sol",
+"nivel": "Evidencia media"
+},
+{
+"t": "Granos (con un derivado)",
+"nivel": "Evidencia media"
+}
+],
+"resumen": {
+"Qué es": "Ácido L-ascórbico",
+"Dosis estudiada": "3–15%",
+"Cuándo usar": "De día, debajo del protector · primeros cambios en unos 3 meses",
+"Principal precaución": "No sustituye al protector solar",
+"Límite legal UE": "Sin límite legal en la UE"
+},
+"para_mi": {
+"v": "Sí, si tienes arrugas finas, textura áspera o manchas de sol",
+"s": "También como antioxidante de día, además del protector."
+}
+},
+"vitamina-e": {
+"nombre": "Vitamina E",
+"inci": "Tocopherol",
+"frase": "La vitamina E protege las grasas de tu piel y, puesta antes del sol, reduce un poco la rojez.",
+"usos": [
+{
+"t": "Daño del sol, como extra del protector",
+"nivel": "Evidencia alta"
+},
+{
+"t": "Hidratación",
+"nivel": "Evidencia media"
+},
+{
+"t": "Arrugas",
+"nivel": "En fórmulas combinadas"
+}
+],
+"resumen": {
+"Dosis estudiada": "0,5–10%",
+"Cuándo usar": "Mañana y noche",
+"Principal precaución": "Embarazo y lactancia: consúltalo antes",
+"Límite legal UE": "Sin límite legal en la UE"
+},
+"para_mi": {
+"v": "Sí, si te expones al sol y quieres un extra del protector",
+"s": "Para cicatrices o estrías, los estudios no dan para tanto."
+}
+},
+"zinc-pca": {
+"nombre": "Zinc PCA",
+"inci": "Zinc PCA · Zinc Gluconate",
+"frase": "El zinc PCA es zinc en una forma soluble, típico de los sérums para piel grasa y con granos.",
+"usos": [
+{
+"t": "Grasa y brillos",
+"nivel": "Evidencia media"
+},
+{
+"t": "Granos",
+"nivel": "En estudio"
+}
+],
+"resumen": {
+"Qué es": "Sal de zinc",
+"Dosis estudiada": "0,2–2%",
+"Cuándo usar": "Dos veces al día en los estudios · cambios medidos en 3–12 semanas"
+},
+"para_mi": {
+"v": "Sí, si tienes la piel grasa con brillos y quieres algo suave",
+"s": "El apoyo es un solo estudio pequeño. En granos, el zinc solo no funcionó."
+}
+}
+}
