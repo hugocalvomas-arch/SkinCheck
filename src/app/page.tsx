@@ -128,7 +128,7 @@ export default function Inicio() {
               </ul>
             </div>
             <figure className="col-span-12 lg:col-span-6 lg:col-start-7 m-0 w-full max-w-[34rem] lg:justify-self-end">
-              <AntesDespues escaneo antes={hayEjemplo ? '/ejemplos/antes.jpg' : undefined} despues={hayEjemplo ? '/ejemplos/despues.jpg' : undefined} />
+              <AntesDespues antes={hayEjemplo ? '/ejemplos/antes.jpg' : undefined} despues={hayEjemplo ? '/ejemplos/despues.jpg' : undefined} />
               <figcaption className="mt-3 text-sm text-gris">Desliza para comparar. Simulación orientativa generada con IA.</figcaption>
             </figure>
           </div>
