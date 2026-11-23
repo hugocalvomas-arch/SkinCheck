@@ -2,7 +2,8 @@
 /* eslint-disable @next/next/no-img-element */
 import { useEffect, useRef, useState } from 'react'
 import { DESTACADAS, EDAD, GLOBAL, PRIMERO, nivel, valor } from './ejemplo'
-import { CONTORNO, MALLA, PUNTOS, RASGOS } from './mallaCara'
+import { CEJAS, LABIOS, MALLA, OJOS, OVALO, PUNTOS } from './mallaCara'
+import { ESTILO, dibujarMallaClinica, type Uniones } from '@/lib/mallaClinica'
 
 // El análisis "en directo", como un vídeo continuo y en bucle: la malla aparece y se ajusta a la cara,
 // y después un barrido va pintando lo que detecta la API (sus imágenes reales) mientras el radar se llena.
@@ -18,8 +19,8 @@ const V = ZONAS.filter(([, f]) => f).length
 
 // Línea de tiempo (segundos)
 const L = 25 // duración del bucle
-const MALLA_FIN = 3.4 // la malla termina de ajustarse
-const Z0 = 3.6 // empieza la primera zona
+const MALLA_FIN = 1.8 // la malla termina de amoldarse
+const Z0 = 3.2 // empieza la primera zona
 const D = 2.3 // cada zona
 const BARRIDO = 1.1 // lo que tarda el barrido de una zona
 const R0 = Z0 + V * D + 0.3 // empieza el resultado
@@ -27,7 +28,7 @@ const VACIADO = 1.0 // al reiniciar, el radar se vacía suave
 
 const IMG_W = 900
 const IMG_H = 1125
-const MENTA = '127,214,194'
+const MENTA = ESTILO.clinica.color
 
 const clamp = (x: number) => Math.max(0, Math.min(1, x))
 const suave = (x: number) => { const c = clamp(x); return c * c * (3 - 2 * c) }
@@ -93,53 +94,35 @@ function Radar({ vals, actual, nombres = true }: { vals: number[]; actual: numbe
   )
 }
 
-// Malla sobre la foto: al principio llega descolocada y se va ajustando; luego queda tenue, respirando.
+// La misma malla que ve la clienta en la cámara del iPad. Aparece de golpe algo descolocada,
+// se amolda a la cara (frente incluida) y se retira cuando empiezan los resultados.
+const UNIONES: Uniones = { malla: MALLA, ovalo: OVALO, ojos: OJOS, cejas: CEJAS, labios: LABIOS }
 function dibujarMalla(ctx: CanvasRenderingContext2D, w: number, h: number, t: number) {
   ctx.clearRect(0, 0, w, h)
-  let op: number
-  if (t < 0.5) op = suave(t / 0.5)
-  else if (t < MALLA_FIN) op = 1
-  else if (t < MALLA_FIN + 1.2) op = 1 - 0.8 * suave((t - MALLA_FIN) / 1.2)
-  else if (t < R0) op = 0.2
-  else op = 0.2 * (1 - suave((t - R0) / 1.2))
+  const op = t < 0.12 ? t / 0.12 : t < Z0 ? 1 : 1 - suave((t - Z0) / 0.8)
   if (op <= 0.01) return
   const e = Math.max(w / IMG_W, h / IMG_H)
   const ox = (w - IMG_W * e) / 2
   const oy = (h - IMG_H * e) / 2
-  const ajuste = salida(t / (MALLA_FIN - 0.4)) // 0 = descolocada, 1 = sobre la cara
-  const desv = 1 - ajuste
-  const cx = 0.52, cy = 0.6
-  const giro = -0.14 * desv + 0.012 * Math.sin(t * 1.3)
-  const esc = 1 - 0.16 * desv
-  const dx = 0.05 * desv, dy = -0.06 * desv
+  const desv = 1 - salida(t / MALLA_FIN) // 1 = recién aparecida, 0 = sobre la cara
+  const cx = 0.52, cy = 0.55
+  const giro = -0.12 * desv
+  const esc = 1 + 0.14 * desv
+  const dx = 0.04 * desv, dy = -0.05 * desv
   const cos = Math.cos(giro), sin = Math.sin(giro)
   const n = PUNTOS.length / 2
-  const xs = new Float32Array(n), ys = new Float32Array(n)
+  const Q: number[][] = new Array(n)
   for (let i = 0; i < n; i++) {
-    let x = PUNTOS[i * 2] - cx, y = PUNTOS[i * 2 + 1] - cy
-    const r1 = x * cos - y * sin, r2 = x * sin + y * cos
-    const ruido = 0.022 * desv + 0.0012
-    x = cx + r1 * esc + dx + ruido * Math.sin(t * 3.1 + i * 1.7)
-    y = cy + r2 * esc + dy + ruido * Math.cos(t * 2.7 + i * 2.3)
-    xs[i] = ox + x * IMG_W * e
-    ys[i] = oy + y * IMG_H * e
+    const x = PUNTOS[i * 2] - cx, y = PUNTOS[i * 2 + 1] - cy
+    const ruido = 0.018 * desv
+    Q[i] = [
+      ox + (cx + (x * cos - y * sin) * esc + dx + ruido * Math.sin(t * 3.1 + i * 1.7)) * IMG_W * e,
+      oy + (cy + (x * sin + y * cos) * esc + dy + ruido * Math.cos(t * 2.7 + i * 2.3)) * IMG_H * e,
+    ]
   }
-  const lineas = (pares: number[], color: string, grosor: number) => {
-    ctx.beginPath()
-    for (let k = 0; k < pares.length; k += 2) { ctx.moveTo(xs[pares[k]], ys[pares[k]]); ctx.lineTo(xs[pares[k + 1]], ys[pares[k + 1]]) }
-    ctx.strokeStyle = color; ctx.lineWidth = grosor; ctx.stroke()
-  }
-  lineas(MALLA, `rgba(${MENTA},${0.32 * op})`, 0.6)
-  lineas(RASGOS, `rgba(${MENTA},${0.75 * op})`, 1)
-  ctx.save(); ctx.shadowColor = `rgba(${MENTA},${0.8 * op})`; ctx.shadowBlur = 8
-  lineas(CONTORNO, `rgba(${MENTA},${0.95 * op})`, 1.6)
-  ctx.restore()
-  ctx.fillStyle = `rgba(255,255,255,${0.85 * op})`
-  for (let i = 0; i < n; i += 4) {
-    const parpadeo = 0.5 + 0.5 * Math.sin(t * 6 + i)
-    const r = 0.8 + 0.9 * parpadeo * (desv + 0.3)
-    ctx.beginPath(); ctx.arc(xs[i], ys[i], r, 0, Math.PI * 2); ctx.fill()
-  }
+  ctx.globalAlpha = op
+  dibujarMallaClinica(ctx, Q, UNIONES, ESTILO.clinica, { t, quieto: false })
+  ctx.globalAlpha = 1
 }
 
 export function PanelEnVivo() {
@@ -202,9 +185,6 @@ export function PanelEnVivo() {
             <canvas ref={lienzo} aria-hidden className="absolute inset-0 w-full h-full z-[20] pointer-events-none" />
             {rz > 0 && rz < 1 && (
               <span aria-hidden className="absolute inset-x-0 z-[21] h-[3px] pointer-events-none" style={{ top: `${suave(rz) * 100}%`, background: `rgb(${MENTA})`, boxShadow: `0 0 18px 4px rgba(${MENTA},.7)` }} />
-            )}
-            {t < MALLA_FIN && (
-              <span aria-hidden className="absolute inset-x-0 z-[21] h-[2px] pointer-events-none" style={{ top: `${(((t / MALLA_FIN) * 2) % 1) * 100}%`, background: `rgba(${MENTA},.9)`, boxShadow: `0 0 14px 3px rgba(${MENTA},.5)` }} />
             )}
           </div>
           {/* Rótulo */}
