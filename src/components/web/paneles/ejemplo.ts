@@ -1,4 +1,4 @@
-// Resultado real de Perfect Corp sobre una cara generada con IA (mujer de unos 55 años, public/ejemplos/cara-ia-55.jpg), 23/11/2026.
+// Resultado real de Perfect Corp sobre una cara generada con IA (mujer de unos 55 años, public/ejemplos/zonas/foto.webp), 23/11/2026.
 // Escala 0 a 100, más alto = más marcado, con los cortes del informe de la clienta (Leve 25, Moderado 50, Marcado 70).
 export const MEDIDAS: [string, number][] = [
   ['Firmeza', 43], ['Luminosidad', 40], ['Arrugas', 39], ['Hidratación', 39], ['Textura', 36], ['Manchas', 34],
