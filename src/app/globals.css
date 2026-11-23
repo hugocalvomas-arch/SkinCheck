@@ -125,10 +125,3 @@
   .btn, .btn-sec, .campo, .enlace { transition: none; }
 }
 
-/* Barrido de detección del análisis en directo */
-@media (prefers-reduced-motion: no-preference) {
-  @keyframes sc-revela { from { clip-path: inset(0 0 100% 0); } to { clip-path: inset(0 0 0 0); } }
-  @keyframes sc-linea { 0% { transform: translateY(0); opacity: 1; } 85% { opacity: 1; } 100% { transform: translateY(100%); opacity: 0; } }
-  .sc-revela { animation: sc-revela 1100ms var(--ease-in-out) both; }
-  .sc-linea { animation: sc-linea 1100ms var(--ease-in-out) both; }
-}

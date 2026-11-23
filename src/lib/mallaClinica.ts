@@ -1,4 +1,4 @@
-// Dibujo de la malla facial "clínica". Lo usan la cámara del iPad (MallaFacial) y la demo de la portada (PanelEnVivo),
+// Dibujo de la malla facial "clínica". Lo usan la cámara del iPad (MallaFacial) y la demo de la portada (video/analisis),
 // para que en la web se vea exactamente la misma malla que verá la clienta.
 
 // Uniones de MediaPipe en pares planos [a, b, a, b…]. El óvalo va en orden, para poder cerrarlo como trazado.

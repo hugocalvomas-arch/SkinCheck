@@ -81,7 +81,7 @@
           </div>
           <div class="lado">
             <div id="edad"><div class="eti">Edad aparente</div><div class="dato">61 años</div></div>
-            <div id="prio"><div class="eti">A trabajar primero</div><div class="dato">Firmeza y arrugas</div></div>
+            <div id="prio"><div class="eti">A trabajar primero</div><div class="dato">Firmeza y luminosidad</div></div>
           </div>
         </div>
         <svg id="radar" viewBox="-20 10 540 480"></svg>
@@ -92,18 +92,18 @@
       // ---------- Datos reales del análisis (cara de ejemplo de 55 años) ----------
       const ZONAS = [
         // nombre, valor, ancla en la foto (px del panel), posición de la tarjeta
-        ['Arrugas', 39, [464, 277], [548, 150]],
-        ['Manchas', 34, [219, 647], [34, 742]],
-        ['Textura', 36, [708, 637], [632, 742]],
-        ['Rojez', 27, [240, 610], [34, 404]],
-        ['Brillo', 31, [468, 497], [600, 318]],
-        ['Firmeza', 43, [743, 882], [520, 920]],
-        ['Hidratación', 39, [198, 562], [34, 300]],
-        ['Poros', 33], ['Ojeras', 23], ['Acné', 12], ['Luminosidad', 40],
+        ['Arrugas', 61, [464, 277], [548, 150]],
+        ['Manchas', 66, [219, 647], [34, 742]],
+        ['Textura', 64, [708, 637], [632, 742]],
+        ['Rojez', 73, [240, 610], [34, 404]],
+        ['Brillo', 69, [468, 497], [600, 318]],
+        ['Firmeza', 57, [743, 882], [520, 920]],
+        ['Hidratación', 61, [198, 562], [34, 300]],
+        ['Poros', 67], ['Ojeras', 77], ['Acné', 88], ['Luminosidad', 60],
       ];
-      const DESTACADAS = ['Firmeza', 'Arrugas'];
+      const DESTACADAS = ['Firmeza', 'Luminosidad']; // las dos notas más bajas
       const V = 7, N = ZONAS.length;
-      const nivel = (v) => (v < 25 ? 'Leve' : v < 50 ? 'Leve a moderado' : v < 70 ? 'Moderado' : 'Marcado');
+      const nivel = (n) => (n >= 75 ? 'Bien' : n >= 50 ? 'Leve' : n >= 30 ? 'Moderado' : 'Marcado'); // escala de Perfect Corp: más alto = mejor (src/lib/escalaPiel.ts)
 
       // ---------- Línea de tiempo (s) ----------
       const L = 24, AJUSTE = 1.8, Z0 = 3.0, D = 2.45, FUNDIDO = 0.9, R0 = Z0 + V * D + 0.15, VACIA = 23.0;
@@ -130,7 +130,7 @@
       const C = 250, R = 180;
       const pol = (r, k) => { const a = ((k * 360) / N - 90) * Math.PI / 180; return [C + r * Math.cos(a), C + r * Math.sin(a)]; };
       const anillo = (v) => ZONAS.map((_, k) => pol((R * v) / 100, k).join(',')).join(' ');
-      [[25, 'Leve'], [50, 'Moderado'], [70, 'Marcado'], [100, '']].forEach(([v, txt]) => {
+      [[30, '30'], [50, '50'], [75, '75'], [100, '']].forEach(([v, txt]) => {
         el('polygon', { points: anillo(v), fill: 'none', stroke: '#dfe6e5', 'stroke-dasharray': v === 100 ? '' : '3 4' }, radar);
         if (txt) el('text', { x: C + 5, y: C - (R * v) / 100 - 4, 'font-size': 10.5, fill: '#56676a' }, radar).textContent = txt;
       });
@@ -280,7 +280,7 @@
           c.linea.setAttribute('stroke-dasharray', `${c.largo * trazo} ${c.largo}`);
           c.linea.setAttribute('opacity', (1 - sale).toFixed(3));
           c.punto.setAttribute('opacity', (suave((t - ini(i) - 0.1) / 0.3) * (1 - sale)).toFixed(3));
-          const f = ((t - ini(i)) % 1.3) / 1.3;
+          const f = (Math.max(0, t - ini(i)) % 1.3) / 1.3;
           const vivo = t > ini(i) && t < fin;
           c.onda.setAttribute('r', (6 + f * 34).toFixed(2));
           c.onda.setAttribute('opacity', vivo ? ((1 - f) * 0.9 * (1 - sale)).toFixed(3) : 0);

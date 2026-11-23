@@ -1,6 +1,7 @@
 'use client'
 /* eslint-disable @next/next/no-img-element, @typescript-eslint/no-explicit-any */
 import { MallaFacial, type EstadoCara } from './MallaFacial'
+import { aTrabajar, nivelPiel, notaPiel } from '@/lib/escalaPiel'
 import { useCallback, useEffect, useRef, useState, useTransition } from 'react'
 import QRCode from 'qrcode'
 import { ArrowLeft, ArrowRight, ArrowsLeftRight, CalendarCheck, Camera, Check, Drop, Moon, ScanSmiley, ShieldCheck, Sparkle, Sun, Trash, X } from '@phosphor-icons/react'
@@ -28,7 +29,6 @@ const MEJORAR: [string, string][] = [
 const NOMBRE: Record<string, string> = Object.fromEntries(MEJORAR)
 const PASOS_ANALISIS = ['Detectar el rostro', 'Medir poros, textura y brillo', 'Medir manchas, rojeces y ojeras', 'Medir arrugas y firmeza', 'Elegir ingredientes', 'Preparar tu rutina', 'Generar la simulación']
 const eur = (n: number | null | undefined) => (n == null ? '' : n.toLocaleString('es-ES', { style: 'currency', currency: 'EUR' }))
-const nivelDe = (v: number) => (v >= 70 ? 'Marcado' : v >= 50 ? 'Moderado' : v >= 25 ? 'Leve' : 'Bien')
 const INACTIVIDAD_MS = 150_000
 
 export function Kiosko({ farmaciaId, farmacia, precio }: Props) {
@@ -364,13 +364,17 @@ export function Informe({ res, foto, farmacia, onFin }: { res: any; foto: string
           )}
           {aspectos.length > 0 && (
             <ul className="grid gap-3 list-none p-0 m-0">
-              {aspectos.map(([a, v]) => (
-                <li key={a} className="grid grid-cols-[8rem_1fr_5.5rem] items-center gap-4">
-                  <span>{NOMBRE[a] ?? a}</span>
-                  <span className="escala"><i /><b data-alto={v >= 50 ? '' : undefined} style={{ width: `${Math.max(4, v)}%` }} /></span>
-                  <span className={`text-sm text-right ${v >= 50 ? 'text-[var(--k-text)] font-medium' : 'text-[var(--k-muted)]'}`}>{nivelDe(v)}</span>
-                </li>
-              ))}
+              {aspectos.map(([a, v]) => {
+                const n = notaPiel(v)
+                return (
+                  <li key={a} className="grid grid-cols-[8rem_1fr_2.5rem_5.5rem] items-center gap-4">
+                    <span>{NOMBRE[a] ?? a}</span>
+                    <span className="escala"><i /><b data-alto={aTrabajar(n) ? '' : undefined} style={{ width: `${Math.max(4, n)}%` }} /></span>
+                    <span className="num text-sm text-right">{n}</span>
+                    <span className={`text-sm text-right ${aTrabajar(n) ? 'text-[var(--k-text)] font-medium' : 'text-[var(--k-muted)]'}`}>{nivelPiel(n)}</span>
+                  </li>
+                )
+              })}
             </ul>
           )}
           {marcas && F?.imagenes?.despues && (

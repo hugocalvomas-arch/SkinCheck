@@ -27,7 +27,7 @@ export function VideoAnalisis() {
           aria-label="Demostración del análisis facial: la malla se ajusta a la cara, se analizan las zonas y sale el resultado"
         />
       </div>
-      <figcaption className="mt-3 text-sm text-gris">Resultado real del análisis sobre una cara generada con IA. Más hacia fuera, más marcado.</figcaption>
+      <figcaption className="mt-3 text-sm text-gris">Resultado real del análisis sobre una cara generada con IA. Escala de 0 a 100: más hacia fuera, mejor.</figcaption>
     </figure>
   )
 }
