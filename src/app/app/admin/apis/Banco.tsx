@@ -18,7 +18,7 @@ export function Banco({ proveedores, nombres }: { proveedores: P[]; nombres: Rec
               {!p.listo && <p className="text-sm text-gris">Falta en Vercel: {p.variables.join(', ')}</p>}
             </div>
             <button disabled={!p.listo || enCurso} onClick={() => empezar(async () => { const r = await probarProveedor(p.id); setRes((x) => ({ ...x, [p.id]: r })) })}
-              className="rounded-lg px-4 py-2 bg-marca text-sobre-marca disabled:opacity-40">{enCurso ? 'Probando…' : 'Probar las dos caras'}</button>
+              className="rounded-lg px-4 py-2 bg-marca text-sobre-marca disabled:opacity-40">{enCurso ? 'Probando…' : 'Probar las 4 caras'}</button>
           </div>
           {res[p.id] && (
             <div className="grid md:grid-cols-2 gap-6 text-sm">

@@ -10,6 +10,9 @@ export type Prueba = { proveedor: string; cara: string; ms: number; medidas: Med
 export const CARAS = [
   { id: '35', nombre: 'Mujer, 35 años', foto: '/ejemplos/antes.jpg' },
   { id: '55', nombre: 'Mujer, 55 años', foto: '/ejemplos/cara-55.jpg' },
+  // Sin referencia de Perfect Corp (no quedan unidades): sirven para ver si cada API detecta acné, arrugas y manchas marcadas
+  { id: 'h25', nombre: 'Hombre, 25 años, con acné', foto: '/ejemplos/hombre-25.jpg' },
+  { id: 'h60', nombre: 'Hombre, 60 años', foto: '/ejemplos/hombre-60.jpg' },
 ] as const
 
 // Resultado real de Perfect Corp (23/11/2026) para esas caras, en su escala: 0-100, más alto = mejor.
