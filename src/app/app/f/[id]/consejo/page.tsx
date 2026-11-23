@@ -1,6 +1,9 @@
 import { usuarioActual } from '@/lib/auth'
 import { Cuestionario } from './Cuestionario'
 
+// el análisis de la foto tarda entre 15 y 60 segundos
+export const maxDuration = 90
+
 export default async function NuevoConsejo({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params
   const { sb } = await usuarioActual()

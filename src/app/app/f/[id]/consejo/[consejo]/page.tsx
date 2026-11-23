@@ -2,6 +2,7 @@
 import Link from 'next/link'
 import { usuarioActual } from '@/lib/auth'
 import { marcarVendida } from '../actions'
+import { FotoAnalisis } from './FotoAnalisis'
 
 const eur = (n: number | null) => (n == null ? '' : n.toLocaleString('es-ES', { style: 'currency', currency: 'EUR' }))
 const TURNO: Record<string, string> = { AM: 'Mañana', PM: 'Noche', AMPM: 'Mañana y noche' }
@@ -9,7 +10,7 @@ const TURNO: Record<string, string> = { AM: 'Mañana', PM: 'Noche', AMPM: 'Maña
 export default async function Resultado({ params }: { params: Promise<{ id: string; consejo: string }> }) {
   const { id, consejo } = await params
   const { sb } = await usuarioActual()
-  const { data: c } = await sb.from('consejos').select('id, rutinas, rutina_vendida, creado').eq('id', consejo).eq('farmacia_id', id).maybeSingle()
+  const { data: c } = await sb.from('consejos').select('id, rutinas, rutina_vendida, creado, puntuaciones_foto').eq('id', consejo).eq('farmacia_id', id).maybeSingle()
   if (!c) return <p>Consejo no encontrado.</p>
   const R = c.rutinas as any
   if (R.sin_rutina) return <p className="bg-amber-50 rounded-xl p-5">{R.sin_rutina}</p>
@@ -20,6 +21,8 @@ export default async function Resultado({ params }: { params: Promise<{ id: stri
         <h1 className="text-2xl font-semibold">Rutinas propuestas</h1>
         <Link href={`/app/f/${id}/consejo`} className="ml-auto text-sm underline">Nuevo consejo</Link>
       </div>
+
+      {c.puntuaciones_foto?.puntuaciones && <FotoAnalisis f={c.puntuaciones_foto} />}
 
       {R.productos_en_stock < 20 && (
         <p className="text-sm bg-amber-50 text-amber-900 rounded-lg p-3">

@@ -61,10 +61,10 @@ export function Cuestionario({ farmaciaId }: { farmaciaId: string }) {
       <div className="sticky bottom-0 bg-neutral-50 py-4 flex items-center gap-4">
         <button
           disabled={faltan.length > 0 || enviando}
-          onClick={() => start(async () => { const res = await crearConsejo(farmaciaId, r, foto); if (res?.error) setError(res.error) })}
+          onClick={() => start(async () => { setError(''); const res = await crearConsejo(farmaciaId, r, foto); if (res?.error) setError(res.error) })}
           className="bg-neutral-900 text-white rounded-lg px-5 py-2.5 disabled:opacity-40"
         >
-          {enviando ? 'Calculando…' : 'Ver rutinas'}
+          {enviando ? (foto ? 'Analizando la piel… (hasta 1 minuto)' : 'Calculando…') : 'Ver rutinas'}
         </button>
         <span className="text-sm text-neutral-500">{faltan.length ? `Faltan ${faltan.length} preguntas` : 'Listo'}</span>
         {error && <span className="text-sm text-red-600">{error}</span>}

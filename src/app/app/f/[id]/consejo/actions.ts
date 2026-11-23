@@ -4,7 +4,7 @@ import { revalidatePath } from 'next/cache'
 import { supabaseServer } from '@/lib/supabase/server'
 import { pendientes, visibles, type Respuestas } from '@/lib/cuestionario'
 import { calcularRutinas } from '@/server/rutinas'
-import { analizarFoto, problemasDesdeFoto, type Puntuaciones } from '@/server/analisisPiel'
+import { analizarFoto, problemasDesdeFoto, type ResultadoFoto } from '@/server/analisisPiel'
 
 export async function crearConsejo(farmaciaId: string, r: Respuestas, foto: string | null = null) {
   const sb = await supabaseServer()
@@ -12,13 +12,13 @@ export async function crearConsejo(farmaciaId: string, r: Respuestas, foto: stri
   // solo se guardan las respuestas de preguntas visibles (nada de texto libre ni datos personales)
   const limpias: Respuestas = {}
   for (const q of visibles(r)) limpias[q.id] = r[q.id]
-  // Foto (opcional): se analiza y se descarta; solo quedan las puntuaciones
-  let puntuaciones: Puntuaciones | null = null
+  // Foto (opcional): se analiza y se descarta; quedan las puntuaciones y enlaces del proveedor que caducan en 2 h
+  let puntuaciones: ResultadoFoto | null = null
   if (foto) {
     const a = await analizarFoto(foto)
     if ('error' in a) return { error: a.error }
-    puntuaciones = a.puntuaciones
-    limpias.problemas_extra = problemasDesdeFoto(puntuaciones)
+    puntuaciones = a
+    limpias.problemas_extra = problemasDesdeFoto(a.puntuaciones)
   }
   const stock: { producto_id: string; pvp: number | null; unidades: number }[] = []
   for (let desde = 0; ; desde += 1000) {

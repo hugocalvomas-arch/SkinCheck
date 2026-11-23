@@ -13,7 +13,7 @@ export function Camara({ onFoto }: { onFoto: (jpegBase64: string | null) => void
     if (!activa) return
     let stream: MediaStream | null = null
     navigator.mediaDevices
-      .getUserMedia({ video: { facingMode: 'user', width: { ideal: 1280 } }, audio: false })
+      .getUserMedia({ video: { facingMode: 'user', width: { ideal: 1920 }, height: { ideal: 1080 } }, audio: false })
       .then((s) => {
         stream = s
         if (video.current) video.current.srcObject = s
@@ -25,11 +25,15 @@ export function Camara({ onFoto }: { onFoto: (jpegBase64: string | null) => void
   function capturar() {
     const v = video.current
     if (!v) return
-    const ancho = Math.min(1024, v.videoWidth)
+    // recorte vertical 3:4 centrado: la cara debe ocupar más del 60 % del ancho (requisito del proveedor)
+    const alto = v.videoHeight
+    const ancho = Math.min(v.videoWidth, Math.round((alto * 3) / 4))
+    const x = Math.round((v.videoWidth - ancho) / 2)
+    const escala = Math.min(1, 1280 / alto)
     const c = document.createElement('canvas')
-    c.width = ancho
-    c.height = Math.round((v.videoHeight / v.videoWidth) * ancho)
-    c.getContext('2d')!.drawImage(v, 0, 0, c.width, c.height)
+    c.width = Math.round(ancho * escala)
+    c.height = Math.round(alto * escala)
+    c.getContext('2d')!.drawImage(v, x, 0, ancho, alto, 0, 0, c.width, c.height)
     const datos = c.toDataURL('image/jpeg', 0.85)
     setFoto(datos)
     setActiva(false)
@@ -49,7 +53,7 @@ export function Camara({ onFoto }: { onFoto: (jpegBase64: string | null) => void
         <input type="checkbox" checked={consiente} onChange={(e) => { setConsiente(e.target.checked); if (!e.target.checked) { setActiva(false); setFoto(null); onFoto(null) } }} />
         <span>
           El cliente acepta que se haga una foto de su cara para analizar el aspecto de la piel con un servicio externo.
-          La foto no se guarda: solo se conservan las puntuaciones del análisis, sin nombre. Puede seguir sin foto.
+          SkinCheck no guarda la foto: solo las puntuaciones del análisis, sin nombre. El servicio externo la conserva un tiempo limitado y después la borra. Puede seguir sin foto.
         </span>
       </label>
       {consiente && !activa && !foto && (
@@ -57,8 +61,11 @@ export function Camara({ onFoto }: { onFoto: (jpegBase64: string | null) => void
       )}
       {activa && (
         <div className="space-y-2">
-          <video ref={video} autoPlay playsInline muted className="w-full max-w-md rounded-lg -scale-x-100 bg-black" />
-          <p className="text-xs text-neutral-500">Buena luz, de frente, sin gafas ni maquillaje si es posible.</p>
+          <div className="relative w-full max-w-sm aspect-[3/4] overflow-hidden rounded-lg bg-black">
+            <video ref={video} autoPlay playsInline muted className="absolute inset-0 w-full h-full object-cover -scale-x-100" />
+            <div className="absolute left-[12%] right-[12%] top-[10%] bottom-[14%] rounded-[50%] border-2 border-white/80 pointer-events-none" />
+          </div>
+          <p className="text-xs text-neutral-500">Acerca la cara hasta llenar el óvalo. Buena luz, de frente, sin gafas, pelo fuera de la frente y sin maquillaje si es posible.</p>
           <button type="button" onClick={capturar} className="bg-neutral-900 text-white rounded-lg px-3 py-2 text-sm">Hacer foto</button>
         </div>
       )}
