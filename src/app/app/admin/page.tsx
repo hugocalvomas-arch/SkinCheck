@@ -19,6 +19,7 @@ export default async function Admin() {
           {pendientes ?? 0} códigos sin clasificar
         </Link>
         <span className="bg-papel rounded-lg px-3 py-2">{conCodigo ?? 0} productos del catálogo con EAN o CN</span>
+        <Link href="/app/admin/apis" className="bg-papel rounded-lg px-3 py-2 underline">Comparar APIs de análisis</Link>
       </div>
 
       <section className="bg-papel rounded-[var(--radius-card)] border border-linea p-6 space-y-4">
