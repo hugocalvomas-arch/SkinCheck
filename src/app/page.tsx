@@ -2,7 +2,7 @@ import Link from 'next/link'
 import { existsSync } from 'node:fs'
 import { join } from 'node:path'
 import { CaretDown, ChartLineUp, Crosshair, DeviceTablet, FileXls, LockKey, Repeat, ShieldCheck, Storefront } from '@phosphor-icons/react/dist/ssr'
-import { PanelEnVivo } from '@/components/web/paneles/PanelEnVivo'
+import { VideoAnalisis } from '@/components/web/VideoAnalisis'
 import { AntesDespues } from '@/components/web/AntesDespues'
 import { MiniInforme } from '@/components/web/MiniInforme'
 import { FormularioInfo } from '@/components/web/FormularioInfo'
@@ -83,7 +83,7 @@ export default function Inicio() {
               </div>
             </div>
           </div>
-          <div className="mt-10"><PanelEnVivo /></div>
+          <div className="mt-10"><VideoAnalisis /></div>
         </section>
 
         {/* Qué mide */}

@@ -1,0 +1,331 @@
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=1920, height=1080" />
+    <script src="gsap.min.js"></script>
+    <script src="malla.js"></script>
+    <style>
+      @font-face { font-family: 'Geist'; src: url('assets/geist.woff2') format('woff2'); font-weight: 100 900; }
+      @font-face { font-family: 'Geist Mono'; src: url('assets/geist-mono.woff2') format('woff2'); font-weight: 100 900; }
+      :root {
+        --paper: #ffffff; --paper-2: #f3f6f5; --ink: #0f1b1d; --ink-2: #2b3a3c; --muted: #56676a; --rule: #dfe6e5;
+        --accent: #0b6e5b; --accent-soft: #e5f2ee; --menta: 127, 214, 194;
+      }
+      * { margin: 0; padding: 0; box-sizing: border-box; }
+      html, body { width: 1920px; height: 1080px; overflow: hidden; background: var(--paper); }
+      #root { position: relative; width: 1920px; height: 1080px; font-family: 'Geist', sans-serif; color: var(--ink); background: var(--paper); }
+
+      /* Cara */
+      #cara { position: absolute; left: 0; top: 0; width: 900px; height: 1080px; overflow: hidden; background: #d9dcdc; }
+      #escena { position: absolute; inset: 0; transform-origin: 50% 46%; will-change: transform; }
+      #escena img { position: absolute; left: 0; top: -22.5px; width: 900px; height: 1125px; display: block; }
+      #escena img.zona { opacity: 0; }
+      #malla { position: absolute; left: 0; top: 0; width: 900px; height: 1080px; }
+      #guias { position: absolute; left: 0; top: 0; width: 900px; height: 1080px; overflow: visible; }
+
+      .chip { position: absolute; width: 236px; padding: 16px 18px 16px; border-radius: 14px; background: rgba(255,255,255,.86);
+        backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px); box-shadow: 0 10px 30px -12px rgba(15,27,29,.35), 0 0 0 1px rgba(255,255,255,.6) inset;
+        opacity: 0; will-change: transform, opacity; }
+      .chip .fila { display: flex; align-items: baseline; justify-content: space-between; }
+      .chip .nombre { font-size: 19px; font-weight: 500; color: var(--ink-2); }
+      .chip .valor { font-size: 34px; font-weight: 600; letter-spacing: -0.02em; color: var(--accent); font-variant-numeric: tabular-nums; }
+      .chip .barra { margin-top: 10px; height: 5px; border-radius: 3px; background: var(--accent-soft); overflow: hidden; }
+      .chip .barra i { display: block; height: 100%; width: 0; background: var(--accent); border-radius: 3px; }
+      .chip .nivel { margin-top: 8px; font-size: 14px; color: var(--muted); }
+
+      #estado { position: absolute; left: 28px; top: 28px; display: flex; align-items: center; gap: 10px; padding: 11px 16px 11px 14px; border-radius: 999px;
+        background: rgba(255,255,255,.9); backdrop-filter: blur(10px); box-shadow: 0 6px 20px -10px rgba(15,27,29,.4); font-size: 18px; color: var(--ink-2); }
+      #estado b { width: 9px; height: 9px; border-radius: 50%; background: var(--accent); display: block; }
+      #progreso { position: absolute; left: 28px; right: 28px; bottom: 26px; height: 4px; border-radius: 2px; background: rgba(255,255,255,.45); overflow: hidden; }
+      #progreso i { display: block; height: 100%; width: 0; background: #fff; border-radius: 2px; }
+
+      /* Resultado */
+      #panel { position: absolute; left: 900px; top: 0; width: 1020px; height: 1080px; padding: 64px 72px 0 80px; border-left: 1px solid var(--rule); }
+      .cab { display: flex; justify-content: space-between; align-items: flex-start; }
+      .eti { font-size: 18px; color: var(--muted); }
+      #nota { display: flex; align-items: baseline; gap: 8px; margin-top: 8px; }
+      #nota .num { font-size: 112px; font-weight: 600; letter-spacing: -0.045em; line-height: 1; font-variant-numeric: tabular-nums; min-width: 140px; }
+      #nota .de { font-size: 28px; color: var(--muted); }
+      .dato { margin-top: 14px; font-size: 26px; font-weight: 500; color: var(--ink); }
+      .lado { display: flex; gap: 56px; padding-top: 6px; }
+      .lado > div { will-change: transform, opacity; }
+      #radar { position: absolute; left: 50px; top: 268px; width: 900px; height: 800px; overflow: visible; }
+    </style>
+  </head>
+  <body>
+    <div id="root" data-composition-id="main" data-start="0" data-duration="24" data-width="1920" data-height="1080">
+      <div id="cara" class="clip" data-start="0" data-duration="24">
+        <div id="escena">
+          <img src="assets/foto.webp" alt="" />
+          <img class="zona" src="assets/arrugas.webp" alt="" />
+          <img class="zona" src="assets/manchas.webp" alt="" />
+          <img class="zona" src="assets/textura.webp" alt="" />
+          <img class="zona" src="assets/rojez.webp" alt="" />
+          <img class="zona" src="assets/brillo.webp" alt="" />
+          <img class="zona" src="assets/firmeza.webp" alt="" />
+          <img class="zona" src="assets/hidratacion.webp" alt="" />
+          <canvas id="malla" width="1800" height="2160"></canvas>
+          <svg id="guias" viewBox="0 0 900 1080"></svg>
+        </div>
+        <div id="chips"></div>
+        <div id="estado"><b></b><span>Detectando la cara…</span></div>
+        <div id="progreso"><i></i></div>
+      </div>
+
+      <div id="panel" class="clip" data-start="0" data-duration="24">
+        <div class="cab">
+          <div>
+            <div class="eti">Puntuación de la piel</div>
+            <div id="nota"><span class="num">–</span><span class="de">/100</span></div>
+          </div>
+          <div class="lado">
+            <div id="edad"><div class="eti">Edad aparente</div><div class="dato">61 años</div></div>
+            <div id="prio"><div class="eti">A trabajar primero</div><div class="dato">Firmeza y arrugas</div></div>
+          </div>
+        </div>
+        <svg id="radar" viewBox="-20 10 540 480"></svg>
+      </div>
+    </div>
+
+    <script>
+      // ---------- Datos reales del análisis (cara de ejemplo de 55 años) ----------
+      const ZONAS = [
+        // nombre, valor, ancla en la foto (px del panel), posición de la tarjeta
+        ['Arrugas', 39, [464, 277], [548, 150]],
+        ['Manchas', 34, [219, 647], [34, 742]],
+        ['Textura', 36, [708, 637], [632, 742]],
+        ['Rojez', 27, [240, 610], [34, 404]],
+        ['Brillo', 31, [468, 497], [600, 318]],
+        ['Firmeza', 43, [743, 882], [520, 920]],
+        ['Hidratación', 39, [198, 562], [34, 300]],
+        ['Poros', 33], ['Ojeras', 23], ['Acné', 12], ['Luminosidad', 40],
+      ];
+      const DESTACADAS = ['Firmeza', 'Arrugas'];
+      const V = 7, N = ZONAS.length;
+      const nivel = (v) => (v < 25 ? 'Leve' : v < 50 ? 'Leve a moderado' : v < 70 ? 'Moderado' : 'Marcado');
+
+      // ---------- Línea de tiempo (s) ----------
+      const L = 24, AJUSTE = 1.8, Z0 = 3.0, D = 2.45, FUNDIDO = 0.9, R0 = Z0 + V * D + 0.15, VACIA = 23.0;
+      const clamp = (x) => Math.max(0, Math.min(1, x));
+      const suave = (x) => { const c = clamp(x); return c * c * (3 - 2 * c); };
+      const salida = (x) => 1 - Math.pow(1 - clamp(x), 3);
+      const expo = (x) => { const c = clamp(x); return c === 1 ? 1 : 1 - Math.pow(2, -10 * c); };
+      const ini = (i) => Z0 + i * D;
+      // Peso de una zona: entra fundiéndose y sale fundiéndose mientras entra la siguiente
+      const pesoZona = (t, i) => {
+        const fin = i < V - 1 ? ini(i + 1) : R0;
+        return suave((t - ini(i)) / FUNDIDO) * (1 - suave((t - fin) / FUNDIDO));
+      };
+      const reinicio = (t) => 1 - suave((t - VACIA) / 0.9);
+      const valores = (t) => ZONAS.map(([, v], k) => {
+        const a = k < V ? salida((t - ini(k) - 0.25) / 1.3) : salida((t - R0 - 0.3 - (k - V) * 0.18) / 1.1);
+        return v * a * reinicio(t);
+      });
+
+      // ---------- Radar ----------
+      const NS = 'http://www.w3.org/2000/svg';
+      const el = (tag, at, padre) => { const e = document.createElementNS(NS, tag); for (const k in at) e.setAttribute(k, at[k]); padre && padre.appendChild(e); return e; };
+      const radar = document.getElementById('radar');
+      const C = 250, R = 180;
+      const pol = (r, k) => { const a = ((k * 360) / N - 90) * Math.PI / 180; return [C + r * Math.cos(a), C + r * Math.sin(a)]; };
+      const anillo = (v) => ZONAS.map((_, k) => pol((R * v) / 100, k).join(',')).join(' ');
+      [[25, 'Leve'], [50, 'Moderado'], [70, 'Marcado'], [100, '']].forEach(([v, txt]) => {
+        el('polygon', { points: anillo(v), fill: 'none', stroke: '#dfe6e5', 'stroke-dasharray': v === 100 ? '' : '3 4' }, radar);
+        if (txt) el('text', { x: C + 5, y: C - (R * v) / 100 - 4, 'font-size': 10.5, fill: '#56676a' }, radar).textContent = txt;
+      });
+      const ejes = ZONAS.map((_, k) => { const [x, y] = pol(R, k); return el('line', { x1: C, y1: C, x2: x, y2: y, stroke: '#dfe6e5' }, radar); });
+      const forma = el('polygon', { fill: '#0b6e5b', 'fill-opacity': 0.13, stroke: '#0b6e5b', 'stroke-width': 1.75, 'stroke-linejoin': 'round' }, radar);
+      const puntosR = ZONAS.map(([n]) => el('circle', { r: 3, fill: DESTACADAS.includes(n) ? '#0b6e5b' : '#fff', stroke: '#0b6e5b', 'stroke-width': 1.5 }, radar));
+      const textos = ZONAS.map(([n], k) => {
+        const [lx, ly] = pol(R + 24, k);
+        const anc = Math.abs(lx - C) < 14 ? 'middle' : lx > C ? 'start' : 'end';
+        const a = el('text', { x: lx, y: ly - 2, 'text-anchor': anc, 'font-size': 14, fill: '#2b3a3c' }, radar); a.textContent = n;
+        const b = el('text', { x: lx, y: ly + 17, 'text-anchor': anc, 'font-size': 16.5, 'font-weight': 500, fill: '#56676a', style: 'font-variant-numeric: tabular-nums' }, radar);
+        return [a, b];
+      });
+
+      // ---------- Tarjetas y guías sobre la cara ----------
+      const chips = document.getElementById('chips');
+      const guias = document.getElementById('guias');
+      const tarjetas = ZONAS.slice(0, V).map(([n, v, ancla, pos]) => {
+        const d = document.createElement('div');
+        d.className = 'chip';
+        d.style.left = pos[0] + 'px'; d.style.top = pos[1] + 'px';
+        d.innerHTML = `<div class="fila"><span class="nombre">${n}</span><span class="valor">0</span></div><div class="barra"><i></i></div><div class="nivel">${nivel(v)}</div>`;
+        chips.appendChild(d);
+        const cx = pos[0] + 118, cy = pos[1] + 50;
+        const linea = el('line', { x1: ancla[0], y1: ancla[1], x2: cx, y2: cy, stroke: '#fff', 'stroke-width': 1.5, 'stroke-opacity': 0.9 }, guias);
+        const onda = el('circle', { cx: ancla[0], cy: ancla[1], r: 0, fill: 'none', stroke: 'rgb(127,214,194)', 'stroke-width': 2 }, guias);
+        const punto = el('circle', { cx: ancla[0], cy: ancla[1], r: 5, fill: '#fff', stroke: '#0b6e5b', 'stroke-width': 2 }, guias);
+        return { d, num: d.querySelector('.valor'), barra: d.querySelector('.barra i'), linea, onda, punto, largo: Math.hypot(cx - ancla[0], cy - ancla[1]) };
+      });
+
+      // ---------- Malla (la misma que la cámara del iPad) ----------
+      const IMG_W = 900, IMG_H = 1125, OY = -22.5;
+      const lienzo = document.getElementById('malla');
+      const ctx = lienzo.getContext('2d');
+      const U = { malla: MALLA, ovalo: OVALO, ojos: OJOS, cejas: CEJAS, labios: LABIOS };
+      const CLINICA = { color: '127,214,194', velo: 0.05, malla: 0.12, contorno: 0.85, rasgos: 0.3, puntos: 0.6, escaneo: 0.25, brillo: 6, anillo: 0.055, giro: true, etiquetas: true };
+      const TENUE = { color: '127,214,194', velo: 0, malla: 0.1, contorno: 0.55, rasgos: 0, puntos: 0.45, escaneo: 0, brillo: 4, anillo: 0, giro: false, etiquetas: false };
+
+      function dibujarMalla(Q, E, t) {
+        const arriba = Q[10], barbilla = Q[152];
+        let ux = arriba[0] - barbilla[0], uy = arriba[1] - barbilla[1];
+        const largo = Math.hypot(ux, uy) || 1; ux /= largo; uy /= largo;
+        const bx = (Q[105][0] + Q[334][0]) / 2, by = (Q[105][1] + Q[334][1]) / 2;
+        const EXT = 0.55;
+        const semi = Math.hypot(Q[454][0] - Q[234][0], Q[454][1] - Q[234][1]) / 2 || 1;
+        const pts = Q.map(([x, y]) => {
+          const d = (x - bx) * ux + (y - by) * uy;
+          if (d <= 0) return [x, y];
+          const l = ((x - bx) * -uy + (y - by) * ux) / semi;
+          const k = d * EXT * Math.max(0.15, 1 - l * l * 0.85);
+          return [x + ux * k, y + uy * k];
+        });
+        const altoFrente = ((arriba[0] - bx) * ux + (arriba[1] - by) * uy) * (1 + EXT);
+        let x0 = 1e9, x1 = -1e9, y0 = 1e9, y1 = -1e9;
+        for (const [x, y] of pts) { x0 = Math.min(x0, x); x1 = Math.max(x1, x); y0 = Math.min(y0, y); y1 = Math.max(y1, y); }
+        const ancho = x1 - x0, cx = (x0 + x1) / 2;
+        const ovalo = new Path2D();
+        ovalo.moveTo(pts[U.ovalo[0]][0], pts[U.ovalo[0]][1]);
+        for (let k = 1; k < U.ovalo.length; k += 2) ovalo.lineTo(pts[U.ovalo[k]][0], pts[U.ovalo[k]][1]);
+        ovalo.closePath();
+        const lineas = (p, color, w) => { ctx.beginPath(); for (let k = 0; k < p.length; k += 2) { const a = pts[p[k]], b = pts[p[k + 1]]; ctx.moveTo(a[0], a[1]); ctx.lineTo(b[0], b[1]); } ctx.strokeStyle = color; ctx.lineWidth = w; ctx.stroke(); };
+        const C = E.color;
+        if (E.velo) { ctx.fillStyle = `rgba(${C},${E.velo})`; ctx.fill(ovalo); }
+        if (E.malla) lineas(U.malla, `rgba(255,255,255,${E.malla})`, 0.5);
+        if (E.contorno) { ctx.shadowColor = `rgba(${C},.8)`; ctx.shadowBlur = E.brillo; lineas(U.ovalo, `rgba(${C},${E.contorno})`, 1.4); ctx.shadowBlur = 0; }
+        if (E.rasgos) { lineas(U.ojos, `rgba(${C},${E.rasgos})`, 1); lineas(U.cejas, `rgba(${C},${E.rasgos * 0.7})`, 1); lineas(U.labios, `rgba(${C},${E.rasgos})`, 1); }
+        if (E.puntos) { ctx.fillStyle = `rgba(255,255,255,${E.puntos})`; for (let i = 0; i < pts.length; i += 5) ctx.fillRect(pts[i][0] - 0.8, pts[i][1] - 0.8, 1.6, 1.6); }
+        if (E.escaneo) {
+          const fase = (t % 1.6) / 1.6, ly = y0 + (y1 - y0) * fase, h = (y1 - y0) * 0.2;
+          ctx.save(); ctx.clip(ovalo);
+          const g = ctx.createLinearGradient(0, ly - h, 0, ly); g.addColorStop(0, `rgba(${C},0)`); g.addColorStop(1, `rgba(${C},${E.escaneo})`);
+          ctx.fillStyle = g; ctx.fillRect(x0, ly - h, ancho, h);
+          ctx.fillStyle = 'rgba(255,255,255,.75)'; ctx.fillRect(x0, ly - 0.5, ancho, 1); ctx.restore();
+        }
+        if (!E.anillo) return;
+        const r = ancho * E.anillo;
+        const zonas = [[bx + ux * altoFrente * 0.5, by + uy * altoFrente * 0.5, 'Frente', 'arriba'], [pts[205][0], pts[205][1], 'Mejilla', 'lado'], [pts[425][0], pts[425][1], 'Mejilla', 'lado'], [pts[4][0], pts[4][1], 'Nariz', 'arriba'], [pts[200][0], pts[200][1], 'Mentón', 'abajo']];
+        ctx.font = `500 ${Math.max(12, Math.round(ancho * 0.032))}px 'Geist Mono', monospace`;
+        zonas.forEach(([x, y, nombre, pos], k) => {
+          ctx.strokeStyle = 'rgba(255,255,255,.85)'; ctx.lineWidth = 1; ctx.beginPath(); ctx.arc(x, y, r, 0, Math.PI * 2); ctx.stroke();
+          const giro = t * 1.2 + k;
+          ctx.strokeStyle = `rgba(${C},1)`; ctx.lineWidth = 1.8;
+          ctx.beginPath(); ctx.arc(x, y, r * 1.45, giro, giro + Math.PI * 0.6); ctx.stroke();
+          ctx.beginPath(); ctx.arc(x, y, r * 1.45, giro + Math.PI, giro + Math.PI * 1.6); ctx.stroke();
+          ctx.fillStyle = 'rgba(255,255,255,.95)'; ctx.beginPath(); ctx.arc(x, y, 1.8, 0, Math.PI * 2); ctx.fill();
+          const sep = Math.max(r * 1.8, 10);
+          ctx.shadowColor = 'rgba(15,27,29,.85)'; ctx.shadowBlur = 4;
+          if (pos === 'lado') { const izq = x < cx; ctx.textAlign = izq ? 'right' : 'left'; ctx.fillText(nombre, x + (izq ? -sep : sep), y + 4); }
+          else { ctx.textAlign = 'center'; ctx.fillText(nombre, x, pos === 'arriba' ? y - sep : y + sep + 10); }
+          ctx.shadowBlur = 0;
+        });
+      }
+
+      function puntosMalla(t) {
+        // Aparece de golpe algo grande y girada y se amolda a la cara; luego solo respira
+        const desv = 1 - expo(t / AJUSTE);
+        const cx = 0.52, cy = 0.55, giro = -0.11 * desv, esc = 1 + 0.13 * desv, dx = 0.035 * desv, dy = -0.045 * desv;
+        const cos = Math.cos(giro), sin = Math.sin(giro), n = PUNTOS.length / 2, Q = new Array(n);
+        for (let i = 0; i < n; i++) {
+          const x = PUNTOS[i * 2] - cx, y = PUNTOS[i * 2 + 1] - cy;
+          const ruido = 0.016 * desv + 0.0008;
+          Q[i] = [
+            (cx + (x * cos - y * sin) * esc + dx + ruido * Math.sin(t * 3.1 + i * 1.7)) * IMG_W,
+            (cy + (x * sin + y * cos) * esc + dy + ruido * Math.cos(t * 2.7 + i * 2.3)) * IMG_H + OY,
+          ];
+        }
+        return Q;
+      }
+
+      // ---------- Todo sale de un único reloj ----------
+      const escena = document.getElementById('escena');
+      const imgs = [...document.querySelectorAll('img.zona')];
+      const estado = document.querySelector('#estado span');
+      const barra = document.querySelector('#progreso i');
+      const nota = document.querySelector('#nota .num');
+      const edad = document.getElementById('edad'), prio = document.getElementById('prio');
+
+      function render(t) {
+        // Zoom lento y continuo; empieza y acaba igual para que el bucle no salte
+        const z = 1.03 + 0.025 * (0.5 - 0.5 * Math.cos((2 * Math.PI * t) / L));
+        escena.style.transform = `scale(${z}) translateY(${-6 * Math.sin((2 * Math.PI * t) / L)}px)`;
+
+        // Malla
+        ctx.setTransform(2, 0, 0, 2, 0, 0);
+        ctx.clearRect(0, 0, 900, 1080);
+        const Q = puntosMalla(t);
+        const fuerte = (t < 0.1 ? t / 0.1 : 1) * (1 - suave((t - Z0) / 0.8));
+        if (fuerte > 0.01) { ctx.globalAlpha = fuerte; dibujarMalla(Q, CLINICA, t); }
+        const tenue = suave((t - Z0) / 0.8) * (1 - suave((t - R0) / 1.2));
+        if (tenue > 0.01) { ctx.globalAlpha = tenue; dibujarMalla(Q, TENUE, t); }
+        ctx.globalAlpha = 1;
+
+        // Zonas, tarjetas y guías
+        let actual = -1;
+        imgs.forEach((im, i) => { const p = pesoZona(t, i); im.style.opacity = p.toFixed(4); if (t >= ini(i) && t < (i < V - 1 ? ini(i + 1) : R0)) actual = i; });
+        const vals = valores(t);
+        tarjetas.forEach((c, i) => {
+          const s = ini(i) + 0.35, fin = (i < V - 1 ? ini(i + 1) : R0) + 0.1;
+          const entra = expo((t - s) / 0.7), sale = suave((t - fin) / 0.45);
+          const a = entra * (1 - sale);
+          c.d.style.opacity = a.toFixed(4);
+          c.d.style.transform = `translateY(${(1 - entra) * 14 - sale * 8}px) scale(${0.96 + 0.04 * entra})`;
+          const v = ZONAS[i][1] * salida((t - s - 0.1) / 1.1);
+          c.num.textContent = Math.round(v);
+          c.barra.style.width = v + '%';
+          const trazo = salida((t - ini(i) - 0.15) / 0.5);
+          c.linea.setAttribute('stroke-dasharray', `${c.largo * trazo} ${c.largo}`);
+          c.linea.setAttribute('opacity', (1 - sale).toFixed(3));
+          c.punto.setAttribute('opacity', (suave((t - ini(i) - 0.1) / 0.3) * (1 - sale)).toFixed(3));
+          const f = ((t - ini(i)) % 1.3) / 1.3;
+          const vivo = t > ini(i) && t < fin;
+          c.onda.setAttribute('r', (6 + f * 34).toFixed(2));
+          c.onda.setAttribute('opacity', vivo ? ((1 - f) * 0.9 * (1 - sale)).toFixed(3) : 0);
+        });
+
+        // Radar
+        forma.setAttribute('points', ZONAS.map((_, k) => pol((R * vals[k]) / 100, k).join(',')).join(' '));
+        ZONAS.forEach(([n], k) => {
+          const [x, y] = pol((R * vals[k]) / 100, k);
+          const act = k === actual, alto = DESTACADAS.includes(n), hecho = vals[k] > 0.5;
+          puntosR[k].setAttribute('cx', x); puntosR[k].setAttribute('cy', y);
+          puntosR[k].setAttribute('r', act ? 5.5 : alto ? 4.5 : 3);
+          puntosR[k].setAttribute('opacity', hecho ? 1 : 0);
+          ejes[k].setAttribute('stroke', act ? '#7fb5a9' : '#dfe6e5');
+          textos[k][0].setAttribute('fill', act ? '#0b6e5b' : '#2b3a3c');
+          textos[k][0].setAttribute('font-weight', act ? 600 : 400);
+          const re = reinicio(t);
+          textos[k][1].textContent = hecho ? Math.round(vals[k] / Math.max(re, 1e-3)) : '–';
+          textos[k][1].setAttribute('opacity', t >= VACIA ? re.toFixed(3) : 1);
+          textos[k][1].setAttribute('fill', act || (alto && hecho) ? '#0b6e5b' : '#56676a');
+        });
+
+        // Resultado
+        const r = salida((t - R0 - 0.2) / 1.6);
+        nota.textContent = r > 0.005 && t < L - 0.05 ? Math.round(68 * r) : '–';
+        nota.style.opacity = t >= VACIA ? Math.max(reinicio(t), 0.0).toFixed(3) : 1;
+        [[edad, R0 + 0.7], [prio, R0 + 1.0]].forEach(([e, s]) => {
+          const a = expo((t - s) / 0.7) * reinicio(t);
+          e.style.opacity = (0.25 + 0.75 * a).toFixed(3);
+          e.style.transform = `translateY(${(1 - expo((t - s) / 0.7)) * 10}px)`;
+          e.querySelector('.dato').style.opacity = a.toFixed(3);
+        });
+
+        // Estado y progreso
+        estado.textContent = t < Z0 ? (t < AJUSTE ? 'Detectando la cara…' : 'Cara detectada · 478 puntos') : actual >= 0 ? `Analizando ${ZONAS[actual][0].toLowerCase()}…` : 'Análisis completo';
+        barra.style.width = (clamp(t / R0) * 100 * reinicio(t)).toFixed(2) + '%';
+      }
+
+      const reloj = { t: 0 };
+      const tl = gsap.timeline({ paused: true });
+      tl.to(reloj, { t: L, duration: L, ease: 'none', onUpdate: () => render(reloj.t) }, 0);
+      window.__timelines = window.__timelines || {};
+      window.__timelines['main'] = tl;
+      render(0);
+      tl.seek(0);
+    </script>
+  </body>
+</html>

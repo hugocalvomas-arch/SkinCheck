@@ -12,6 +12,8 @@ const eslintConfig = defineConfig([
     "out/**",
     "build/**",
     "next-env.d.ts",
+    // Fuente del vídeo de la portada (HyperFrames), no es código de la app
+    "video/**",
   ]),
 ]);
 
