@@ -2,7 +2,7 @@
 /* eslint-disable @next/next/no-img-element, @typescript-eslint/no-explicit-any */
 import { useCallback, useEffect, useRef, useState, useTransition } from 'react'
 import QRCode from 'qrcode'
-import { ArrowLeft, ArrowRight, ArrowsLeftRight, CalendarCheck, Camera, Check, Drop, Moon, ScanSmiley, ShieldCheck, Sun, Trash, X } from '@phosphor-icons/react'
+import { ArrowLeft, ArrowRight, ArrowsLeftRight, CalendarCheck, Camera, Check, Drop, Moon, ScanSmiley, ShieldCheck, Sparkle, Sun, Trash, X } from '@phosphor-icons/react'
 import { analizarKiosko, type Seguridad } from './actions'
 
 // Recorrido de la clienta en el iPad del mostrador. Dirección visual: clínica, fondo claro,
@@ -24,7 +24,7 @@ const MEJORAR: [string, string][] = [
   ['firmeza', 'Firmeza'], ['textura', 'Textura'], ['rojez', 'Rojeces'], ['hidratacion', 'Sequedad'], ['ojeras', 'Ojeras'],
 ]
 const NOMBRE: Record<string, string> = Object.fromEntries(MEJORAR)
-const PASOS_ANALISIS = ['Detectar el rostro', 'Medir poros, textura y brillo', 'Medir manchas, rojeces y ojeras', 'Medir arrugas y firmeza', 'Elegir ingredientes', 'Buscar productos en esta farmacia', 'Generar la simulación']
+const PASOS_ANALISIS = ['Detectar el rostro', 'Medir poros, textura y brillo', 'Medir manchas, rojeces y ojeras', 'Medir arrugas y firmeza', 'Elegir ingredientes', 'Preparar tu rutina', 'Generar la simulación']
 const eur = (n: number | null | undefined) => (n == null ? '' : n.toLocaleString('es-ES', { style: 'currency', currency: 'EUR' }))
 const nivelDe = (v: number) => (v >= 70 ? 'Marcado' : v >= 50 ? 'Moderado' : v >= 25 ? 'Leve' : 'Bien')
 const INACTIVIDAD_MS = 150_000
@@ -110,7 +110,7 @@ function Reclamo({ precio, onEmpezar }: { precio: string; onEmpezar: () => void 
       <div className="grid md:grid-cols-[1fr_minmax(0,420px)] gap-10 items-center">
         <div className="space-y-6">
           <h1 className="text-4xl md:text-6xl font-semibold tracking-tight leading-[1.05]">Descubre qué necesita tu piel</h1>
-          <p className="texto max-w-[34ch]">Análisis facial con IA en dos minutos y una rutina con productos de esta farmacia.</p>
+          <p className="texto max-w-[34ch]">Una foto y dos minutos para saber qué le pasa a tu piel y qué le sienta bien.</p>
           <div className="flex flex-wrap items-center gap-5 pt-2">
             <button onClick={onEmpezar} className="boton">Empezar análisis <ArrowRight size={20} weight="bold" /></button>
             <span className="text-lg"><span className="font-semibold num">{precio}</span> <span className="text-[var(--k-muted)]">en el mostrador</span></span>
@@ -119,9 +119,9 @@ function Reclamo({ precio, onEmpezar }: { precio: string; onEmpezar: () => void 
         <Espejo />
       </div>
       <ul className="grid sm:grid-cols-3 gap-4 border-t border-[var(--k-line)] pt-8">
-        <Ventaja icono={<Camera size={24} />} titulo="Foto guiada" texto="Te indicamos cómo colocarte para medir bien." />
-        <Ventaja icono={<ScanSmiley size={24} />} titulo="11 parámetros" texto="Poros, manchas, rojeces, arrugas, hidratación y más." />
-        <Ventaja icono={<Drop size={24} />} titulo="Rutina disponible hoy" texto="Solo productos que esta farmacia tiene en stock." />
+        <Ventaja icono={<ScanSmiley size={24} />} titulo="Mira tu piel de cerca" texto="La IA ve lo que el espejo no te enseña: poros, manchas, rojeces y arrugas." />
+        <Ventaja icono={<Sparkle size={24} />} titulo="Descubre tu mejor versión" texto="Una simulación de cómo podría verse tu piel con los cuidados adecuados." />
+        <Ventaja icono={<Drop size={24} />} titulo="Acierta a la primera" texto="Te decimos qué usar por la mañana y por la noche. Sin probar a ciegas." />
       </ul>
     </div>
   )
@@ -393,7 +393,7 @@ export function Informe({ res, foto, farmacia, onFin }: { res: any; foto: string
 
       <section className="space-y-6">
         <div className="flex flex-wrap items-center gap-4">
-          <h3 className="text-3xl font-semibold tracking-tight">Tu rutina en esta farmacia</h3>
+          <h3 className="text-3xl font-semibold tracking-tight">Tu rutina</h3>
           <div role="tablist" className="md:ml-auto inline-flex rounded-xl border border-[var(--k-line)] bg-white p-1">
             {(['basica', 'media', 'completa'] as const).map((k) => (
               <button key={k} role="tab" aria-selected={nivel === k} onClick={() => { setNivel(k); setQr('') }}
