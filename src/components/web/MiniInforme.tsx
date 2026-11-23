@@ -1,9 +1,11 @@
 import { Moon, Sun } from '@phosphor-icons/react/dist/ssr'
 import { Logo } from '@/components/Logo'
 
+import { aTrabajar, nivelPiel } from '@/lib/escalaPiel'
+
 // Vista previa del informe que recibe la clienta en el iPad (mismas piezas visuales, datos de ejemplo).
-const ASPECTOS: [string, number][] = [['Poros', 72], ['Brillo', 58], ['Rojeces', 44], ['Textura', 39], ['Manchas', 31], ['Arrugas', 18]]
-const nivel = (v: number) => (v >= 70 ? 'Marcado' : v >= 50 ? 'Moderado' : v >= 25 ? 'Leve' : 'Bien')
+// Escala de Perfect Corp: más alto = piel en mejor estado.
+const ASPECTOS: [string, number][] = [['Poros', 28], ['Brillo', 42], ['Rojeces', 56], ['Textura', 61], ['Manchas', 69], ['Arrugas', 82]]
 
 export function MiniInforme() {
   return (
@@ -19,10 +21,11 @@ export function MiniInforme() {
         </div>
         <ul className="grid gap-3 text-sm m-0 p-0 list-none">
           {ASPECTOS.map(([a, v]) => (
-            <li key={a} className="grid grid-cols-[4.75rem_minmax(0,1fr)_4.75rem] items-center gap-3">
+            <li key={a} className="grid grid-cols-[4.75rem_minmax(0,1fr)_1.75rem_4.75rem] items-center gap-3">
               <span>{a}</span>
-              <span className="escala"><i /><b data-alto={v >= 50 ? '' : undefined} style={{ width: `${v}%` }} /></span>
-              <span className={`text-right text-xs ${v >= 50 ? 'font-medium text-marca' : 'text-gris'}`}>{nivel(v)}</span>
+              <span className="escala"><i /><b data-alto={aTrabajar(v) ? '' : undefined} style={{ width: `${v}%` }} /></span>
+              <span className="num text-right">{v}</span>
+              <span className={`text-right text-xs ${aTrabajar(v) ? 'font-medium text-marca' : 'text-gris'}`}>{nivelPiel(v)}</span>
             </li>
           ))}
         </ul>

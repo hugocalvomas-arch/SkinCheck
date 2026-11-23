@@ -1,5 +1,6 @@
 /* eslint-disable @next/next/no-img-element */
 import { NOMBRE_ASPECTO, type ResultadoFoto } from '@/server/analisisPiel'
+import { nivelPiel, notaPiel } from '@/lib/escalaPiel'
 
 // Resultado de la foto: cara con zonas marcadas, simulación del "después" y nivel de cada aspecto.
 // Las imágenes las aloja el proveedor y caducan a las 2 horas; después solo quedan las puntuaciones.
@@ -35,13 +36,14 @@ export function FotoAnalisis({ f }: { f: ResultadoFoto }) {
           <li key={a} className="flex items-center gap-2">
             <span className="w-28 shrink-0">{NOMBRE_ASPECTO[a] ?? a}</span>
             <span className="flex-1 h-2 bg-suave rounded-full overflow-hidden">
-              <span className="block h-full bg-marca" style={{ width: `${v}%` }} />
+              <span className="block h-full bg-marca" style={{ width: `${notaPiel(v)}%` }} />
             </span>
-            <span className="w-10 text-right text-gris">{v}</span>
+            <span className="w-10 text-right">{notaPiel(v)}</span>
+            <span className="w-20 text-right text-gris">{nivelPiel(notaPiel(v))}</span>
           </li>
         ))}
       </ul>
-      <p className="text-xs text-gris">Más alto = más marcado. Es un análisis cosmético orientativo, no un diagnóstico médico.</p>
+      <p className="text-xs text-gris">Escala 0 a 100: más alto = piel en mejor estado. Es un análisis cosmético orientativo, no un diagnóstico médico.</p>
     </section>
   )
 }
