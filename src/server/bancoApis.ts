@@ -69,5 +69,7 @@ export async function probar(id: string): Promise<Prueba[]> {
       out.push({ proveedor: p.nombre, cara: c.id, ms: Date.now() - t0, medidas: [], error: (e as Error).message })
     }
   }
+  // Queda en los registros de Vercel para poder actualizar la comparativa (solo caras de IA, sin datos de clientas)
+  console.log('[banco-apis]', JSON.stringify(out))
   return out
 }
