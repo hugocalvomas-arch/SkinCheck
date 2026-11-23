@@ -1,12 +1,12 @@
-// Resultado real de Perfect Corp sobre una cara generada con IA (public/ejemplos/cara-ia-analisis.jpg), 23/11/2026.
+// Resultado real de Perfect Corp sobre una cara generada con IA (mujer de unos 55 años, public/ejemplos/cara-ia-55.jpg), 23/11/2026.
 // Escala 0 a 100, más alto = más marcado, con los cortes del informe de la clienta (Leve 25, Moderado 50, Marcado 70).
 export const MEDIDAS: [string, number][] = [
-  ['Textura', 35], ['Brillo', 33], ['Rojez', 32], ['Ojeras', 31], ['Poros', 30], ['Hidratación', 30],
-  ['Manchas', 25], ['Arrugas', 23], ['Firmeza', 22], ['Luminosidad', 20], ['Acné', 9],
+  ['Firmeza', 43], ['Luminosidad', 40], ['Arrugas', 39], ['Hidratación', 39], ['Textura', 36], ['Manchas', 34],
+  ['Poros', 33], ['Brillo', 31], ['Rojez', 27], ['Ojeras', 23], ['Acné', 12],
 ]
 export const valor = (a: string) => MEDIDAS.find(([n]) => n === a)![1]
 export const nivel = (v: number) => (v >= 70 ? 'Marcado' : v >= 50 ? 'Moderado' : v >= 25 ? 'Leve' : 'Bien')
-export const GLOBAL = 74
-export const EDAD = 37
-export const PRIMERO = 'Textura y brillo'
-export const DESTACADAS = ['Textura', 'Brillo']
+export const GLOBAL = 68
+export const EDAD = 61
+export const PRIMERO = 'Firmeza y arrugas'
+export const DESTACADAS = ['Firmeza', 'Arrugas']
