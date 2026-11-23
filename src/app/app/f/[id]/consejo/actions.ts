@@ -4,13 +4,22 @@ import { revalidatePath } from 'next/cache'
 import { supabaseServer } from '@/lib/supabase/server'
 import { pendientes, visibles, type Respuestas } from '@/lib/cuestionario'
 import { calcularRutinas } from '@/server/rutinas'
+import { analizarFoto, problemasDesdeFoto, type Puntuaciones } from '@/server/analisisPiel'
 
-export async function crearConsejo(farmaciaId: string, r: Respuestas) {
+export async function crearConsejo(farmaciaId: string, r: Respuestas, foto: string | null = null) {
   const sb = await supabaseServer()
   if (pendientes(r).length) return { error: 'Faltan preguntas por contestar.' }
   // solo se guardan las respuestas de preguntas visibles (nada de texto libre ni datos personales)
   const limpias: Respuestas = {}
   for (const q of visibles(r)) limpias[q.id] = r[q.id]
+  // Foto (opcional): se analiza y se descarta; solo quedan las puntuaciones
+  let puntuaciones: Puntuaciones | null = null
+  if (foto) {
+    const a = await analizarFoto(foto)
+    if ('error' in a) return { error: a.error }
+    puntuaciones = a.puntuaciones
+    limpias.problemas_extra = problemasDesdeFoto(puntuaciones)
+  }
   const stock: { producto_id: string; pvp: number | null; unidades: number }[] = []
   for (let desde = 0; ; desde += 1000) {
     const { data, error } = await sb.from('stock').select('producto_id, pvp, unidades').eq('farmacia_id', farmaciaId).gt('unidades', 0).range(desde, desde + 999)
@@ -19,7 +28,7 @@ export async function crearConsejo(farmaciaId: string, r: Respuestas) {
     if (!data || data.length < 1000) break
   }
   const resultado = calcularRutinas(limpias, stock)
-  const { data, error } = await sb.from('consejos').insert({ farmacia_id: farmaciaId, respuestas: limpias, rutinas: resultado }).select('id').single()
+  const { data, error } = await sb.from('consejos').insert({ farmacia_id: farmaciaId, respuestas: limpias, puntuaciones_foto: puntuaciones, rutinas: resultado }).select('id').single()
   if (error) return { error: error.message }
   redirect(`/app/f/${farmaciaId}/consejo/${data.id}`)
 }

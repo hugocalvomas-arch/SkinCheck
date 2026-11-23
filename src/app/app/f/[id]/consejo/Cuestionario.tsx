@@ -2,9 +2,11 @@
 import { useState, useTransition } from 'react'
 import { BLOQUES, opciones, pendientes, visibles, type Respuestas } from '@/lib/cuestionario'
 import { crearConsejo } from './actions'
+import { Camara } from './Camara'
 
 export function Cuestionario({ farmaciaId }: { farmaciaId: string }) {
   const [r, setR] = useState<Respuestas>({})
+  const [foto, setFoto] = useState<string | null>(null)
   const [error, setError] = useState('')
   const [enviando, start] = useTransition()
   const faltan = pendientes(r)
@@ -24,6 +26,7 @@ export function Cuestionario({ farmaciaId }: { farmaciaId: string }) {
   const vis = visibles(r)
   return (
     <div className="space-y-8">
+      <Camara onFoto={setFoto} />
       {BLOQUES.map((b) => {
         const qs = vis.filter((q) => q.bloque === b)
         if (!qs.length) return null
@@ -58,7 +61,7 @@ export function Cuestionario({ farmaciaId }: { farmaciaId: string }) {
       <div className="sticky bottom-0 bg-neutral-50 py-4 flex items-center gap-4">
         <button
           disabled={faltan.length > 0 || enviando}
-          onClick={() => start(async () => { const res = await crearConsejo(farmaciaId, r); if (res?.error) setError(res.error) })}
+          onClick={() => start(async () => { const res = await crearConsejo(farmaciaId, r, foto); if (res?.error) setError(res.error) })}
           className="bg-neutral-900 text-white rounded-lg px-5 py-2.5 disabled:opacity-40"
         >
           {enviando ? 'Calculando…' : 'Ver rutinas'}
