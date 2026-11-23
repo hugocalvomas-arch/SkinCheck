@@ -67,6 +67,7 @@ export default async function Resultado({ params }: { params: Promise<{ id: stri
                 ))}
               </ol>
               {r.escalado && <p className="text-xs text-neutral-600">{r.escalado}</p>}
+              <Link href={`/app/f/${id}/consejo/${c.id}/hoja?nivel=${k}`} className="block text-center border rounded-lg px-3 py-2 text-sm">Hoja de consejo</Link>
               <form action={marcarVendida}>
                 <input type="hidden" name="farmacia" value={id} />
                 <input type="hidden" name="consejo" value={c.id} />
