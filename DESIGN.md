@@ -199,3 +199,16 @@ Con `prefers-reduced-motion: reduce`: todo aparece en su estado final, sin despl
 | Ancho | ≥ 1440 px | El contenedor se queda en 1216 px; las bandas llegan a los bordes. |
 
 Áreas táctiles ≥ 44 × 44 px. Sin scroll horizontal a 320 px. El comparador conserva el scroll vertical con el dedo.
+
+## 10. Referencias (se toma una idea de cada una, ninguna se replica)
+
+| Referencia | Qué se toma | Dónde se usa |
+|---|---|---|
+| [Canfield VISIA](https://www.canfieldsci.com/imaging-systems/visia) | Comparador con indicación "Arrastra para comparar"; hoja de especificaciones | Sección 6 (6 semanas) y hoja de requisitos en la sección 8 |
+| [Haut.AI](https://haut.ai/ai-skin-analysis-lp) | Flujo numerado de 4 pasos, un verbo por paso | Sección 2 (en el mostrador) |
+| [Withings](https://www.withings.com) | Cada cifra con nota al pie que dice de dónde sale | Toda la página |
+| [Mettler-Toledo](https://www.mt.com) | Garantías concretas en 3–4 puntos comprobables | Sección 7 (objeciones) |
+| [Consoft / Farmatic](https://www2.consoft.es/) | Lenguaje de farmacia española; programas de gestión nombrados en texto (sin logos) | Sección 5 (stock) |
+| [Haut.AI × Südameapteek](https://haut.ai/blogs/sudameapteek-partners-haut) | Formato de caso real: datos de la farmacia + una cita | Hueco reservado; solo se publica con un piloto real |
+
+Lo que **no** se toma: muros de logos de clientes, cifras de conversión sin fuente, premios, vídeos en bucle y carruseles.
