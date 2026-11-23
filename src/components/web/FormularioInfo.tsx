@@ -7,14 +7,14 @@ export function FormularioInfo() {
   const [estado, accion, enviando] = useActionState<EstadoSolicitud, FormData>(pedirInformacion, undefined)
   if (estado?.ok)
     return (
-      <div className="tarjeta p-8 space-y-3">
+      <div className="border-t-2 border-tinta pt-8 grid gap-3" role="status">
         <CheckCircle size={40} className="text-marca" />
         <p className="text-2xl font-semibold tracking-tight">Recibido. Te escribimos en menos de 48 horas.</p>
         <p className="text-gris">Te enviaremos las tarifas y, si quieres, organizamos una demostración en tu farmacia.</p>
       </div>
     )
   return (
-    <form action={accion} className="tarjeta p-6 md:p-8 grid sm:grid-cols-2 gap-5">
+    <form action={accion} className="border-t-2 border-tinta pt-8 grid sm:grid-cols-2 gap-x-6 gap-y-6">
       <Campo id="nombre" etiqueta="Tu nombre" autoComplete="name" required />
       <Campo id="farmacia" etiqueta="Farmacia" autoComplete="organization" required />
       <Campo id="email" etiqueta="Email" type="email" autoComplete="email" required />
@@ -33,10 +33,10 @@ export function FormularioInfo() {
       </div>
       <input type="text" name="web" tabIndex={-1} autoComplete="off" className="hidden" aria-hidden="true" />
       <label className="sm:col-span-2 flex gap-3 text-sm text-gris">
-        <input type="checkbox" name="privacidad" required className="mt-0.5 w-4 h-4 accent-marca" />
+        <input type="checkbox" name="privacidad" required className="mt-0.5 w-5 h-5 shrink-0 accent-marca" />
         <span>Acepto que SkinCheck use estos datos solo para enviarme información comercial y contactarme sobre el servicio.</span>
       </label>
-      {estado?.error && <p role="alert" className="sm:col-span-2 text-sm rounded-lg bg-aviso-suave text-aviso p-3">{estado.error}</p>}
+      {estado?.error && <p role="alert" className="sm:col-span-2 text-sm rounded-[var(--radius-input)] bg-aviso-suave text-aviso p-4">{estado.error}</p>}
       <div className="sm:col-span-2">
         <button disabled={enviando} className="btn btn-lg">{enviando ? 'Enviando…' : 'Pedir información'}</button>
       </div>

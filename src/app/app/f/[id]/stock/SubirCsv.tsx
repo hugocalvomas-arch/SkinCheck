@@ -80,7 +80,7 @@ export function SubirCsv({ farmaciaId, mapeoGuardado, programaGuardado }: Props)
   }
 
   return (
-    <div className="bg-white rounded-xl p-6 shadow-sm space-y-5">
+    <div className="bg-papel rounded-[var(--radius-card)] border border-linea p-6 space-y-5">
       <div className="grid sm:grid-cols-2 gap-4">
         <label className="text-sm space-y-1">
           <span className="block font-medium">Programa de gestión</span>
@@ -94,16 +94,16 @@ export function SubirCsv({ farmaciaId, mapeoGuardado, programaGuardado }: Props)
           <input type="file" accept=".xlsx,.xls,.xlsm,.ods,.csv,.txt" onChange={(e) => e.target.files?.[0] && leer(e.target.files[0])} />
         </label>
       </div>
-      {aviso && <p className="text-sm bg-amber-50 text-amber-900 rounded-lg p-3">{aviso}</p>}
+      {aviso && <p className="text-sm bg-aviso-suave text-aviso rounded-lg p-3">{aviso}</p>}
       {cabeceras.length > 0 && (
         <>
-          <p className="text-sm text-neutral-600">
+          <p className="text-sm text-gris">
             {filas.length} filas leídas, {reconocibles} con un código válido. Comprueba qué columna es cada dato:
           </p>
           <div className="grid sm:grid-cols-2 gap-3">
             {(Object.keys(ETIQUETAS) as Campo[]).map((c) => (
               <label key={c} className="text-sm space-y-1">
-                <span className="block text-neutral-600">{ETIQUETAS[c]}</span>
+                <span className="block text-gris">{ETIQUETAS[c]}</span>
                 <select value={mapa[c] ?? ''} onChange={(e) => setMapa({ ...mapa, [c]: e.target.value || undefined })} className="w-full border rounded-lg px-2 py-1.5">
                   <option value="">—</option>
                   {cabeceras.map((h) => <option key={h} value={h}>{h}</option>)}
@@ -112,13 +112,13 @@ export function SubirCsv({ farmaciaId, mapeoGuardado, programaGuardado }: Props)
             ))}
           </div>
           {notacionCientifica && (
-            <p className="text-sm bg-amber-50 text-amber-900 rounded-lg p-3">
+            <p className="text-sm bg-aviso-suave text-aviso rounded-lg p-3">
               Algunos códigos de barras vienen como “8,41E+12”. Excel los ha estropeado: en Excel, da formato de texto o de número sin decimales a esa columna y vuelve a guardar.
             </p>
           )}
           <div className="overflow-x-auto">
             <table className="text-xs w-full">
-              <thead><tr className="text-left text-neutral-500">{(['cn', 'ean', 'descripcion', 'pvp', 'stock'] as Campo[]).map((c) => <th key={c} className="pr-3 pb-1">{ETIQUETAS[c]}</th>)}</tr></thead>
+              <thead><tr className="text-left text-gris">{(['cn', 'ean', 'descripcion', 'pvp', 'stock'] as Campo[]).map((c) => <th key={c} className="pr-3 pb-1">{ETIQUETAS[c]}</th>)}</tr></thead>
               <tbody>
                 {filas.slice(0, 5).map((f, i) => (
                   <tr key={i} className="border-t">{(['cn', 'ean', 'descripcion', 'pvp', 'stock'] as Campo[]).map((c) => <td key={c} className="pr-3 py-1">{val(f, c)}</td>)}</tr>
@@ -126,7 +126,7 @@ export function SubirCsv({ farmaciaId, mapeoGuardado, programaGuardado }: Props)
               </tbody>
             </table>
           </div>
-          <button onClick={guardar} disabled={pendiente} className="bg-neutral-900 text-white rounded-lg px-4 py-2 disabled:opacity-50">
+          <button onClick={guardar} disabled={pendiente} className="btn">
             {pendiente ? 'Guardando…' : 'Actualizar stock'}
           </button>
         </>

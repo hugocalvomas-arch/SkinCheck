@@ -15,13 +15,13 @@ export default async function Admin() {
     <div className="space-y-8">
       <h1 className="text-2xl font-semibold">Administración</h1>
       <div className="flex flex-wrap gap-4 text-sm">
-        <Link href="/app/admin/sin-clasificar" className="bg-white rounded-lg px-3 py-2 shadow-sm underline">
+        <Link href="/app/admin/sin-clasificar" className="bg-papel rounded-lg px-3 py-2 underline">
           {pendientes ?? 0} códigos sin clasificar
         </Link>
-        <span className="bg-white rounded-lg px-3 py-2 shadow-sm">{conCodigo ?? 0} productos del catálogo con EAN o CN</span>
+        <span className="bg-papel rounded-lg px-3 py-2">{conCodigo ?? 0} productos del catálogo con EAN o CN</span>
       </div>
 
-      <section className="bg-white rounded-xl p-6 shadow-sm space-y-4">
+      <section className="bg-papel rounded-[var(--radius-card)] border border-linea p-6 space-y-4">
         <h2 className="font-medium">Nueva farmacia</h2>
         <form action={crearFarmacia} className="flex flex-wrap gap-3">
           <input name="nombre" required placeholder="Nombre de la farmacia" className="border rounded-lg px-3 py-2 flex-1 min-w-56" />
@@ -34,7 +34,7 @@ export default async function Admin() {
             <option value="bitfarma">Bitfarma</option>
             <option value="otro">Otro</option>
           </select>
-          <button className="bg-neutral-900 text-white rounded-lg px-4 py-2">Crear</button>
+          <button className="btn">Crear</button>
         </form>
       </section>
 
@@ -43,9 +43,9 @@ export default async function Admin() {
         <ul className="grid sm:grid-cols-2 gap-3">
           {farmacias?.map((f) => (
             <li key={f.id}>
-              <Link href={`/app/admin/f/${f.id}`} className="block bg-white rounded-xl p-4 shadow-sm hover:shadow">
+              <Link href={`/app/admin/f/${f.id}`} className="block bg-papel rounded-[var(--radius-card)] border border-linea p-6 hover:shadow">
                 <div className="font-medium">{f.nombre}</div>
-                <div className="text-sm text-neutral-500">{f.programa_gestion ?? 'Programa sin indicar'}</div>
+                <div className="text-sm text-gris">{f.programa_gestion ?? 'Programa sin indicar'}</div>
               </Link>
             </li>
           ))}

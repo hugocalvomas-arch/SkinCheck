@@ -18,24 +18,24 @@ export default async function FarmaciaAdmin({ params }: { params: Promise<{ id: 
   const lista = (miembros ?? []) as { user_id: string; email: string; rol: string }[]
   return (
     <div className="space-y-6">
-      <Link href="/app/admin" className="text-sm text-neutral-500">← Administración</Link>
-      <h1 className="text-2xl font-semibold">{f.nombre}</h1>
-      <p className="text-sm text-neutral-600">
-        {f.programa_gestion ?? 'Programa sin indicar'} · {stock ?? 0} productos en stock · {pendientes ?? 0} sin clasificar ·{' '}
+      <Link href="/app/admin" className="text-sm text-gris">← Administración</Link>
+      <h1 className="text-[2rem] leading-tight">{f.nombre}</h1>
+      <p className="text-sm text-gris">
+        {f.programa_gestion ?? 'Programa sin indicar'}, {stock ?? 0} productos en stock, {pendientes ?? 0} sin clasificar.{' '}
         <Link href={`/app/f/${id}/stock`} className="underline">Stock</Link>
       </p>
-      <section className="bg-white rounded-xl p-6 shadow-sm space-y-4">
+      <section className="bg-papel rounded-[var(--radius-card)] border border-linea p-6 space-y-4">
         <h2 className="font-medium">Usuarios</h2>
-        {lista.length === 0 && <p className="text-sm text-neutral-500">Todavía no hay usuarios en esta farmacia.</p>}
+        {lista.length === 0 && <p className="text-sm text-gris">Todavía no hay usuarios en esta farmacia.</p>}
         <ul className="divide-y text-sm">
           {lista.map((m) => (
             <li key={m.user_id} className="py-2 flex items-center gap-3">
               <span className="flex-1">{m.email}</span>
-              <span className="text-neutral-500">{m.rol}</span>
+              <span className="text-gris">{m.rol}</span>
               <form action={quitarMiembro}>
                 <input type="hidden" name="farmacia" value={id} />
                 <input type="hidden" name="user" value={m.user_id} />
-                <button className="text-red-600">Quitar</button>
+                <button className="text-error">Quitar</button>
               </form>
             </li>
           ))}

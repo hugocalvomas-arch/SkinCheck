@@ -10,12 +10,12 @@ export default function Login() {
   const [modo, setModo] = useState<'entrar' | 'crear'>('entrar')
   const [estado, accion, cargando] = useActionState<Estado, FormData>(modo === 'entrar' ? entrar : crearCuenta, undefined)
   return (
-    <main className="min-h-[100dvh] grid md:grid-cols-2 bg-fondo">
-      <div className="flex flex-col px-6 md:px-12 py-8">
+    <main className="min-h-[100dvh] grid md:grid-cols-[minmax(0,1fr)_minmax(0,1fr)] bg-papel">
+      <div className="flex flex-col px-6 md:px-12 py-8 min-h-[100dvh]">
         <Link href="/" aria-label="Volver a la web"><Logo /></Link>
-        <form action={accion} className="w-full max-w-sm m-auto py-12 space-y-5">
-          <div className="space-y-2">
-            <h1 className="text-3xl font-semibold tracking-tight">{modo === 'entrar' ? 'Acceso farmacias' : 'Crea tu cuenta'}</h1>
+        <form action={accion} className="w-full max-w-sm m-auto py-12 grid gap-6">
+          <div className="grid gap-3 border-t-2 border-tinta pt-6">
+            <h1 className="text-[2.5rem] leading-[1.05]">{modo === 'entrar' ? 'Acceso farmacias' : 'Crea tu cuenta'}</h1>
             <p className="text-gris">{modo === 'entrar' ? 'Entra para gestionar tu stock, abrir el modo iPad y ver tus resultados.' : 'Después te asociaremos a tu farmacia.'}</p>
           </div>
           <div>
@@ -27,24 +27,42 @@ export default function Login() {
             <input id="password" name="password" type="password" required minLength={8} autoComplete={modo === 'entrar' ? 'current-password' : 'new-password'} className="campo" />
             {modo === 'crear' && <p className="text-sm text-gris mt-1.5">Mínimo 8 caracteres.</p>}
           </div>
-          {estado?.error && <p role="alert" className="text-sm rounded-lg bg-aviso-suave text-aviso p-3">{estado.error}</p>}
-          {estado?.ok && <p className="text-sm rounded-lg bg-marca-suave text-marca p-3">{estado.ok}</p>}
+          {estado?.error && <p role="alert" className="text-sm rounded-[var(--radius-input)] bg-aviso-suave text-aviso p-4">{estado.error}</p>}
+          {estado?.ok && <p role="status" className="text-sm rounded-[var(--radius-input)] bg-marca-suave text-marca p-4">{estado.ok}</p>}
           <button disabled={cargando} className="btn btn-lg w-full">{cargando ? 'Un momento…' : modo === 'entrar' ? 'Entrar' : 'Crear cuenta'}</button>
           <p className="text-sm text-gris text-center">
             {modo === 'entrar' ? '¿Aún no tienes cuenta? ' : '¿Ya tienes cuenta? '}
-            <button type="button" onClick={() => setModo(modo === 'entrar' ? 'crear' : 'entrar')} className="text-marca font-medium hover:underline">
+            <button type="button" onClick={() => setModo(modo === 'entrar' ? 'crear' : 'entrar')} className="enlace min-h-11 px-1">
               {modo === 'entrar' ? 'Créala' : 'Entra'}
             </button>
           </p>
         </form>
-        <p className="text-sm text-gris">¿Tu farmacia aún no usa SkinCheck? <Link href="/#contacto" className="text-marca font-medium hover:underline">Pide información</Link></p>
+        <p className="text-sm text-gris">¿Tu farmacia aún no usa SkinCheck? <Link href="/#contacto" className="enlace">Pide información</Link></p>
       </div>
-      <aside className="hidden md:flex flex-col justify-end bg-marca text-white p-12">
-        <div className="max-w-md space-y-4">
-          <p className="text-3xl font-semibold tracking-tight leading-tight">Cada análisis termina en una rutina con productos de tu estantería.</p>
-          <p className="text-white/80">Sube tu stock una vez y deja el iPad en el mostrador.</p>
+      <aside className="hidden md:flex flex-col justify-between bg-marca-suave text-tinta p-12 border-l border-linea">
+        <EscalaDecorativa />
+        <div className="max-w-lg grid gap-4">
+          <p className="text-[2.25rem] font-semibold tracking-[-0.03em] leading-[1.08]">Cada análisis termina en una rutina con productos de tu estantería.</p>
+          <p className="text-lg text-tinta-2">Sube tu stock una vez y deja el iPad en el mostrador.</p>
         </div>
       </aside>
     </main>
+  )
+}
+
+// Las 11 medidas del análisis como escala, a modo de muestra del informe (datos de ejemplo)
+function EscalaDecorativa() {
+  const m: [string, number][] = [['Poros', 72], ['Brillo', 61], ['Rojez', 48], ['Textura', 41], ['Manchas', 33], ['Hidratación', 29]]
+  return (
+    <figure className="m-0 max-w-md w-full grid gap-3" aria-label="Ejemplo de lectura del análisis">
+      {m.map(([a, v]) => (
+        <div key={a} className="grid grid-cols-[6.5rem_minmax(0,1fr)_2rem] items-center gap-3 text-sm">
+          <span className="text-tinta-2">{a}</span>
+          <span className="escala bg-papel"><i /><b data-alto={v >= 50 ? '' : undefined} style={{ width: `${v}%` }} /></span>
+          <span className="cifra text-right text-gris">{v}</span>
+        </div>
+      ))}
+      <figcaption className="text-xs text-gris mt-2">Datos de ejemplo</figcaption>
+    </figure>
   )
 }

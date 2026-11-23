@@ -47,9 +47,9 @@ export function Camara({ onFoto }: { onFoto: (jpegBase64: string | null) => void
   }
 
   return (
-    <div className="bg-white rounded-xl p-5 shadow-sm space-y-3">
+    <div className="bg-papel rounded-[var(--radius-card)] border border-linea p-6 space-y-3">
       <p className="font-medium">Foto de la cara (opcional)</p>
-      <label className="flex gap-2 text-sm text-neutral-700">
+      <label className="flex gap-2 text-sm text-tinta-2">
         <input type="checkbox" checked={consiente} onChange={(e) => { setConsiente(e.target.checked); if (!e.target.checked) { setActiva(false); setFoto(null); onFoto(null) } }} />
         <span>
           El cliente acepta que se haga una foto de su cara para analizar el aspecto de la piel con un servicio externo.
@@ -57,7 +57,7 @@ export function Camara({ onFoto }: { onFoto: (jpegBase64: string | null) => void
         </span>
       </label>
       {consiente && !activa && !foto && (
-        <button type="button" onClick={() => setActiva(true)} className="border rounded-lg px-3 py-2 text-sm">Abrir cámara</button>
+        <button type="button" onClick={() => setActiva(true)} className="btn-sec text-sm">Abrir cámara</button>
       )}
       {activa && (
         <div className="space-y-2">
@@ -65,18 +65,18 @@ export function Camara({ onFoto }: { onFoto: (jpegBase64: string | null) => void
             <video ref={video} autoPlay playsInline muted className="absolute inset-0 w-full h-full object-cover -scale-x-100" />
             <div className="absolute left-[12%] right-[12%] top-[10%] bottom-[14%] rounded-[50%] border-2 border-white/80 pointer-events-none" />
           </div>
-          <p className="text-xs text-neutral-500">Acerca la cara hasta llenar el óvalo. Buena luz, de frente, sin gafas, pelo fuera de la frente y sin maquillaje si es posible.</p>
-          <button type="button" onClick={capturar} className="bg-neutral-900 text-white rounded-lg px-3 py-2 text-sm">Hacer foto</button>
+          <p className="text-xs text-gris">Acerca la cara hasta llenar el óvalo. Buena luz, de frente, sin gafas, pelo fuera de la frente y sin maquillaje si es posible.</p>
+          <button type="button" onClick={capturar} className="btn">Hacer foto</button>
         </div>
       )}
       {foto && (
         <div className="space-y-2">
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img src={foto} alt="Foto tomada" className="w-40 rounded-lg -scale-x-100" />
-          <button type="button" onClick={repetir} className="border rounded-lg px-3 py-1.5 text-sm">Repetir</button>
+          <button type="button" onClick={repetir} className="btn-sec text-sm">Repetir</button>
         </div>
       )}
-      {error && <p className="text-sm text-red-600">{error}</p>}
+      {error && <p className="text-sm text-error">{error}</p>}
     </div>
   )
 }

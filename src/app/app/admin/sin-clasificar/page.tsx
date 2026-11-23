@@ -33,9 +33,9 @@ export default async function SinClasificar() {
   const lista = [...grupos.values()].sort((a, b) => b.farmacias - a.farmacias || b.unidades - a.unidades).slice(0, 100)
   return (
     <div className="space-y-6">
-      <Link href="/app/admin" className="text-sm text-neutral-500">← Administración</Link>
-      <h1 className="text-2xl font-semibold">Sin clasificar</h1>
-      <p className="text-sm text-neutral-600">
+      <Link href="/app/admin" className="text-sm text-gris">← Administración</Link>
+      <h1 className="text-[2rem] leading-tight">Sin clasificar</h1>
+      <p className="text-sm text-gris">
         {grupos.size} códigos distintos. Se muestran los 100 que más farmacias tienen. Busca el producto en tu catálogo y asócialo:
         se guarda su EAN o CN y pasa al stock de todas esas farmacias.
       </p>
