@@ -20,6 +20,7 @@ export default async function Inicio() {
             <div className="flex gap-2">
               <Link href={`/app/f/${f.id}/consejo`} className="inline-block text-sm bg-neutral-900 text-white rounded-lg px-3 py-1.5">Nuevo consejo</Link>
               <Link href={`/app/f/${f.id}/stock`} className="inline-block text-sm border rounded-lg px-3 py-1.5">Stock</Link>
+              <Link href={`/app/f/${f.id}/panel`} className="inline-block text-sm border rounded-lg px-3 py-1.5">Panel</Link>
             </div>
           </li>
         ))}
