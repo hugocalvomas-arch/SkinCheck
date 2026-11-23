@@ -133,11 +133,12 @@ function Espejo() {
   const [ok, setOk] = useState(true)
   useEffect(() => {
     let stream: MediaStream | null = null
+    let vivo = true
     Promise.resolve()
       .then(() => navigator.mediaDevices.getUserMedia({ video: { facingMode: 'user' }, audio: false }))
-      .then((s) => { stream = s; if (video.current) video.current.srcObject = s })
+      .then((s) => { if (!vivo) return s.getTracks().forEach((t) => t.stop()); stream = s; if (video.current) video.current.srcObject = s })
       .catch(() => setOk(false))
-    return () => stream?.getTracks().forEach((t) => t.stop())
+    return () => { vivo = false; stream?.getTracks().forEach((t) => t.stop()) }
   }, [])
   return (
     <figure className="space-y-3">
@@ -209,11 +210,12 @@ function Camara({ error, onFoto }: { error: string; onFoto: (b64: string, dataUr
 
   useEffect(() => {
     let stream: MediaStream | null = null
+    let vivo = true
     navigator.mediaDevices
       ?.getUserMedia({ video: { facingMode: 'user', width: { ideal: 1920 }, height: { ideal: 1080 } }, audio: false })
-      .then((s) => { stream = s; if (video.current) video.current.srcObject = s })
+      .then((s) => { if (!vivo) return s.getTracks().forEach((t) => t.stop()); stream = s; if (video.current) video.current.srcObject = s })
       .catch(() => setFallo('No se ha podido abrir la cámara. Pide ayuda en el mostrador.'))
-    return () => stream?.getTracks().forEach((t) => t.stop())
+    return () => { vivo = false; stream?.getTracks().forEach((t) => t.stop()) }
   }, [])
 
   useEffect(() => {
