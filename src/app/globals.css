@@ -1,26 +1,50 @@
 @import "tailwindcss";
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
-
+/* SkinCheck: tema claro fijo, aspecto clínico. Un solo acento (verde farmacia). */
 @theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+  --color-marca: #0b6e5b;
+  --color-marca-oscura: #095c4c;
+  --color-marca-media: #7fb5a9;
+  --color-marca-suave: #e5f2ee;
+  --color-tinta: #0f1b1d;
+  --color-gris: #5a696b;
+  --color-linea: #e1e7e7;
+  --color-fondo: #fbfcfc;
+  --color-suave: #f1f5f5;
+  --color-aviso: #8a3b12;
+  --color-aviso-suave: #fbeee6;
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  background: var(--color-fondo);
+  color: var(--color-tinta);
+  font-family: var(--font-geist-sans), system-ui, sans-serif;
+}
+
+@layer components {
+  .num { font-variant-numeric: tabular-nums; }
+  .btn, .btn-sec {
+    display: inline-flex; align-items: center; justify-content: center; gap: .5rem;
+    height: 2.75rem; padding: 0 1.25rem; border-radius: .75rem; font-weight: 500; white-space: nowrap;
+    transition: background-color 140ms cubic-bezier(.23,1,.32,1), border-color 140ms ease-out, transform 80ms ease-out;
+  }
+  .btn { background: var(--color-marca); color: #fff; }
+  .btn:hover { background: var(--color-marca-oscura); }
+  .btn-sec { background: #fff; color: var(--color-tinta); border: 1px solid var(--color-linea); }
+  .btn-sec:hover { background: var(--color-suave); }
+  .btn:active, .btn-sec:active { transform: scale(.97); }
+  .btn:disabled, .btn-sec:disabled { opacity: .45; pointer-events: none; }
+  .btn-lg { height: 3.25rem; padding: 0 1.6rem; font-size: 1.05rem; }
+  .campo {
+    width: 100%; height: 2.75rem; padding: 0 .875rem; border-radius: .75rem; background: #fff;
+    border: 1px solid var(--color-linea); color: var(--color-tinta); transition: border-color 140ms ease-out;
+  }
+  textarea.campo { height: auto; padding: .75rem .875rem; }
+  .campo:hover { border-color: var(--color-marca-media); }
+  .campo:focus { outline: none; border-color: var(--color-marca); box-shadow: 0 0 0 3px var(--color-marca-suave); }
+  .etiqueta { display: block; font-size: .875rem; font-weight: 500; margin-bottom: .375rem; }
+  .tarjeta { background: #fff; border: 1px solid var(--color-linea); border-radius: 1rem; }
+  :where(a, button, input, select, textarea, summary):focus-visible { outline: 2px solid var(--color-marca); outline-offset: 2px; }
 }

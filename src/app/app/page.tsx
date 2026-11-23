@@ -1,28 +1,27 @@
 import Link from 'next/link'
+import { redirect } from 'next/navigation'
+import { ArrowRight } from '@phosphor-icons/react/dist/ssr'
 import { usuarioActual } from '@/lib/auth'
 
 export default async function Inicio() {
   const { sb, esAdmin } = await usuarioActual()
-  const { data: farmacias } = await sb.from('farmacias').select('id, nombre, programa_gestion').order('nombre')
+  const { data: farmacias } = await sb.from('farmacias').select('id, nombre').order('nombre')
+  if (farmacias?.length === 1) redirect(`/app/f/${farmacias[0].id}`)
   return (
-    <div className="space-y-6">
-      <h1 className="text-2xl font-semibold">Tus farmacias</h1>
+    <div className="space-y-8">
+      <h1 className="text-3xl font-semibold tracking-tight">{farmacias?.length ? 'Elige farmacia' : 'Bienvenida a SkinCheck'}</h1>
       {!farmacias?.length && (
-        <p className="text-neutral-600">
-          {esAdmin ? 'Aún no hay farmacias. Créalas en Administración.' : 'Tu cuenta aún no está asociada a ninguna farmacia. Pide acceso a SkinCheck.'}
+        <p className="text-gris text-lg max-w-[60ch]">
+          {esAdmin ? 'Aún no hay farmacias. Créalas en Farmacias y usuarios.' : 'Tu cuenta aún no está asociada a ninguna farmacia. Escríbenos y te damos acceso en el día.'}
         </p>
       )}
       <ul className="grid sm:grid-cols-2 gap-4">
         {farmacias?.map((f) => (
-          <li key={f.id} className="bg-white rounded-xl p-5 shadow-sm space-y-3">
-            <div className="font-medium">{f.nombre}</div>
-            <div className="text-sm text-neutral-500">{f.programa_gestion ?? 'Programa sin indicar'}</div>
-            <div className="flex gap-2">
-              <Link href={`/kiosko/${f.id}`} className="inline-block text-sm bg-neutral-900 text-white rounded-lg px-3 py-1.5">Abrir modo iPad</Link>
-              <Link href={`/app/f/${f.id}/consejo`} className="inline-block text-sm border rounded-lg px-3 py-1.5">Consejo en mostrador</Link>
-              <Link href={`/app/f/${f.id}/stock`} className="inline-block text-sm border rounded-lg px-3 py-1.5">Stock</Link>
-              <Link href={`/app/f/${f.id}/panel`} className="inline-block text-sm border rounded-lg px-3 py-1.5">Panel</Link>
-            </div>
+          <li key={f.id}>
+            <Link href={`/app/f/${f.id}`} className="tarjeta p-6 flex items-center gap-4 hover:border-marca-media transition-colors">
+              <span className="font-medium text-lg flex-1">{f.nombre}</span>
+              <ArrowRight size={20} className="text-gris" />
+            </Link>
           </li>
         ))}
       </ul>
