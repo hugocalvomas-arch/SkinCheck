@@ -133,10 +133,10 @@ function Espejo() {
   const [ok, setOk] = useState(true)
   useEffect(() => {
     let stream: MediaStream | null = null
-    navigator.mediaDevices?.getUserMedia({ video: { facingMode: 'user' }, audio: false })
+    Promise.resolve()
+      .then(() => navigator.mediaDevices.getUserMedia({ video: { facingMode: 'user' }, audio: false }))
       .then((s) => { stream = s; if (video.current) video.current.srcObject = s })
       .catch(() => setOk(false))
-    if (!navigator.mediaDevices) setOk(false)
     return () => stream?.getTracks().forEach((t) => t.stop())
   }, [])
   return (
