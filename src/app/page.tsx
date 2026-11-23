@@ -73,17 +73,17 @@ export default function Inicio() {
       <main>
         {/* Portada: titular y la lectura del análisis */}
         <section className="contenedor pt-12 md:pt-16 pb-14">
-          <div className="rejilla items-end gap-y-6">
-            <h1 className="col-span-12 lg:col-span-7 text-[length:var(--text-display)] max-w-[13ch]">Análisis facial con IA en tu mostrador</h1>
-            <div className="col-span-12 lg:col-span-4 lg:col-start-9 grid gap-6 pb-2">
-              <p className="lead">Una foto, 11 medidas de la piel y una rutina con tu stock.</p>
+          <div className="rejilla items-center gap-y-10">
+            <div className="col-span-12 lg:col-span-5 grid gap-6">
+              <h1 className="text-[clamp(2.5rem,4.2vw,3.75rem)] leading-[1.04] max-w-[13ch]">Análisis facial con IA en tu mostrador</h1>
+              <p className="lead max-w-[34ch]">Una foto, 11 medidas de la piel y una rutina con tu stock.</p>
               <div className="flex flex-wrap items-center gap-6">
                 <a href="#contacto" className="btn btn-lg">Pedir información</a>
                 <a href="#como" className="enlace whitespace-nowrap">Ver cómo funciona</a>
               </div>
             </div>
+            <div className="col-span-12 lg:col-span-7"><VideoAnalisis /></div>
           </div>
-          <div className="mt-10"><VideoAnalisis /></div>
         </section>
 
         {/* Qué mide */}
