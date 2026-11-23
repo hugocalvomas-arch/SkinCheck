@@ -12,9 +12,9 @@ export function AsignarMiembro({ farmaciaId }: { farmaciaId: string }) {
         <option value="auxiliar">Auxiliar</option>
         <option value="titular">Titular</option>
       </select>
-      <button disabled={pendiente} className="bg-neutral-900 text-white rounded-lg px-4 py-2 disabled:opacity-50">Añadir</button>
-      {estado && 'error' in estado && <p className="w-full text-sm text-red-600">{estado.error}</p>}
-      {estado && 'ok' in estado && <p className="w-full text-sm text-green-700">{estado.ok}</p>}
+      <button disabled={pendiente} className="btn">Añadir</button>
+      {estado && 'error' in estado && <p className="w-full text-sm text-error">{estado.error}</p>}
+      {estado && 'ok' in estado && <p className="w-full text-sm text-marca">{estado.ok}</p>}
     </form>
   )
 }

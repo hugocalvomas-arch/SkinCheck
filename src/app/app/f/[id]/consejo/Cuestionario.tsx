@@ -32,11 +32,11 @@ export function Cuestionario({ farmaciaId }: { farmaciaId: string }) {
         if (!qs.length) return null
         return (
           <section key={b} className="space-y-5">
-            <h2 className="text-sm uppercase tracking-wide text-neutral-500">{b}</h2>
+            <h2 className="text-lg border-b border-tinta pb-2">{b}</h2>
             {qs.map((q) => (
-              <div key={q.id} className="bg-white rounded-xl p-5 shadow-sm space-y-3">
+              <div key={q.id} className="bg-papel rounded-[var(--radius-card)] border border-linea p-6 space-y-3">
                 <p className="font-medium">{q.t}</p>
-                {q.nota && <p className="text-sm text-neutral-500">{q.nota}</p>}
+                {q.nota && <p className="text-sm text-gris">{q.nota}</p>}
                 <div className="flex flex-wrap gap-2">
                   {opciones(q, r).map(([v, txt, sub]) => {
                     const sel = q.multi ? (r[q.id] || []).includes(v) : r[q.id] === v
@@ -45,10 +45,10 @@ export function Cuestionario({ farmaciaId }: { farmaciaId: string }) {
                         key={String(v)}
                         type="button"
                         onClick={() => elegir(q.id, v, q.multi)}
-                        className={`text-left rounded-lg border px-3 py-2 text-sm ${sel ? 'bg-neutral-900 text-white border-neutral-900' : 'bg-white hover:bg-neutral-50'}`}
+                        className={`text-left rounded-lg border px-3 py-2 text-sm ${sel ? 'bg-marca-suave text-marca border-marca font-medium' : 'bg-papel border-linea hover:border-campo'}`}
                       >
                         {txt}
-                        {sub && <span className={`block text-xs ${sel ? 'text-neutral-300' : 'text-neutral-500'}`}>{sub}</span>}
+                        {sub && <span className={`block text-xs ${sel ? 'text-marca' : 'text-gris'}`}>{sub}</span>}
                       </button>
                     )
                   })}
@@ -58,16 +58,16 @@ export function Cuestionario({ farmaciaId }: { farmaciaId: string }) {
           </section>
         )
       })}
-      <div className="sticky bottom-0 bg-neutral-50 py-4 flex items-center gap-4">
+      <div className="sticky bottom-0 bg-suave py-4 flex items-center gap-4">
         <button
           disabled={faltan.length > 0 || enviando}
           onClick={() => start(async () => { setError(''); const res = await crearConsejo(farmaciaId, r, foto); if (res?.error) setError(res.error) })}
-          className="bg-neutral-900 text-white rounded-lg px-5 py-2.5 disabled:opacity-40"
+          className="btn"
         >
           {enviando ? (foto ? 'Analizando la piel… (hasta 1 minuto)' : 'Calculando…') : 'Ver rutinas'}
         </button>
-        <span className="text-sm text-neutral-500">{faltan.length ? `Faltan ${faltan.length} preguntas` : 'Listo'}</span>
-        {error && <span className="text-sm text-red-600">{error}</span>}
+        <span className="text-sm text-gris">{faltan.length ? `Faltan ${faltan.length} preguntas` : 'Listo'}</span>
+        {error && <span className="text-sm text-error">{error}</span>}
       </div>
     </div>
   )

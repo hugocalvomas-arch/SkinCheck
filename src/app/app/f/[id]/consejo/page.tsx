@@ -11,7 +11,10 @@ export default async function NuevoConsejo({ params }: { params: Promise<{ id: s
   if (!f) return <p>No tienes acceso a esta farmacia.</p>
   return (
     <div className="space-y-6">
-      <h1 className="text-2xl font-semibold">Nuevo consejo · {f.nombre}</h1>
+      <div className="grid gap-1">
+        <h1 className="text-[2rem] leading-tight">Nuevo consejo</h1>
+        <p className="text-gris">{f.nombre}</p>
+      </div>
       <Cuestionario farmaciaId={id} />
     </div>
   )

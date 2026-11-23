@@ -34,46 +34,51 @@ export default async function Panel({ params }: { params: Promise<{ id: string }
 
   const Tarjetas = ({ t, r }: { t: string; r: ReturnType<typeof resumen> }) => (
     <section className="space-y-3">
-      <h2 className="font-medium">{t}</h2>
-      <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+      <h2 className="text-lg">{t}</h2>
+      <div className="grid grid-cols-2 sm:grid-cols-4 border-y border-linea">
         {[
           ['Consejos', String(r.consejos)],
           ['Rutinas vendidas', `${r.vendidas} (${r.conversion} %)`],
           ['Venta estimada', eur(r.venta)],
           ['Ticket medio', eur(r.ticket)],
         ].map(([k, v]) => (
-          <div key={k} className="bg-white rounded-xl p-4 shadow-sm">
-            <div className="text-xs text-neutral-500">{k}</div>
-            <div className="text-xl font-semibold">{v}</div>
+          <div key={k} className="py-5 pr-5 [&:not(:first-child)]:pl-5 [&:not(:first-child)]:border-l border-linea max-sm:[&:nth-child(3)]:border-l-0 max-sm:[&:nth-child(3)]:pl-0 max-sm:[&:nth-child(n+3)]:border-t">
+            <div className="text-sm text-gris">{k}</div>
+            <div className="cifra text-[1.75rem] leading-none mt-3">{v}</div>
           </div>
         ))}
       </div>
-      <p className="text-sm text-neutral-600">
-        Básica {r.porNivel.basica} · Media {r.porNivel.media} · Completa {r.porNivel.completa}
-        {r.sinMarcar > 0 && ` · ${r.sinMarcar} consejos sin marcar si se vendieron`}
-      </p>
+      <dl className="flex flex-wrap gap-x-8 gap-y-2 text-sm m-0">
+        {[['Básica', r.porNivel.basica], ['Media', r.porNivel.media], ['Completa', r.porNivel.completa]].map(([n, x]) => (
+          <div key={n as string} className="flex gap-2"><dt className="text-gris">{n}</dt><dd className="m-0 cifra">{x}</dd></div>
+        ))}
+        {r.sinMarcar > 0 && <div className="text-aviso">{r.sinMarcar} consejos sin marcar si se vendieron</div>}
+      </dl>
     </section>
   )
 
   return (
     <div className="space-y-8">
-      <h1 className="text-2xl font-semibold">Panel · {f.nombre}</h1>
+      <div className="grid gap-1">
+        <h1 className="text-[2rem] leading-tight">Resultados</h1>
+        <p className="text-gris">{f.nombre}</p>
+      </div>
       <Tarjetas t="Últimos 30 días" r={mes} />
       <Tarjetas t="Desde el principio" r={total} />
       <section className="space-y-2">
         <h2 className="font-medium">Últimos consejos</h2>
-        <ul className="bg-white rounded-xl shadow-sm divide-y text-sm">
+        <ul className="bg-papel rounded-[var(--radius-card)] border border-linea divide-y text-sm">
           {consejos.slice(0, 20).map((c) => (
             <li key={c.id} className="px-4 py-2 flex gap-3">
               <span>{new Date(c.creado).toLocaleString('es-ES', { dateStyle: 'short', timeStyle: 'short', timeZone: 'Europe/Madrid' })}</span>
-              <span className="text-neutral-500">{c.rutina_vendida ? (c.rutina_vendida === 'ninguna' ? 'No compró' : `Vendida: ${c.rutina_vendida}`) : 'Sin marcar'}</span>
+              <span className="text-gris">{c.rutina_vendida ? (c.rutina_vendida === 'ninguna' ? 'No compró' : `Vendida: ${c.rutina_vendida}`) : 'Sin marcar'}</span>
               <Link href={`/app/f/${id}/consejo/${c.id}`} className="ml-auto underline">Ver</Link>
             </li>
           ))}
-          {!consejos.length && <li className="px-4 py-3 text-neutral-500">Todavía no hay consejos.</li>}
+          {!consejos.length && <li className="px-4 py-3 text-gris">Todavía no hay consejos.</li>}
         </ul>
       </section>
-      <p className="text-xs text-neutral-500">La venta estimada suma el precio de la rutina marcada como vendida. El % de reposición llegará con los recordatorios.</p>
+      <p className="text-xs text-gris">La venta estimada suma el precio de la rutina marcada como vendida. El % de reposición llegará con los recordatorios.</p>
     </div>
   )
 }

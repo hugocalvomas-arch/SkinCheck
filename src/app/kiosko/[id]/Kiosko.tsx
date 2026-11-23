@@ -5,6 +5,7 @@ import { useCallback, useEffect, useRef, useState, useTransition } from 'react'
 import QRCode from 'qrcode'
 import { ArrowLeft, ArrowRight, ArrowsLeftRight, CalendarCheck, Camera, Check, Drop, Moon, ScanSmiley, ShieldCheck, Sparkle, Sun, Trash, X } from '@phosphor-icons/react'
 import { analizarKiosko, type Seguridad } from './actions'
+import { Logo } from '@/components/Logo'
 
 // Recorrido de la clienta en el iPad del mostrador. Dirección visual: clínica, fondo claro,
 // un único acento verde farmacia, Geist + números tabulares, iconos Phosphor.
@@ -73,10 +74,9 @@ export function Kiosko({ farmaciaId, farmacia, precio }: Props) {
   return (
     <div className="min-h-[100dvh] flex flex-col">
       <Estilos />
-      <header className="h-16 shrink-0 flex items-center gap-3 px-6 md:px-10 border-b border-[var(--k-line)] bg-white">
-        <span className="w-7 h-7 rounded-md bg-[var(--k-accent)] grid place-items-center text-white text-sm font-semibold">S</span>
-        <span className="font-semibold tracking-tight">SkinCheck</span>
-        <span className="text-[var(--k-muted)]">{farmacia}</span>
+      <header className="h-16 shrink-0 flex items-center gap-3 px-6 md:px-10 border-b border-[var(--k-line)] bg-papel">
+        <Logo />
+        <span className="text-[var(--k-muted)] pl-3 border-l border-[var(--k-line)]">{farmacia}</span>
         {paso !== 'reclamo' && paso !== 'analizando' && (
           <button onClick={reiniciar} className="ml-auto inline-flex items-center gap-2 text-sm text-[var(--k-muted)] h-11 px-3 rounded-xl hover:bg-[var(--k-soft)]">
             <X size={18} /> Salir
@@ -110,16 +110,16 @@ function Reclamo({ precio, onEmpezar }: { precio: string; onEmpezar: () => void 
     <div className="w-full max-w-6xl mx-auto px-6 md:px-10 py-10 grid gap-10 content-center">
       <div className="grid md:grid-cols-[1fr_minmax(0,420px)] gap-10 items-center">
         <div className="space-y-6">
-          <h1 className="text-4xl md:text-6xl font-semibold tracking-tight leading-[1.05]">Descubre qué necesita tu piel</h1>
+          <h1 className="text-[clamp(2.75rem,6vw,4.75rem)] leading-[1.02] max-w-[12ch]">Descubre qué necesita tu piel</h1>
           <p className="texto max-w-[34ch]">Una foto y dos minutos para saber qué le pasa a tu piel y qué le sienta bien.</p>
           <div className="flex flex-wrap items-center gap-5 pt-2">
             <button onClick={onEmpezar} className="boton">Empezar análisis <ArrowRight size={20} weight="bold" /></button>
-            <span className="text-lg"><span className="font-semibold num">{precio}</span> <span className="text-[var(--k-muted)]">en el mostrador</span></span>
+            <span className="text-lg"><span className="cifra text-2xl font-medium">{precio}</span> <span className="text-[var(--k-muted)]">en el mostrador</span></span>
           </div>
         </div>
         <Espejo />
       </div>
-      <ul className="grid sm:grid-cols-3 gap-4 border-t border-[var(--k-line)] pt-8">
+      <ul className="grid sm:grid-cols-3 gap-x-8 gap-y-6 border-t border-[var(--k-text)] pt-6 list-none p-0 m-0">
         <Ventaja icono={<ScanSmiley size={24} />} titulo="Mira tu piel de cerca" texto="La IA ve lo que el espejo no te enseña: poros, manchas, rojeces y arrugas." />
         <Ventaja icono={<Sparkle size={24} />} titulo="Descubre tu mejor versión" texto="Una simulación de cómo podría verse tu piel con los cuidados adecuados." />
         <Ventaja icono={<Drop size={24} />} titulo="Acierta a la primera" texto="Te decimos qué usar por la mañana y por la noche. Sin probar a ciegas." />
@@ -143,7 +143,7 @@ function Espejo() {
   }, [])
   return (
     <figure className="space-y-3">
-      <div className="relative aspect-[4/5] rounded-2xl overflow-hidden bg-[var(--k-soft)] border border-[var(--k-line)]">
+      <div className="relative aspect-[4/5] rounded-[var(--radius-card)] overflow-hidden bg-[var(--k-soft)] border border-[var(--k-line)]">
         {ok ? <><video ref={video} autoPlay playsInline muted className="absolute inset-0 w-full h-full object-cover -scale-x-100" /><MallaFacial video={video} /></> : (
           <div className="absolute inset-0 grid place-items-center text-[var(--k-muted)]"><ScanSmiley size={96} weight="thin" /></div>
         )}
@@ -156,9 +156,9 @@ function Espejo() {
 
 function Ventaja({ icono, titulo, texto }: { icono: React.ReactNode; titulo: string; texto: string }) {
   return (
-    <li className="flex gap-4">
-      <span className="w-11 h-11 shrink-0 rounded-xl bg-[var(--k-accent-soft)] text-[var(--k-accent)] grid place-items-center">{icono}</span>
-      <span><span className="block font-medium">{titulo}</span><span className="block text-[var(--k-muted)]">{texto}</span></span>
+    <li className="grid gap-2 content-start">
+      <span className="flex items-center gap-2 text-lg font-medium"><span className="text-[var(--k-accent)]" aria-hidden>{icono}</span>{titulo}</span>
+      <span className="block text-[var(--k-muted)]">{texto}</span>
     </li>
   )
 }
@@ -186,7 +186,7 @@ function Consentimiento({ onFoto, onSinFoto }: { onFoto: () => void; onSinFoto: 
   return (
     <Bloque>
       <h2 className="titulo max-w-2xl">Antes de la foto</h2>
-      <ul className="w-full max-w-2xl grid gap-3">
+      <ul className="w-full max-w-2xl grid list-none p-0 m-0 border-t border-[var(--k-text)]">
         <Punto icono={<ShieldCheck size={22} />} texto="La farmacia no guarda tu foto ni tu nombre." />
         <Punto icono={<Trash size={22} />} texto="El servicio de análisis la elimina tras un periodo limitado." />
         <Punto icono={<ScanSmiley size={22} />} texto="Es un análisis cosmético orientativo, no un diagnóstico médico." />
@@ -200,7 +200,7 @@ function Consentimiento({ onFoto, onSinFoto }: { onFoto: () => void; onSinFoto: 
 }
 
 function Punto({ icono, texto }: { icono: React.ReactNode; texto: string }) {
-  return <li className="flex items-center gap-4 rounded-2xl bg-white border border-[var(--k-line)] p-4 text-lg"><span className="text-[var(--k-accent)]">{icono}</span>{texto}</li>
+  return <li className="flex items-center gap-4 py-5 border-b border-[var(--k-line)] text-xl"><span className="text-[var(--k-accent)]">{icono}</span>{texto}</li>
 }
 
 function Camara({ error, onFoto }: { error: string; onFoto: (b64: string, dataUrl: string) => void }) {
@@ -245,26 +245,26 @@ function Camara({ error, onFoto }: { error: string; onFoto: (b64: string, dataUr
 
   return (
     <div className="w-full max-w-6xl mx-auto px-6 md:px-10 py-8 grid md:grid-cols-[minmax(0,1fr)_320px] gap-10 items-center">
-      <div className="relative h-[min(72dvh,680px)] aspect-[3/4] max-w-full mx-auto rounded-2xl overflow-hidden bg-[#0f1b1d]">
+      <div className="relative h-[min(72dvh,680px)] aspect-[3/4] max-w-full mx-auto rounded-[var(--radius-card)] overflow-hidden bg-camara">
         <video ref={video} autoPlay playsInline muted className="absolute inset-0 w-full h-full object-cover -scale-x-100" />
         <div className="absolute inset-0 pointer-events-none velo-ovalo" />
-        <div className={`absolute left-[15%] right-[15%] top-[10%] bottom-[13%] rounded-[50%] border-2 pointer-events-none transition-colors duration-300 ${cara === 'lista' ? 'border-[#7fd6c2]' : 'border-white/70'}`} />
+        <div className={`absolute left-[15%] right-[15%] top-[10%] bottom-[13%] rounded-[50%] border-2 pointer-events-none transition-colors duration-300 ${cara === 'lista' ? 'border-cara-lista' : 'border-sobre-marca/70'}`} />
         <MallaFacial video={video} onEstado={setCara} />
         {cuenta == null && (
-          <p className="absolute top-4 left-1/2 -translate-x-1/2 rounded-full bg-[#0f1b1d]/70 backdrop-blur px-4 py-2 text-white text-sm font-medium whitespace-nowrap">
+          <p className="absolute top-4 left-1/2 -translate-x-1/2 rounded-full bg-cristal px-4 py-2 text-sobre-marca text-sm font-medium whitespace-nowrap">
             {{ buscando: 'Buscando tu cara', lejos: 'Acércate un poco', descentrada: 'Céntrate en el óvalo', lista: 'Perfecto, no te muevas' }[cara]}
           </p>
         )}
-        {cuenta != null && cuenta > 0 && <div className="absolute inset-0 grid place-items-center text-white text-9xl font-semibold num">{cuenta}</div>}
+        {cuenta != null && cuenta > 0 && <div className="absolute inset-0 grid place-items-center text-sobre-marca text-9xl cifra">{cuenta}</div>}
       </div>
       <div className="space-y-6">
-        <h2 className="text-3xl font-semibold tracking-tight">Coloca tu cara dentro del óvalo</h2>
+        <h2 className="text-[2.25rem] leading-[1.05]">Coloca tu cara dentro del óvalo</h2>
         <ul className="space-y-3 text-lg text-[var(--k-muted)]">
           {['Acércate hasta llenarlo', 'Mira de frente, sin sonreír', 'Sin gafas y con la frente despejada', 'Mejor sin maquillaje'].map((t) => (
             <li key={t} className="flex gap-3"><Check size={22} className="text-[var(--k-accent)] shrink-0 mt-0.5" />{t}</li>
           ))}
         </ul>
-        {(error || fallo) && <p role="alert" className="rounded-xl bg-[var(--k-warn-soft)] text-[var(--k-warn)] p-4">{fallo || error}</p>}
+        {(error || fallo) && <p role="alert" className="rounded-[var(--radius-input)] bg-[var(--k-warn-soft)] text-[var(--k-warn)] p-4">{fallo || error}</p>}
         {!fallo && (
           <button onClick={() => setCuenta(3)} disabled={cuenta != null} className="boton w-full">
             <Camera size={20} /> {error ? 'Repetir la foto' : 'Hacer la foto'}
@@ -285,7 +285,7 @@ function Mejorar({ error, onListo }: { error: string; onListo: (m: string[]) => 
       <div className="w-full max-w-2xl grid grid-cols-2 md:grid-cols-3 gap-3">
         {MEJORAR.map(([v, t]) => <button key={v} onClick={() => alternar(v)} className={`opcion ${sel.includes(v) ? 'opcion-sel' : ''}`}>{t}</button>)}
       </div>
-      {error && <p role="alert" className="w-full max-w-2xl rounded-xl bg-[var(--k-warn-soft)] text-[var(--k-warn)] p-4">{error}</p>}
+      {error && <p role="alert" className="w-full max-w-2xl rounded-[var(--radius-input)] bg-[var(--k-warn-soft)] text-[var(--k-warn)] p-4">{error}</p>}
       <div className="w-full max-w-2xl"><button onClick={() => onListo(sel)} disabled={!sel.length} className="boton">Ver mi rutina <ArrowRight size={20} weight="bold" /></button></div>
     </Bloque>
   )
@@ -296,17 +296,17 @@ export function Analizando({ foto }: { foto: string | null }) {
   useEffect(() => { const t = setInterval(() => setHechos((x) => Math.min(x + 1, PASOS_ANALISIS.length - 1)), 4500); return () => clearInterval(t) }, [])
   return (
     <div className="w-full max-w-5xl mx-auto px-6 md:px-10 py-10 grid md:grid-cols-[360px_1fr] gap-12 items-center">
-      <div className="relative aspect-[3/4] rounded-2xl overflow-hidden bg-[var(--k-soft)] border border-[var(--k-line)]">
+      <div className="relative aspect-[3/4] rounded-[var(--radius-card)] overflow-hidden bg-[var(--k-soft)] border border-[var(--k-line)]">
         {foto && <img src={foto} alt="" className="absolute inset-0 w-full h-full object-cover -scale-x-100" />}
         <div className="linea-escaneo" />
         <Esquinas />
       </div>
       <div className="space-y-6">
-        <h2 className="text-3xl font-semibold tracking-tight">Analizando tu piel</h2>
+        <h2 className="text-[2.25rem] leading-[1.05]">Analizando tu piel</h2>
         <ol className="space-y-3 text-lg">
           {PASOS_ANALISIS.map((t, k) => (
             <li key={t} className={`flex items-center gap-3 transition-colors duration-200 ${k < hechos ? 'text-[var(--k-text)]' : k === hechos ? 'text-[var(--k-accent)]' : 'text-[var(--k-muted)]/60'}`}>
-              <span className={`w-6 h-6 rounded-full grid place-items-center border ${k < hechos ? 'bg-[var(--k-accent)] border-[var(--k-accent)] text-white' : k === hechos ? 'border-[var(--k-accent)]' : 'border-[var(--k-line)]'}`}>
+              <span className={`w-6 h-6 rounded-full grid place-items-center border ${k < hechos ? 'bg-[var(--k-accent)] border-[var(--k-accent)] text-sobre-marca' : k === hechos ? 'border-[var(--k-accent)]' : 'border-[var(--k-line)]'}`}>
                 {k < hechos ? <Check size={14} weight="bold" /> : k === hechos ? <span className="w-2 h-2 rounded-full bg-[var(--k-accent)] latido" /> : null}
               </span>
               {t}
@@ -348,26 +348,26 @@ export function Informe({ res, foto, farmacia, onFin }: { res: any; foto: string
       <section className="grid md:grid-cols-[minmax(0,1fr)_minmax(0,1fr)] gap-10 items-start">
         <div>
           {foto && F?.imagenes?.despues ? <AntesDespues antes={foto} despues={F.imagenes.despues} />
-            : marcas ? <img src={marcas} alt="Zonas analizadas" className="w-full rounded-2xl border border-[var(--k-line)]" />
-            : foto ? <img src={foto} alt="Tu foto" className="w-full rounded-2xl -scale-x-100" /> : null}
+            : marcas ? <img src={marcas} alt="Zonas analizadas" className="w-full rounded-[var(--radius-card)] border border-[var(--k-line)]" />
+            : foto ? <img src={foto} alt="Tu foto" className="w-full rounded-[var(--radius-card)] -scale-x-100" /> : null}
         </div>
         <div className="space-y-8">
           <div className="space-y-3">
-            <h2 className="text-4xl font-semibold tracking-tight leading-tight">Tu informe de piel</h2>
+            <h2 className="text-[clamp(2.5rem,4.5vw,3.5rem)] leading-[1.02]">Tu informe de piel</h2>
             <p className="texto">{prioridades.length ? `Lo que más conviene trabajar: ${prioridades.join(', ')}.` : 'Tu rutina se ha calculado con tus respuestas.'}</p>
           </div>
           {F && (F.puntuacion_global != null || F.edad_piel != null) && (
-            <dl className="grid grid-cols-2 gap-4">
+            <dl className="grid grid-cols-2 border-y border-[var(--k-line)] m-0">
               {F.puntuacion_global != null && <Dato etiqueta="Puntuación de la piel" valor={`${F.puntuacion_global}`} unidad="/100" />}
               {F.edad_piel != null && <Dato etiqueta="Edad aparente de la piel" valor={`${F.edad_piel}`} unidad="años" />}
             </dl>
           )}
           {aspectos.length > 0 && (
-            <ul className="grid gap-2.5">
+            <ul className="grid gap-3 list-none p-0 m-0">
               {aspectos.map(([a, v]) => (
                 <li key={a} className="grid grid-cols-[8rem_1fr_5.5rem] items-center gap-4">
                   <span>{NOMBRE[a] ?? a}</span>
-                  <span className="h-1.5 rounded-full bg-[var(--k-line)] overflow-hidden"><span className="block h-full rounded-full" style={{ width: `${Math.max(4, v)}%`, background: v >= 50 ? 'var(--k-accent)' : 'var(--k-accent-mid)' }} /></span>
+                  <span className="escala"><i /><b data-alto={v >= 50 ? '' : undefined} style={{ width: `${Math.max(4, v)}%` }} /></span>
                   <span className={`text-sm text-right ${v >= 50 ? 'text-[var(--k-text)] font-medium' : 'text-[var(--k-muted)]'}`}>{nivelDe(v)}</span>
                 </li>
               ))}
@@ -375,7 +375,7 @@ export function Informe({ res, foto, farmacia, onFin }: { res: any; foto: string
           )}
           {marcas && F?.imagenes?.despues && (
             <figure className="flex items-center gap-4">
-              <img src={marcas} alt="Zonas detectadas" className="w-24 rounded-xl border border-[var(--k-line)]" />
+              <img src={marcas} alt="Zonas detectadas" className="w-24 rounded-[var(--radius-input)] border border-[var(--k-line)]" />
               <figcaption className="text-sm text-[var(--k-muted)]">Zonas detectadas por el análisis.</figcaption>
             </figure>
           )}
@@ -384,11 +384,11 @@ export function Informe({ res, foto, farmacia, onFin }: { res: any; foto: string
 
       {ingredientes.length > 0 && (
         <section className="space-y-6">
-          <h3 className="text-3xl font-semibold tracking-tight">Ingredientes recomendados</h3>
-          <ol className="grid md:grid-cols-2 gap-x-10 gap-y-6">
+          <h3 className="text-[2.25rem] leading-[1.05] tracking-[-0.03em]">Ingredientes recomendados</h3>
+          <ol className="grid md:grid-cols-2 gap-x-10 list-none p-0 m-0 border-t border-[var(--k-text)]">
             {ingredientes.map((o: any, k: number) => (
-              <li key={k} className="grid grid-cols-[2.25rem_1fr] gap-3">
-                <span className="w-9 h-9 rounded-full bg-[var(--k-accent-soft)] text-[var(--k-accent)] grid place-items-center font-semibold num">{k + 1}</span>
+              <li key={k} className="grid grid-cols-[2.5rem_1fr] gap-3 py-5 border-b border-[var(--k-line)]">
+                <span className="cifra text-3xl leading-none text-[var(--k-accent)]">{k + 1}</span>
                 <span>
                   <span className="block text-xl font-medium">{o.nombre}</span>
                   <span className="block text-[var(--k-muted)] leading-relaxed">{o.por_que}</span>
@@ -401,11 +401,11 @@ export function Informe({ res, foto, farmacia, onFin }: { res: any; foto: string
 
       <section className="space-y-6">
         <div className="flex flex-wrap items-center gap-4">
-          <h3 className="text-3xl font-semibold tracking-tight">Tu rutina</h3>
-          <div role="tablist" className="md:ml-auto inline-flex rounded-xl border border-[var(--k-line)] bg-white p-1">
+          <h3 className="text-[2.25rem] leading-[1.05] tracking-[-0.03em]">Tu rutina</h3>
+          <div role="tablist" aria-label="Nivel de la rutina" className="md:ml-auto inline-flex rounded-[var(--radius-card)] border border-[var(--k-line)] bg-[var(--k-bg)] p-1">
             {(['basica', 'media', 'completa'] as const).map((k) => (
               <button key={k} role="tab" aria-selected={nivel === k} onClick={() => { setNivel(k); setQr('') }}
-                className={`h-11 px-4 rounded-lg text-sm ${nivel === k ? 'bg-[var(--k-accent)] text-white' : 'text-[var(--k-muted)] hover:text-[var(--k-text)]'}`}>
+                className={`h-11 px-4 rounded-lg text-sm ${nivel === k ? 'bg-[var(--k-accent)] text-sobre-marca' : 'text-[var(--k-muted)] hover:text-[var(--k-text)]'}`}>
                 {R.rutinas[k].nombre} <span className="num">{eur(R.rutinas[k].total)}</span>
               </button>
             ))}
@@ -419,13 +419,13 @@ export function Informe({ res, foto, farmacia, onFin }: { res: any; foto: string
         ) : <p className="texto">Pide al farmacéutico que te enseñe los productos de tu rutina.</p>}
       </section>
 
-      <section className="rounded-2xl bg-white border border-[var(--k-line)] p-6 md:p-8 grid md:grid-cols-[1fr_auto] gap-8 items-center">
+      <section className="rounded-[var(--radius-card)] bg-[var(--k-accent-soft)] p-6 md:p-10 grid md:grid-cols-[1fr_auto] gap-8 items-center">
         <div className="space-y-3">
-          <h3 className="text-2xl font-semibold tracking-tight flex items-center gap-3"><CalendarCheck size={26} className="text-[var(--k-accent)]" /> Llévatela y repite en 6 semanas</h3>
+          <h3 className="text-[1.75rem] leading-tight tracking-[-0.025em] flex items-center gap-3"><CalendarCheck size={26} className="text-[var(--k-accent)]" /> Llévatela y repite en 6 semanas</h3>
           <p className="texto">Escanea el código con tu móvil para guardar la rutina en WhatsApp. En 6 semanas, repite el análisis y compara tu piel con la de hoy.</p>
-          <p className="text-[var(--k-muted)]">Enseña esta pantalla en el mostrador para que te preparen los productos.</p>
+          <p className="text-[var(--k-text)]">Enseña esta pantalla en el mostrador para que te preparen los productos.</p>
         </div>
-        {qr ? <img src={qr} alt="Código QR con tu rutina" className="w-44 h-44 rounded-xl border border-[var(--k-line)]" /> : <button onClick={generarQr} className="boton-sec">Ver mi código</button>}
+        {qr ? <img src={qr} alt="Código QR con tu rutina" className="w-44 h-44 rounded-[var(--radius-input)] border border-[var(--k-line)]" /> : <button onClick={generarQr} className="boton-sec">Ver mi código</button>}
       </section>
 
       <div className="flex justify-center pb-4">
@@ -440,13 +440,13 @@ export function Informe({ res, foto, farmacia, onFin }: { res: any; foto: string
 
 function Turno({ icono, titulo, productos }: { icono: React.ReactNode; titulo: string; productos: any[] }) {
   return (
-    <div className="rounded-2xl bg-white border border-[var(--k-line)] p-6 space-y-4">
+    <div className="border-t border-[var(--k-text)] pt-5 space-y-4">
       <p className="flex items-center gap-2 font-medium text-[var(--k-accent)]">{icono} {titulo}</p>
       <ol className="space-y-4">
         {productos.map((p: any, k: number) => (
-          <li key={k} className="grid grid-cols-[1fr_auto] gap-x-4 gap-y-0.5">
+          <li key={k} className="grid grid-cols-[1fr_auto] gap-x-4 gap-y-0.5 pb-4 border-b border-[var(--k-line)]">
             <span className="text-sm text-[var(--k-muted)]">{k + 1}. {p.paso}</span>
-            <span className="row-span-2 self-center font-medium num">{eur(p.precio)}</span>
+            <span className="row-span-2 self-center cifra text-lg">{eur(p.precio)}</span>
             <span className="text-lg leading-snug">{p.marca} {p.producto}</span>
           </li>
         ))}
@@ -458,9 +458,9 @@ function Turno({ icono, titulo, productos }: { icono: React.ReactNode; titulo: s
 
 function Dato({ etiqueta, valor, unidad }: { etiqueta: string; valor: string; unidad: string }) {
   return (
-    <div className="rounded-2xl bg-white border border-[var(--k-line)] p-5">
+    <div className="py-5 pr-5 [&+&]:pl-5 [&+&]:border-l border-[var(--k-line)]">
       <dt className="text-sm text-[var(--k-muted)]">{etiqueta}</dt>
-      <dd className="mt-1"><span className="text-4xl font-semibold num">{valor}</span> <span className="text-[var(--k-muted)]">{unidad}</span></dd>
+      <dd className="mt-2 m-0"><span className="cifra text-[3rem] leading-none">{valor}</span> <span className="text-[var(--k-muted)]">{unidad}</span></dd>
     </div>
   )
 }
@@ -473,13 +473,13 @@ function AntesDespues({ antes, despues }: { antes: string; despues: string }) {
   }
   return (
     <figure className="space-y-3">
-      <div className="relative w-full aspect-[3/4] rounded-2xl overflow-hidden bg-[var(--k-soft)] touch-none cursor-ew-resize"
+      <div className="relative w-full aspect-[3/4] rounded-[var(--radius-card)] overflow-hidden bg-[var(--k-soft)] touch-none cursor-ew-resize"
         onPointerDown={(e) => { e.currentTarget.setPointerCapture(e.pointerId); mover(e) }}
         onPointerMove={(e) => { if (e.buttons) mover(e) }}>
         <img src={despues} alt="Simulación con la rutina" className="absolute inset-0 w-full h-full object-cover" />
         <img src={antes} alt="Hoy" className="absolute inset-0 w-full h-full object-cover -scale-x-100" style={{ clipPath: `inset(0 ${100 - x}% 0 0)` }} />
-        <div className="absolute top-0 bottom-0 w-px bg-white" style={{ left: `${x}%` }}>
-          <span className="absolute top-1/2 -translate-y-1/2 -translate-x-1/2 w-11 h-11 rounded-full bg-white text-[var(--k-text)] grid place-items-center shadow-[0_4px_16px_rgba(15,27,29,.18)]"><ArrowsLeftRight size={20} /></span>
+        <div className="absolute top-0 bottom-0 w-px bg-sobre-marca" style={{ left: `${x}%` }}>
+          <span className="absolute top-1/2 -translate-y-1/2 -translate-x-1/2 w-11 h-11 rounded-full bg-papel text-[var(--k-text)] grid place-items-center shadow-pomo"><ArrowsLeftRight size={20} /></span>
         </div>
       </div>
       <figcaption className="flex justify-between text-sm text-[var(--k-muted)]"><span>Hoy</span><span>Simulación con tu rutina (IA)</span></figcaption>
@@ -507,25 +507,25 @@ export function Estilos() {
   return (
     <style>{`
       .kiosko {
-        --k-bg:#fbfcfc; --k-soft:#f1f5f5; --k-line:#e1e7e7; --k-text:#0f1b1d; --k-muted:#5a696b;
-        --k-accent:#0b6e5b; --k-accent-mid:#7fb5a9; --k-accent-soft:#e5f2ee; --k-warn:#8a3b12; --k-warn-soft:#fbeee6;
+        --k-bg:var(--color-paper); --k-soft:var(--color-paper-2); --k-line:var(--color-rule); --k-text:var(--color-ink); --k-muted:var(--color-muted);
+        --k-accent:var(--color-accent); --k-accent-mid:var(--color-accent-mid); --k-accent-soft:var(--color-accent-soft); --k-warn:var(--color-warn); --k-warn-soft:var(--color-warn-soft);
       }
       .num { font-variant-numeric: tabular-nums; }
-      .titulo { font-size: clamp(2rem, 3.6vw, 3rem); font-weight: 600; letter-spacing: -0.02em; line-height: 1.1; }
+      .titulo { font-size: clamp(2.25rem, 4vw, 3.25rem); font-weight: 600; letter-spacing: -0.035em; line-height: 1.04; text-wrap: balance; }
       .texto { font-size: 1.25rem; line-height: 1.55; color: var(--k-muted); }
-      .boton, .boton-sec { display:inline-flex; align-items:center; justify-content:center; gap:.6rem; height:3.5rem; padding:0 1.75rem; border-radius:.875rem; font-size:1.125rem; font-weight:500; white-space:nowrap; transition: background-color 140ms cubic-bezier(.23,1,.32,1), transform 80ms ease-out; }
-      .boton { background: var(--k-accent); color: #fff; }
-      .boton:hover { background: #095c4c; }
-      .boton-sec { background: #fff; color: var(--k-text); border: 1px solid var(--k-line); }
+      .boton, .boton-sec { display:inline-flex; align-items:center; justify-content:center; gap:.6rem; height:3.5rem; padding:0 1.75rem; border-radius:var(--radius-input); border:1px solid var(--k-accent); font-size:1.125rem; font-weight:500; white-space:nowrap; transition: background-color 140ms cubic-bezier(.23,1,.32,1), transform 80ms ease-out; }
+      .boton { background: var(--k-accent); color: var(--color-accent-ink); }
+      .boton:hover { background: var(--color-accent-deep); border-color: var(--color-accent-deep); }
+      .boton-sec { background: var(--k-bg); color: var(--k-text); border-color: var(--color-field); }
       .boton-sec:hover { background: var(--k-soft); }
       .boton:active, .boton-sec:active, .opcion:active { transform: scale(.97); }
-      .boton:disabled { opacity: .4; pointer-events: none; }
+      .boton:disabled { background: var(--k-soft); border-color: var(--k-line); color: var(--k-muted); cursor: not-allowed; }
       .boton:focus-visible, .boton-sec:focus-visible, .opcion:focus-visible, .kiosko button:focus-visible { outline: 2px solid var(--k-accent); outline-offset: 2px; }
-      .opcion { min-height: 4.5rem; padding: 1rem; border-radius: .875rem; background: #fff; border: 1px solid var(--k-line); font-size: 1.15rem; transition: background-color 140ms ease-out, border-color 140ms ease-out, transform 80ms ease-out; }
+      .opcion { min-height: 4.5rem; padding: 1rem; border-radius: var(--radius-input); background: var(--k-bg); text-align: left; border: 1px solid var(--k-line); font-size: 1.15rem; transition: background-color 140ms ease-out, border-color 140ms ease-out, transform 80ms ease-out; }
       .opcion:hover { border-color: var(--k-accent-mid); }
       .opcion-sel { background: var(--k-accent-soft); border-color: var(--k-accent); color: var(--k-accent); font-weight: 500; }
-      .velo-ovalo { background: radial-gradient(ellipse 35% 38.5% at 50% 48.5%, transparent 99%, rgba(15,27,29,.45) 100%); }
-      .linea-escaneo { position:absolute; left:0; right:0; height:2px; background: var(--k-accent); box-shadow: 0 0 0 1px rgba(255,255,255,.5); animation: escaneo 2.8s cubic-bezier(.45,0,.55,1) infinite; }
+      .velo-ovalo { background: radial-gradient(ellipse 35% 38.5% at 50% 48.5%, transparent 99%, var(--color-veil) 100%); }
+      .linea-escaneo { position:absolute; left:0; right:0; height:2px; background: var(--k-accent); box-shadow: 0 0 0 1px var(--color-on-accent-muted); animation: escaneo 2.8s cubic-bezier(.45,0,.55,1) infinite; }
       @keyframes escaneo { 0%,100% { top: 10% } 50% { top: 88% } }
       .latido { animation: latido 1.2s ease-in-out infinite; }
       @keyframes latido { 0%,100% { opacity: .35 } 50% { opacity: 1 } }

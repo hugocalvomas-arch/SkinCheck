@@ -34,10 +34,10 @@ export default async function Hoja({ params, searchParams }: { params: Promise<{
       <ol className="space-y-2">
         {items.map((p: any, i: number) => (
           <li key={i} className="flex gap-3">
-            <span className="text-neutral-400 w-5">{i + 1}.</span>
+            <span className="text-gris w-5">{i + 1}.</span>
             <div>
               <div className="font-medium">{p.paso}: {p.marca} {p.producto}</div>
-              <div className="text-sm text-neutral-600">{p.para}</div>
+              <div className="text-sm text-gris">{p.para}</div>
             </div>
             <span className="ml-auto whitespace-nowrap text-sm">{eur(p.precio)}</span>
           </li>
@@ -47,22 +47,22 @@ export default async function Hoja({ params, searchParams }: { params: Promise<{
   )
 
   return (
-    <div className="max-w-2xl mx-auto bg-white rounded-xl p-8 shadow-sm space-y-6 print:shadow-none print:p-0">
+    <div className="max-w-2xl mx-auto bg-papel rounded-[var(--radius-card)] border border-linea p-6 space-y-6 print:shadow-none print:p-0">
       <header className="flex items-center gap-4 border-b pb-4">
         {/* eslint-disable-next-line @next/next/no-img-element */}
         {f.logo_url && <img src={f.logo_url} alt="" className="h-12" />}
         <div>
           <div className="text-xl font-semibold">{f.nombre}</div>
-          <div className="text-sm text-neutral-500">Tu rutina · {new Date(c.creado).toLocaleDateString('es-ES')}</div>
+          <div className="text-sm text-gris">Tu rutina del {new Date(c.creado).toLocaleDateString('es-ES')}</div>
         </div>
       </header>
       <Lista titulo="Por la mañana" items={manana} />
       <Lista titulo="Por la noche" items={noche} />
       {r.escalado && <p className="text-sm"><b>Cómo empezar:</b> {r.escalado}</p>}
       {r.avisos?.length > 0 && <ul className="list-disc pl-5 text-sm space-y-1">{r.avisos.map((a: string, i: number) => <li key={i}>{a}</li>)}</ul>}
-      {R.derivacion?.length > 0 && <ul className="list-disc pl-5 text-sm space-y-1 text-red-800">{R.derivacion.map((d: any, i: number) => <li key={i}>{d.texto}</li>)}</ul>}
+      {R.derivacion?.length > 0 && <ul className="list-disc pl-5 text-sm space-y-1 text-error">{R.derivacion.map((d: any, i: number) => <li key={i}>{d.texto}</li>)}</ul>}
       <div className="flex justify-between border-t pt-3 font-semibold"><span>Total</span><span>{eur(r.total)}</span></div>
-      <p className="text-xs text-neutral-500">Esto no es un diagnóstico ni sustituye a una consulta médica. Si algo te preocupa o no mejora, consúltalo con tu farmacéutico o tu médico.</p>
+      <p className="text-xs text-gris">Esto no es un diagnóstico ni sustituye a una consulta médica. Si algo te preocupa o no mejora, consúltalo con tu farmacéutico o tu médico.</p>
       <Acciones texto={texto} />
     </div>
   )

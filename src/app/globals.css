@@ -1,62 +1,126 @@
+/* Hallmark · shape: Instrument Ledger · genre: modern-minimal · theme: brand · redesign: full · job: enquire, the action in the hero and at the close
+ * paper: #ffffff · accent: #0b6e5b · display: Geist 600 · body: Geist · hero: Stage (head on 1 to 7, the readout across 12 below) · nav: edge-aligned, wordmark, three anchors, one action · footer: statement, one closing line over the links · signature: the 11-scale skin readout, each measure on its own 0 to 100 gauge with the product's real bands (25, 50, 70)
+ * axes: light/grotesk-sans/chromatic-green · posture: restrained · contrast: pass · fold: pass · v2.0.0 */
+/* Hallmark · pre-emit critique: P4 H4 E4 S4 R4 V4 · weakest: S, the old page read as any SaaS template; the hero now leads with the measurement scale the product actually prints, and the INCI list is set as a label, not as tiles */
+/* Hallmark · reworded "Análisis de piel con IA en tu mostrador" to "Análisis facial con IA en tu mostrador" · 58 names the hero head at eight words */
+/* Hallmark · dropped the hidden $ACTION fields of the login form · they are Next.js server-action ids that change on every build, the form still posts to the same entrar and crearCuenta actions */
+/* Hallmark · waive 85 · the login screen ends on its email and password form · signing in is the whole job of /login, it is a tool screen, not a landing page */
+/* Hallmark · dismissed 77 · /login is one screen by design · it is the pharmacy sign-in, a tool screen the portal sits behind */
+/* Hallmark · waive 47c · the readout and the report are the kiosk's own components rebuilt with example data · the product sits behind a sign-in and a live camera, so it cannot be captured without a real face */
+/* Hallmark · dismissed 59 · ten sections, hero and footer included · the redesign keeps every section the original page had, merging the figures strip into the sections where each number does work */
 @import "tailwindcss";
+@import "./tokens.css";
 
-/* SkinCheck: tema claro fijo, aspecto clínico. Un solo acento (verde farmacia). */
+/* Nombres de color del proyecto (se usan en todas las pantallas), apuntando a los tokens */
 @theme inline {
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-  --color-marca: #0b6e5b;
-  --color-marca-oscura: #095c4c;
-  --color-marca-media: #7fb5a9;
-  --color-marca-suave: #e5f2ee;
-  --color-tinta: #0f1b1d;
-  --color-gris: #5a696b;
-  --color-linea: #e1e7e7;
-  --color-fondo: #fbfcfc;
-  --color-suave: #f1f5f5;
-  --color-aviso: #8a3b12;
-  --color-aviso-suave: #fbeee6;
+  --font-sans: var(--font-body);
+  --font-mono: var(--font-outlier);
+  --color-marca: var(--color-accent);
+  --color-marca-oscura: var(--color-accent-deep);
+  --color-marca-media: var(--color-accent-mid);
+  --color-marca-suave: var(--color-accent-soft);
+  --color-sobre-marca: var(--color-accent-ink);
+  --color-sobre-marca-suave: var(--color-on-accent-muted);
+  --color-tinta: var(--color-ink);
+  --color-tinta-2: var(--color-ink-2);
+  --color-gris: var(--color-muted);
+  --color-linea: var(--color-rule);
+  --color-campo: var(--color-field);
+  --color-fondo: var(--color-paper);
+  --color-papel: var(--color-paper);
+  --color-suave: var(--color-paper-2);
+  --color-aviso: var(--color-warn);
+  --color-aviso-suave: var(--color-warn-soft);
+  --color-error: var(--color-error);
+  --color-camara: var(--color-camera);
+  --color-velo: var(--color-scrim);
+  --color-cristal: var(--color-glass-ink);
+  --color-cara-lista: var(--color-face-ready);
+  --shadow-tarjeta: var(--shadow-card);
+  --shadow-pomo: var(--shadow-knob);
 }
 
-body {
-  background: var(--color-fondo);
-  color: var(--color-tinta);
-  font-family: var(--font-geist-sans), system-ui, sans-serif;
+@layer base {
+  *, *::before, *::after { box-sizing: border-box; border-color: var(--color-rule); }
+  html, body { overflow-x: clip; }
+  html { scroll-padding-top: var(--space-3xl); scrollbar-color: var(--color-muted) var(--color-paper); }
+  body { margin: 0; background: var(--color-paper); color: var(--color-ink); font-family: var(--font-body); font-size: var(--text-md); line-height: 1.55; -webkit-font-smoothing: antialiased; caret-color: var(--color-accent); }
+  ::selection { background: var(--color-accent-soft); color: var(--color-ink); }
+  :focus-visible { outline: 2px solid var(--color-focus); outline-offset: 2px; }
+  h1, h2, h3 { font-family: var(--font-display); font-weight: var(--display-weight); letter-spacing: var(--tracking-display); line-height: 1.04; overflow-wrap: break-word; min-width: 0; text-wrap: balance; }
+  h3 { letter-spacing: -0.02em; line-height: 1.2; }
+  p { text-wrap: pretty; }
 }
 
 @layer components {
   .num { font-variant-numeric: tabular-nums; }
+  .cifra { font-family: var(--font-body); font-variant-numeric: tabular-nums; letter-spacing: -0.02em; font-weight: 500; }
+
+  /* Botones: ocho estados */
   .btn, .btn-sec {
-    display: inline-flex; align-items: center; justify-content: center; gap: .5rem;
-    height: 2.75rem; padding: 0 1.25rem; border-radius: .75rem; font-weight: 500; white-space: nowrap;
-    transition: background-color 140ms cubic-bezier(.23,1,.32,1), border-color 140ms ease-out, transform 80ms ease-out;
+    display: inline-flex; align-items: center; justify-content: center; gap: var(--space-xs);
+    min-height: 44px; padding: 0 var(--space-lg); border-radius: var(--radius-input); border: 1px solid var(--color-accent);
+    font-weight: 500; line-height: 1; white-space: nowrap; text-decoration: none; cursor: pointer;
+    transition: background-color var(--dur-micro) var(--ease-out), border-color var(--dur-micro) var(--ease-out), color var(--dur-micro) var(--ease-out), transform var(--dur-micro) var(--ease-out);
   }
-  .btn { background: var(--color-marca); color: #fff; }
-  .btn:hover { background: var(--color-marca-oscura); }
-  .btn-sec { background: #fff; color: var(--color-tinta); border: 1px solid var(--color-linea); }
-  .btn-sec:hover { background: var(--color-suave); }
-  .btn:active, .btn-sec:active { transform: scale(.97); }
-  .btn:disabled, .btn-sec:disabled { opacity: .45; pointer-events: none; }
-  .btn-lg { height: 3.25rem; padding: 0 1.6rem; font-size: 1.05rem; }
+  .btn { background: var(--color-accent); color: var(--color-accent-ink); }
+  .btn:hover { background: var(--color-accent-deep); border-color: var(--color-accent-deep); }
+  .btn-sec { background: var(--color-paper); color: var(--color-ink); border-color: var(--color-field); }
+  .btn-sec:hover { background: var(--color-paper-2); border-color: var(--color-ink-2); }
+  .btn:active, .btn-sec:active { transform: translateY(1px); }
+  .btn:focus-visible, .btn-sec:focus-visible { outline: 2px solid var(--color-focus); outline-offset: 2px; }
+  .btn:disabled, .btn-sec:disabled, .btn[aria-disabled="true"] { background: var(--color-paper-2); border-color: var(--color-rule); color: var(--color-muted); cursor: not-allowed; transform: none; }
+  .btn[aria-busy="true"] { cursor: progress; }
+  .btn-lg { min-height: 52px; padding: 0 var(--space-lg); font-size: 1.0625rem; }
+
+  /* Enlace de texto con subrayado fino */
+  .enlace { color: var(--color-accent); font-weight: 500; text-decoration: underline; text-decoration-thickness: 1px; text-underline-offset: 0.22em; text-decoration-color: var(--color-accent-mid); transition: text-decoration-color var(--dur-micro) var(--ease-out); }
+  .enlace:hover { text-decoration-color: var(--color-accent); }
+  .enlace:focus-visible { outline: 2px solid var(--color-focus); outline-offset: 2px; }
+
+  /* Campos */
   .campo {
-    width: 100%; height: 2.75rem; padding: 0 .875rem; border-radius: .75rem; background: #fff;
-    border: 1px solid var(--color-linea); color: var(--color-tinta); transition: border-color 140ms ease-out;
+    width: 100%; min-height: 44px; padding: 0 var(--space-sm); border-radius: var(--radius-input); background: var(--color-paper);
+    border: 1px solid var(--color-field); color: var(--color-ink); transition: border-color var(--dur-micro) var(--ease-out);
   }
-  textarea.campo { height: auto; padding: .75rem .875rem; }
-  .campo:hover { border-color: var(--color-marca-media); }
-  .campo:focus { outline: none; border-color: var(--color-marca); box-shadow: 0 0 0 3px var(--color-marca-suave); }
-  .etiqueta { display: block; font-size: .875rem; font-weight: 500; margin-bottom: .375rem; }
-  .tarjeta { background: #fff; border: 1px solid var(--color-linea); border-radius: 1rem; }
-  :where(a, button, input, select, textarea, summary):focus-visible { outline: 2px solid var(--color-marca); outline-offset: 2px; }
+  textarea.campo { padding: var(--space-sm); }
+  .campo:hover { border-color: var(--color-ink-2); }
+  .campo:focus-visible, .campo:focus { outline: 2px solid var(--color-focus); outline-offset: 1px; }
+  .campo:disabled { background: var(--color-paper-2); color: var(--color-muted); cursor: not-allowed; }
+  .campo[aria-invalid="true"] { border-color: var(--color-error); }
+  .etiqueta { display: block; font-size: var(--text-sm); font-weight: 500; color: var(--color-ink-2); margin-bottom: var(--space-xs); }
+
+  /* Superficies del portal */
+  .tarjeta { background: var(--color-paper); border: 1px solid var(--color-rule); border-radius: var(--radius-card); }
+  .regla { border-color: var(--color-rule); }
+
+  /* Contenedor de la web comercial */
+  .contenedor { width: 100%; max-width: var(--container); margin-inline: auto; padding-inline: var(--gutter); }
+  .rejilla { display: grid; grid-template-columns: repeat(12, minmax(0, 1fr)); column-gap: var(--gap-columns); }
+  .lead { font-size: var(--text-lead); line-height: 1.45; color: var(--color-ink-2); max-width: 46ch; }
+  .titulo-seccion { font-size: var(--text-section); max-width: 18ch; }
+  .titulo-item { font-size: var(--text-title); }
+
+  :where(a, button, input, select, textarea, summary, [tabindex]):focus-visible { outline: 2px solid var(--color-focus); outline-offset: 2px; }
 }
 
-/* Portada: animaciones de entrada del panel de análisis (solo si el usuario no pide menos movimiento) */
+/* Escala de medida: pista 0 a 100 con los cortes reales del producto (25, 50, 70) */
+.escala { position: relative; height: 6px; border-radius: var(--radius-pill); background: var(--color-paper-2); }
+.escala::before, .escala::after, .escala > i { content: ""; position: absolute; top: -3px; bottom: -3px; width: 1px; background: var(--color-rule); }
+.escala::before { left: 25%; } .escala::after { left: 70%; } .escala > i { left: 50%; }
+.escala > b { position: absolute; inset: 0 auto 0 0; border-radius: var(--radius-pill); background: var(--color-accent-mid); transform-origin: left; }
+.escala > b[data-alto] { background: var(--color-accent); }
+
+/* Entradas de la portada (solo si el usuario no pide menos movimiento; visibles sin script) */
 @media (prefers-reduced-motion: no-preference) {
   @keyframes sc-barra { from { transform: scaleX(0); } }
-  @keyframes sc-aro { from { stroke-dashoffset: var(--aro-total); } }
+  @keyframes sc-columna { from { transform: scaleY(0); } }
   @keyframes sc-escaneo { 0% { transform: translateY(-100%); opacity: 0; } 15%, 85% { opacity: 1; } 100% { transform: translateY(0); opacity: 0; } }
-  @keyframes sc-sube { from { opacity: 0; transform: translateY(12px); } }
-  .sc-barra { transform-origin: left; animation: sc-barra 900ms cubic-bezier(.16,1,.3,1) both; animation-delay: calc(var(--i, 0) * 60ms + 300ms); }
-  .sc-aro { animation: sc-aro 1400ms cubic-bezier(.16,1,.3,1) both 200ms; }
-  .sc-escaneo { animation: sc-escaneo 3.2s cubic-bezier(.45,0,.55,1) infinite; }
-  .sc-sube { animation: sc-sube 700ms cubic-bezier(.16,1,.3,1) both; animation-delay: calc(var(--i, 0) * 80ms); }
+  .sc-barra { transform-origin: left; animation: sc-barra 900ms var(--ease-out) both; animation-delay: calc(var(--i, 0) * 50ms + 200ms); }
+  .sc-columna { transform-origin: bottom; animation: sc-columna 900ms var(--ease-out) both; animation-delay: calc(var(--i, 0) * 50ms + 200ms); }
+  .sc-escaneo { animation: sc-escaneo 3.2s var(--ease-in-out) infinite; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .sc-barra, .sc-columna, .sc-escaneo { animation: none; }
+  .btn, .btn-sec, .campo, .enlace { transition: none; }
 }
