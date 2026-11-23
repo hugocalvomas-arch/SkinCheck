@@ -83,7 +83,7 @@ export async function guardarStock(
 
   // 5. Recordar las columnas para la próxima vez
   const prog = (PROGRAMAS as readonly string[]).includes(programa) ? programa : null
-  await sb.rpc('guardar_mapeo_csv', { p_farmacia: farmaciaId, p_mapeo: mapeo, p_programa: prog })
+  await sb.rpc('guardar_mapeo_csv', { p_farmacia: farmaciaId, p_mapeo: mapeo, p_programa: prog, p_filas: filas.length })
 
   return {
     reconocidos: filasStock.length,
