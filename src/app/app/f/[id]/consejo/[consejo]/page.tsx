@@ -40,6 +40,25 @@ export default async function Resultado({ params }: { params: Promise<{ id: stri
         </p>
       )}
 
+      {R.rutinas.completa.ingredientes?.length > 0 && (
+        <section className="bg-white rounded-xl p-5 shadow-sm space-y-3 text-sm">
+          <h2 className="font-medium">Ingredientes recomendados</h2>
+          <ul className="space-y-2">
+            {R.rutinas.completa.ingredientes.map((o: any, i: number) => (
+              <li key={i}>
+                <b>{o.nombre}</b>
+                <span className="text-neutral-500"> · {o.papel === 'prioridad' ? 'primero' : o.papel === 'siguiente' ? 'después' : o.papel === 'alternativa' ? 'alternativa' : 'más adelante'}{o.turno ? ` · ${TURNO[o.turno] ?? o.turno}` : ''}</span>
+                <div className="text-neutral-700">{o.por_que}{o.motivo ? ` ${o.motivo}` : ''}</div>
+                {o.limite && <div className="text-neutral-500">Límite: {o.limite}</div>}
+              </li>
+            ))}
+          </ul>
+          {R.rutinas.completa.prioridad?.razones?.length > 0 && (
+            <p className="text-neutral-600"><b>Por qué {R.rutinas.completa.prioridad.nombre} va primero:</b> {R.rutinas.completa.prioridad.razones.join(' ')}</p>
+          )}
+        </section>
+      )}
+
       <div className="grid lg:grid-cols-3 gap-4">
         {(['basica', 'media', 'completa'] as const).map((k) => {
           const r = R.rutinas[k]
@@ -58,6 +77,7 @@ export default async function Resultado({ params }: { params: Promise<{ id: stri
                       <>
                         <div className="font-medium">{p.marca} {p.producto}</div>
                         <div className="text-neutral-600">{p.para}{p.dosis ? ` (${p.dosis})` : ''}</div>
+                        {p.ademas?.length > 0 && <div className="text-xs text-green-800">Además: {p.ademas.join('; ')}</div>}
                         <div>{eur(p.precio)}</div>
                       </>
                     ) : (

@@ -37,12 +37,15 @@ function resumen(out: any) {
       paso: p.paso, turno: p.turno, slot: p.slot, id: p.id ?? null, marca: p.marca ?? null, producto: p.producto ?? null,
       precio: p.precio ?? null, formato_ml: p.formato_ml ?? null, para: p.para, activo: p.activo ?? null, dosis: p.dosis ?? null,
       motivo: p.producto ? null : p.motivo ?? null, aparte: !!p.aparte,
+      dosis_tipo: p.dosis_tipo ?? null, ademas: p.ademas ?? [],
     })),
     rutina: out.rutina,
     semana: out.semana,
     escalado: out.escalado,
     avisos: out.avisos,
     queda_fuera: out.queda_fuera,
+    ingredientes: (out.opciones ?? []).map((o: any) => ({ papel: o.papel, nombre: o.nombre, turno: o.turno, objetivos: o.objetivos, por_que: o.por_que, limite: o.limite, motivo: o.motivo })),
+    prioridad: out.prioridad ?? null,
   }
 }
 
