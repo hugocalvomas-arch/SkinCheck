@@ -1,4 +1,5 @@
 'use client'
+import { AVISO_FOTO } from '@/lib/privacidad'
 import { useEffect, useRef, useState } from 'react'
 
 // Cámara del navegador (iPad o móvil). La foto se queda en memoria y solo se envía al pulsar "Analizar".
@@ -52,8 +53,7 @@ export function Camara({ onFoto }: { onFoto: (jpegBase64: string | null) => void
       <label className="flex gap-2 text-sm text-tinta-2">
         <input type="checkbox" checked={consiente} onChange={(e) => { setConsiente(e.target.checked); if (!e.target.checked) { setActiva(false); setFoto(null); onFoto(null) } }} />
         <span>
-          El cliente acepta que se haga una foto de su cara para analizar el aspecto de la piel con un servicio externo.
-          SkinRead no guarda la foto: solo las puntuaciones del análisis, sin nombre. El servicio externo la conserva un tiempo limitado y después la borra. Puede seguir sin foto.
+          La clienta acepta que se haga una foto de su cara para analizar el aspecto de la piel con IA. {AVISO_FOTO.join(' ')} Puede seguir sin foto.
         </span>
       </label>
       {consiente && !activa && !foto && (

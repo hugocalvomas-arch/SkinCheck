@@ -6,13 +6,16 @@ import { analizarFoto, problemasDesdeFoto, UMBRALES_POR_DEFECTO, type ResultadoF
 import { construirLectura } from '@/server/lectura'
 import { crearInformePdf } from '@/server/informePdf'
 import type { Respuestas } from '@/lib/cuestionario'
+import { registroConsentimiento } from '@/lib/privacidad'
 
 export type Seguridad = { edad: string; sexo: 'mujer' | 'hombre' | 'nd'; embarazo: 'si' | 'no'; receta: 'si' | 'no'; reactiva: 'nunca' | 'a_veces' | 'siempre' }
 
 const PROBLEMA_DE: Record<string, string> = Object.fromEntries(UMBRALES_POR_DEFECTO.map((u) => [u.aspecto, u.problema]))
 
 /** Recorrido de la clienta en el iPad: 4 respuestas de seguridad + foto (o, si no hay foto, lo que quiere mejorar). */
-export async function analizarKiosko(farmaciaId: string, s: Seguridad, foto: string | null, mejorar: string[] = []) {
+export async function analizarKiosko(farmaciaId: string, s: Seguridad, foto: string | null, mejorar: string[] = [], acepta = false) {
+  // Embarazo y tratamientos médicos son datos de salud (art. 9 RGPD): sin permiso expreso no se trata nada
+  if (acepta !== true) return { error: 'Necesitamos tu permiso para continuar. Si lo prefieres, pide consejo en el mostrador.' }
   const sb = await supabaseServer()
   const { data: f } = await sb.from('farmacias').select('id').eq('id', farmaciaId).maybeSingle()
   if (!f) return { error: 'Este iPad no tiene acceso a la farmacia. Pide ayuda en el mostrador.' }
@@ -31,6 +34,7 @@ export async function analizarKiosko(farmaciaId: string, s: Seguridad, foto: str
     preocupa: ['nada'],
     piel: 'normal',
     kiosko: true,
+    consentimiento: registroConsentimiento(!!foto, 'kiosko'),
   }
 
   let fotoRes: ResultadoFoto | null = null
@@ -62,7 +66,8 @@ export async function analizarKiosko(farmaciaId: string, s: Seguridad, foto: str
 }
 
 /**
- * Informe completo en PDF al email de la clienta. El email solo se usa para este envío: no se guarda en ningún sitio.
+ * Informe completo en PDF al email de la clienta. SkinRead no guarda el email; Resend conserva un registro del envío
+ * (en su cuenta, en EE. UU.), así que hay que contarlo en el aviso (AVISO_EMAIL).
  * Necesita RESEND_API_KEY y INFORME_REMITENTE (p. ej. "SkinRead <informe@tudominio.es>") en Vercel.
  */
 export async function enviarInformeEmail(consejoId: string, email: string, fotoCliente: string | null, nivel: string) {

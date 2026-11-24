@@ -15,7 +15,7 @@ export default async function NuevoConsejo({ params }: { params: Promise<{ id: s
         <h1 className="text-[2rem] leading-tight">Nuevo consejo</h1>
         <p className="text-gris">{f.nombre}</p>
       </div>
-      <Cuestionario farmaciaId={id} />
+      <Cuestionario farmaciaId={id} farmacia={f.nombre} />
     </div>
   )
 }
