@@ -16,12 +16,12 @@ function pasar(casos, M, conEstabilidad){
   return casos.map(c => {
     const res = L.correr(c, M);
     const fallos = L.revisar(c, res, M);
-    const est = conEstabilidad ? L.estabilidad(c, res, M) : null;
+    const est = conEstabilidad ? L.estabilidad(c, res, M).cambios : null;
     return { c, res, fallos, est };
   });
 }
 function todosLosCasos(){
-  const casos = [];
+  const casos = JSON.parse(fs.readFileSync(path.join(__dirname, "antiguos148.json"), "utf8"));
   for(let n = 1; n <= 10; n++){ const f = path.join(OUT, `ciclo${n}_casos.json`); if(fs.existsSync(f)) casos.push(...JSON.parse(fs.readFileSync(f, "utf8"))); }
   return casos;
 }

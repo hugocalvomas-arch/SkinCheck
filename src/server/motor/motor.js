@@ -335,10 +335,10 @@ function pauta(r, P, c, veto, modo){
     const pts = k => (ING.ranking.find(x => x.k === k) || {puntos: 0}).puntos;
     const pesoEn = (k, a) => ((NEC.TABLA.ingredientes[k] || {}).pesos || {})[a] || 0;
     const objetivo = notasF.filter(k => k !== "ojeras").sort((a, b) => nf[a] - nf[b] || a.localeCompare(b))[0];
-    const NO_SUAVE = ["aha", "salicilico", "glicolico_afeitado"];
+    const NO_SUAVE = ["aha", "pha", "salicilico", "glicolico_afeitado"];   // exfoliantes: no son el activo suave único; en la completa entran solo con su indicación
     let mejor = null;
     for(const x of lista){
-      if(NO_SUAVE.includes(x.k)) continue;
+      if(NO_SUAVE.includes(x.k) || (r._excluir || []).includes(x.k)) continue;
       const d = deseoDe(x.k); if(!d) continue;
       const acts = d.humectante ? ["hialuronico"] : (x.activos || d.activos || []).filter(a => !veto[a]);
       if(!acts.length) continue;
@@ -348,7 +348,8 @@ function pauta(r, P, c, veto, modo){
     if(!mejor && !veto.pha && !c.sequedad_activa) mejor = {x: {k: "pha", por: orden[0]}, sc: 0, acts: null};
     for(const x of lista) if(!mejor || x !== mejor.x){ const nom = nombreDeseo(x.k); if(!fuera.some(f => f.que === nom)) fuera.push({k: x.k, que: nom, por: "Tu piel está en la franja leve: un solo activo suave, dirigido a tu nota más baja. Lo demás se cuida con la rutina base."}); }
     // la media y la completa no rellenan: solo suman los pasos con indicación de Hugo (R21: retinoide desde los 35 con arrugas <70 o poros <55; R35: manchas <60, vitamina C o azelaico de mañana)
-    const conIndicacion = N0 >= 4 ? lista.filter(x => x !== (mejor && mejor.x) && ((x.k === "retinoide" && combo40) || (nb("manchas") < 60 && ["vitc", "despigmentante", "azelaico_mixto"].includes(x.k)))) : [];
+    // y en la completa, el exfoliante que deja entrar la regla de nota leve (Hugo: con 50-69, solo en la completa y 2 noches)
+    const conIndicacion = N0 >= 4 ? lista.filter(x => x !== (mejor && mejor.x) && ((x.k === "retinoide" && combo40) || (nb("manchas") < 60 && ["vitc", "despigmentante", "azelaico_mixto"].includes(x.k)) || (N0 >= 5 && ["aha", "pha", "salicilico"].includes(x.k)))) : [];
     for(const x of lista) if(conIndicacion.includes(x)){ const nom = nombreDeseo(x.k), i = fuera.findIndex(f => f.que === nom); if(i >= 0) fuera.splice(i, 1); }
     lista.length = 0;
     if(mejor){ const y = Object.assign({}, mejor.x, {leve: true}); if(mejor.acts) y.activos = mejor.acts; lista.push(y); }
@@ -369,6 +370,7 @@ function pauta(r, P, c, veto, modo){
   const reservaOjos = nb("ojeras") < 60 && N < 5 && !suave && !c.menor18 && !c.barrera && !c.receta && (N >= 4 || !peorQueOjeras) ? 1 : 0;
   const maxSerums = c.barrera || c.receta ? 0 : leve && N < 4 ? (reservaOjos ? 0 : 1) : Math.max(0, (N >= 6 || tercero ? 3 : N >= 4 ? 2 : 1) - reservaOjos);
   for(const x of lista){
+    if((r._excluir || []).includes(x.k)) continue;
     if(c.barrera || c.receta){ if(!fuera.some(f => f.k === x.k)) fuera.push({k: x.k, que: nombreDeseo(x.k), por: c.receta ? "Con un tratamiento con receta, limpiador, hidratante y solar. Los tratamientos se eligen después de revisar contigo lo que usas." : "Mientras la piel se recupera, nada más que limpiador, hidratante y solar. Entrará después, de uno en uno."}); continue; }
     if(serums.length >= maxSerums){ if(!fuera.some(f => f.k === x.k)) fuera.push({k: x.k, que: nombreDeseo(x.k), por: N0 < 6 ? "En esta rutina ya no cabe. Entraría en una con más pasos." : "No cabe sin sumar demasiados activos."}); continue; }
     const d = Object.assign({k: x.k, por: x.por}, deseo(x.k));
@@ -568,7 +570,7 @@ function hayBakuchiol(veto, c){
 }
 const LIM = r => (r && r.limites) || {};
 function rangoPara(k, deseo, r){
-  if(k === "retinal") return !r || !r.retinoide_exp || r.retinoide_exp === "nunca" ? R.retinal_inicio : R.retinal_retinizada;
+  if(k === "retinal") return !r || !r.retinoide_exp || r.retinoide_exp === "nunca" || (deseo && deseo.leve) ? R.retinal_inicio : R.retinal_retinizada;   // vía Leve: concentración baja aunque ya lo use
   if(k === "niacinamida") return deseo && deseo.k === "sebo" ? R.niacinamida.sebo : R.niacinamida.resto;
   return {vitc_pura: R.vitc_pura, vitc_derivados: R.vitc_derivados, retinol: R.retinol, retinal: R.retinal, bakuchiol: R.bakuchiol, glicolico: R.glicolico, lactico: R.lactico, salicilico: R.salicilico, azelaico: R.azelaico, tranexamico: R.tranexamico, thiamidol: R.thiamidol}[k] || null;
 }
@@ -656,6 +658,7 @@ function candidatos(h, ctx){
       if(P.includes("P15") && !(v2.preocupacion || p.preocupacion || []).includes("ojeras")) continue;   // con ojeras, un contorno formulado para ojeras
       if(r.mantenimiento && (!["cafeina", "peptidos"].some(k => lleva(p, k)) || RETINOIDES.concat("bakuchiol").some(k => lleva(p, k)))) continue;   // mantenimiento: contorno con cafeína o péptidos (Hugo, 24/11)
       if(hayRetinoide && RETINOIDES.concat("bakuchiol").some(k => lleva(p, k))) continue;
+      if((LIM(r).retinoide || (r._excluir || []).includes("retinoide")) && RETINOIDES.some(k => lleva(p, k))) continue;   // si el retinoide de la cara tiene tope o se ha quitado, el contorno no lo trae por otra vía
       base = 1; const pr = v2.preocupacion || p.preocupacion || [];
       if(ACIDOS_EXF.concat("pha").some(k => llevaAcido(p, k))) base -= 1;   // en el contorno, sin ácidos exfoliantes
       if(P.includes("P15") && pr.includes("ojeras")) base += .5;
@@ -834,6 +837,7 @@ function elegir(pa, ctx){
     for(const [slot, e] of cuenta()){
       for(const alt of cand[slot].principales){
         if(usados.has(alt.p.id) || alt.p.pvp_eur >= e.p.pvp_eur) continue;
+        const bon = ctx.r.bonus_activos || {}; if(alt.activo && (bon[alt.activo] || 0) < 0 && !((bon[e.activo] || 0) < 0)) continue;   // el ahorro no mete un activo que una regla de la foto pide evitar
         if(/^serum/.test(slot) && alt.activo && Object.entries(sel).some(([s2, e2]) => s2 !== slot && /^serum/.test(s2) && e2.activo === alt.activo)) continue;   // sin dos sérums con el mismo activo
         if(slot !== "L" && ACIDOS_EXF.some(k => llevaAcido(alt.p, k)) && Object.entries(sel).some(([s2, e2]) => s2 !== slot && s2 !== "L" && ACIDOS_EXF.some(k => llevaAcido(e2.p, k)))) continue;   // el ahorro no mete un segundo producto con ácido (R2)
         const ahorro = e.p.pvp_eur - alt.p.pvp_eur, perdida = Math.max(e.score - alt.score, .02);
@@ -865,7 +869,20 @@ function calcular(r){
   c.suave = modo === "suave";
   const ING = r.notas_foto && Object.keys(r.notas_foto).length ? NEC.puntuarIngredientes(r.notas_foto, r, veto, c) : null;
   Object.defineProperty(c, "ing", {value: ING, enumerable: false});
-  const pa = pauta(r, P, c, veto, modo);
+  // Si un sérum no tiene ningún producto que cumpla (dosis, perfume, tipo de piel…), entra otro activo en su lugar (Hugo, 24/11: primero el
+  // mismo activo en otro producto, luego otro activo; si no hay, el hueco queda vacío). Se recalcula la pauta sin esa función, dos veces como mucho.
+  let pa = pauta(r, P, c, veto, modo), el0 = null; const sinProd = [];
+  for(let vuelta = 0; vuelta < 2; vuelta++){
+    el0 = elegir(pa, {c, veto, P, r, serums: pa.serums, modo, ing: ING});
+    const vacio = pa.huecos.find(h => h.deseo && !el0.sel[h.slot] && !el0.quitados.includes(h) && !(el0.cand[h.slot] || {principales: []}).principales.length);
+    if(!vacio) break;
+    const excl = (r._excluir || []).concat(vacio.deseo.k);
+    const pa2 = pauta(Object.assign({}, r, {_excluir: excl}), P, c, veto, modo);
+    if(!pa2.serums.length && pa.serums.length > 1) break;
+    sinProd.push({k: vacio.deseo.k, que: nombreDeseo(vacio.deseo.k), por: "No hay ningún producto que cumpla lo que pide este paso para tu piel (dosis, sin perfume, tipo de piel). Va otro activo en su lugar."});
+    pa2.fuera = sinProd.concat(pa2.fuera.filter(f => !sinProd.some(x => x.que === f.que)));
+    pa = pa2; r = Object.assign({}, r, {_excluir: excl});
+  }
   const perfil = {
     problemas: pa.orden.map(id => ({id, nombre: PROBLEMAS[id].t, corto: CORTO[id], alcance: PROBLEMAS[id].alcance, plazo: PLAZOS[id] || ""})),
     primero: pa.orden.length > 1 ? PROBLEMAS[pa.orden[0]].t : null,
@@ -873,7 +890,7 @@ function calcular(r){
   };
   const no_recomiendo = agrupaVetos(veto);
   const ctx = {c, veto, P, r, serums: pa.serums, modo, ing: ING};
-  const el = elegir(pa, ctx);
+  const el = el0 && el0.sel ? el0 : elegir(pa, ctx);
   const productos = [], queda_fuera = pa.fuera.map(f => ({que: f.que, por: f.por}));
   for(const h of pa.huecos){
     const e = el.sel[h.slot];
