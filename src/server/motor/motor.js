@@ -316,7 +316,8 @@ function pauta(r, P, c, veto, modo){
     const iH = lista.findIndex(x => ["humectante", "barrera"].includes(x.k));
     if(iC >= 0 && iH >= 0 && iC > iH) lista.splice(iH, 0, lista.splice(iC, 1)[0]);
     // en la completa, azelaico o tranexámico en lugar de repetir la vitamina C de la media
-    if(N0 >= 5 && !veto.azelaico){ const iV = lista.findIndex(x => x.k === "vitc"), iD = lista.findIndex(x => x.k === "despigmentante");
+    // R35: con manchas <60 la vitamina C de la mañana se queda también en la completa (ciclo 15, C15-07)
+    if(N0 >= 5 && !veto.azelaico && nb("manchas") >= 60){ const iV = lista.findIndex(x => x.k === "vitc"), iD = lista.findIndex(x => x.k === "despigmentante");
       if(iV >= 0 && iD > iV && lista.some(x => x.k === "retinoide")){ const t = lista[iV]; lista[iV] = lista[iD]; lista[iD] = t; lista[iV].activos = ["azelaico", "tranexamico"]; } }
   }
   // Vitamina C junto a los despigmentantes: si el tratamiento de granos ya trabaja las marcas (azelaico o niacinamida), la vitamina C entra antes que un despigmentante aparte
