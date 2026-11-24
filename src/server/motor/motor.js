@@ -441,6 +441,7 @@ function candidatos(h, ctx){
     } else if(h.slot === "H" || h.slot === "H2"){
       if(v2.hueco !== "H") continue;
       if(["glicolico", "lactico", "mandelico", "pha", "salicilico", "lha"].some(k => aDosis(p, k)) || v2.exfoliante) continue;   // la hidratante no exfolia
+      if(h.slot === "H" && /\bnoche\b|\bnight\b|\bnuit\b/.test(n(p.producto))) continue;   // la hidratante va mañana y noche: una crema de noche solo en el hueco de noche (H2)
       if(NO_HIDRATANTE.test(n(p.producto)) || /corporal/.test(n(p.subcategoria)) || (p.textura === "aceite" && /\boil\b|aceite|huile/.test(n(p.producto)) && !/oil.free|oil control|anti.oil/.test(n(p.producto)))) continue;   // sérums, tónicos, aceites y productos de cuerpo no son la hidratante
       if(hayRetinoide && RETINOIDES.concat("bakuchiol").some(k => lleva(p, k))) continue;       // un solo retinoide en la rutina, y retinoide o bakuchiol, no los dos
       if(!hayRetinoide && RETINOIDES.concat("bakuchiol").some(k => aDosis(p, k)) && (c.menor25 || ctx.modo !== "normal" || hayAcido || !["P08", "P17", "P18", "P19"].some(x => P.includes(x)))) continue;   // una hidratante antiedad solo si hay un motivo antiedad
@@ -509,6 +510,9 @@ function candidatos(h, ctx){
       activo = k; base = 1 + dosis.ok + (ep ? (ep.control === false ? .1 : .2) : dosis.tipo === "estudiada" ? .2 : 0); cubre.push(h.deseo.f);
       // una regla de la foto que «evita» este activo (avoid) pesa de verdad cuando es el protagonista del sérum: entra solo si no hay otra opción
       if(((r.bonus_activos || {})[k] || 0) < 0) base -= 1;
+      // Vitamina C (Hugo, 24/11): la pura es la de referencia; entre los derivados, el 3-O-etil ascórbico es el que mejor funciona
+      if(k === "vitc_pura") base += .15;
+      if(k === "vitc_derivados") base += (p.inci_completo || []).some(i => /ethyl ascorbic/.test(n(i))) ? .1 : -.1;
       if(ep) pegas.push("la eficacia está estudiada en el producto acabado");
       if(h.deseo.turno === "AM" && RETINOIDES.some(x => lleva(p, x))) continue;        // retinoides, solo de noche
       // un solo activo fuerte por producto y por turno: el sérum no trae otro ácido o retinoide a dosis
