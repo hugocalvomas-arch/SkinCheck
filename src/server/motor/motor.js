@@ -335,7 +335,9 @@ function pauta(r, P, c, veto, modo){
   if(leve && lista.length){
     const pts = k => (ING.ranking.find(x => x.k === k) || {puntos: 0}).puntos;
     const pesoEn = (k, a) => ((NEC.TABLA.ingredientes[k] || {}).pesos || {})[a] || 0;
-    const objetivo = notasF.filter(k => k !== "ojeras").sort((a, b) => nf[a] - nf[b] || a.localeCompare(b))[0];
+    let objetivo = notasF.filter(k => k !== "ojeras").sort((a, b) => nf[a] - nf[b] || a.localeCompare(b))[0];
+    // la hidratación la cubre la hidratante: si otra nota está a 3 puntos o menos, el activo único va a esa (revisión clínica, C12-10)
+    if(objetivo === "hidratacion"){ const otra = notasF.filter(k => !["ojeras", "hidratacion"].includes(k)).sort((a, b) => nf[a] - nf[b] || a.localeCompare(b))[0]; if(otra && nf[otra] - nf.hidratacion <= B3) objetivo = otra; }
     const NO_SUAVE = ["aha", "pha", "salicilico", "glicolico_afeitado"];   // exfoliantes: no son el activo suave único; en la completa entran solo con su indicación
     let mejor = null;
     if(!veto.niacinamida && !lista.some(x => ((x.activos || (deseoDe(x.k) || {}).activos) || []).includes("niacinamida"))) lista.push({k: "niacinamida", por: orden[0], _tabla: true});
@@ -356,8 +358,8 @@ function pauta(r, P, c, veto, modo){
     // y en la completa, el exfoliante que deja entrar la regla de nota leve (Hugo: con 50-69, solo en la completa y 2 noches)
     const conIndicacion = N0 >= 4 ? lista.filter(x => x !== (mejor && mejor.x) && ((x.k === "retinoide" && combo40) || (nb("manchas") < 60 && ["vitc", "despigmentante", "azelaico_mixto"].includes(x.k)) || (N0 >= 5 && ["aha", "pha", "salicilico"].includes(x.k)))) : [];
     { const exf = conIndicacion.filter(x => ["aha", "pha", "salicilico"].includes(x.k)); for(const x of exf.slice(1)){ conIndicacion.splice(conIndicacion.indexOf(x), 1); } }
-    // R35: un solo paso de mañana para las manchas, el primero de la lista, y el mismo en la media y la completa (ciclo 11, C11-05)
-    { const PREF = ["vitc", "azelaico_mixto", "despigmentante"], mch = conIndicacion.filter(x => PREF.includes(x.k)); for(const x of mch.slice(1)) conIndicacion.splice(conIndicacion.indexOf(x), 1); }
+    // R35: un solo paso de mañana para las manchas y el mismo en la media y la completa: vitamina C primero, salvo que la foto pida evitarla (ciclos 11-12, C11-05, C12-06)
+    { const PREF = ["vitc", "azelaico_mixto", "despigmentante"], mch = conIndicacion.filter(x => PREF.includes(x.k)); if(!(((r.bonus_activos || {}).vitc_pura || 0) < 0)) mch.sort((a, b) => PREF.indexOf(a.k) - PREF.indexOf(b.k)); for(const x of mch.slice(1)) conIndicacion.splice(conIndicacion.indexOf(x), 1); }
     for(const x of lista) if(conIndicacion.includes(x)){ const nom = nombreDeseo(x.k), i = fuera.findIndex(f => f.que === nom); if(i >= 0) fuera.splice(i, 1); }
     lista.length = 0;
     if(mejor){ const y = Object.assign({}, mejor.x, {leve: true}); if(mejor.acts) y.activos = mejor.acts; lista.push(y); }
@@ -631,6 +633,7 @@ function candidatos(h, ctx){
       if(v2.hueco !== "H") continue;
       if(["glicolico", "lactico", "mandelico", "pha", "salicilico", "lha"].some(k => aDosis(p, k)) || v2.exfoliante) continue;   // la hidratante no exfolia
       if(h.slot === "H" && /\bnoche\b|\bnight\b|\bnuit\b/.test(n(p.producto))) continue;
+      if(/hidratacion-cuerpo|corporal|body lotion/.test(n(p.url_producto || "") + " " + n(p.producto)) && p.formato_ml >= 400) continue;   // loción corporal de bote grande: no es la hidratante de la cara (revisión clínica, C12-07)
       if(/parpado|contorno|\beye\b|\byeux\b|ojos/.test(n(p.producto))) continue;   // una crema de ojos no es la hidratante de la cara   // la hidratante va mañana y noche: una crema de noche solo en el hueco de noche (H2)
       if(NO_HIDRATANTE.test(n(p.producto)) || /corporal/.test(n(p.subcategoria)) || /crema-corporal|body-lotion|locion-corporal/.test(n(p.url_producto)) || (p.textura === "aceite" && /\boil\b|aceite|huile/.test(n(p.producto)) && !/oil.free|oil control|anti.oil/.test(n(p.producto)))) continue;   // sérums, tónicos, aceites y productos de cuerpo no son la hidratante
       if(hayRetinoide && LIM(r).retinoide && !esReparadora(p, LIM(r).retinoide.hidratante)) continue;
@@ -749,6 +752,7 @@ function candidatos(h, ctx){
     { const nom = n(p.producto) + " " + n(p.marca), nf = r.notas_foto || {};
       if(h.slot !== "posafeitado" && (NO_DIARIO.test(nom) && !/exfoliante quimico/.test(nom) && !h.deseo || (p.inci_completo || []).some(i => INCI_FISICO.test(n(i))))) continue;   // ni posprocedimiento ni exfoliante físico como producto diario
       if(SOLO_HOMBRE.test(nom) && r.sexo !== "hombre") continue;
+      if(h.slot === "L" && r.sexo === "hombre" && /desmaquill|demaquill|make-?up remover/.test(nom)) base -= .4;   // a un hombre sin maquillaje no se le da un desmaquillante como limpiador (revisión clínica, C12-09)
       if(/kelual|dermatitis seborreica|\bds\b/.test(nom) && !P.includes("P25")) continue;
       // R19 (Hugo): con la hidratación por debajo de 55, ningún producto sin aclarado con AHA a dosis (≥5 % o probable por su posición), sea cual sea su función
       if(h.slot !== "L" && (nf.hidratacion ?? 100) < 55 + B3 && ["glicolico", "lactico"].some(k => { const e = estado(p)[k]; return e && (e.pct != null ? e.pct >= 5 : e.estado === "probable"); })) continue;   // producto para la dermatitis seborreica: solo si se ha detectado (ciclos, 24/11)
