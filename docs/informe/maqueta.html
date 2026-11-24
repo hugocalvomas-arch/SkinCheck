@@ -255,7 +255,7 @@ p { margin: 0; }
 </style>
 
 <div class="demo" role="region" aria-label="Controles del ejemplo">
-  <p class="demo-aviso"><b>Ejemplo con datos ficticios.</b> Las caras son las dos de prueba generadas con IA; las 11 notas son las que Perfect Corp devolvió para ellas; la rutina es la salida real del motor del PR #10 (commit 4e1486d, solo dermofarmacia). Los productos son reales del catálogo, con su PVP de referencia, en una farmacia inventada. Los recuadros con rejilla marcan dónde irán las imágenes reales del análisis y las fotos de producto.</p>
+  <p class="demo-aviso"><b>Ejemplo con datos ficticios.</b> Las caras son las dos de prueba generadas con IA; las 11 notas son las que Perfect Corp devolvió para ellas; la rutina es la salida real del motor del PR #10 (commit 5fab166, solo dermofarmacia). Los productos son reales del catálogo, con su PVP de referencia, en una farmacia inventada. Los recuadros con rejilla marcan dónde irán las imágenes reales del análisis y las fotos de producto.</p>
   <div class="tabs" role="tablist" aria-label="Elige el ejemplo">
     <button class="tab" role="tab" id="t-carmen" aria-selected="true" data-v="carmen">Carmen, 55 años</button>
     <button class="tab" role="tab" id="t-lucia" aria-selected="false" data-v="lucia">Lucía, 35 años</button>
@@ -320,7 +320,7 @@ const CASOS = {
       { tipo: 'Sérum de mañana', marca: 'Caudalie', nombre: 'Vinergetic C+', ml: 30, pvp: 39.15, act: true, para: 'Para proteger de día como antioxidante.', activos: ['Lleva vitamina C estable (tetraisopalmitato de ascorbilo) entre sus primeros ingredientes.'], ademas: [], objetivos: ['Luminosidad', 'Firmeza'], foto: true, como: '3 o 4 gotas en cara y cuello, antes de la hidratante.' },
       { tipo: 'Hidratante', marca: 'La Roche-Posay', nombre: 'Toleriane Dermallergo Cream', ml: 40, pvp: 19.95, para: 'Hidrata y cuida la barrera de la piel.', activos: [], ademas: ['Lleva escualano y manteca de karité.'], objetivos: [], foto: true, como: 'Una cantidad del tamaño de una avellana.' },
       { tipo: 'Contorno de ojos', marca: 'Avène', nombre: 'Hyaluron Activ B3 Cuidado de Ojos Triple Corrección', ml: 15, pvp: 30.95, para: 'Formulado para la piel del contorno de los ojos.', activos: [], ademas: ['Lleva niacinamida y ácido hialurónico.'], objetivos: [], foto: false, como: 'Un grano de arroz por ojo, a toquecitos con el anular.' },
-      { tipo: 'Protector solar', marca: 'A-Derma', nombre: 'Epitheliale Ultra SPF50+', ml: 40, pvp: 13.69, para: 'Protege del sol. Es el paso que más cuida tu piel a largo plazo.', activos: ['SPF 50+'], ademas: [], objetivos: [], foto: true, como: 'El último paso, generoso: unos dos dedos de producto para cara y cuello.' },
+      { tipo: 'Protector solar', marca: 'Uriage', nombre: 'Bariesun Fluido Antimanchas SPF50+', ml: 40, pvp: 23.49, para: 'Protege del sol. Es el paso que más cuida tu piel a largo plazo.', activos: ['SPF 50+'], ademas: [], objetivos: [], foto: true, como: 'El último paso, generoso: unos dos dedos de producto para cara y cuello.' },
     ],
     noche: [
       { tipo: 'Limpiador', ref: 0 },
@@ -371,7 +371,7 @@ const CASOS = {
     manana: [
       { tipo: 'Limpiador', marca: 'Rilastil', nombre: 'Aqua Limpiador Facial', ml: 100, pvp: 3.95, para: 'Limpia sin resecar.', activos: [], ademas: [], objetivos: [], foto: true, como: 'Sobre la piel húmeda, masajea y aclara con agua tibia.' },
       { tipo: 'Sérum de mañana', marca: 'MartiDerm', nombre: 'The Originals Proteos Hydra Plus SP (ampollas)', ml: 20, pvp: 15.48, act: true, para: 'Para proteger de día como antioxidante.', activos: ['Lleva vitamina C pura (ácido ascórbico) entre sus primeros ingredientes.'], ademas: ['Lleva además vitamina E, que refuerza a la vitamina C.'], objetivos: ['Textura'], foto: true, como: 'Unas gotas en cara y cuello, antes de la hidratante.' },
-      { tipo: 'Hidratante', marca: 'Uriage', nombre: 'Bariederm-Cica Crema con Cu-Zn', ml: 40, pvp: 9.52, para: 'Hidrata y cuida la barrera de la piel.', activos: [], ademas: ['Lleva pantenol y óxido de zinc.'], objetivos: [], foto: true, como: 'Una cantidad del tamaño de una avellana.' },
+      { tipo: 'Hidratante', marca: 'La Roche-Posay', nombre: 'Cicaplast Gel B5', ml: 40, pvp: 11.01, para: 'Hidrata y cuida la barrera de la piel.', activos: [], ademas: ['Lleva pantenol, madecasósido y ácido hialurónico.'], objetivos: [], foto: true, como: 'Una cantidad del tamaño de una avellana.' },
       { tipo: 'Protector solar', marca: 'Uriage', nombre: 'Bariesun Fluido Antimanchas SPF50+', ml: 40, pvp: 23.49, para: 'Protege del sol. Es el paso que más cuida tu piel a largo plazo.', activos: ['SPF 50+'], ademas: [], objetivos: [], foto: true, como: 'El último paso, generoso: unos dos dedos de producto para cara y cuello.' },
     ],
     noche: [
