@@ -10207,8 +10207,13 @@
    {
     "fuente": "limpieza",
     "nota": "Lista limpiada: de 48 a 47 entradas"
+   },
+   {
+    "fuente": "auditoría 24/11",
+    "nota": "Duplicado de medik8-crystal-retinal-10."
    }
-  ]
+  ],
+  "retirar": true
  },
  "medik8-micellar-mousse": {
   "inci_completo": [
@@ -10457,6 +10462,16 @@
    {
     "fuente": "limpieza",
     "nota": "Lista limpiada: de 48 a 47 entradas"
+   },
+   {
+    "fuente": "auditoría 24/11",
+    "nota": "Crystal Retinal 3: la gama numera el retinal por centésimas (3 = 0,03 %); ficha sin activos hasta ahora."
+   }
+  ],
+  "activos_declarados": [
+   {
+    "inci": "Retinal",
+    "pct_declarado": 0.03
    }
   ]
  },
@@ -15999,6 +16014,158 @@
    {
     "fuente": "Hugo, 24/11: el nombre completo es Red Bean Water Gel",
     "nota": "Nombre exacto del producto (Hugo, 24/11): el nombre anterior era el de la gama."
+   }
+  ]
+ },
+ "cocunat-night-serum-clinical-retinal-0-1": {
+  "activos_declarados": [
+   {
+    "inci": "Retinal",
+    "pct_declarado": 0.1
+   }
+  ],
+  "_origen": [
+   {
+    "fuente": "auditoría 24/11",
+    "nota": "El nombre declara retinal al 0,1 %; ficha sin activos hasta ahora."
+   }
+  ]
+ },
+ "isdin-serum-de-noche": {
+  "activos_declarados": [
+   {
+    "inci": "Retinal",
+    "pct_declarado": null
+   }
+  ],
+  "_origen": [
+   {
+    "fuente": "auditoría 24/11",
+    "nota": "Ficha sin activos: el retinoide está en el INCI pero no se había fichado, y el producto nunca entraba (auditoría 24/11). Sin % declarado no se inventa."
+   }
+  ]
+ },
+ "purito-serum-txa6-niacinamide-retinal": {
+  "activos_declarados": [
+   {
+    "inci": "Retinal",
+    "pct_declarado": null
+   }
+  ],
+  "_origen": [
+   {
+    "fuente": "auditoría 24/11",
+    "nota": "Ficha sin activos: el retinoide está en el INCI pero no se había fichado, y el producto nunca entraba (auditoría 24/11). Sin % declarado no se inventa."
+   }
+  ]
+ },
+ "freshly-cosmetics-bioretinal-night-serum": {
+  "activos_declarados": [
+   {
+    "inci": "Retinal",
+    "pct_declarado": null
+   }
+  ],
+  "_origen": [
+   {
+    "fuente": "auditoría 24/11",
+    "nota": "Ficha sin activos: el retinoide está en el INCI pero no se había fichado, y el producto nunca entraba (auditoría 24/11). Sin % declarado no se inventa."
+   }
+  ]
+ },
+ "paula-s-choice-clinical-pro-retinal-dual-treatment": {
+  "activos_declarados": [
+   {
+    "inci": "Retinal",
+    "pct_declarado": null
+   }
+  ],
+  "_origen": [
+   {
+    "fuente": "auditoría 24/11",
+    "nota": "Ficha sin activos: el retinoide está en el INCI pero no se había fichado, y el producto nunca entraba (auditoría 24/11). Sin % declarado no se inventa."
+   }
+  ]
+ },
+ "gh-gema-herrerias-1600-retinal-z-serum-imperfecciones": {
+  "activos_declarados": [
+   {
+    "inci": "Retinal",
+    "pct_declarado": null
+   }
+  ],
+  "_origen": [
+   {
+    "fuente": "auditoría 24/11",
+    "nota": "Ficha sin activos: el retinoide está en el INCI pero no se había fichado, y el producto nunca entraba (auditoría 24/11). Sin % declarado no se inventa."
+   }
+  ]
+ },
+ "gh-gema-herrerias-600-retinal-r-serum-antiedad-piel-sensible": {
+  "activos_declarados": [
+   {
+    "inci": "Retinal",
+    "pct_declarado": null
+   }
+  ],
+  "_origen": [
+   {
+    "fuente": "auditoría 24/11",
+    "nota": "Ficha sin activos: el retinoide está en el INCI pero no se había fichado, y el producto nunca entraba (auditoría 24/11). Sin % declarado no se inventa."
+   }
+  ]
+ },
+ "gh-gema-herrerias-2000-retinal-r-serum-antiedad-arrugas-y-manchas": {
+  "activos_declarados": [
+   {
+    "inci": "Retinal",
+    "pct_declarado": null
+   },
+   {
+    "inci": "Retinol",
+    "pct_declarado": null
+   }
+  ],
+  "_origen": [
+   {
+    "fuente": "auditoría 24/11",
+    "nota": "Ficha sin activos: el retinoide está en el INCI pero no se había fichado, y el producto nunca entraba (auditoría 24/11). Sin % declarado no se inventa."
+   }
+  ]
+ },
+ "gh-gema-herrerias-3000-retinol-np-serum-antiedad-arrugas-y-flacidez": {
+  "activos_declarados": [
+   {
+    "inci": "Retinol",
+    "pct_declarado": null
+   }
+  ],
+  "_origen": [
+   {
+    "fuente": "auditoría 24/11",
+    "nota": "Ficha sin activos: el retinoide está en el INCI pero no se había fichado, y el producto nunca entraba (auditoría 24/11). Sin % declarado no se inventa."
+   }
+  ]
+ },
+ "theramid-clinical-vitamin-a": {
+  "activos_declarados": [
+   {
+    "inci": "Retinal",
+    "pct_declarado": null
+   },
+   {
+    "inci": "Retinol",
+    "pct_declarado": null
+   },
+   {
+    "inci": "Hydroxypinacolone Retinoate",
+    "pct_declarado": null
+   }
+  ],
+  "_origen": [
+   {
+    "fuente": "auditoría 24/11",
+    "nota": "Ficha sin activos: el retinoide está en el INCI pero no se había fichado, y el producto nunca entraba (auditoría 24/11). Sin % declarado no se inventa."
    }
   ]
  }
