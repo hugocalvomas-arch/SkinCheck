@@ -38,6 +38,10 @@ function aplicar(p){
   return Object.assign({}, q, {v2}, inci !== q.inci_completo ? {inci_completo: inci} : {});
 }
 const TODOS = BASE.map(aplicar).concat(NUEVOS.map(p => Object.assign({}, p, {v2: FICHAS[p.id] || null}, {inci_completo: limpiaInci(p.inci_completo)})));
-// Lo que el motor puede recomendar: ni retirados ni fichas que no se han podido verificar.
-const CATALOGO = TODOS.filter(p => !p.retirado && !p.sin_verificar && !p.sin_precio_es);
+// Marcas que no se venden en farmacia (Hugo, 24/11): no se recomiendan. Cruce con el filtro Facial de Atida/Mifarma y el índice de Farmacia Jiménez.
+// Se excluyen aquí y no se borran de la base, para poder deshacerlo.
+const MARCAS_FUERA_FARMACIA = new Set(["Paula's Choice", "Kiehl's", "The Ordinary", "Dermalogica", "The INKEY List", "Natura Bissé", "Some By Mi", "Round Lab", "Isntree", "Innisfree", "Drunk Elephant", "Transparent Lab", "Pai", "La Mer", "Yepoda", "Byoma", "Glow Recipe", "Rituals", "Guerlain", "Mario Badescu", "Pyunkang Yul", "Collistar", "Deliplus", "First Aid Beauty", "Ma:nyo", "Rowse", "Mary&May", "iUNIK", "Dior", "Cocunat", "Pixi", "Augustinus Bader", "Tatcha", "Goodal", "Rhode", "Fresh", "AESTURA", "Summer Fridays", "Fenty Skin", "Youth To The People", "Bulldog", "Supergoop!", "Recipe for Men", "Holika Holika", "Proraso", "Lab Series", "Clinique for Men", "Peace Out", "Hawaiian Tropic", "Acqua di Parma", "Timeless", "Ole Henriksen"].map(n));
+for(const p of TODOS) if(MARCAS_FUERA_FARMACIA.has(n(p.marca).trim())) p.fuera_farmacia = true;
+// Lo que el motor puede recomendar: ni retirados ni fichas que no se han podido verificar, ni marcas que no están en farmacia.
+const CATALOGO = TODOS.filter(p => !p.retirado && !p.sin_verificar && !p.sin_precio_es && !p.fuera_farmacia);
 module.exports = {CATALOGO, TODOS};

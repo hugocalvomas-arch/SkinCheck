@@ -12,7 +12,7 @@ export const NIVELES = [
   { clave: 'completa', nombre: 'Completa', productos: 5, presupuesto: 'alto' },
 ] as const
 
-const RECOMENDABLES: any[] = TODOS.filter((p: any) => !p.retirado && !p.sin_verificar)
+const RECOMENDABLES: any[] = TODOS.filter((p: any) => !p.retirado && !p.sin_verificar && !p.fuera_farmacia)
 const POR_ID = new Map<string, any>(RECOMENDABLES.map((p: any) => [p.id, p]))
 
 // Ventaja que da tener stock: mayor que cualquier diferencia de puntuación entre productos, así el motor

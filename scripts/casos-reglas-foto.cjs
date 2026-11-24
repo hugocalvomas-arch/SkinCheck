@@ -6,7 +6,7 @@ const motor = require("../src/server/motor/motor.js");
 const { TODOS } = require("../src/server/motor/catalogo.js");
 const { aplicarAlMotor, ASPECTOS } = require("../src/server/motor/reglasFoto.js");
 
-const LISTA = TODOS.filter(p => !p.retirado && !p.sin_verificar && p.pvp_eur != null);
+const LISTA = TODOS.filter(p => !p.retirado && !p.sin_verificar && !p.fuera_farmacia && p.pvp_eur != null);
 const NIVELES = [["basica", 3, "bajo"], ["media", 4, "medio"], ["completa", 5, "alto"]];
 // Umbral antiguo (analisisPiel.ts): intensidad = 100 - nota >= 40, y se completa hasta 3 con intensidad >= 25
 const ANTES = { acne: "P02", poros: "P07", brillo: "P06", manchas: "P12", tono: "P14", arrugas: "P17", firmeza: "P19", textura: "P20", rojez: "P23", hidratacion: "P29", ojeras: "P15" };
