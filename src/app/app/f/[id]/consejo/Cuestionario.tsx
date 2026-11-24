@@ -3,8 +3,10 @@ import { useState, useTransition } from 'react'
 import { BLOQUES, opciones, pendientes, visibles, type Respuestas } from '@/lib/cuestionario'
 import { crearConsejo } from './actions'
 import { Camara } from './Camara'
+import { AVISO_DETALLE, AVISO_INICIO } from '@/lib/privacidad'
 
-export function Cuestionario({ farmaciaId }: { farmaciaId: string }) {
+export function Cuestionario({ farmaciaId, farmacia }: { farmaciaId: string; farmacia: string }) {
+  const [acepta, setAcepta] = useState(false)
   const [r, setR] = useState<Respuestas>({})
   const [foto, setFoto] = useState<string | null>(null)
   const [error, setError] = useState('')
@@ -24,6 +26,19 @@ export function Cuestionario({ farmaciaId }: { farmaciaId: string }) {
   }
 
   const vis = visibles(r)
+  // Las preguntas incluyen datos de salud (embarazo, tratamientos): primero se informa y se pide permiso expreso
+  if (!acepta)
+    return (
+      <section className="bg-papel rounded-[var(--radius-card)] border border-linea p-6 space-y-4 max-w-2xl">
+        <h2 className="font-medium">Antes de empezar, lee esto con la clienta</h2>
+        <ul className="list-disc pl-5 space-y-2 text-sm">{AVISO_INICIO(farmacia).map((t) => <li key={t}>{t}</li>)}</ul>
+        <details className="text-sm text-gris">
+          <summary className="cursor-pointer">Más información</summary>
+          <ul className="list-disc pl-5 space-y-2 mt-2">{AVISO_DETALLE.map((t) => <li key={t}>{t}</li>)}</ul>
+        </details>
+        <button type="button" onClick={() => setAcepta(true)} className="btn">La clienta acepta</button>
+      </section>
+    )
   return (
     <div className="space-y-8">
       <Camara onFoto={setFoto} />
@@ -61,7 +76,7 @@ export function Cuestionario({ farmaciaId }: { farmaciaId: string }) {
       <div className="sticky bottom-0 bg-suave py-4 flex items-center gap-4">
         <button
           disabled={faltan.length > 0 || enviando}
-          onClick={() => start(async () => { setError(''); const res = await crearConsejo(farmaciaId, r, foto); if (res?.error) setError(res.error) })}
+          onClick={() => start(async () => { setError(''); const res = await crearConsejo(farmaciaId, r, foto, acepta); if (res?.error) setError(res.error) })}
           className="btn"
         >
           {enviando ? (foto ? 'Analizando la piel… (hasta 1 minuto)' : 'Calculando…') : 'Ver rutinas'}

@@ -5,13 +5,16 @@ import { supabaseServer } from '@/lib/supabase/server'
 import { pendientes, visibles, type Respuestas } from '@/lib/cuestionario'
 import { calcularRutinas } from '@/server/rutinas'
 import { analizarFoto, problemasDesdeFoto, type ResultadoFoto } from '@/server/analisisPiel'
+import { registroConsentimiento } from '@/lib/privacidad'
 
-export async function crearConsejo(farmaciaId: string, r: Respuestas, foto: string | null = null) {
+export async function crearConsejo(farmaciaId: string, r: Respuestas, foto: string | null = null, acepta = false) {
+  if (acepta !== true) return { error: 'Falta el permiso expreso de la clienta.' }
   const sb = await supabaseServer()
   if (pendientes(r).length) return { error: 'Faltan preguntas por contestar.' }
   // solo se guardan las respuestas de preguntas visibles (nada de texto libre ni datos personales)
   const limpias: Respuestas = {}
   for (const q of visibles(r)) limpias[q.id] = r[q.id]
+  limpias.consentimiento = registroConsentimiento(!!foto, 'mostrador')
   // Foto (opcional): se analiza y se descarta; quedan las puntuaciones y enlaces del proveedor que caducan en 2 h
   let puntuaciones: ResultadoFoto | null = null
   if (foto) {

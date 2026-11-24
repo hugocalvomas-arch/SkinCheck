@@ -263,6 +263,8 @@ export default function Inicio() {
             <span className="text-sobre-marca-suave">© 2026 SkinRead</span>
             <Link href="/login" className="sm:ml-auto hover:underline underline-offset-4">Acceso farmacias</Link>
             <a href="#contacto" className="hover:underline underline-offset-4">Pedir información</a>
+            <Link href="/privacidad" className="hover:underline underline-offset-4">Privacidad</Link>
+            <Link href="/aviso-legal" className="hover:underline underline-offset-4">Aviso legal</Link>
           </div>
         </div>
       </footer>

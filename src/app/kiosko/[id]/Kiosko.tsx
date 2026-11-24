@@ -7,12 +7,13 @@ import QRCode from 'qrcode'
 import { ArrowLeft, ArrowRight, ArrowsLeftRight, CalendarCheck, Camera, Check, Drop, EnvelopeSimple, Moon, ScanSmiley, ShieldCheck, Sparkle, Sun, Trash, X } from '@phosphor-icons/react'
 import { analizarKiosko, enviarInformeEmail, type Seguridad } from './actions'
 import { Logo } from '@/components/Logo'
+import { AVISO_DETALLE, AVISO_EMAIL, AVISO_FOTO, AVISO_INICIO } from '@/lib/privacidad'
 
 // Recorrido de la clienta en el iPad del mostrador. Dirección visual: clínica, fondo claro,
 // un único acento verde farmacia, Geist + números tabulares, iconos Phosphor.
-// reclamo → 4 preguntas de seguridad → consentimiento → foto → análisis → informe → vuelta al reclamo
+// reclamo → aviso de privacidad y permiso expreso → 4 preguntas de seguridad → consentimiento de la foto → foto → análisis → informe → vuelta al reclamo
 
-type Paso = 'reclamo' | 'preguntas' | 'consentimiento' | 'camara' | 'mejorar' | 'analizando' | 'resultado' | 'menor'
+type Paso = 'reclamo' | 'aviso' | 'no_acepta' | 'preguntas' | 'consentimiento' | 'camara' | 'mejorar' | 'analizando' | 'resultado' | 'menor'
 type Props = { farmaciaId: string; farmacia: string; precio: string }
 
 const PREGUNTAS: { id: keyof Seguridad; t: string; nota: string; ops: [string, string][]; si?: (s: Partial<Seguridad>) => boolean }[] = [
@@ -77,7 +78,7 @@ export function Kiosko({ farmaciaId, farmacia, precio }: Props) {
     setError('')
     setPaso('analizando')
     start(async () => {
-      const r = await analizarKiosko(farmaciaId, seg as Seguridad, fotoB64, mejorar)
+      const r = await analizarKiosko(farmaciaId, seg as Seguridad, fotoB64, mejorar, true)
       if ('error' in r) { setError(r.error ?? 'No se ha podido completar el análisis.'); setPaso(fotoB64 ? 'camara' : 'mejorar'); return }
       setRes(r)
       setPaso('resultado')
@@ -97,8 +98,16 @@ export function Kiosko({ farmaciaId, farmacia, precio }: Props) {
         )}
       </header>
       <main key={paso + i} className="flex-1 flex entrar">
-        {paso === 'reclamo' && <Reclamo precio={precio} onEmpezar={() => setPaso('preguntas')} />}
-        {paso === 'preguntas' && <Pregunta q={PREGUNTAS[i]} n={i} valor={seg[PREGUNTAS[i].id]} onResp={(v) => responder(PREGUNTAS[i].id, v)} onAtras={() => { const k = anterior(i - 1, seg); return k >= 0 ? setI(k) : setPaso('reclamo') }} />}
+        {paso === 'reclamo' && <Reclamo precio={precio} onEmpezar={() => setPaso('aviso')} />}
+        {paso === 'aviso' && <Aviso farmacia={farmacia} onAcepta={() => setPaso('preguntas')} onRechaza={() => setPaso('no_acepta')} />}
+        {paso === 'no_acepta' && (
+          <Bloque>
+            <h2 className="titulo">Sin problema</h2>
+            <p className="texto">Pide consejo en el mostrador y te atenderán en persona.</p>
+            <button onClick={reiniciar} className="boton">Volver al inicio</button>
+          </Bloque>
+        )}
+        {paso === 'preguntas' && <Pregunta q={PREGUNTAS[i]} n={i} valor={seg[PREGUNTAS[i].id]} onResp={(v) => responder(PREGUNTAS[i].id, v)} onAtras={() => { const k = anterior(i - 1, seg); return k >= 0 ? setI(k) : setPaso('aviso') }} />}
         {paso === 'menor' && (
           <Bloque>
             <h2 className="titulo">Para menores de 14 años, mejor en persona</h2>
@@ -195,14 +204,37 @@ function Pregunta({ q, n, valor, onResp, onAtras }: { q: (typeof PREGUNTAS)[numb
   )
 }
 
+function Aviso({ farmacia, onAcepta, onRechaza }: { farmacia: string; onAcepta: () => void; onRechaza: () => void }) {
+  const [mas, setMas] = useState(false)
+  return (
+    <Bloque>
+      <h2 className="titulo max-w-2xl">Antes de empezar</h2>
+      <ul className="w-full max-w-2xl grid list-none p-0 m-0 border-t border-[var(--k-text)]">
+        {AVISO_INICIO(farmacia).map((t) => <Punto key={t} icono={<ShieldCheck size={22} />} texto={t} />)}
+      </ul>
+      {mas ? (
+        <ul className="w-full max-w-2xl grid gap-3 list-none p-0 m-0 text-[var(--k-muted)] leading-relaxed">
+          {AVISO_DETALLE.map((t) => <li key={t}>{t}</li>)}
+        </ul>
+      ) : (
+        <button onClick={() => setMas(true)} className="text-[var(--k-accent)] underline underline-offset-4">Más información sobre tus datos</button>
+      )}
+      <div className="w-full max-w-2xl flex flex-wrap gap-3">
+        <button onClick={onAcepta} className="boton"><Check size={20} /> Acepto y empiezo</button>
+        <button onClick={onRechaza} className="boton-sec">No, gracias</button>
+      </div>
+    </Bloque>
+  )
+}
+
 function Consentimiento({ onFoto, onSinFoto }: { onFoto: () => void; onSinFoto: () => void }) {
   return (
     <Bloque>
       <h2 className="titulo max-w-2xl">Antes de la foto</h2>
       <ul className="w-full max-w-2xl grid list-none p-0 m-0 border-t border-[var(--k-text)]">
-        <Punto icono={<ShieldCheck size={22} />} texto="La farmacia no guarda tu foto ni tu nombre." />
-        <Punto icono={<Trash size={22} />} texto="El servicio de análisis la elimina tras un periodo limitado." />
-        <Punto icono={<ScanSmiley size={22} />} texto="Es un análisis cosmético orientativo, no un diagnóstico médico." />
+        <Punto icono={<ShieldCheck size={22} />} texto={AVISO_FOTO[0]} />
+        <Punto icono={<Trash size={22} />} texto={AVISO_FOTO[1]} />
+        <Punto icono={<ScanSmiley size={22} />} texto={AVISO_FOTO[2]} />
       </ul>
       <div className="w-full max-w-2xl flex flex-wrap gap-3">
         <button onClick={onFoto} className="boton"><Camera size={20} /> Acepto, hacer la foto</button>
@@ -480,7 +512,7 @@ function InformeEmail({ consejo, foto, nivel }: { consejo: string; foto: string 
           </div>
           <label className="flex items-start gap-2 text-sm text-[var(--k-muted)]">
             <input type="checkbox" checked={acepta} onChange={(e) => setAcepta(e.target.checked)} className="mt-0.5 w-5 h-5 accent-[var(--k-accent)]" />
-            Acepto recibir mi informe en este email. Solo se usa para enviarlo: no se guarda.
+            {AVISO_EMAIL}
           </label>
           {estado && estado !== 'enviando' && <p className="text-sm text-[var(--k-warn)]">{estado}</p>}
         </>
