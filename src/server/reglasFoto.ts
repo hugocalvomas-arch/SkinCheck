@@ -18,6 +18,11 @@ export function conReglasFoto(r: Respuestas, foto: ResultadoFoto, fijarPiel = tr
   r.avisos_extra = rf.avisos_extra
   r.prioridad_foto = rf.prioridad_foto
   r.limites = rf.limites
+  r.mantenimiento = rf.mantenimiento
+  r.solar_color = rf.solar_color
+  r.hidratante_req = rf.hidratante_req
+  r.notas_foto = rf.notas_foto
+  r.aspecto_problema = rf.aspecto_problema
   r.reglas_foto = { version: rf.version_reglas, ids: rf.reglas_aplicadas.map((x: any) => x.id) }
   if (fijarPiel && rf.piel) r.piel = rf.piel
   return rf

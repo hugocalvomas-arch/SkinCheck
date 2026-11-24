@@ -72,5 +72,7 @@ export function calcularRutinas(respuestas: Record<string, any>, stock: Stock[],
     rutinas[n.clave] = { nombre: n.nombre, ...resumen(out, bajoPedido) }
     comun ??= { perfil: out.perfil, derivacion: out.derivacion, no_recomiendo: out.no_recomiendo }
   }
-  return { ...comun, rutinas, productos_en_stock: lista.length - bajoPedido.size, sin_stock: sinStock }
+  // Con un tratamiento con receta, las tres rutinas son la misma de soporte: en el iPad se enseña una sola (Hugo, 24/11)
+  const unica = respuestas.receta === 'si'
+  return { ...comun, rutinas, unica, productos_en_stock: lista.length - bajoPedido.size, sin_stock: sinStock }
 }

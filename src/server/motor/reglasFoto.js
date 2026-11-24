@@ -37,6 +37,7 @@ function cumpleBase(cond, notas, r){
   if(!cond) return true;
   if(cond.scores && !cond.scores.every(c => cumpleNota(c, notas))) return false;
   if(cond.client && !cumpleCliente(cond.client, r)) return false;
+  if(cond.client_not && Object.entries(cond.client_not).some(([k, vals]) => vals.includes(r[k]))) return false;
   if(cond.count_lte && !cuenta(cond.count_lte, notas)) return false;
   if(cond.any && !cond.any.some(sub => cumpleBase(sub, notas, r))) return false;
   return true;
@@ -79,7 +80,7 @@ function aplicarReglasFoto(notas, r0, op = {}){
     return true;
   };
 
-  const out = {problemas: [], quitar: [], veto: {}, bonus: {}, derivacion: [], avisos: [], piel: null, factor: {}, aspectoDe: {}, aplicadas: [], limites: {}};
+  const out = {problemas: [], quitar: [], veto: {}, bonus: {}, derivacion: [], avisos: [], piel: null, factor: {}, aspectoDe: {}, aplicadas: [], limites: {}, mantenimiento: false, solar_color: false, hidratante: []};
   for(const x of reglas){
     if(!activa(x)) continue;
     const asp = x.conditions && x.conditions.scores && x.conditions.scores[0] && x.conditions.scores[0].aspect;
@@ -95,6 +96,9 @@ function aplicarReglasFoto(notas, r0, op = {}){
         case "notice": if(!out.avisos.includes(e.text)) out.avisos.push(e.text); break;
         case "priority": out.factor[e.aspect] = (out.factor[e.aspect] || 1) * (e.factor || 1); break;
         // tope que impone el código (Hugo, P-03): solo esa forma, % declarado máximo, noches, sándwich e hidratante reparadora
+        case "maintenance": out.mantenimiento = true; break;
+        case "tinted_spf": out.solar_color = true; break;
+        case "moisturizer": out.hidratante.push({one_of: e.one_of || null, texture: e.texture || null, fragrance_free: !!e.fragrance_free, regla: x.id}); break;
         case "limit": out.limites[e.slot] = {activo: e.active, max_pct: e.max_pct, noches: e.max_nights, sandwich: !!e.sandwich, hidratante: e.moisturizer || null, mensaje: e.message || x.reason_for_client, regla: x.id}; break;
       }
     }
@@ -102,7 +106,7 @@ function aplicarReglasFoto(notas, r0, op = {}){
   out.problemas = out.problemas.filter(p => !out.quitar.includes(p));
 
   // Banda Leve: si hay menos objetivos que el mínimo, entran los aspectos Leve más bajos
-  if(out.problemas.length < minimo){
+  if(out.problemas.length < minimo && !out.mantenimiento){
     const leves = ASPECTOS.filter(a => typeof notas[a] === "number" && notas[a] >= 50 && notas[a] <= 74).sort((a, b) => notas[a] - notas[b]);
     for(const a of leves){
       if(out.problemas.length >= minimo) break;
@@ -128,6 +132,11 @@ function aplicarReglasFoto(notas, r0, op = {}){
     avisos_extra: out.avisos,
     prioridad_foto: prioridad,
     limites: out.limites,
+    mantenimiento: out.mantenimiento,
+    solar_color: out.solar_color,
+    hidratante_req: out.hidratante,
+    notas_foto: notas,
+    aspecto_problema: out.aspectoDe,
     piel: out.piel,
     reglas_aplicadas: out.aplicadas,
     version_reglas: BASE.version,

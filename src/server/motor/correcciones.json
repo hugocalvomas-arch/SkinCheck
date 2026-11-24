@@ -15983,5 +15983,23 @@
     "nota": "Duplicado de geek-gorgeous-a-game-5 (mismo sérum de retinal al 0,05 %). Se deja una sola ficha. 05/10/2026."
    }
   ]
+ },
+ "rilastil-aqua": {
+  "producto": "Aqua Limpiador Facial",
+  "_origen": [
+   {
+    "fuente": "https://www.druni.es/aqua-rilastil-limpiador-facial",
+    "nota": "Nombre exacto del producto (Hugo, 24/11): el nombre anterior era el de la gama."
+   }
+  ]
+ },
+ "beauty-of-joseon-red-bean": {
+  "producto": "Red Bean Water Gel",
+  "_origen": [
+   {
+    "fuente": "Hugo, 24/11: el nombre completo es Red Bean Water Gel",
+    "nota": "Nombre exacto del producto (Hugo, 24/11): el nombre anterior era el de la gama."
+   }
+  ]
  }
 }

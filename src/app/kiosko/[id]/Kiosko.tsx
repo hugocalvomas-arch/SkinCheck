@@ -537,14 +537,14 @@ export function Informe({ res, foto, farmacia, onFin }: { res: any; foto: string
       <section className="space-y-5">
         <div className="flex flex-wrap items-center gap-4">
           <h3 className="text-[2rem] leading-[1.05] tracking-[-0.03em]">Tu rutina</h3>
-          <div role="tablist" aria-label="Nivel de la rutina" className="md:ml-auto inline-flex rounded-[var(--radius-card)] border border-[var(--k-line)] bg-[var(--k-bg)] p-1">
+          {!R.unica && <div role="tablist" aria-label="Nivel de la rutina" className="md:ml-auto inline-flex rounded-[var(--radius-card)] border border-[var(--k-line)] bg-[var(--k-bg)] p-1">
             {(['basica', 'media', 'completa'] as const).map((k) => (
               <button key={k} role="tab" aria-selected={nivel === k} onClick={() => { setNivel(k); setQr('') }}
                 className={`h-11 px-4 rounded-lg text-sm ${nivel === k ? 'bg-[var(--k-accent)] text-sobre-marca' : 'text-[var(--k-muted)] hover:text-[var(--k-text)]'}`}>
                 {R.rutinas[k].nombre} <span className="num">{eur(R.rutinas[k].total)}</span>
               </button>
             ))}
-          </div>
+          </div>}
         </div>
         {productos.length ? (
           <div className="grid md:grid-cols-2 gap-6">

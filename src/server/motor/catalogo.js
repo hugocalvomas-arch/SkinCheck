@@ -2,6 +2,7 @@
    lib/catalogo.json no se toca: el motor publicado sigue usándolo tal cual. */
 "use strict";
 const PRECIOS = require("./precios.json");
+const HUECO_H = new Set(["la-roche-posay-effaclar-duo-m", "avene-cleanance-comedomed"]);
 const BASE = require("./catalogo.json"), CORR = require("./correcciones.json"), NUEVOS = require("./contornos.json"), FICHAS = require("./fichas.json");
 const n = s => String(s || "").toLowerCase();
 function aplicar(p){
@@ -25,6 +26,8 @@ function aplicar(p){
   }
   let v2 = FICHAS[p.id] || null;
   // una «hidratante» que por el nombre es un limpiador (Lavant, Nettoyant, Cleanser…)
+  // crema-gel de tratamiento: ocupa el hueco de la hidratante, no el del sérum (Hugo, 24/11)
+  if(v2 && HUECO_H.has(p.id)) v2 = Object.assign({}, v2, {hueco: "H"});
   if(v2 && v2.hueco === "H" && /lavant|nettoyant|limpiador|limpiadora|cleanser|cleansing|face wash/i.test(q.producto)) v2 = Object.assign({}, v2, {hueco: "L"});
   return Object.assign({}, q, {v2});
 }

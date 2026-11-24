@@ -202,6 +202,8 @@ const PLAZOS = {
 
 /* ------------------------------------------------------------------ 4 · Pauta: huecos y semana */
 const DIAS = ["L", "M", "X", "J", "V", "S", "D"];
+const AGUA_MICELAR = /micel|micellar|\bh2o\b/;
+const CON_FRECUENCIA = ["retinoide", "bakuchiol", "aha", "pha", "salicilico", "glicolico_afeitado"];
 function pauta(r, P, c, veto, modo){
   // SkinRead: con foto, barrera y rojez siguen primero (seguridad) y el resto va por gravedad (prioridad_foto); sin foto, por grupo
   const pf = r.prioridad_foto || {}, conFoto = Object.keys(pf).length > 0;
@@ -222,12 +224,35 @@ function pauta(r, P, c, veto, modo){
   if((c.rojez || c.reactiva) && N > CFG.topes.rojez_sensible){ N = CFG.topes.rojez_sensible; notas.push("Con rojez o piel sensible, más de cinco productos es demasiado: me quedo en cinco."); }
   // deseos de sérum, por orden de prioridad de problema
   const lista = [];
+  // Correcciones de Hugo a los casos de prueba (24/11)
+  const nf = r.notas_foto || {}, ap = r.aspecto_problema || {};
+  const notaDe = p => ap[p] != null && typeof nf[ap[p]] === "number" ? nf[ap[p]] : null;
+  const graso = ["P06", "P07"].some(x => P.includes(x));
+  // piel grasa con arrugas a partir de 40 años, en la completa: retinal suave por la noche aunque lleve salicílico
+  // retinoide suave por la noche desde los 35 (Hugo, 24/11): con arrugas <70, poros <55 o poros, textura, granitos o manchas en leve, en la media y la completa, antes que más salicílico o un segundo sérum de niacinamida
+  const de35 = ["35-44", "45-54", "55+"].includes(r.edad_tramo) || ["40-49", "50+"].includes(r.edad);
+  const nb = k => typeof nf[k] === "number" ? nf[k] : 100;
+  const combo40 = N0 >= 4 && de35 && (nb("arrugas") < 70 || nb("poros") < 55 || ["poros", "textura", "acne", "manchas"].some(k => nb(k) <= 69)) && !c.embarazo && !c.reactiva && !c.rojez && !r.mantenimiento && !suave && nb("hidratacion") >= 55;
+  const madura = nb("arrugas") < 55 || nb("firmeza") < 55;   // piel madura: la básica ya lleva un activo antiedad
+  const ordenDeseos = p => {
+    let d = (DESEOS[p] || []).slice();
+    if(r.mantenimiento) return p === "P31" && N0 >= 4 ? ["vitc"] : [];                       // mantenimiento: como mucho vitamina C
+    if(c.menor25 && ["P01", "P02"].includes(p)) d = ["antiacne"].concat(d.filter(x => x !== "antiacne"));   // acné joven: azelaico o niacinamida antes que el retinoide
+    if(c.embarazo && ["P10", "P12", "P13"].includes(p)) d = ["despigmentante"].concat(d.filter(x => x !== "despigmentante"));   // embarazo con manchas: azelaico antes que la vitamina C
+    return d;
+  };
   if(c.menor18 && CFG.acne_14_17 === "limpiador_hidratante_solar") fuera.push({que: "Sérums de tratamiento", por: "De 14 a 17 años la rutina es limpiador, hidratante ligera y solar. Si los granos no mejoran, consulta en la farmacia o con un dermatólogo."});
   // Rutina suave (hay algo que consultar, la piel está irritada o hay un tratamiento con receta): siempre lleva un activo suave para la barrera.
   // Barrera dañada: tres productos y ninguno más. La niacinamida va dentro de la hidratante de barrera, no en un sérum aparte.
   if(suave && !c.menor18 && !c.barrera) lista.push({k: "barrera", por: orden[0]});
-  if(!(c.menor18 && CFG.acne_14_17 === "limpiador_hidratante_solar")) for(const p of orden) for(const d of DESEOS[p] || []){
+  if(!(c.menor18 && CFG.acne_14_17 === "limpiador_hidratante_solar")) for(const p of orden) for(const d of ordenDeseos(p)){
     let k = d;
+    // exfoliante sin aclarado (Hugo, 24/11): con la piel deshidratada no entra; con una nota leve (50-69), solo en la completa y 2 noches
+    if(["aha", "salicilico"].includes(k)){
+      const nt = notaDe(p), nom = k === "aha" ? "Exfoliante con ácido" : "Loción de salicílico";
+      if(typeof nf.hidratacion === "number" && nf.hidratacion <= 55){ if(!fuera.some(f => f.que === nom)) fuera.push({k, que: nom, por: "Con la piel deshidratada, primero se hidrata: el exfoliante espera."}); continue; }
+      if(nt != null && nt >= 50 && N0 < 5){ if(!fuera.some(f => f.que === nom)) fuera.push({k, que: nom, por: "Con una nota leve no hace falta: el limpiador y el resto de la rutina bastan."}); continue; }
+    }
     if(suave){
       if(k === "retinoide"){ if(!fuera.some(f => f.que === "Retinoide")) fuera.push({k: "retinoide", que: "Retinoide", por: "Queda para más adelante: primero la consulta y que la piel esté tranquila."}); continue; }
       if(k === "sebo") continue;                                       // ya va la niacinamida de la barrera
@@ -263,6 +288,14 @@ function pauta(r, P, c, veto, modo){
     if(k === "glicolico_afeitado" && veto.glicolico){ continue; }
     if(!lista.some(x => x.k === k)) lista.push({k, por: p});
   }
+  if(combo40 && !veto.retinal && !c.menor25){
+    const i = lista.findIndex(x => x.k === "retinoide"), x = i >= 0 ? lista.splice(i, 1)[0] : {k: "retinoide", por: P.find(p => ["P17", "P07", "P20", "P12", "P02", "P03"].includes(p)) || "P17"};
+    lista.splice(Math.min(1, lista.length), 0, x);   // segundo deseo: después del tratamiento principal, antes que el salicílico o la segunda niacinamida
+  }
+  if(madura && !c.menor25 && !c.embarazo && !suave && !veto.retinal && !veto.retinol){ const i = lista.findIndex(x => x.k === "retinoide"); if(i > 0) lista.unshift(lista.splice(i, 1)[0]); }
+  // granitos y manchas a la vez: azelaico en la básica, que trata las dos cosas (Hugo, 24/11)
+  if((P.some(p => ["P01", "P02", "P03"].includes(p)) || nb("acne") <= 69) && P.some(p => ["P10", "P12", "P13"].includes(p)) && !veto.azelaico && !suave){
+    lista.unshift({k: "azelaico_mixto", por: P.find(p => ["P10", "P12", "P13"].includes(p))}); }
   // Vitamina C junto a los despigmentantes: si el tratamiento de granos ya trabaja las marcas (azelaico o niacinamida), la vitamina C entra antes que un despigmentante aparte
   { const iD = lista.findIndex(x => x.k === "despigmentante"), iC = lista.findIndex(x => x.k === "vitc");
     if(lista.some(x => x.k === "antiacne") && iD >= 0 && iC > iD){ const t = lista[iD]; lista[iD] = lista[iC]; lista[iC] = t; } }
@@ -270,7 +303,7 @@ function pauta(r, P, c, veto, modo){
   if(lista.some(x => x.k === "retinoide")) lista.sort((a, b) => (["aha", "pha"].includes(a.k) && a.por !== "P20") - (["aha", "pha"].includes(b.k) && b.por !== "P20"));
   // embarazo: azelaico ocupa el hueco del retinoide, de noche
   for(const x of lista) if(x.k === "antiacne_o_azelaico"){ x.k = "azelaico_noche"; }
-  const deseo = k => k === "azelaico_noche" ? {f: "F10", turno: "PM", activos: ["azelaico"], para: "ocupar el lugar del retinoide durante el embarazo o la lactancia"} : F[k];
+  const deseo = k => k === "azelaico_mixto" ? {f: "F10", turno: "AM", activos: ["azelaico"], para: "tratar los granitos y aclarar las marcas a la vez", flexible: true} : k === "azelaico_noche" ? {f: "F10", turno: "PM", activos: ["azelaico"], para: "ocupar el lugar del retinoide durante el embarazo o la lactancia"} : F[k];
 
   // Reparto: 1 limpiador · 2 sérum principal · 3 hidratante · 4 sérum del otro turno · 5 contorno · 6 otro
   const huecos = [{slot: "L", etiqueta: "Limpiador", turno: "AMPM"}];
@@ -287,7 +320,7 @@ function pauta(r, P, c, veto, modo){
     if(serums.length >= maxSerums){ if(!fuera.some(f => f.k === x.k)) fuera.push({k: x.k, que: nombreDeseo(x.k), por: N0 < 6 ? `Con ${N0} productos no cabe. Entraría con más pasos.` : "No cabe sin sumar demasiados activos."}); continue; }
     const d = Object.assign({k: x.k, por: x.por}, deseo(x.k));
     if(suave && d.activos && serums.some(s => s.k === "barrera")) d.activos = d.activos.filter(a => a !== "niacinamida");
-    if(d.k === "salicilico" && serums.some(s => s.k === "retinoide") && r.retinoide_exp !== "tolera"){
+    if(d.k === "salicilico" && serums.some(s => s.k === "retinoide") && r.retinoide_exp !== "tolera" && !combo40){
       fuera.push({k: "salicilico", que: "Loción de salicílico", por: "Mientras empiezas el retinoide, el salicílico va solo en el limpiador."}); continue; }
     if(d.k === "aha" || d.k === "pha"){
       const nom = d.k === "pha" ? "Exfoliante suave (PHA)" : "Exfoliante con ácido";
@@ -295,7 +328,7 @@ function pauta(r, P, c, veto, modo){
       if(serums.some(s => s.k === "salicilico")){ fuera.push({k: d.k, que: nom, por: "Ya llevas salicílico sin aclarado; dos exfoliantes son demasiados."}); continue; }
     }
     // dos activos fuertes no se empiezan a la vez: si ya va un ácido o un salicílico sin aclarado, el retinoide nuevo espera
-    if(d.k === "retinoide" && r.retinoide_exp !== "tolera" && serums.some(s => ["aha", "pha", "salicilico"].includes(s.k))){
+    if(d.k === "retinoide" && r.retinoide_exp !== "tolera" && serums.some(s => ["aha", "pha"].includes(s.k) || (s.k === "salicilico" && !combo40))){
       fuera.push({k: "retinoide", que: "Retinoide", por: serums.some(s => s.k === "salicilico") ? "Entra cuando lleves unas semanas con el salicílico y lo toleres. Empezar los dos a la vez irrita." : "Entra cuando ya toleres el exfoliante. Empezar los dos a la vez irrita."}); continue; }
     // el segundo sérum va al turno contrario
     if(serums.length >= 1 && d.flexible){ const am = serums.filter(s => s.turno === "AM").length, pm = serums.length - am; d.turno = am > pm ? "PM" : am < pm ? "AM" : d.k === "despigmentante" ? "PM" : (serums[serums.length - 1].turno === "AM" ? "PM" : "AM");
@@ -312,6 +345,24 @@ function pauta(r, P, c, veto, modo){
     if(!cabe(d, serums)){ fuera.push({k: x.k, que: nombreDeseo(x.k), por: "Un solo activo fuerte por turno."}); continue; }
     serums.push(d);
   }
+  // salicílico sin aclarado (Hugo, 24/11): nunca a diario. Con retinoide, por la mañana; sin él, por la noche alternando con el otro sérum
+  { const sal = serums.find(s => s.k === "salicilico"); if(sal) sal.turno = serums.some(s => s.k === "retinoide") ? "AM" : "PM"; }
+  // un sérum por momento del día: lo que va a diario no se junta con otro sérum diario en el mismo turno (los de frecuencia alternan)
+  for(const T of ["AM", "PM"]){
+    for(;;){
+      const diarios = serums.filter(s => s.turno === T && !CON_FRECUENCIA.includes(s.k));
+      if(diarios.length <= 1) break;
+      const otro = T === "AM" ? "PM" : "AM", libre = !serums.some(s => s.turno === otro && !CON_FRECUENCIA.includes(s.k));
+      const mov = diarios.filter(s => s.flexible && !(otro === "PM" && ["vitc", "despigmentante", "azelaico_mixto"].includes(s.k))).pop();
+      if(mov && libre){ mov.turno = otro; continue; }
+      const x = diarios[diarios.length - 1];
+      serums.splice(serums.indexOf(x), 1);
+      fuera.push({k: x.k, que: nombreDeseo(x.k), por: "Un sérum por momento del día: más capas no suman y pueden hacer bolitas."});
+    }
+  }
+  // antioxidantes y antimanchas por la mañana; la noche, para el retinoide (Hugo, 24/11)
+  { const pm = serums.find(s => s.turno === "PM" && ["despigmentante", "vitc", "azelaico_mixto"].includes(s.k)), am = serums.find(s => s.turno === "AM" && !CON_FRECUENCIA.includes(s.k) && !["despigmentante", "vitc", "azelaico_mixto"].includes(s.k) && s.flexible);
+    if(pm && serums.some(s => s.k === "retinoide")){ if(am){ am.turno = "PM"; pm.turno = "AM"; } else if(!serums.some(s => s.turno === "AM" && !CON_FRECUENCIA.includes(s.k))) pm.turno = "AM"; } }
   serums.forEach((s, i) => huecos.push({slot: "serum" + (i + 1), etiqueta: s.turno === "PM" ? "Sérum de noche" : "Sérum de mañana", turno: s.turno, deseo: s}));
   huecos.push({slot: "H", etiqueta: "Hidratante", turno: "AMPM"});
   let contornoOjeras = false;
@@ -323,7 +374,7 @@ function pauta(r, P, c, veto, modo){
   if(P.includes("P15") && suave) fuera.push({que: "Contorno de ojos", por: "Queda para más adelante: primero la consulta y que la piel esté tranquila."});
   if(P.includes("P09") && !suave) huecos.push({slot: "posafeitado", etiqueta: "Después del afeitado", turno: "AM"});
   // el contorno solo entra si lo que se quiere mejorar está en los ojos (ojeras, arrugas, firmeza)
-  if(N >= 5 && ojos && !suave && !c.menor18) huecos.push({slot: "contorno", etiqueta: "Contorno de ojos", turno: "AMPM"});
+  if(N >= 5 && (ojos || r.mantenimiento) && !suave && !c.menor18) huecos.push({slot: "contorno", etiqueta: "Contorno de ojos", turno: "AMPM"});
   if(N >= 6 && !suave && serums.length < 3){
     if(c.piel === "seca" || P.includes("P28")) huecos.push({slot: "H2", etiqueta: "Crema de noche", turno: "PM"});
   }
@@ -337,7 +388,8 @@ function pauta(r, P, c, veto, modo){
   if(ret && ret.k === "retinoide"){
     const acne = ["P01", "P02"].includes(ret.por);
     if(c.reactiva || c.reactiva_a_veces && false){ nochesRet = ["L", "J"]; escalado = "Piel sensible: 1-2 noches por semana, en sándwich (hidratante, retinoide, hidratante), durante 8 semanas. Techo: 3 noches."; }
-    else if(acne){ nochesRet = ["L", "X", "V", "D"]; escalado = "Con granos, noches alternas desde el principio y, si lo toleras, cada noche. Espaciarlo le quita eficacia."; }
+    else if(acne && (r.retinoide_exp === "nunca" || !r.retinoide_exp)){ nochesRet = ["L", "J"]; escalado = "Semanas 1-4: 2 noches no seguidas, para que la piel se acostumbre. Después, noches alternas y, si lo toleras, cada noche."; }
+    else if(acne){ nochesRet = ["L", "X", "V", "D"]; escalado = "Con granos, noches alternas y, si lo toleras, cada noche. Espaciarlo le quita eficacia."; }
     // Acné del adulto (P03): la piel adulta se irrita antes (Dréno 2013, doi:10.1111/jdv.12061; Bagatin 2021, doi:10.1080/17512433.2021.1917376). Empieza más despacio que P01/P02 y llega a alternas, como dice el catálogo v2.
     else if(ret.por === "P03"){ nochesRet = ["L", "J"]; escalado = "Semanas 1-4: 2 noches no seguidas, entre dos capas de hidratante. Después, noches alternas si no irrita. Si la piel tira o escuece, vuelve a 2 noches."; }
     else if(r.retinoide_exp === "nunca" || !r.retinoide_exp){ nochesRet = ["L", "J"]; escalado = "Semanas 1-4: 2 noches no seguidas. Semanas 5-12: 3 noches. Desde la 13: 3 noches, que es el mantenimiento. Si lo toleras y quieres más, noches alternas."; }
@@ -347,12 +399,19 @@ function pauta(r, P, c, veto, modo){
     const L = LIM(r).retinoide;
     if(L){ nochesRet = ["L", "J"].slice(0, L.noches || 2); escalado = `Retinal suave (hasta ${fmt(L.max_pct)} %) ${nochesRet.length} noches por semana, no seguidas, en sándwich: hidratante, retinal, hidratante. Mientras haya rojez no se sube de ${nochesRet.length} noches.`; }
   }
+  // salicílico: 3 días por semana (2 si la nota es leve), sin coincidir con el retinoide ni con el ácido
+  const salS = serums.find(s => s.k === "salicilico");
+  let nochesSal = [];
+  if(salS){ const n0 = (notaDe(salS.por) ?? 0) >= 50 ? 2 : 3; nochesSal = (salS.turno === "AM" ? ["L", "X", "V"] : ["M", "X", "S", "V", "D", "L"].filter(x => !nochesRet.includes(x))).slice(0, n0); }
   let nochesAha = [];
   if(aha){ nochesAha = aha.k === "glicolico_afeitado" ? (ret ? ["M", "S"] : ["M", "J", "S"]) : ["D"].filter(x => !nochesRet.includes(x)); if(aha.k !== "glicolico_afeitado" && !nochesAha.length) nochesAha = ["S"]; if(c.fototipo_oscuro) nochesAha = nochesAha.slice(0, 1); }
   const semana = DIAS.map(dia => {
     const paso = ["Limpiador"];
+    const hayFrec = (ret && ret.k === "retinoide" && nochesRet.includes(dia)) || (aha && nochesAha.includes(dia)) || (salS && salS.turno === "PM" && nochesSal.includes(dia));
     for(const s of serums.filter(s => s.turno === "PM")){
       if((s.k === "retinoide") && !nochesRet.includes(dia)) continue;
+      if(s.k === "salicilico" && !nochesSal.includes(dia)) continue;
+      if(!CON_FRECUENCIA.includes(s.k) && hayFrec) continue;   // las noches del activo fuerte, el otro sérum descansa
       if((s.k === "aha" || s.k === "pha" || s.k === "glicolico_afeitado") && !nochesAha.includes(dia)) continue;
       paso.push(etiquetaDeseo(s.k));
     }
@@ -360,12 +419,12 @@ function pauta(r, P, c, veto, modo){
     return {dia, noche: paso};
   });
   const vistos = new Set(), fuera1 = fuera.filter(x => !vistos.has(x.que) && vistos.add(x.que));
-  return {orden, N, N0, huecos, serums, semana, escalado, fuera: fuera1, notas, nochesRet, nochesAha, lista};
+  return {orden, N, N0, huecos, serums, semana, escalado, fuera: fuera1, notas, nochesRet, nochesAha, nochesSal, lista};
 }
 const NOMBRE_DESEO = {retinoide: "Retinoide", bakuchiol: "Bakuchiol", aha: "Exfoliante con ácido", salicilico: "Loción de salicílico", antiacne: "Azelaico o niacinamida",
-  despigmentante: "Despigmentante", pha: "Exfoliante suave (PHA)", barrera: "Niacinamida", vitc: "Vitamina C", calma: "Niacinamida o azelaico", sebo: "Niacinamida", humectante: "Sérum hidratante", glicolico_afeitado: "Loción con glicólico", azelaico_noche: "Ácido azelaico"};
+  despigmentante: "Despigmentante", pha: "Exfoliante suave (PHA)", barrera: "Niacinamida", vitc: "Vitamina C", calma: "Niacinamida o azelaico", sebo: "Niacinamida", humectante: "Sérum hidratante", glicolico_afeitado: "Loción con glicólico", azelaico_noche: "Ácido azelaico", azelaico_mixto: "Ácido azelaico"};
 const nombreDeseo = k => NOMBRE_DESEO[k] || k;
-const etiquetaDeseo = k => ({retinoide: "Retinoide", pha: "PHA (exfoliante suave)", barrera: "Niacinamida", aha: "Ácido exfoliante", glicolico_afeitado: "Glicólico", despigmentante: "Despigmentante", azelaico_noche: "Azelaico", antiacne: "Azelaico o niacinamida", calma: "Niacinamida o azelaico", sebo: "Niacinamida", bakuchiol: "Bakuchiol", humectante: "Sérum hidratante"}[k] || nombreDeseo(k));
+const etiquetaDeseo = k => ({retinoide: "Retinoide", pha: "PHA (exfoliante suave)", barrera: "Niacinamida", aha: "Ácido exfoliante", glicolico_afeitado: "Glicólico", despigmentante: "Despigmentante", azelaico_noche: "Azelaico", azelaico_mixto: "Azelaico", antiacne: "Azelaico o niacinamida", calma: "Niacinamida o azelaico", sebo: "Niacinamida", bakuchiol: "Bakuchiol", humectante: "Sérum hidratante"}[k] || nombreDeseo(k));
 
 /* ------------------------------------------------------------------ 5 · Productos */
 // Marcas que Hugo no recomienda (copiado de lib/motor.js de su web)
@@ -374,6 +433,15 @@ const normMarca = s => n(s).replace(/[^a-z0-9]/g, "");
 const EXCL_MARCA = new Set([...MARCAS_EXCLUIDAS].map(normMarca));
 const PROHIBIDOS_UE = ["zinc pyrithione", "hydroquinone", "4-methylbenzylidene camphor", "butylphenyl methylpropional"];
 const CUERPO = /corporal|body|cuerpo|manos|hand |pies|champu|shampoo|capilar|cabello|labios|labial/;
+// Correcciones de Hugo a los casos de prueba (24/11): productos que no van en el uso diario o que piden un perfil concreto
+const NO_DIARIO = /post.?act|post.?procedimiento|post.?laser|\bscrub\b|exfoliante|exfoliant|peeling|3 en 1/;   // posprocedimiento y exfoliantes físicos
+const INCI_FISICO = /\bpumice\b|perlite|walnut shell|juglans regia shell|apricot kernel powder|prunus armeniaca seed powder/;
+const SOLO_HOMBRE = /for men|\bhomme\b|\bmen\b/;
+const PIEL_IRRITADA = /zitcalm/;
+const NO_SOLAR_PRINCIPAL = new Set(["revolution-skincare-moisturiser"]);   // hidratante con SPF: no como solar principal
+const DENSA = /intensive|intensiv|\brich\b|\brica\b|piel seca|dry skin|ceramide treatment|\bbalm\b|balsamo/;
+const SEBORREGULADORA = /cloud clear|water cream|day light|oil control|seborregul|matific|\bmate\b|anti.?brillo|purif/;
+const DE_DIA = /morning|\bday\b|\bdia\b|de jour/;
 const NO_HIDRATANTE = /\bserum\b|\bsarum\b|tonico|toner|essence|esencia|ampoule|ampolla|callosidades|mascarilla|\bmask\b/;
 const PIEL_OK = {seca: ["seca", "normal a seca", "todas"], normal: ["normal a seca", "normal a grasa", "todas"], mixta: ["normal a grasa", "grasa o mixta", "todas"], grasa: ["grasa o mixta", "normal a grasa", "todas"]};
 
@@ -408,6 +476,17 @@ function esReparadora(p, H){
 }
 /* El rango eficaz de siempre, recortado por arriba al máximo de la regla. */
 function rangoTope(L){ const r = R[L.activo] || [0, L.max_pct]; return [r[0], Math.min(r[1], L.max_pct)]; }
+/* Requisitos de la hidratante que ponen las reglas de la foto (moisturizer). */
+function cumpleHidratante(p, q){
+  const e = estado(p);
+  if(q.fragrance_free && (p.fragancia !== false || lleva(p, "perfume"))) return false;
+  if(q.texture && !q.texture.includes(p.textura)) return false;
+  if(q.one_of && !q.one_of.some(k => e[k] || lleva(p, k))) return false;
+  return true;
+}
+const ACIDOS_EXF = ["glicolico", "lactico", "mandelico", "salicilico", "lha"];
+/* Para duplicados, la betaína salicilato no cuenta como BHA (Hugo, 24/11): es un éster muy suave. En el embarazo sigue vetada (vetado usa lleva). */
+function llevaAcido(p, k){ if(k !== "salicilico") return lleva(p, k); return (p.inci_completo || []).some(i => /\bsalicylic acid\b/.test(n(i)) && !/capryloyl/.test(n(i))); }
 function hayRetinoideTope(veto, c, L){
   const ser = (LISTA || CATALOGO).some(p => p.v2 && p.v2.protagonista === L.activo && ["PM", "AM/PM"].includes(p.v2.hueco) && !vetado(p, veto) && cumpleTopeRet(p, L) && dosisDe(p, L.activo, rangoTope(L), c));
   const hid = (LISTA || CATALOGO).some(p => p.v2 && p.v2.hueco === "H" && !vetado(p, veto) && esReparadora(p, L.hidratante));
@@ -452,6 +531,7 @@ function candidatos(h, ctx){
     let base = 0, cubre = [], dosis = null, activo = null, pegas = [];
     if(h.slot === "L"){
       if(v2.hueco !== "L") continue;
+      if(AGUA_MICELAR.test(n(p.producto)) && !/gel|mousse|moussant|espuma|foam/.test(n(p.producto))) continue;   // el agua micelar no se aclara: deja tensioactivos en la piel (Hugo, 24/11)
       const sal = aDosis(p, "salicilico"), otroAcido = ["glicolico", "lactico", "mandelico", "pha", "lha"].some(k => aDosis(p, k));
       const quiereSal = quiere("limpiador_salicilico") && !veto.salicilico && !P.includes("P03") && ctx.modo === "normal";
       if(otroAcido || (v2.exfoliante && !sal)) continue;                    // el limpiador no exfolia
@@ -465,12 +545,16 @@ function candidatos(h, ctx){
     } else if(h.slot === "H" || h.slot === "H2"){
       if(v2.hueco !== "H") continue;
       if(["glicolico", "lactico", "mandelico", "pha", "salicilico", "lha"].some(k => aDosis(p, k)) || v2.exfoliante) continue;   // la hidratante no exfolia
-      if(h.slot === "H" && /\bnoche\b|\bnight\b|\bnuit\b/.test(n(p.producto))) continue;   // la hidratante va mañana y noche: una crema de noche solo en el hueco de noche (H2)
+      if(h.slot === "H" && /\bnoche\b|\bnight\b|\bnuit\b/.test(n(p.producto))) continue;
+      if(/parpado|contorno|\beye\b|\byeux\b|ojos/.test(n(p.producto))) continue;   // una crema de ojos no es la hidratante de la cara   // la hidratante va mañana y noche: una crema de noche solo en el hueco de noche (H2)
       if(NO_HIDRATANTE.test(n(p.producto)) || /corporal/.test(n(p.subcategoria)) || (p.textura === "aceite" && /\boil\b|aceite|huile/.test(n(p.producto)) && !/oil.free|oil control|anti.oil/.test(n(p.producto)))) continue;   // sérums, tónicos, aceites y productos de cuerpo no son la hidratante
-      if(hayRetinoide && LIM(r).retinoide && !esReparadora(p, LIM(r).retinoide.hidratante)) continue;   // con el retinal de la regla P-03, la hidratante es reparadora (ceramidas o pantenol, sin perfume)
+      if(hayRetinoide && LIM(r).retinoide && !esReparadora(p, LIM(r).retinoide.hidratante)) continue;
+      if(!(r.hidratante_req || []).every(q => cumpleHidratante(p, q))) continue;   // reglas de la foto: barrera sin perfume, crema rica a partir de 50…
       if(hayRetinoide && RETINOIDES.concat("bakuchiol").some(k => lleva(p, k))) continue;       // un solo retinoide en la rutina, y retinoide o bakuchiol, no los dos
       if(!hayRetinoide && RETINOIDES.concat("bakuchiol").some(k => aDosis(p, k)) && (c.menor25 || ctx.modo !== "normal" || hayAcido || !["P08", "P17", "P18", "P19"].some(x => P.includes(x)))) continue;   // una hidratante antiedad solo si hay un motivo antiedad
       base = 1;
+      if(ACIDOS_EXF.some(k => llevaAcido(p, k))) base -= 1;                              // la hidratante no lleva ácidos exfoliantes: el ácido, como mucho, en un producto
+      if(/atopic/.test(n(p.producto)) && !c.barrera && !P.includes("P27")) base -= .5;   // una crema de piel atópica, solo si hace falta
       const e = estado(p);
       if(quiere("h_niacinamida") && e.niacinamida && e.niacinamida.estado !== "tras_linea" && !(e.niacinamida.pct > 5 && (c.reactiva || c.rojez || c.barrera))){ base += .35; cubre.push("F8"); }
       if(quiere("h_barrera") || c.reactiva || c.barrera){ if(["ceramidas", "pantenol", "bisabolol", "karite"].some(k => e[k]) && p.fragancia === false){ base += .4; cubre.push("F12"); } else if(ctx.modo !== "normal" || c.barrera) base -= .3; }
@@ -486,7 +570,7 @@ function candidatos(h, ctx){
       base = (p.spf || 0) >= CFG.fps_defecto ? 1 : .6;
       if(p.fotoestable === false) continue;
       const color = !!p.oxidos_hierro;
-      if(quiere("solar_color_oblig")){ if(!color) continue; cubre.push("F3"); }
+      if(quiere("solar_color_oblig") || r.solar_color){ if(!color) continue; cubre.push("F3"); }
       else if(quiere("solar_color_pref") || c.fototipo_oscuro){ if(color){ base += .4; cubre.push("F3"); } }
       else if(color) base -= .15;
       if((quiere("solar_mineral") || tiene(r, "sienta", "filtros_quimicos")) ){ if(p.tipo_filtro === "mineral") base += .5; else if(tiene(r, "sienta", "filtros_quimicos")) continue; }
@@ -497,6 +581,7 @@ function candidatos(h, ctx){
     } else if(h.slot === "contorno"){
       if(v2.hueco !== "contorno de ojos") continue;
       if(P.includes("P15") && !(v2.preocupacion || p.preocupacion || []).includes("ojeras")) continue;   // con ojeras, un contorno formulado para ojeras
+      if(r.mantenimiento && (!["cafeina", "peptidos"].some(k => lleva(p, k)) || RETINOIDES.concat("bakuchiol").some(k => lleva(p, k)))) continue;   // mantenimiento: contorno con cafeína o péptidos (Hugo, 24/11)
       if(hayRetinoide && RETINOIDES.concat("bakuchiol").some(k => lleva(p, k))) continue;
       base = 1; const pr = v2.preocupacion || p.preocupacion || [];
       if(P.includes("P15") && pr.includes("ojeras")) base += .5;
@@ -550,14 +635,35 @@ function candidatos(h, ctx){
       // secundarios que suman
       const e = estado(p);
       if(k === "vitc_pura" && (e.vitamina_e || e.ferulico)){ base += .2; pegas.push("lleva además vitamina E o ferúlico, que refuerzan a la vitamina C"); }
+      if(k === "vitc_pura" && r.mantenimiento && +r.productos >= 5 && e.vitamina_e && e.ferulico) base += .5;   // completa de mantenimiento: vitamina C con E y ferúlico
       if(RETINOIDES.includes(k) && (e.ceramidas || e.pantenol)){ base += .15; pegas.push("lleva además ceramidas o pantenol, que ayudan a tolerarlo"); }
       if(k !== "niacinamida" && e.niacinamida && e.niacinamida.estado !== "tras_linea" && ["P06", "P07", "P10", "P13", "P21"].some(x => P.includes(x))){ base += .2; pegas.push("lleva además niacinamida, que también te ayuda"); }
       if(c.reactiva && k === "retinol") base -= .2;
       // quien nunca ha usado un retinoide empieza por la dosis baja: retinal hasta 0,05 % o retinol por debajo de 0,3 %
-      if(h.deseo.k === "retinoide" && (!r.retinoide_exp || r.retinoide_exp === "nunca")){ const pc = (e[k] || {}).pct; if((k === "retinal" && pc > 0.05) || (k === "retinol" && pc >= 0.3)) base -= .3; }                                      // en piel reactiva, mejor retinal o ésteres
+      // quien nunca ha usado un retinoide empieza suave (Hugo, 24/11): retinal hasta 0,05 % o retinol por debajo de 0,3 %; lo más fuerte no entra
+      if(h.deseo.k === "retinoide" && (!r.retinoide_exp || r.retinoide_exp === "nunca")){ const pc = (e[k] || {}).pct; if((k === "retinal" && pc > 0.05) || (k === "retinol" && pc >= 0.3)) continue; }                                      // en piel reactiva, mejor retinal o ésteres
     } else continue;
 
     const v = vetado(p, veto, h.slot); if(v) continue;
+    { const nom = n(p.producto) + " " + n(p.marca), nf = r.notas_foto || {};
+      if(h.slot !== "posafeitado" && (NO_DIARIO.test(nom) && !/exfoliante quimico/.test(nom) && !h.deseo || (p.inci_completo || []).some(i => INCI_FISICO.test(n(i))))) continue;   // ni posprocedimiento ni exfoliante físico como producto diario
+      if(SOLO_HOMBRE.test(nom) && r.sexo !== "hombre") continue;
+      if(PIEL_IRRITADA.test(nom) && !(c.reactiva || c.rojez || c.barrera || c.receta || ctx.modo === "suave" || (typeof nf.rojez === "number" && nf.rojez <= 49))) continue;   // gama para piel irritada o en tratamiento
+      if(h.slot === "S" && NO_SOLAR_PRINCIPAL.has(p.id)) continue;
+      // vehículo según la piel: con brillo, sin bases oleosas ni cremas densas; piel seca y deshidratada, sin geles seborreguladores
+      const brillo = typeof nf.brillo === "number" && nf.brillo <= 60, seca = typeof nf.hidratacion === "number" && nf.hidratacion < 55 && (nf.brillo ?? 100) >= 65;
+      if(brillo && (p.textura === "aceite" || /anhydrous|anhidr/.test(nom)) && h.slot !== "L") continue;
+      if(brillo && ["H", "H2"].includes(h.slot) && (DENSA.test(nom) || p.textura === "balsamo")) continue;
+      if(seca && ["H", "H2"].includes(h.slot) && (SEBORREGULADORA.test(nom) || p.textura === "gel")) continue;
+      // hidratación baja: limpiador suave o en crema, no espumoso
+      if(h.slot === "L" && typeof nf.hidratacion === "number" && nf.hidratacion < 55 && /espum|foam|mousse|moussant/.test(nom)) base -= .6;
+      // solar mineral espeso: no primero en piel grasa, con granitos, con barba o deshidratada
+      if(h.slot === "S" && p.tipo_filtro === "mineral" && !quiere("solar_mineral") && ((nf.brillo ?? 100) <= 60 || (nf.acne ?? 100) <= 69 || r.sexo === "hombre" || (nf.hidratacion ?? 100) < 55)) base -= .6;
+      // sérum de día, de día; de noche, de noche
+      if(h.deseo && h.deseo.turno === "PM" && DE_DIA.test(nom)) continue;
+      if(h.deseo && h.deseo.turno === "AM" && /\bnoche\b|\bnight\b|\bnuit\b/.test(nom)) continue;
+      // con retinoide por la noche, nada de glicólico o láctico de mañana
+      if(h.deseo && h.deseo.turno === "AM" && hayRetinoide && ["glicolico", "lactico"].some(k => lleva(p, k))) continue; }
     // tipo de piel: un producto pensado para un tipo no sale en el contrario
     if(["L", "H", "H2", "S"].includes(h.slot)){ if(!PIEL_OK[c.piel].includes(v2.piel)) continue; if(v2.piel !== "todas") base += .15; }
     else if((c.piel === "seca" && v2.piel === "grasa o mixta") || (c.piel === "grasa" && v2.piel === "seca")) continue;
@@ -596,6 +702,10 @@ function elegir(pa, ctx){
     // la hidratante no repite a dosis el activo que ya lleva un sérum (tres productos con niacinamida no suman)
     if(["H", "H2"].includes(h.slot) && l.length){ const act = Object.entries(sel).filter(([s]) => /^serum/.test(s)).map(([, e]) => e.activo).filter(Boolean);
       const otros = l.filter(x => !act.some(a => aDosis(x.p, a))); if(otros.length) l = otros; }
+    // un solo producto sin aclarado con ácido exfoliante en toda la rutina (Hugo, 24/11): el ácido secundario de otro sérum también cuenta
+    if((h.deseo || ["H", "H2", "S"].includes(h.slot)) && l.length){ const prev = Object.entries(sel).filter(([s]) => /^serum|^H/.test(s)).map(([, e]) => e.p);
+      const esAcido = h.deseo && ["aha", "salicilico", "glicolico_afeitado"].includes(h.deseo.k), habra = pa.serums.some(x => ["aha", "salicilico", "glicolico_afeitado"].includes(x.k));
+      if(prev.some(q => ACIDOS_EXF.some(k => llevaAcido(q, k))) || (habra && !esAcido)){ const otros = l.filter(x => !ACIDOS_EXF.some(k => llevaAcido(x.p, k))); if(otros.length) l = otros; } }
     if(!l.length){ sinProducto.push(h); continue; }
     const mejores = l.filter(x => x.score >= l[0].score - .12).slice(0, 6);
     const e = mejores[(semilla + hash(h.slot)) % mejores.length];
@@ -668,10 +778,17 @@ function calcular(r){
   // frecuencia: el sérum de retinoide o de ácido dice cuántas noches va, igual que la semana
   const FREC = {L: "lunes", M: "martes", X: "miércoles", J: "jueves", V: "viernes", S: "sábado", D: "domingo"};
   pa.serums.forEach((sr, i) => { const pr = productos.find(x => x.slot === "serum" + (i + 1)); if(!pr) return;
-    const noches = sr.k === "retinoide" ? pa.nochesRet : ["aha", "pha", "glicolico_afeitado"].includes(sr.k) ? pa.nochesAha : null;
-    if(!noches || !noches.length || noches.length >= 7) return;
+    const noches = sr.k === "retinoide" ? pa.nochesRet : ["aha", "pha", "glicolico_afeitado"].includes(sr.k) ? pa.nochesAha : sr.k === "salicilico" ? pa.nochesSal : null;
+    if(!noches || !noches.length || noches.length >= 7){
+      // sérum diario que comparte la noche con un activo fuerte: va las otras noches
+      const fuertes = pa.serums.filter(o => o !== sr && o.turno === sr.turno && sr.turno === "PM" && CON_FRECUENCIA.includes(o.k));
+      if(!CON_FRECUENCIA.includes(sr.k) && fuertes.length){ const dias = pa.semana.filter(d => !d.noche.includes(etiquetaDeseo(fuertes[0].k))).map(d => d.dia); pr.noches = dias; pr.frecuencia = `Las noches sin ${nombreDeseo(fuertes[0].k).toLowerCase()} (${dias.map(d => FREC[d]).join(", ")})`; }
+      else if(!CON_FRECUENCIA.includes(sr.k) && sr.turno === "AM" && pa.serums.some(o => o.k === "salicilico" && o.turno === "AM")) pr.frecuencia = "Las mañanas sin salicílico";
+      return;
+    }
     pr.noches = noches.slice();
-    pr.frecuencia = noches.length === 1 ? `Una noche a la semana (${FREC[noches[0]]})` : `${noches.length} noches a la semana (${noches.map(d => FREC[d]).join(", ")})`; });
+    const unidad = sr.turno === "AM" ? ["Una mañana", "mañanas"] : ["Una noche", "noches"];
+    pr.frecuencia = noches.length === 1 ? `${unidad[0]} a la semana (${FREC[noches[0]]})` : `${noches.length} ${unidad[1]} a la semana (${noches.map(d => FREC[d]).join(", ")})`; });
   // en la semana, el sérum de cada noche se nombra por el activo que lleva el producto elegido
   pa.serums.forEach((sr, i) => { const pr = productos.find(x => x.slot === "serum" + (i + 1)); if(!pr || !pr.activo || !sr.flexible) return;
     const de = etiquetaDeseo(sr.k), a = pr.activo.charAt(0).toUpperCase() + pr.activo.slice(1);
