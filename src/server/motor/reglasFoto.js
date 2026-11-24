@@ -9,12 +9,23 @@ const BASE = require("./reglas-foto.json");
 const ASPECTOS = ["arrugas", "manchas", "textura", "rojez", "brillo", "firmeza", "hidratacion", "poros", "ojeras", "acne", "tono"];
 const MAYOR_25 = ["25-39", "40-49", "50+"];
 
-function cumpleNota(c, notas){
+// Banda de duda (Hugo, 24/11): a ±3 puntos de un umbral se elige la opción prudente. Una regla prudente (veta, deriva, protege la barrera,
+// pide solar con color o mantenimiento) se aplica 3 puntos antes; una que permite algo (un tope que deja entrar el retinal) se aplica 3 puntos después.
+const BANDA = 3;
+const PRUDENTE = new Set(["veto", "refer", "moisturizer", "tinted_spf", "maintenance"]), PROBLEMA_PRUDENTE = new Set(["P21", "P23", "P24", "P28", "P29"]);
+function sentido(x){
+  const ef = x.effect || [];
+  if(ef.some(e => e.action === "limit")) return -1;
+  if(ef.some(e => PRUDENTE.has(e.action) || (e.action === "add_problem" && PROBLEMA_PRUDENTE.has(e.problem)))) return 1;
+  return 0;
+}
+function cumpleNota(c, notas, sh = 0){
   const v = notas[c.aspect];
   if(typeof v !== "number") return false;
-  if(c.operator === "lte") return v <= c.max;
-  if(c.operator === "gte") return v >= c.min;
-  if(c.operator === "between") return v >= c.min && v <= c.max;
+  const b = sh * BANDA;
+  if(c.operator === "lte") return v <= c.max + b;
+  if(c.operator === "gte") return v >= c.min - b;
+  if(c.operator === "between") return v >= c.min - b && v <= c.max + b;
   return false;
 }
 function cumpleCliente(cl, r){
@@ -26,20 +37,22 @@ function normalizar(r){
   const lact = r.embarazo === "lactancia" || r.lactancia === "si";
   return {...r, embarazo: lact || r.embarazo === "si" ? "si" : "no", lactancia: lact ? "si" : "no"};
 }
-function cuenta(cc, notas){
+function cuenta(cc, notas, sh = 0){
   const asp = cc.aspects || ASPECTOS;
-  const k = asp.filter(a => typeof notas[a] === "number" && notas[a] <= cc.max).length;
+  // prudente: «ninguna por debajo de» cuenta con el umbral 3 puntos más bajo; «al menos N por debajo de», 3 puntos más alto
+  const max = cc.max + sh * BANDA * (cc.at_most != null && cc.at_least == null ? -1 : 1);
+  const k = asp.filter(a => typeof notas[a] === "number" && notas[a] <= max).length;
   if(cc.at_least != null && k < cc.at_least) return false;
   if(cc.at_most != null && k > cc.at_most) return false;
   return true;
 }
-function cumpleBase(cond, notas, r){
+function cumpleBase(cond, notas, r, sh = 0){
   if(!cond) return true;
-  if(cond.scores && !cond.scores.every(c => cumpleNota(c, notas))) return false;
+  if(cond.scores && !cond.scores.every(c => cumpleNota(c, notas, sh))) return false;
   if(cond.client && !cumpleCliente(cond.client, r)) return false;
   if(cond.client_not && Object.entries(cond.client_not).some(([k, vals]) => vals.includes(r[k]))) return false;
-  if(cond.count_lte && !cuenta(cond.count_lte, notas)) return false;
-  if(cond.any && !cond.any.some(sub => cumpleBase(sub, notas, r))) return false;
+  if(cond.count_lte && !cuenta(cond.count_lte, notas, sh)) return false;
+  if(cond.any && !cond.any.some(sub => cumpleBase(sub, notas, r, sh))) return false;
   return true;
 }
 
@@ -70,7 +83,8 @@ function aplicarReglasFoto(notas, r0, op = {}){
   const reglas = op.reglas || BASE.rules;
   const alcance = BASE.aspect_reach;
   const minimo = op.minimoObjetivos ?? 2;
-  const base = new Map(reglas.map(x => [x.id, cumpleBase(x.conditions, notas, r)]));
+  const banda = op.banda !== false;
+  const base = new Map(reglas.map(x => [x.id, cumpleBase(x.conditions, notas, r, banda ? sentido(x) : 0)]));
   const activa = x => {
     if(!base.get(x.id)) return false;
     const no = x.conditions && x.conditions.not;
