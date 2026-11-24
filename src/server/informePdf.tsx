@@ -68,7 +68,9 @@ function Pie() {
   )
 }
 
-export async function crearInformePdf(o: { farmacia: string; foto: ResultadoFoto | null; fotoCliente: string | null; lectura: Lectura; rutina: any; avisos: string[] }) {
+export type AnteriorPdf = { fecha: string; ui: Record<string, number>; global?: number; edad?: number; foto: string | null }
+
+export async function crearInformePdf(o: { farmacia: string; foto: ResultadoFoto | null; fotoCliente: string | null; lectura: Lectura; rutina: any; avisos: string[]; codigo?: string | null; anterior?: AnteriorPdf | null }) {
   const { farmacia, foto: F, lectura, rutina } = o
   const fecha = new Date().toLocaleDateString('es-ES', { day: 'numeric', month: 'long', year: 'numeric', timeZone: 'Europe/Madrid' })
   const notas = F ? Object.keys(NOMBRE_ASPECTO).filter((a) => F.ui?.[a] != null || F.puntuaciones[a] != null)
@@ -85,6 +87,12 @@ export async function crearInformePdf(o: { farmacia: string; foto: ResultadoFoto
   }
   const despues = F?.imagenes?.despues ? await traer(F.imagenes.despues) : null
   const cliente = o.fotoCliente?.startsWith('data:image/') ? Buffer.from(o.fotoCliente.split(',')[1] ?? '', 'base64') : null
+  // Revisión: el primer análisis frente al de hoy, en la misma escala (0-100, más alto = mejor)
+  const A = o.anterior
+  const fotoAntes = A?.foto?.startsWith('data:image/') ? Buffer.from(A.foto.split(',')[1] ?? '', 'base64') : null
+  const fechaAntes = A ? new Date(A.fecha).toLocaleDateString('es-ES', { day: 'numeric', month: 'long', timeZone: 'Europe/Madrid' }) : ''
+  const evolucion = A && F ? Object.keys(NOMBRE_ASPECTO).filter((a) => A.ui[a] != null && F.ui?.[a] != null)
+    .map((a) => ({ a, antes: Math.round(A.ui[a]), ahora: Math.round(F.ui[a]) })).sort((x, y) => (y.ahora - y.antes) - (x.ahora - x.antes)) : []
   zonas.sort((x, y) => (notas.find((n) => n[0] === x.aspecto)?.[1] ?? 100) - (notas.find((n) => n[0] === y.aspecto)?.[1] ?? 100))
 
   const productos: any[] = (rutina?.productos ?? []).filter((p: any) => p.producto)
@@ -147,6 +155,33 @@ export async function crearInformePdf(o: { farmacia: string; foto: ResultadoFoto
         )}
         <Pie />
       </Page>
+
+      {/* Revisión: antes y ahora */}
+      {evolucion.length > 0 && (
+        <Page size="A4" style={s.pagina}>
+          <Cabecera farmacia={farmacia} fecha={fecha} />
+          <Text style={s.h2}>Tu evolución desde el {fechaAntes}</Text>
+          <Text style={[s.gris, { marginTop: -6, marginBottom: 12 }]}>Las mismas medidas en tu primer análisis y hoy. Más alto, piel en mejor estado. Cambios de 1 o 2 puntos pueden deberse a la luz o a la postura.</Text>
+          {fotoAntes && cliente && (
+            <View style={[s.fila, { gap: 12, marginBottom: 14 }]}>
+              <View><Image src={fotoAntes} style={{ width: 150, borderRadius: 6, transform: 'scaleX(-1)' }} /><Text style={[s.gris, { fontSize: 8.5, marginTop: 3 }]}>{fechaAntes}</Text></View>
+              <View><Image src={cliente} style={{ width: 150, borderRadius: 6, transform: 'scaleX(-1)' }} /><Text style={[s.gris, { fontSize: 8.5, marginTop: 3 }]}>Hoy</Text></View>
+            </View>
+          )}
+          {A?.global != null && F?.puntuacion_global != null && (
+            <Text style={{ fontSize: 12, marginBottom: 10 }}>Puntuación global: {Math.round(A.global)} → <Text style={{ fontWeight: 600 }}>{Math.round(F.puntuacion_global)}</Text>{A.edad != null && F.edad_piel != null ? <Text style={s.gris}>   ·   Edad de la piel: {Math.round(A.edad)} → {Math.round(F.edad_piel)} años</Text> : null}</Text>
+          )}
+          {evolucion.map((e) => (
+            <View key={e.a} style={[s.fila, { alignItems: 'center', gap: 10, paddingVertical: 4, borderBottom: `0.5pt solid ${C.linea}` }]} wrap={false}>
+              <Text style={{ width: 80, fontWeight: 500 }}>{NOMBRE_ASPECTO[e.a]}</Text>
+              <Text style={{ width: 70 }}>{e.antes} → {e.ahora}</Text>
+              <Text style={{ width: 40, fontWeight: 600, color: e.ahora - e.antes >= 3 ? C.marca : C.gris }}>{e.ahora - e.antes > 0 ? '+' : ''}{e.ahora - e.antes}</Text>
+              <Text style={[s.gris, { flex: 1, fontSize: 8.5 }]}>{nivelPiel(e.ahora)}</Text>
+            </View>
+          ))}
+          <Pie />
+        </Page>
+      )}
 
       {/* 2. Fotos por zona */}
       {zonas.length > 0 && (
@@ -216,7 +251,12 @@ export async function crearInformePdf(o: { farmacia: string; foto: ResultadoFoto
             {o.avisos.map((a, k) => <Text key={k}>· {a}</Text>)}
           </View>
         )}
-        <Text style={[s.gris, { marginTop: 16 }]}>Repite el análisis en tu farmacia dentro de 6 semanas para comparar.</Text>
+        {o.codigo ? (
+          <View style={{ marginTop: 16, borderTop: `0.5pt solid ${C.linea}`, paddingTop: 10 }} wrap={false}>
+            <Text style={{ fontWeight: 600 }}>Tu código de revisión: <Text style={{ color: C.marca, fontSize: 13 }}>{o.codigo}</Text></Text>
+            <Text style={s.gris}>Vuelve a la farmacia en unas 4 semanas, toca «Vengo a mi revisión» en el iPad y escribe este código para comparar tu piel con la de hoy.</Text>
+          </View>
+        ) : <Text style={[s.gris, { marginTop: 16 }]}>Repite el análisis en tu farmacia dentro de 4 semanas para comparar.</Text>}
         <Pie />
       </Page>
     </Document>
