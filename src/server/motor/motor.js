@@ -21,7 +21,7 @@ const PROBLEMAS = {
   P09: {t: "Pelos encarnados y granitos del afeitado", g: "acne", alcance: "trata con técnica"},
   P10: {t: "Marcas oscuras tras granos o heridas", g: "manchas", alcance: "trata, despacio"},
   P11: {t: "Marcas rojas tras granos", g: "manchas", alcance: "ayuda poco"},
-  P12: {t: "Manchas del sol o de la edad", g: "manchas", alcance: "ayuda poco"},
+  P12: {t: "Manchas y tono desigual", g: "manchas", alcance: "ayuda poco"},
   P13: {t: "Manchas hormonales (melasma)", g: "manchas", alcance: "ayuda"},
   P14: {t: "Tono apagado y desigual", g: "manchas", alcance: "trata"},
   P15: {t: "Ojeras", g: "otros", alcance: "ayuda poco"},
@@ -103,6 +103,7 @@ function detectar(r){
   for(const id of r.problemas_extra || []) if(PROBLEMAS[id]) P.add(id);
   if(!P.size) P.add("P31");
   if(r.edad === "40-49" || r.edad === "50+"){ if(pre.includes("granos") && tiene(r, "granos_adulto", "debut_adulto")) d("suave", "Acné que empieza pasados los 40 conviene consultarlo."); }
+  if(r.receta === "si") der.push({nivel: "consulta", texto: "Para elegir los productos más adecuados, vamos a revisar contigo el tratamiento que utilizas actualmente."});
   return {problemas: [...P], derivacion: der};
 }
 
@@ -131,8 +132,10 @@ function condiciones(r, P){
   if(c.menor18) v(RETINOIDES.concat("bakuchiol"), "Con menos de 18 años no se usan retinoides ni rutina antiedad.");
   if(c.rojez) v(["glicolico", "lactico", "mandelico", "salicilico", "lha", "urea", "alcohol", "perfume", "mentol"], "Con rojez fija, los ácidos fuertes, el alcohol, el perfume y el mentol la empeoran.");
   if(c.reactiva) v(["glicolico", "lactico", "mandelico", "salicilico", "lha", "alcohol", "perfume"], "Tu piel reacciona con facilidad: sin exfoliantes fuertes, alcohol ni perfume.");
+  if(r.reactiva === "siempre") v(["vitc_pura"], "Tu piel reacciona a menudo: la vitamina C pura escuece; mejor un derivado estable.");
   if(c.barrera) v(RETINOIDES.concat(ACIDOS, ["vitc_pura", "azelaico", "perfume"]), "Ahora tu piel tiene que recuperarse: sin retinoides, ácidos, vitamina C pura ni perfume.");
-  if(c.receta) v(RETINOIDES.concat(ACIDOS, ["azelaico", "vitc_pura"]), "Mientras sigas un tratamiento con receta, no pongo activos fuertes encima.");
+  // Receta (decisión P-01 de Hugo, 24/11): sin activos encima de un tratamiento que no conocemos; lo revisa el farmacéutico
+  if(c.receta) v(RETINOIDES.concat(ACIDOS, ["azelaico", "vitc_pura", "bakuchiol", "tranexamico", "thiamidol", "arbutina", "kojico"]), "Mientras sigas un tratamiento con receta, no pongo activos encima: primero lo revisamos contigo.");
   for(const s of r.sienta || []){
     if(s === "perfume") v(["perfume"], "Me dijiste que el perfume te sienta mal.");
     if(s === "alcohol") v(["alcohol"], "Me dijiste que el alcohol te sienta mal.");
@@ -212,8 +215,10 @@ function pauta(r, P, c, veto, modo){
   let N = N0;
   const fuera = [], notas = [];
   const suave = modo === "suave";
-  if(c.barrera && N > CFG.topes.barrera){ N = CFG.topes.barrera; }
+  if((c.barrera || c.receta) && N > CFG.topes.barrera){ N = CFG.topes.barrera; }
   if(suave && N > CFG.topes.rojez_sensible) N = CFG.topes.rojez_sensible;
+  // Reactividad «casi siempre» (auditoría D-05, base 6.5): como mucho 4 productos con el solar
+  if(r.reactiva === "siempre" && N > 3){ N = 3; notas.push("Como tu piel reacciona a menudo, me quedo en pocos productos: así sabrás qué te sienta bien."); }
   if((c.rojez || c.reactiva) && N > CFG.topes.rojez_sensible){ N = CFG.topes.rojez_sensible; notas.push("Con rojez o piel sensible, más de cinco productos es demasiado: me quedo en cinco."); }
   // deseos de sérum, por orden de prioridad de problema
   const lista = [];
@@ -274,9 +279,9 @@ function pauta(r, P, c, veto, modo){
   };
   const ojos = ["P15", "P17", "P18", "P19"].some(x => P.includes(x));
   const tercero = N === 5 && !suave && !ojos && !c.reactiva && !c.rojez && lista.length > 2;   // quinto producto: otro tratamiento antes que un contorno que nadie ha pedido
-  const maxSerums = c.barrera ? 0 : N >= 6 || tercero ? 3 : N >= 4 ? 2 : 1;
+  const maxSerums = c.barrera || c.receta ? 0 : N >= 6 || tercero ? 3 : N >= 4 ? 2 : 1;
   for(const x of lista){
-    if(c.barrera){ if(!fuera.some(f => f.k === x.k)) fuera.push({k: x.k, que: nombreDeseo(x.k), por: "Mientras la piel se recupera, nada más que limpiador, hidratante y solar. Entrará después, de uno en uno."}); continue; }
+    if(c.barrera || c.receta){ if(!fuera.some(f => f.k === x.k)) fuera.push({k: x.k, que: nombreDeseo(x.k), por: c.receta ? "Con un tratamiento con receta, limpiador, hidratante y solar. Los tratamientos se eligen después de revisar contigo lo que usas." : "Mientras la piel se recupera, nada más que limpiador, hidratante y solar. Entrará después, de uno en uno."}); continue; }
     if(serums.length >= maxSerums){ if(!fuera.some(f => f.k === x.k)) fuera.push({k: x.k, que: nombreDeseo(x.k), por: N0 < 6 ? `Con ${N0} productos no cabe. Entraría con más pasos.` : "No cabe sin sumar demasiados activos."}); continue; }
     const d = Object.assign({k: x.k, por: x.por}, deseo(x.k));
     if(suave && d.activos && serums.some(s => s.k === "barrera")) d.activos = d.activos.filter(a => a !== "niacinamida");
@@ -320,7 +325,7 @@ function pauta(r, P, c, veto, modo){
   if(N >= 6 && !suave && serums.length < 3){
     if(c.piel === "seca" || P.includes("P28")) huecos.push({slot: "H2", etiqueta: "Crema de noche", turno: "PM"});
   }
-  if(huecos.length < N && !suave && !c.menor18 && !c.barrera) notas.push(`Te pongo ${huecos.length} productos y no ${N}: no hay nada más que tu piel necesite ahora, y un paso de relleno no mejora el resultado.`);
+  if(huecos.length < N && !suave && !c.menor18 && !c.barrera && !c.receta) notas.push(`Te pongo ${huecos.length} productos y no ${N}: no hay nada más que tu piel necesite ahora, y un paso de relleno no mejora el resultado.`);
   huecos.push({slot: "S", etiqueta: "Protector solar", turno: "AM", aparte: true});
 
   // Semana
@@ -391,7 +396,7 @@ function hayBakuchiol(veto, c){
 }
 function rangoPara(k, deseo){
   if(k === "niacinamida") return deseo && deseo.k === "sebo" ? R.niacinamida.sebo : R.niacinamida.resto;
-  return {vitc_pura: R.vitc_pura, retinol: R.retinol, retinal: R.retinal, bakuchiol: R.bakuchiol, glicolico: R.glicolico, lactico: R.lactico, salicilico: R.salicilico, azelaico: R.azelaico, tranexamico: R.tranexamico, thiamidol: R.thiamidol}[k] || null;
+  return {vitc_pura: R.vitc_pura, vitc_derivados: R.vitc_derivados, retinol: R.retinol, retinal: R.retinal, bakuchiol: R.bakuchiol, glicolico: R.glicolico, lactico: R.lactico, salicilico: R.salicilico, azelaico: R.azelaico, tranexamico: R.tranexamico, thiamidol: R.thiamidol}[k] || null;
 }
 function vetado(p, veto, slot){
   const inci = (p.inci_completo || []).map(n);
@@ -402,6 +407,8 @@ function vetado(p, veto, slot){
   const er = (p.activos || []).reduce((t, x) => { const i = n(x.inci || ""), q = +x.pct_declarado || 0;
     return t + (i === "retinol" ? q : i === "retinyl acetate" ? q * 0.872 : i === "retinyl palmitate" ? q * 0.546 : 0); }, 0);
   if(er > 0.3 + 1e-9) return "lleva más vitamina A de la que permite la UE";
+  // Sin el porcentaje de retinol o de ésteres no se puede comprobar el 0,3 % de la UE (auditoría D-04): no se recomienda
+  if(!(p.flags || []).includes("conforme_2024_996") && ["retinol", "esteres_retinilo"].some(k => { const e = estado(p)[k]; return e && e.estado !== "declarada"; })) return "no declara el porcentaje de vitamina A";
   if(EXCL_MARCA.has(normMarca(p.marca))) return "marca excluida";
   if(CUERPO.test(" " + n(p.producto) + " ") && !/facial|rostro|face|cara/.test(n(p.producto))) return "no es de cara";
   for(const k of Object.keys(veto)){
@@ -758,7 +765,7 @@ CFG.topes = CFG.topes || {barrera: 3, rojez_sensible: 5};
    Acepta respuestas a medias. No elige productos: devuelve lo que se va viendo (problemas, funciones, vetos).
    Calcula siempre con el máximo de pasos: el número de productos no cambia lo que la piel pide, solo lo que cabe. */
 const CORTO = {P01: "Puntos negros", P02: "Granos", P03: "Granos del adulto", P04: "Bultos profundos", P05: "Granitos que pican", P06: "Brillo", P07: "Poros", P08: "Poros y firmeza",
-  P09: "Pelos encarnados", P10: "Marcas oscuras", P11: "Marcas rojas", P12: "Manchas del sol", P13: "Manchas hormonales", P14: "Tono apagado", P15: "Ojeras", P16: "Cicatrices hundidas",
+  P09: "Pelos encarnados", P10: "Marcas oscuras", P11: "Marcas rojas", P12: "Manchas", P13: "Manchas hormonales", P14: "Tono apagado", P15: "Ojeras", P16: "Cicatrices hundidas",
   P17: "Líneas finas", P18: "Arrugas de expresión", P19: "Firmeza", P20: "Textura áspera", P21: "Rojez fija", P22: "Rojez con granitos", P23: "Piel sensible", P24: "Piel irritada",
   P25: "Descamación grasienta", P26: "Granitos junto a la boca", P27: "Zonas secas con picor", P28: "Piel seca", P29: "Piel deshidratada", P30: "Sequedad constante", P31: "Mantener"};
 function provisional(r){

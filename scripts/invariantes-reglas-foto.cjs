@@ -3,7 +3,7 @@
    Uso: node scripts/invariantes-reglas-foto.cjs. Sale con código 1 si algún caso incumple una regla. */
 "use strict";
 const motor = require("../src/server/motor/motor.js");
-const { lleva, RETINOIDES } = require("../src/server/motor/activos.js");
+const { lleva, estado, RETINOIDES } = require("../src/server/motor/activos.js");
 const { aplicarReglasFoto } = require("../src/server/motor/reglasFoto.js");
 const { LISTA } = require("./casos-reglas-foto.cjs");
 const CASOS = require("./casos-simulados.json");
@@ -37,6 +37,13 @@ for(const c of CASOS){
     if(r.lactancia === "si" && !out.avisos.some(a => /pecho/.test(a))) mal("lactancia sin el aviso de no aplicar en el pecho");
     if(r.lactancia === "si" && out.derivacion.some(d => /matrona/.test(d.texto))) mal("lactancia con aviso de matrona");
     for(const p of out.productos) if(!p.producto && !p.motivo && p.slot !== "S") mal(`paso vacío: ${p.paso}`);
+    // auditoría 24/11: receta, melasma, vitamina A sin porcentaje y reactividad frecuente
+    if(r.receta === "si" && out.productos.some(p => /^serum/.test(p.slot || ""))) mal("receta con un sérum de tratamiento");
+    if(r.receta === "si" && !out.derivacion.some(d => /tratamiento que utilizas/.test(d.texto))) mal("receta sin aviso para revisar el tratamiento");
+    if(out.perfil.problemas.some(x => x.id === "P13")) mal("la foto asigna manchas hormonales (P13)");
+    for(const p of prods) for(const k of ["retinol", "esteres_retinilo"]) if(lleva(p, k) && estado(p)[k].estado !== "declarada" && !(p.flags || []).includes("conforme_2024_996")) mal(`${p.producto}: ${k} sin porcentaje declarado`);
+    if(r.reactiva === "siempre" && out.productos.length > 4) mal(`reactividad frecuente con ${out.productos.length} productos`);
+    if(r.reactiva === "siempre" && tiene("vitc_pura")) mal("reactividad frecuente con vitamina C pura");
   }
 }
 console.log(`${CASOS.length} casos, ${rutinas} rutinas, ${errores.length} fallos`);
