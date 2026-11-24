@@ -518,7 +518,7 @@ const CUERPO = /corporal|body|cuerpo|manos|hand |pies|champu|shampoo|capilar|cab
 const NO_DIARIO = /post.?act|post.?procedimiento|post.?laser|\bscrub\b|exfoliante|exfoliant|peeling|3 en 1/;   // posprocedimiento y exfoliantes físicos
 const INCI_FISICO = /\bpumice\b|perlite|walnut shell|juglans regia shell|apricot kernel powder|prunus armeniaca seed powder/;
 const SOLO_HOMBRE = /for men|\bhomme\b|\bmen\b/;
-const PIEL_IRRITADA = /zitcalm|epitheliale|bari[eé]derm|cicalfate|cicaplast baum|cicabio|cica.?repair|reparadora intensa/;   // reparadores de barrera o postratamiento: solo con rojez, piel que reacciona, receta o barrera (informe, 24/11)
+const PIEL_IRRITADA = /zitcalm|epitheliale|bari[eé]derm|cicalfate|cicaplast baum|cicabio|cica.?repair|reparadora intensa|cicavit/;   // reparadores de barrera o postratamiento: solo con rojez, piel que reacciona, receta o barrera (informe, 24/11)
 const NO_SOLAR_PRINCIPAL = new Set(["revolution-skincare-moisturiser", "avene-cicalfate-spf50"]);   // Cicalfate+ SPF50+: reparador de cicatrices y marcas, no solar facial diario   // hidratante con SPF: no como solar principal
 const DENSA = /intensive|intensiv|\brich\b|\brica\b|piel seca|dry skin|ceramide treatment|\bbalm\b|balsamo/;
 const A_FOTO = ["arrugas", "manchas", "textura", "rojez", "brillo", "firmeza", "hidratacion", "poros", "ojeras", "acne", "tono"];
@@ -776,6 +776,8 @@ function candidatos(h, ctx){
       if(["H", "H2"].includes(h.slot) && (sensible || madura) && !brillo){ const e = estado(p);
         if(!["crema", "balsamo"].includes(p.textura) || LIGERA.test(nom) || !["ceramidas", "escualano", "karite", "colesterol", "vaselina"].some(k => e[k])) base -= 1;
         if(SEBORREGULADORA.test(nom) || /gel/.test(p.textura || "")) base -= 1; }
+      // R32 con piel grasa (Hugo, 24/11; revisión clínica C17-01): rojez <55 y brillo: ni gel ni crema densa, una emulsión o fluido ligero
+      if(["H", "H2"].includes(h.slot) && rojezB && brillo && (/gel/.test(p.textura || "") || /\bgel\b/.test(nom))) base -= 1;
       // R36: con poco brillo (≥75), sin hidratantes matificantes; la crema de tarro de CeraVe, solo en piel muy seca
       if(["H", "H2"].includes(h.slot) && (nf.brillo ?? 0) >= 75 && (SEBORREGULADORA.test(nom) || /shine control/.test(nom))) base -= 1.5;
       if(["H", "H2"].includes(h.slot) && p.id === "cerave-crema-hidratante" && !((nf.hidratacion ?? 100) < 50)) base -= 1.5;
