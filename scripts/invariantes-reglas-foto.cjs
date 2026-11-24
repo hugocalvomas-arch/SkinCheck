@@ -4,7 +4,7 @@
 "use strict";
 const motor = require("../src/server/motor/motor.js");
 const { lleva, estado, aDosis, RETINOIDES } = require("../src/server/motor/activos.js");
-const { aplicarReglasFoto } = require("../src/server/motor/reglasFoto.js");
+const { aplicarAlMotor } = require("../src/server/motor/reglasFoto.js");
 const { LISTA } = require("./casos-reglas-foto.cjs");
 const CASOS = require("./casos-simulados.json");
 const POR_ID = new Map(LISTA.map(p => [p.id, p]));
@@ -15,9 +15,7 @@ let rutinas = 0;
 for(const c of CASOS){
   const r = { edad: c.edad, edad_tramo: c.edad_tramo, sexo: c.sexo, embarazo: c.sexo === "hombre" ? "no" : c.embarazo || "no", lactancia: c.lactancia || "no",
     receta: c.receta || "no", reactiva: c.reactiva || "nunca", sienta: ["nada"], retinoide_exp: "nunca", fototipo: "III", textura: "igual", preocupa: ["nada"], piel: "normal", kiosko: true };
-  const rf = aplicarReglasFoto(c.notas, r);
-  Object.assign(r, { problemas_extra: rf.problemas_extra, veto_extra: rf.veto_extra, bonus_activos: rf.bonus_activos, derivacion_extra: rf.derivacion_extra, avisos_extra: rf.avisos_extra, prioridad_foto: rf.prioridad_foto, limites: rf.limites, mantenimiento: rf.mantenimiento, solar_color: rf.solar_color, hidratante_req: rf.hidratante_req, notas_foto: rf.notas_foto, aspecto_problema: rf.aspecto_problema });
-  if(rf.piel) r.piel = rf.piel;
+  const rf = aplicarAlMotor(r, c.notas);
   const embOLac = r.embarazo === "si" || r.lactancia === "si";
   const todoBien = Object.values(c.notas).every(v => v >= 75);
   for(const [n, pres] of NIVELES){
@@ -53,7 +51,8 @@ for(const c of CASOS){
     if(r.embarazo === "si" && r.lactancia !== "si" && c.notas.manchas <= 69){ const sol = out.productos.find(p => p.slot === "S" && p.id); if(sol && !POR_ID.get(sol.id).oxidos_hierro) mal("embarazo con manchas sin solar con color"); }
     if((c.notas.rojez <= 49 || ["a_veces", "siempre"].includes(r.reactiva)) && tiene("urea")) mal("urea con rojez o reactividad");
     { const l = out.productos.find(p => p.slot === "L" && p.producto); if(l && /micel|micellar|\bh2o\b/i.test(l.producto) && !/gel|mousse|moussant|espuma|foam/i.test(l.producto)) mal(`agua micelar como limpiador (${l.producto})`); }
-    for(const T of ["AM", "PM"]){ const d = out.productos.filter(p => /^serum/.test(p.slot || "") && p.turno === T && p.id && !p.noches && !p.frecuencia); if(d.length > 1) mal(`dos sérums diarios por la ${T === "AM" ? "mañana" : "noche"}`); }
+    for(const T of ["AM", "PM"]){ const d = out.productos.filter(p => /^serum/.test(p.slot || "") && p.turno === T && p.id && !p.noches && !p.frecuencia); const parAz = d.length === 2 && d.some(p => /azelaico/.test(p.activo || "")) && d.some(p => /vitamina C|niacinamida/.test(p.activo || ""));
+      if(d.length > 1 && !parAz) mal(`dos sérums diarios por la ${T === "AM" ? "mañana" : "noche"}`); }
     if(prods.some(p => RETINOIDES.some(k => lleva(p, k))) && out.productos.some(p => /^serum/.test(p.slot || "") && p.turno === "AM" && p.id && ["glicolico", "lactico"].some(k => lleva(POR_ID.get(p.id), k)))) mal("glicólico o láctico de mañana con retinoide");
     if(c.notas.hidratacion < 55 && out.productos.some(p => /^serum/.test(p.slot || "") && p.id && ["glicolico", "lactico"].some(k => aDosis(POR_ID.get(p.id), k)))) mal("AHA sin aclarado con la hidratación por debajo de 55");
     // P-03 (Hugo, 24/11): con arrugas y rojez 30-49, retinal solo si nunca reacciona y la hidratación es ≥50; hasta 0,05 %, 2 noches, sándwich y crema reparadora

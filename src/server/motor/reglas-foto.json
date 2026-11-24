@@ -1,5 +1,5 @@
 {
- "version": "0.5.0",
+ "version": "0.6.0",
  "date": "2026-11-24",
  "methodology": "Base de conocimiento SkinRead (OUTPUTS/skincheck/base-conocimiento, entregas 1-4). Notas de Perfect Corp de 0 a 100, más alto es mejor. Bandas: Bien >=75, Leve 50-74, Moderado 30-49, Marcado <30. Evidencia: A guía o metaanálisis, B ensayo clínico, C mecanismo o criterio de experto. Reglas deterministas: se evalúan todas y se suman sus efectos. Pendiente de validación de Hugo.",
  "aspect_reach": {
@@ -1071,7 +1071,7 @@
      {
       "aspect": "ojeras",
       "operator": "lte",
-      "max": 49
+      "max": 59
      }
     ]
    },
@@ -1089,7 +1089,7 @@
      "doi": "10.1097/DSS.0000000000002484"
     }
    ],
-   "exceptions": "El motor solo añade contorno si sobra hueco.",
+   "exceptions": "Corrección de Hugo (24/11, R31): con ojeras por debajo de 60, contorno en las tres rutinas.",
    "requires_expert_validation": false
   },
   {
@@ -1152,7 +1152,7 @@
      {
       "aspect": "arrugas",
       "operator": "lte",
-      "max": 49
+      "max": 54
      },
      {
       "aspect": "rojez",
@@ -1228,7 +1228,7 @@
      "url": "https://pubmed.ncbi.nlm.nih.gov/23135655/"
     }
    ],
-   "exceptions": "Decisión de Hugo (24/11, auditoría P-03): retinal solo si la clienta dice que su piel nunca reacciona y la barrera está estable (hidratación ≥50). El código impone retinal con % declarado ≤0,05, 2 noches por semana, sándwich y una hidratante con ceramidas o pantenol sin perfume, que ocupa el hueco de la hidratante (no suma producto). Si no hay producto que lo cumpla, el retinal no entra. Que el retinal irrite menos que el retinol es C.",
+   "exceptions": "Decisión de Hugo (24/11, auditoría P-03): retinal solo si la clienta dice que su piel nunca reacciona y la barrera está estable (hidratación ≥50). El código impone retinal con % declarado ≤0,05, 2 noches por semana, sándwich y una hidratante con ceramidas o pantenol sin perfume, que ocupa el hueco de la hidratante (no suma producto). Si no hay producto que lo cumpla, el retinal no entra. Que el retinal irrite menos que el retinol es C. Hugo (24/11, R22): desde arrugas 54, como la piel madura de la básica.",
    "requires_expert_validation": true
   },
   {
@@ -1240,7 +1240,7 @@
      {
       "aspect": "arrugas",
       "operator": "lte",
-      "max": 49
+      "max": 54
      },
      {
       "aspect": "rojez",
@@ -1292,7 +1292,7 @@
    "reason_for_client": "Tienes líneas finas y algo de rojez: primero calmamos y reforzamos la barrera, y el retinoide queda para más adelante.",
    "evidence_level": "C",
    "sources": [],
-   "exceptions": "Decisión de Hugo (24/11, auditoría P-03): con rojez 30-49, el retinal solo si la piel nunca reacciona y la hidratación es ≥50. En el resto de casos (a veces reacciona, sin respuesta o piel deshidratada), sin retinoide.",
+   "exceptions": "Decisión de Hugo (24/11, auditoría P-03): con rojez 30-49, el retinal solo si la piel nunca reacciona y la hidratación es ≥50. En el resto de casos (a veces reacciona, sin respuesta o piel deshidratada), sin retinoide. Hugo (24/11, R22): desde arrugas 54, como la piel madura de la básica.",
    "requires_expert_validation": true
   },
   {
@@ -2911,12 +2911,16 @@
      "action": "veto",
      "active": "mandelico",
      "message": "Durante el embarazo, sin salicílico ni ácidos exfoliantes fuertes: si acaso, un PHA suave."
+    },
+    {
+     "action": "refer",
+     "text": "En el embarazo, consulta cualquier tratamiento con tu médico o tu matrona."
     }
    ],
    "reason_for_client": "Durante el embarazo usamos activos suaves y seguros.",
    "evidence_level": "C",
    "sources": [],
-   "exceptions": "Corrección de Hugo (24/11, caso Laura): por precaución, sin salicílico (tampoco betaína salicilato) ni glicólico al 10 % sin aclarado en el embarazo. El PHA sí.",
+   "exceptions": "Corrección de Hugo (24/11, caso Laura): por precaución, sin salicílico (tampoco betaína salicilato) ni glicólico al 10 % sin aclarado en el embarazo. El PHA sí. El aviso de consultar con el médico o la matrona sale siempre que hay embarazo, no solo con manchas o granitos marcados (Hugo, 24/11).",
    "requires_expert_validation": false
   },
   {

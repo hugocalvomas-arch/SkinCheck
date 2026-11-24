@@ -38,7 +38,7 @@ const nuevoCodigo = () => Array.from({ length: 6 }, () => ALFABETO[randomInt(ALF
 const normalizar = (c: string) => c.toUpperCase().replace(/[^A-Z0-9]/g, '').replace(/^(...)(...)$/, '$1-$2')
 const diasDesde = (f: string) => Math.max(0, Math.floor((Date.now() - new Date(f).getTime()) / 86_400_000))
 
-const EDAD_MOTOR: Record<string, string> = { '25-34': '25-39', '35-44': '25-39', '45-54': '40-49', '55+': '50+' }
+const EDAD_MOTOR: Record<string, string> = { '25-34': '25-39', '35-44': '25-39', '45-54': '40-49', '55+': '50+', '55-64': '50+', '65+': '50+' }
 
 /** Recorrido de la clienta en el iPad: 4 respuestas de seguridad + foto (o, si no hay foto, lo que quiere mejorar). */
 export async function analizarKiosko(farmaciaId: string, s: Seguridad, foto: string | null, mejorar: string[] = [], acepta = false, extra: Extra = {}) {

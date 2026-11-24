@@ -41,6 +41,7 @@ const A = {
   cafeina: [["caffeine"], "alta", "cafeína"],
   centella: [["centella asiatica", "madecassoside", "asiaticoside", "madecassic", "asiatic acid"], "media", "centella"],
   escualano: [["squalane"], "media", "escualano"],
+  ectoina: [["ectoin"], "media", "ectoina"],
   zinc: [["zinc pca", "zinc gluconate"], "media", "zinc"],
   perfume: [["parfum", "fragrance"], "-", "perfume"],
   alcohol: [["alcohol denat", "sd alcohol"], "-", "alcohol"],

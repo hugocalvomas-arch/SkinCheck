@@ -153,4 +153,21 @@ function notasDe(foto){
   return n;
 }
 
-module.exports = {aplicarReglasFoto, notasDe, ASPECTOS, REGLAS: BASE};
+/**
+ * Pasa a las respuestas todo lo que deciden las reglas de la foto, tal y como lo lee el motor.
+ * Es el único sitio donde se hace: la app, los scripts de casos y las pruebas lo llaman igual, así ninguna regla se queda fuera.
+ * @returns el resultado de aplicarReglasFoto
+ */
+function aplicarAlMotor(r, notas, op = {}){
+  const rf = aplicarReglasFoto(notas, r, op);
+  r.problemas_extra = [...new Set([...(r.problemas_extra || []), ...rf.problemas_extra])];
+  r.veto_extra = {...rf.veto_extra, ...(r.veto_extra || {})};
+  r.derivacion_extra = [...(r.derivacion_extra || []), ...rf.derivacion_extra];
+  Object.assign(r, {bonus_activos: rf.bonus_activos, avisos_extra: rf.avisos_extra, prioridad_foto: rf.prioridad_foto, limites: rf.limites, mantenimiento: rf.mantenimiento,
+    solar_color: rf.solar_color, hidratante_req: rf.hidratante_req, notas_foto: rf.notas_foto, aspecto_problema: rf.aspecto_problema,
+    reglas_foto: {version: rf.version_reglas, ids: rf.reglas_aplicadas.map(x => x.id)}});
+  if(op.fijarPiel !== false && rf.piel) r.piel = rf.piel;
+  return rf;
+}
+
+module.exports = {aplicarReglasFoto, aplicarAlMotor, notasDe, ASPECTOS, REGLAS: BASE};

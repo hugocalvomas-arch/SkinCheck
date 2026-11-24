@@ -2,7 +2,7 @@
 /* Los 10 casos que corrigió Hugo (auditoría, 24/11). Uso: node scripts/casos-hugo.cjs [id]. No llama a ninguna API. */
 "use strict";
 const motor = require("../src/server/motor/motor.js");
-const { aplicarReglasFoto } = require("../src/server/motor/reglasFoto.js");
+const { aplicarAlMotor } = require("../src/server/motor/reglasFoto.js");
 const { LISTA } = require("./casos-reglas-foto.cjs");
 const B = o => ({ arrugas: 80, manchas: 80, textura: 80, rojez: 80, brillo: 80, firmeza: 80, hidratacion: 80, poros: 80, ojeras: 80, acne: 80, tono: 80, ...o });
 const CASOS = [
@@ -20,9 +20,7 @@ const CASOS = [
 function respuestas(c){
   const r = { edad: c.edad, edad_tramo: c.tramo, sexo: c.sexo || "mujer", embarazo: c.embarazo || "no", lactancia: "no", receta: c.receta || "no", reactiva: c.reactiva || "nunca",
     sienta: ["nada"], retinoide_exp: "nunca", fototipo: "III", textura: "igual", preocupa: ["nada"], piel: "normal", kiosko: true };
-  const rf = aplicarReglasFoto(c.notas, r);
-  Object.assign(r, { problemas_extra: rf.problemas_extra, veto_extra: rf.veto_extra, bonus_activos: rf.bonus_activos, derivacion_extra: rf.derivacion_extra, avisos_extra: rf.avisos_extra, prioridad_foto: rf.prioridad_foto, limites: rf.limites, mantenimiento: rf.mantenimiento, solar_color: rf.solar_color, hidratante_req: rf.hidratante_req, notas_foto: rf.notas_foto, aspecto_problema: rf.aspecto_problema });
-  if(rf.piel) r.piel = rf.piel;
+  const rf = aplicarAlMotor(r, c.notas);
   return { r, rf };
 }
 function correr(c){

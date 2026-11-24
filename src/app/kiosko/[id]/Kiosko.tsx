@@ -20,9 +20,9 @@ type Props = { farmaciaId: string; farmacia: string; precio: string }
 type Revision = { id: string; fecha: string; dias: number; conFoto: boolean }
 
 const PREGUNTAS: { id: keyof Seguridad; t: string; nota: string; ops: [string, string][]; si?: (s: Partial<Seguridad>) => boolean }[] = [
-  { id: 'edad', t: '¿Qué edad tienes?', nota: 'Algunos ingredientes dependen de la edad.', ops: [['-14', 'Menos de 14'], ['14-17', '14 a 17'], ['18-24', '18 a 24'], ['25-34', '25 a 34'], ['35-44', '35 a 44'], ['45-54', '45 a 54'], ['55+', '55 o más']] },
+  { id: 'edad', t: '¿Qué edad tienes?', nota: 'Algunos ingredientes dependen de la edad.', ops: [['-14', 'Menos de 14'], ['14-17', '14 a 17'], ['18-24', '18 a 24'], ['25-34', '25 a 34'], ['35-44', '35 a 44'], ['45-54', '45 a 54'], ['55-64', '55 a 64'], ['65+', '65 o más']] },
   { id: 'sexo', t: '¿Eres mujer u hombre?', nota: 'El análisis de la foto no lo distingue, y cambia algunos productos (por ejemplo, el afeitado).', ops: [['mujer', 'Mujer'], ['hombre', 'Hombre'], ['nd', 'Prefiero no decirlo']] },
-  { id: 'embarazo', si: (s) => s.sexo !== 'hombre' && s.edad !== '55+', t: '¿Estás embarazada o dando el pecho?', nota: 'Hay ingredientes que no se recomiendan en el embarazo, y otros que conviene evitar mientras das el pecho.', ops: [['embarazo', 'Estoy embarazada'], ['lactancia', 'Estoy dando el pecho'], ['no', 'No, o no aplica']] },
+  { id: 'embarazo', si: (s) => s.sexo !== 'hombre' && !['55+', '55-64', '65+'].includes(s.edad ?? ''), t: '¿Estás embarazada o dando el pecho?', nota: 'Hay ingredientes que no se recomiendan en el embarazo, y otros que conviene evitar mientras das el pecho.', ops: [['embarazo', 'Estoy embarazada'], ['lactancia', 'Estoy dando el pecho'], ['no', 'No, o no aplica']] },
   { id: 'receta', t: '¿Sigues algún tratamiento para la piel indicado por un médico?', nota: 'Si es así, no añadiremos activos que interfieran con él.', ops: [['no', 'No'], ['si', 'Sí']] },
   { id: 'reactiva', t: '¿Tu piel reacciona cuando pruebas un producto nuevo?', nota: 'Picor, rojez o escozor. Así sabemos si empezar por lo más suave.', ops: [['nunca', 'Casi nunca'], ['a_veces', 'A veces'], ['siempre', 'Casi siempre']] },
 ]

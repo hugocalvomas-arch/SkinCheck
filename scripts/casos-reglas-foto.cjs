@@ -4,7 +4,7 @@
 "use strict";
 const motor = require("../src/server/motor/motor.js");
 const { TODOS } = require("../src/server/motor/catalogo.js");
-const { aplicarReglasFoto, ASPECTOS } = require("../src/server/motor/reglasFoto.js");
+const { aplicarAlMotor, ASPECTOS } = require("../src/server/motor/reglasFoto.js");
 
 const LISTA = TODOS.filter(p => !p.retirado && !p.sin_verificar && p.pvp_eur != null);
 const NIVELES = [["basica", 3, "bajo"], ["media", 4, "medio"], ["completa", 5, "alto"]];
@@ -39,9 +39,7 @@ function correr(r){
 function caso(c){
   const rNuevo = base(c);
   rNuevo.piel = pielAntes(c.notas);
-  const rf = aplicarReglasFoto(c.notas, rNuevo);
-  Object.assign(rNuevo, { problemas_extra: rf.problemas_extra, veto_extra: rf.veto_extra, bonus_activos: rf.bonus_activos, derivacion_extra: rf.derivacion_extra, avisos_extra: rf.avisos_extra, prioridad_foto: rf.prioridad_foto, limites: rf.limites, mantenimiento: rf.mantenimiento, solar_color: rf.solar_color, hidratante_req: rf.hidratante_req, notas_foto: rf.notas_foto, aspecto_problema: rf.aspecto_problema });
-  if(rf.piel) rNuevo.piel = rf.piel;
+  const rf = aplicarAlMotor(rNuevo, c.notas);
   const rAntes = { ...base(c), piel: pielAntes(c.notas), problemas_extra: problemasAntes(c.notas) };
   return { ...c, reglas: rf.reglas_aplicadas, prioridad: rf.prioridad_foto, bonus: rf.bonus_activos, vetos_reglas: Object.keys(rf.veto_extra), piel: rNuevo.piel,
     nuevo: correr(rNuevo), antes: { problemas: rAntes.problemas_extra, ...correr(rAntes) } };
