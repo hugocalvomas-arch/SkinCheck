@@ -351,7 +351,7 @@ export function Informe({ res, foto, farmacia, onFin }: { res: any; foto: string
   const noche = productos.filter((p: any) => p.turno === 'PM' || p.turno === 'AMPM')
 
   async function generarQr() {
-    const lineas = [`Mi rutina SkinCheck (${farmacia})`, '']
+    const lineas = [`Mi rutina SkinRead (${farmacia})`, '']
     if (manana.length) lineas.push('Mañana:', ...manana.map((p: any) => `- ${p.marca} ${p.producto}`), '')
     if (noche.length) lineas.push('Noche:', ...noche.map((p: any) => `- ${p.marca} ${p.producto}`), '')
     lineas.push(`Total: ${eur(rut.total)}`, 'Repite el análisis en 6 semanas para comparar.')

@@ -4,7 +4,7 @@
 "use strict";
 const CFG = require("./config.js");
 const {CATALOGO} = require("./catalogo.js");
-// SkinCheck: el catálogo que ve el motor se puede limitar al stock de una farmacia (calcularCon)
+// SkinRead: el catálogo que ve el motor se puede limitar al stock de una farmacia (calcularCon)
 let LISTA = null;
 const {RETINOIDES, ACIDOS, nombre, estado, lleva, aDosis, n} = require("./activos.js");
 
@@ -750,7 +750,7 @@ function provisional(r){
     evita: sinActivos ? [] : agrupaVetos(veto).map(g => g.activos).flat().filter((x, i, a) => a.indexOf(x) === i).slice(0, 8),
     fuera, retinoide: !sinActivos && pa.serums.some(s => s.k === "retinoide")};
 }
-/* SkinCheck: calcula con una lista de productos concreta (el stock de la farmacia, con su PVP). Síncrono. */
+/* SkinRead: calcula con una lista de productos concreta (el stock de la farmacia, con su PVP). Síncrono. */
 function calcularCon(r, lista){
   LISTA = lista;
   try { return calcular(r); } finally { LISTA = null; }
