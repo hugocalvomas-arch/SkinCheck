@@ -404,7 +404,8 @@ function pauta(r, P, c, veto, modo){
       if(d.turno === "PM" && serums.some(s => s.k === "retinoide")) d.activos = d.activos.filter(a => a !== "azelaico"); }
     if(serums.length >= 1 && !d.flexible && serums.some(s => s.turno === d.turno) && !(["aha", "pha"].includes(d.k) && serums.some(s => s.k === "retinoide")) && !(d.k === "retinoide" && serums.some(s => ["aha", "pha"].includes(s.k)))){
       // mismo turno y no se puede mover: solo si el que estaba es flexible
-      const otro = serums.find(s => s.turno === d.turno && s.flexible);
+      // el salicílico sin retinoide va de noche (regla de abajo): se puede mover ya, para no dejar fuera la vitamina C de la mañana (ciclo 20, C20-10)
+      const otro = serums.find(s => s.turno === d.turno && (s.flexible || (s.k === "salicilico" && d.turno === "AM" && !serums.some(q => q.k === "retinoide"))));
       // la vitamina C comparte la mañana con un tratamiento suave antes que mandarlo a la noche del retinoide
       if(otro && d.k === "vitc" && serums.some(s => s.k === "retinoide")){ /* los dos de mañana */ }
       else if(otro) otro.turno = d.turno === "AM" ? "PM" : "AM";
