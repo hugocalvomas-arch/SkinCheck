@@ -6,6 +6,7 @@ import { useCallback, useEffect, useRef, useState, useTransition } from 'react'
 import QRCode from 'qrcode'
 import { ArrowLeft, ArrowRight, ArrowsLeftRight, CalendarCheck, Camera, Check, Drop, EnvelopeSimple, Moon, ScanSmiley, ShieldCheck, Sparkle, Sun, Trash, X } from '@phosphor-icons/react'
 import { analizarKiosko, borrarSeguimiento, buscarSeguimiento, enviarInformeEmail, type Seguridad } from './actions'
+import { textosConsulta } from './consultas'
 import { Logo } from '@/components/Logo'
 import { AVISO_DETALLE, AVISO_EMAIL, AVISO_FOTO, AVISO_GUARDAR_FOTO, AVISO_INICIO } from '@/lib/privacidad'
 
@@ -19,9 +20,9 @@ type Props = { farmaciaId: string; farmacia: string; precio: string }
 type Revision = { id: string; fecha: string; dias: number; conFoto: boolean }
 
 const PREGUNTAS: { id: keyof Seguridad; t: string; nota: string; ops: [string, string][]; si?: (s: Partial<Seguridad>) => boolean }[] = [
-  { id: 'edad', t: '¿Qué edad tienes?', nota: 'Algunos ingredientes dependen de la edad.', ops: [['-14', 'Menos de 14'], ['14-17', '14 a 17'], ['18-24', '18 a 24'], ['25-39', '25 a 39'], ['40-49', '40 a 49'], ['50+', '50 o más']] },
+  { id: 'edad', t: '¿Qué edad tienes?', nota: 'Algunos ingredientes dependen de la edad.', ops: [['-14', 'Menos de 14'], ['14-17', '14 a 17'], ['18-24', '18 a 24'], ['25-34', '25 a 34'], ['35-44', '35 a 44'], ['45-54', '45 a 54'], ['55+', '55 o más']] },
   { id: 'sexo', t: '¿Eres mujer u hombre?', nota: 'El análisis de la foto no lo distingue, y cambia algunos productos (por ejemplo, el afeitado).', ops: [['mujer', 'Mujer'], ['hombre', 'Hombre'], ['nd', 'Prefiero no decirlo']] },
-  { id: 'embarazo', si: (s) => s.sexo !== 'hombre' && s.edad !== '50+', t: '¿Estás embarazada o en periodo de lactancia?', nota: 'Hay ingredientes que no se recomiendan en el embarazo ni en la lactancia.', ops: [['si', 'Sí'], ['no', 'No, o no aplica']] },
+  { id: 'embarazo', si: (s) => s.sexo !== 'hombre' && s.edad !== '55+', t: '¿Estás embarazada o dando el pecho?', nota: 'Hay ingredientes que no se recomiendan en el embarazo, y otros que conviene evitar mientras das el pecho.', ops: [['embarazo', 'Estoy embarazada'], ['lactancia', 'Estoy dando el pecho'], ['no', 'No, o no aplica']] },
   { id: 'receta', t: '¿Sigues algún tratamiento para la piel indicado por un médico?', nota: 'Si es así, no añadiremos activos que interfieran con él.', ops: [['no', 'No'], ['si', 'Sí']] },
   { id: 'reactiva', t: '¿Tu piel reacciona cuando pruebas un producto nuevo?', nota: 'Picor, rojez o escozor. Así sabemos si empezar por lo más suave.', ops: [['nunca', 'Casi nunca'], ['a_veces', 'A veces'], ['siempre', 'Casi siempre']] },
 ]
@@ -64,7 +65,7 @@ export function Kiosko({ farmaciaId, farmacia, precio }: Props) {
     return () => { clearTimeout(t); window.removeEventListener('pointerdown', tocar) }
   }, [paso, reiniciar])
 
-  // Siguiente pregunta que aplica (el embarazo no se pregunta a hombres ni a partir de 50 años)
+  // Siguiente pregunta que aplica (el embarazo no se pregunta a hombres ni a partir de 55 años)
   const siguiente = (desde: number, s: Partial<Seguridad>) => { let k = desde; while (k < PREGUNTAS.length && PREGUNTAS[k].si && !PREGUNTAS[k].si!(s)) k++; return k }
   const anterior = (desde: number, s: Partial<Seguridad>) => { let k = desde; while (k >= 0 && PREGUNTAS[k].si && !PREGUNTAS[k].si!(s)) k--; return k }
 
@@ -374,7 +375,7 @@ function Camara({ error, onFoto }: { error: string; onFoto: (b64: string, dataUr
       <div className="space-y-6">
         <h2 className="text-[2.25rem] leading-[1.05]">Coloca tu cara dentro del óvalo</h2>
         <ul className="space-y-3 text-lg text-[var(--k-muted)]">
-          {['Acércate hasta llenarlo', 'Mira de frente, sin sonreír', 'Sin gafas y con la frente despejada', 'Mejor sin maquillaje'].map((t) => (
+          {['Cara lavada, sin maquillaje ni crema', 'Luz de frente, sin una ventana detrás', 'Acércate hasta llenar el óvalo', 'Cabeza recta, mirando a la cámara', 'Cara relajada, sin sonreír ni fruncir', 'Sin gafas y con la frente despejada'].map((t) => (
             <li key={t} className="flex gap-3"><Check size={22} className="text-[var(--k-accent)] shrink-0 mt-0.5" />{t}</li>
           ))}
         </ul>
@@ -442,6 +443,7 @@ export function Informe({ res, foto, farmacia, onFin }: { res: any; foto: string
   if (R?.sin_rutina) return <Bloque><h2 className="titulo max-w-2xl">{R.sin_rutina}</h2><button onClick={onFin} className="boton">Terminar</button></Bloque>
 
   const rut = R.rutinas[nivel]
+  const consultas = textosConsulta(R.derivacion)
   const objetivos: any[] = res.lectura?.objetivos ?? []
   const productos = (rut.productos ?? []).filter((p: any) => p.producto)
   const conProducto = (g: any) => productos.find((p: any) => p.activo && raiz(p.activo) === raiz(g.nombre))
@@ -496,6 +498,17 @@ export function Informe({ res, foto, farmacia, onFin }: { res: any; foto: string
           )}
         </div>
       </section>
+
+      {/* Avisos de consulta: antes que la rutina, para que se lean */}
+      {consultas.length > 0 && (
+        <section role="note" className="rounded-[var(--radius-card)] bg-[var(--k-warn-soft)] p-6 space-y-3">
+          <p className="text-xl font-medium text-[var(--k-warn)] m-0">Conviene consultarlo</p>
+          <ul className="space-y-2 m-0 p-0 list-none">
+            {consultas.map((t) => <li key={t} className="leading-relaxed">{t}</li>)}
+          </ul>
+          <p className="text-sm text-[var(--k-muted)] m-0">Pregunta en el mostrador: el farmacéutico te dirá si hace falta ir al médico.</p>
+        </section>
+      )}
 
       {/* 2. Ingredientes clave, por qué y con qué producto */}
       {clave.length > 0 && (

@@ -1,5 +1,5 @@
 {
- "version": "0.1.0",
+ "version": "0.2.0",
  "date": "2026-11-24",
  "methodology": "Base de conocimiento SkinRead (OUTPUTS/skincheck/base-conocimiento, entregas 1-4). Notas de Perfect Corp de 0 a 100, más alto es mejor. Bandas: Bien >=75, Leve 50-74, Moderado 30-49, Marcado <30. Evidencia: A guía o metaanálisis, B ensayo clínico, C mecanismo o criterio de experto. Reglas deterministas: se evalúan todas y se suman sus efectos. Pendiente de validación de Hugo.",
  "aspect_reach": {
@@ -1140,7 +1140,7 @@
   },
   {
    "id": "PAR-03",
-   "name": "Arrugas + rojez",
+   "name": "Arrugas + rojez, barrera estable: retinal suave",
    "category": "pareja",
    "conditions": {
     "scores": [
@@ -1151,10 +1151,22 @@
      },
      {
       "aspect": "rojez",
-      "operator": "lte",
+      "operator": "between",
+      "min": 30,
       "max": 49
+     },
+     {
+      "aspect": "hidratacion",
+      "operator": "gte",
+      "min": 50
      }
-    ]
+    ],
+    "client": {
+     "reactiva": [
+      "nunca",
+      "a_veces"
+     ]
+    }
    },
    "effect": [
     {
@@ -1199,22 +1211,17 @@
      "url": "https://pubmed.ncbi.nlm.nih.gov/23135655/"
     }
    ],
-   "exceptions": "Que el retinal irrite menos que el retinol es C.",
+   "exceptions": "Decisión de Hugo (24/11): retinal 0,05 % con reactividad ocasional solo si la barrera está estable (hidratación ≥50 y rojez no marcada). Que el retinal irrite menos que el retinol es C. La concentración no se puede comprobar hasta que el catálogo la guarde.",
    "requires_expert_validation": true
   },
   {
    "id": "PAR-03b",
-   "name": "Arrugas + rojez + reactividad: bakuchiol",
+   "name": "Arrugas + reactividad frecuente: primero la barrera",
    "category": "pareja",
    "conditions": {
     "scores": [
      {
       "aspect": "arrugas",
-      "operator": "lte",
-      "max": 49
-     },
-     {
-      "aspect": "rojez",
       "operator": "lte",
       "max": 49
      }
@@ -1232,15 +1239,31 @@
     {
      "action": "veto",
      "active": "retinol",
-     "message": "Tu piel reacciona con facilidad: en lugar de retinol, una alternativa más suave."
+     "message": "Tu piel reacciona a menudo: primero reparamos la barrera y dejamos el retinoide para más adelante."
     },
     {
      "action": "veto",
      "active": "retinal",
-     "message": "Tu piel reacciona con facilidad: en lugar de un retinoide, una alternativa más suave."
+     "message": "Tu piel reacciona a menudo: primero reparamos la barrera y dejamos el retinoide para más adelante."
+    },
+    {
+     "action": "veto",
+     "active": "hpr",
+     "message": "Tu piel reacciona a menudo: primero reparamos la barrera y dejamos el retinoide para más adelante."
+    },
+    {
+     "action": "prefer",
+     "active": "ceramidas",
+     "weight": 0.3,
+     "routine_step": "hidratante"
+    },
+    {
+     "action": "prefer",
+     "active": "bakuchiol",
+     "weight": 0.2
     }
    ],
-   "reason_for_client": "Como tu piel reacciona, cambiamos el retinoide por bakuchiol, que en un ensayo igualó al retinol con menos escozor.",
+   "reason_for_client": "Como tu piel reacciona a menudo, primero reparamos la barrera. El bakuchiol es una alternativa cosmética suave, no un sustituto equivalente del retinoide.",
    "evidence_level": "B",
    "sources": [
     {
@@ -1248,7 +1271,7 @@
      "doi": "10.1111/bjd.16918"
     }
    ],
-   "exceptions": "Decisión pendiente de Hugo: retinal a dosis baja o bakuchiol por defecto.",
+   "exceptions": "Decisión de Hugo (24/11): el bakuchiol nunca se presenta como equivalente demostrado. Dhaliwal 2019 es un único ensayo de 44 personas frente a retinol 0,5 %; no demuestra equivalencia general ni frente al retinal.",
    "requires_expert_validation": true
   },
   {
@@ -2612,12 +2635,12 @@
     {
      "action": "veto",
      "active": "tranexamico",
-     "message": "Sin datos de seguridad en el embarazo y la lactancia."
+     "message": "Sin datos de seguridad en el embarazo ni en la lactancia."
     },
     {
      "action": "veto",
      "active": "thiamidol",
-     "message": "Sin datos de seguridad en el embarazo y la lactancia."
+     "message": "Sin datos de seguridad en el embarazo ni en la lactancia."
     }
    ],
    "reason_for_client": "En el embarazo y la lactancia usamos solo activos con buen perfil de seguridad.",
@@ -2628,7 +2651,7 @@
      "doi": "10.1016/j.jaad.2013.09.010"
     }
    ],
-   "exceptions": "",
+   "exceptions": "En la lactancia el veto es por prudencia, por falta de datos, no por un riesgo demostrado. Pendiente de validar con Hugo.",
    "requires_expert_validation": true
   },
   {
@@ -2639,6 +2662,9 @@
     "client": {
      "embarazo": [
       "si"
+     ],
+     "lactancia": [
+      "no"
      ]
     },
     "any": [
@@ -2683,6 +2709,87 @@
    ],
    "exceptions": "",
    "requires_expert_validation": false
+  },
+  {
+   "id": "SEG-02L",
+   "name": "Lactancia con granitos o manchas: aviso",
+   "category": "seguridad",
+   "conditions": {
+    "client": {
+     "lactancia": [
+      "si"
+     ]
+    },
+    "any": [
+     {
+      "scores": [
+       {
+        "aspect": "acne",
+        "operator": "lte",
+        "max": 49
+       }
+      ]
+     },
+     {
+      "scores": [
+       {
+        "aspect": "manchas",
+        "operator": "lte",
+        "max": 49
+       }
+      ]
+     }
+    ]
+   },
+   "effect": [
+    {
+     "action": "prefer",
+     "active": "azelaico",
+     "weight": 0.3
+    },
+    {
+     "action": "refer",
+     "text": "Si los granos o las manchas van a más mientras das el pecho, coméntalo con tu médico."
+    }
+   ],
+   "reason_for_client": "El ácido azelaico se puede usar mientras das el pecho, lejos de la zona del pecho.",
+   "evidence_level": "C",
+   "sources": [
+    {
+     "reference": "LactMed, Drugs and Lactation Database (NCBI)",
+     "url": "https://www.ncbi.nlm.nih.gov/books/NBK501922/"
+    }
+   ],
+   "exceptions": "Distinto del embarazo: sin derivación a la matrona.",
+   "requires_expert_validation": true
+  },
+  {
+   "id": "SEG-04",
+   "name": "Lactancia: no aplicar en el pecho",
+   "category": "seguridad",
+   "conditions": {
+    "client": {
+     "lactancia": [
+      "si"
+     ]
+    }
+   },
+   "effect": [
+    {
+     "action": "notice",
+     "text": "Mientras das el pecho, no apliques estos productos en el pecho y lávate las manos después de ponértelos."
+    }
+   ],
+   "reason_for_client": "Así el bebé no entra en contacto con los productos.",
+   "evidence_level": "C",
+   "sources": [
+    {
+     "reference": "LactMed, Drugs and Lactation Database (NCBI)",
+     "url": "https://www.ncbi.nlm.nih.gov/books/NBK501922/"
+    }
+   ],
+   "exceptions": "",
+   "requires_expert_validation": true
   },
   {
    "id": "SEG-03",
@@ -2812,7 +2919,7 @@
    "reason_for_client": "Sin nada marcado, no ponemos activos fuertes.",
    "evidence_level": "C",
    "sources": [],
-   "exceptions": "La base de conocimiento dice menos de 30 años; el iPad agrupa 25-39.",
+   "exceptions": "La base de conocimiento dice menos de 30 años. El iPad pregunta 25-34 y 35-44; los dos van con el tramo del motor 25-39 (el más prudente). Corte pendiente de revisar con Hugo: la edad sola no debe decidir.",
    "requires_expert_validation": true
   }
  ]

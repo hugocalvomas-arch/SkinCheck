@@ -21,7 +21,7 @@ function pielAntes(notas){
   return b >= 50 ? "brillo_total" : b >= 35 ? "brillo_T" : h >= 50 ? "tirante" : "normal";
 }
 function base(c){
-  return { edad: c.edad, sexo: c.sexo, embarazo: c.sexo === "hombre" ? "no" : c.embarazo || "no", receta: c.receta || "no", reactiva: c.reactiva || "nunca",
+  return { edad: c.edad, sexo: c.sexo, embarazo: c.sexo === "hombre" ? "no" : c.embarazo || "no", lactancia: c.lactancia || "no", edad_tramo: c.edad_tramo, receta: c.receta || "no", reactiva: c.reactiva || "nunca",
     sienta: ["nada"], retinoide_exp: "nunca", fototipo: c.fototipo || "III", textura: "igual", preocupa: ["nada"], kiosko: true };
 }
 function resumen(out){

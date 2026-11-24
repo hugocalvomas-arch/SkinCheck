@@ -18,7 +18,13 @@ function cumpleNota(c, notas){
   return false;
 }
 function cumpleCliente(cl, r){
-  return Object.entries(cl || {}).every(([k, vals]) => vals.includes(r[k]));
+  // la edad vale en los dos vocabularios: el tramo del motor (25-39…) y el que pregunta el iPad (25-34…)
+  return Object.entries(cl || {}).every(([k, vals]) => vals.includes(r[k]) || (k === "edad" && r.edad_tramo != null && vals.includes(r.edad_tramo)));
+}
+/** Embarazo y lactancia por separado: embarazo = "si" en los dos casos (vetos prudentes), lactancia = "si" solo al dar el pecho. */
+function normalizar(r){
+  const lact = r.embarazo === "lactancia" || r.lactancia === "si";
+  return {...r, embarazo: lact || r.embarazo === "si" ? "si" : "no", lactancia: lact ? "si" : "no"};
 }
 function cuenta(cc, notas){
   const asp = cc.aspects || ASPECTOS;
@@ -58,7 +64,8 @@ function problemaLeve(a, notas, r){
  * @param {{edad?: string, sexo?: string, embarazo?: string, receta?: string, reactiva?: string}} r respuestas
  * @param {{reglas?: any[], minimoObjetivos?: number}} [op]
  */
-function aplicarReglasFoto(notas, r, op = {}){
+function aplicarReglasFoto(notas, r0, op = {}){
+  const r = normalizar(r0 || {});
   const reglas = op.reglas || BASE.rules;
   const alcance = BASE.aspect_reach;
   const minimo = op.minimoObjetivos ?? 2;

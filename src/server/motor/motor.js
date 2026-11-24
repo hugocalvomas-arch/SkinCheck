@@ -60,7 +60,7 @@ function detectar(r){
     if(tiene(r, "granos_adulto", "reglas_irregulares")) d("suave", "Granos con reglas irregulares pueden tener una causa hormonal que la cosmética no corrige. Coméntalo con tu médico.");
     if(tiene(r, "granos_adulto", "debut_adulto")) d("suave", "Si los granos han aparecido por primera vez de adulto, conviene una consulta.");
     if(tiene(r, "granos_adulto", "whey")) d("suave", "La proteína whey, los anabolizantes y algunos medicamentos pueden provocar granos. La cosmética no corrige esa causa.");
-    if(r.embarazo === "si") d("suave", "Con granos durante el embarazo o la lactancia, lo indicado es consultarlo. Te doy una rutina suave mientras tanto.");
+    if(r.embarazo === "si" || r.embarazo === "lactancia" || r.lactancia === "si") d("suave", "Con granos durante el embarazo o la lactancia, lo indicado es consultarlo. Te doy una rutina suave mientras tanto.");
   }
   if(pre.includes("brillo")) P.add("P06");
   if(pre.includes("poros")) P.add(pre.includes("firmeza") || (["40-49", "50+"].includes(r.edad) && ["tirante", "normal"].includes(r.piel)) ? "P08" : "P07");
@@ -109,7 +109,9 @@ function detectar(r){
 /* ------------------------------------------------------------------ 2 · Condiciones y vetos */
 function condiciones(r, P){
   const c = {
-    embarazo: r.embarazo === "si", menor18: r.edad === "14-17", menor25: ["14-17", "18-24"].includes(r.edad), mayor50: r.edad === "50+",
+    // Embarazo y lactancia se preguntan por separado (Hugo, 24/11). Los vetos prudentes valen para las dos; los avisos cambian.
+    embarazo: r.embarazo === "si" || r.embarazo === "lactancia" || r.lactancia === "si",
+    lactancia: r.embarazo === "lactancia" || r.lactancia === "si", menor18: r.edad === "14-17", menor25: ["14-17", "18-24"].includes(r.edad), mayor50: r.edad === "50+",
     rojez: P.includes("P21") || P.includes("P22"), reactiva: r.reactiva === "siempre" || P.includes("P23"),
     reactiva_a_veces: r.reactiva === "a_veces", barrera: P.includes("P24"), sequedad_activa: P.includes("P28") || P.includes("P30"),
     afeitado_diario: r.afeita === "diario", receta: r.receta === "si",
@@ -120,8 +122,10 @@ function condiciones(r, P){
   const veto = {};
   const v = (ks, motivo) => ks.forEach(k => { if(!veto[k]) veto[k] = motivo; });
   if(c.embarazo){
-    v(RETINOIDES.concat("bakuchiol"), "Durante el embarazo y la lactancia no se usan retinoides. En su lugar va el ácido azelaico.");
-    if(CFG.embarazo_veta_arbutina_kojico) v(["arbutina", "kojico"], "Sin datos de seguridad en el embarazo.");
+    v(RETINOIDES.concat("bakuchiol"), c.lactancia
+      ? "Mientras das el pecho, por prudencia no uso retinoides: apenas hay datos. En su lugar va el ácido azelaico."
+      : "Durante el embarazo no se usan retinoides. En su lugar va el ácido azelaico.");
+    if(CFG.embarazo_veta_arbutina_kojico) v(["arbutina", "kojico"], c.lactancia ? "Sin datos de seguridad durante la lactancia." : "Sin datos de seguridad en el embarazo.");
     if(CFG.embarazo_acidos === "vetar") v(ACIDOS, "Durante el embarazo prefiero no usar ácidos.");
   }
   if(c.menor18) v(RETINOIDES.concat("bakuchiol"), "Con menos de 18 años no se usan retinoides ni rutina antiedad.");
@@ -235,6 +239,8 @@ function pauta(r, P, c, veto, modo){
     if(k === "retinoide"){
       const motivoAcne = ["P01", "P02", "P03", "P07", "P16"].includes(p);
       if(veto.retinol && c.embarazo){ if(lista.some(x => ["despigmentante", "antiacne", "calma"].includes(x.k)) || (DESEOS[p] || []).some(x => ["despigmentante", "antiacne", "calma"].includes(x))) continue; k = "antiacne_o_azelaico"; }
+      // Reactividad frecuente (Hugo, 24/11): primero la barrera; el bakuchiol se ofrece como alternativa cosmética, no como equivalente
+      else if(veto.retinol && c.reactiva && !veto.bakuchiol && !motivoAcne && !c.menor25 && !c.rojez && !c.sequedad_activa && hayBakuchiol(veto, c)){ if(!fuera.some(f => f.que === "Retinoide")) fuera.push({que: "Retinoide", por: veto.retinol}); k = "bakuchiol"; }
       else if(veto.retinol){ fuera.push({que: "Retinoide", por: veto.retinol}); continue; }
       else if(c.menor25 && !motivoAcne){ fuera.push({que: "Retinoide", por: "Con menos de 25 años no hace falta un retinoide antiedad. Antioxidante de mañana y solar."}); continue; }
       else if(c.rojez){ fuera.push({que: "Retinoide", por: "Con rojez fija, el retinoide solo entra cuando esté estable, y eso no lo puedo saber desde aquí."}); continue; }
@@ -257,7 +263,7 @@ function pauta(r, P, c, veto, modo){
   if(lista.some(x => x.k === "retinoide")) lista.sort((a, b) => (["aha", "pha"].includes(a.k) && a.por !== "P20") - (["aha", "pha"].includes(b.k) && b.por !== "P20"));
   // embarazo: azelaico ocupa el hueco del retinoide, de noche
   for(const x of lista) if(x.k === "antiacne_o_azelaico"){ x.k = "azelaico_noche"; }
-  const deseo = k => k === "azelaico_noche" ? {f: "F10", turno: "PM", activos: ["azelaico"], para: "ocupar el lugar del retinoide durante el embarazo"} : F[k];
+  const deseo = k => k === "azelaico_noche" ? {f: "F10", turno: "PM", activos: ["azelaico"], para: "ocupar el lugar del retinoide durante el embarazo o la lactancia"} : F[k];
 
   // Reparto: 1 limpiador · 2 sérum principal · 3 hidratante · 4 sérum del otro turno · 5 contorno · 6 otro
   const huecos = [{slot: "L", etiqueta: "Limpiador", turno: "AMPM"}];
@@ -379,6 +385,10 @@ function dosisDe(p, k, rango, c, ep){
   return {ok: .3, txt: "dosis no declarada por la marca", tipo: "no_declarada"};
 }
 const fmt = x => String(+(+x).toFixed(2)).replace(".", ",");
+/** ¿Hay en el catálogo un sérum de bakuchiol que se pueda recomendar? Si no, el retinoide queda fuera sin dejar un paso vacío. */
+function hayBakuchiol(veto, c){
+  return (LISTA || CATALOGO).some(p => p.v2 && p.v2.protagonista === "bakuchiol" && ["AM", "PM", "AM/PM"].includes(p.v2.hueco) && !vetado(p, veto) && dosisDe(p, "bakuchiol", R.bakuchiol, c));
+}
 function rangoPara(k, deseo){
   if(k === "niacinamida") return deseo && deseo.k === "sebo" ? R.niacinamida.sebo : R.niacinamida.resto;
   return {vitc_pura: R.vitc_pura, retinol: R.retinol, retinal: R.retinal, bakuchiol: R.bakuchiol, glicolico: R.glicolico, lactico: R.lactico, salicilico: R.salicilico, azelaico: R.azelaico, tranexamico: R.tranexamico, thiamidol: R.thiamidol}[k] || null;

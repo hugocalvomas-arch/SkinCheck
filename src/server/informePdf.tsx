@@ -19,7 +19,7 @@ Font.register({
 })
 Font.registerHyphenationCallback((w) => [w])
 
-const C = { tinta: '#0f1b1d', tinta2: '#2b3a3c', gris: '#56676a', linea: '#dfe6e5', marca: '#0b6e5b', suave: '#e5f2ee', papel2: '#f3f6f5' }
+const C = { aviso: '#8a4b0f', avisoSuave: '#fbf0e4', tinta: '#0f1b1d', tinta2: '#2b3a3c', gris: '#56676a', linea: '#dfe6e5', marca: '#0b6e5b', suave: '#e5f2ee', papel2: '#f3f6f5' }
 const s = StyleSheet.create({
   pagina: { fontFamily: 'Geist', fontSize: 10, color: C.tinta, padding: 40, lineHeight: 1.45 },
   cab: { flexDirection: 'row', justifyContent: 'space-between', fontSize: 8.5, color: C.gris, marginBottom: 24 },
@@ -70,7 +70,7 @@ function Pie() {
 
 export type AnteriorPdf = { fecha: string; ui: Record<string, number>; global?: number; edad?: number; foto: string | null }
 
-export async function crearInformePdf(o: { farmacia: string; foto: ResultadoFoto | null; fotoCliente: string | null; lectura: Lectura; rutina: any; avisos: string[]; codigo?: string | null; anterior?: AnteriorPdf | null }) {
+export async function crearInformePdf(o: { farmacia: string; foto: ResultadoFoto | null; fotoCliente: string | null; lectura: Lectura; rutina: any; avisos: string[]; consultas?: string[]; codigo?: string | null; anterior?: AnteriorPdf | null }) {
   const { farmacia, foto: F, lectura, rutina } = o
   const fecha = new Date().toLocaleDateString('es-ES', { day: 'numeric', month: 'long', year: 'numeric', timeZone: 'Europe/Madrid' })
   const notas = F ? Object.keys(NOMBRE_ASPECTO).filter((a) => F.ui?.[a] != null || F.puntuaciones[a] != null)
@@ -246,6 +246,12 @@ export async function crearInformePdf(o: { farmacia: string; foto: ResultadoFoto
             ))}
           </View>
         ))}
+        {(o.consultas?.length ?? 0) > 0 && (
+          <View style={{ backgroundColor: C.avisoSuave, borderRadius: 6, padding: 12, gap: 5, marginBottom: 10 }} wrap={false}>
+            <Text style={{ fontWeight: 600, color: C.aviso }}>Conviene consultarlo</Text>
+            {o.consultas!.map((a, k) => <Text key={k}>· {a}</Text>)}
+          </View>
+        )}
         {o.avisos.length > 0 && (
           <View style={{ backgroundColor: C.suave, borderRadius: 6, padding: 12, gap: 5 }} wrap={false}>
             <Text style={{ fontWeight: 600 }}>Cómo empezar</Text>

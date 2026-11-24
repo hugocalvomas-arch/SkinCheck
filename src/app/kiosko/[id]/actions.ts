@@ -7,11 +7,12 @@ import { analizarFoto, UMBRALES_POR_DEFECTO, type ResultadoFoto } from '@/server
 import { conReglasFoto } from '@/server/reglasFoto'
 import { construirLectura } from '@/server/lectura'
 import { crearInformePdf, type AnteriorPdf } from '@/server/informePdf'
+import { textosConsulta } from './consultas'
 import type { Respuestas } from '@/lib/cuestionario'
 import { randomInt } from 'node:crypto'
 import { registroConsentimiento } from '@/lib/privacidad'
 
-export type Seguridad = { edad: string; sexo: 'mujer' | 'hombre' | 'nd'; embarazo: 'si' | 'no'; receta: 'si' | 'no'; reactiva: 'nunca' | 'a_veces' | 'siempre' }
+export type Seguridad = { edad: string; sexo: 'mujer' | 'hombre' | 'nd'; embarazo: 'embarazo' | 'lactancia' | 'no'; receta: 'si' | 'no'; reactiva: 'nunca' | 'a_veces' | 'siempre' }
 
 async function esDeLaFarmacia(sb: Awaited<ReturnType<typeof supabaseServer>>, farmaciaId: string) {
   const { data: u } = await sb.auth.getUser()
@@ -37,6 +38,8 @@ const nuevoCodigo = () => Array.from({ length: 6 }, () => ALFABETO[randomInt(ALF
 const normalizar = (c: string) => c.toUpperCase().replace(/[^A-Z0-9]/g, '').replace(/^(...)(...)$/, '$1-$2')
 const diasDesde = (f: string) => Math.max(0, Math.floor((Date.now() - new Date(f).getTime()) / 86_400_000))
 
+const EDAD_MOTOR: Record<string, string> = { '25-34': '25-39', '35-44': '25-39', '45-54': '40-49', '55+': '50+' }
+
 /** Recorrido de la clienta en el iPad: 4 respuestas de seguridad + foto (o, si no hay foto, lo que quiere mejorar). */
 export async function analizarKiosko(farmaciaId: string, s: Seguridad, foto: string | null, mejorar: string[] = [], acepta = false, extra: Extra = {}) {
   // Embarazo y tratamientos médicos son datos de salud (art. 9 RGPD): sin permiso expreso no se trata nada
@@ -49,9 +52,14 @@ export async function analizarKiosko(farmaciaId: string, s: Seguridad, foto: str
 
   // Respuestas que lee el motor de Hugo. Lo que no se pregunta va con el valor más prudente.
   const r: Respuestas = {
-    edad: s.edad,
+    // El iPad pregunta en tramos de 10 años (decisión de Hugo, 24/11); el motor sigue con sus tramos.
+    // 35-44 va con 25-39, el tramo más prudente (sin retinoide preventivo ni poro por flacidez).
+    edad: EDAD_MOTOR[s.edad] ?? s.edad,
+    edad_tramo: s.edad,
     sexo: s.sexo ?? 'nd', // la API de piel no detecta el sexo: se pregunta
-    embarazo: s.sexo === 'hombre' ? 'no' : s.embarazo,
+    // Embarazo y lactancia van por separado: el motor mantiene los vetos prudentes en los dos y cambia los avisos
+    embarazo: s.sexo !== 'hombre' && (s.embarazo === 'embarazo' || s.embarazo === 'lactancia') ? 'si' : 'no',
+    lactancia: s.sexo !== 'hombre' && s.embarazo === 'lactancia' ? 'si' : 'no',
     receta: s.receta,
     reactiva: s.reactiva,
     sienta: ['nada'],
@@ -180,7 +188,7 @@ export async function enviarInformeEmail(consejoId: string, email: string, fotoC
         anterior = { fecha: a.creado, ui: pf.ui, global: pf.puntuacion_global, edad: pf.edad_piel, foto: fs ? `data:image/jpeg;base64,${fs.jpeg_base64}` : null }
       }
     }
-    pdf = await crearInformePdf({ farmacia, foto, fotoCliente, lectura, rutina, avisos: rutina?.avisos ?? [], codigo: c.codigo as string | null, anterior })
+    pdf = await crearInformePdf({ farmacia, foto, fotoCliente, lectura, rutina, avisos: rutina?.avisos ?? [], consultas: textosConsulta(rutinas?.derivacion), codigo: c.codigo as string | null, anterior })
   } catch {
     return { error: 'No hemos podido preparar el informe. Inténtalo de nuevo.' }
   }
