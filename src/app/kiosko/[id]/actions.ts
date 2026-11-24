@@ -63,7 +63,7 @@ export async function analizarKiosko(farmaciaId: string, s: Seguridad, foto: str
 
 /**
  * Informe completo en PDF al email de la clienta. El email solo se usa para este envío: no se guarda en ningún sitio.
- * Necesita RESEND_API_KEY y INFORME_REMITENTE (p. ej. "SkinCheck <informe@tudominio.es>") en Vercel.
+ * Necesita RESEND_API_KEY y INFORME_REMITENTE (p. ej. "SkinRead <informe@tudominio.es>") en Vercel.
  */
 export async function enviarInformeEmail(consejoId: string, email: string, fotoCliente: string | null, nivel: string) {
   if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) return { error: 'Revisa el email: parece que no está bien escrito.' }

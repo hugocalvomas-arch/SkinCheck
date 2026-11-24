@@ -53,7 +53,7 @@ export function Camara({ onFoto }: { onFoto: (jpegBase64: string | null) => void
         <input type="checkbox" checked={consiente} onChange={(e) => { setConsiente(e.target.checked); if (!e.target.checked) { setActiva(false); setFoto(null); onFoto(null) } }} />
         <span>
           El cliente acepta que se haga una foto de su cara para analizar el aspecto de la piel con un servicio externo.
-          SkinCheck no guarda la foto: solo las puntuaciones del análisis, sin nombre. El servicio externo la conserva un tiempo limitado y después la borra. Puede seguir sin foto.
+          SkinRead no guarda la foto: solo las puntuaciones del análisis, sin nombre. El servicio externo la conserva un tiempo limitado y después la borra. Puede seguir sin foto.
         </span>
       </label>
       {consiente && !activa && !foto && (

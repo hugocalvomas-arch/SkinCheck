@@ -57,7 +57,7 @@ function Barra({ v }: { v: number }) {
 }
 
 function Cabecera({ farmacia, fecha }: { farmacia: string; fecha: string }) {
-  return <View style={s.cab} fixed><Text>SkinCheck · {farmacia}</Text><Text>{fecha}</Text></View>
+  return <View style={s.cab} fixed><Text>SkinRead · {farmacia}</Text><Text>{fecha}</Text></View>
 }
 function Pie() {
   return (
@@ -92,7 +92,7 @@ export async function crearInformePdf(o: { farmacia: string; foto: ResultadoFoto
   const noche = productos.filter((p) => p.turno === 'PM' || p.turno === 'AMPM')
 
   const doc = (
-    <Document title="Tu informe de piel" author="SkinCheck">
+    <Document title="Tu informe de piel" author="SkinRead">
       {/* 1. Resumen */}
       <Page size="A4" style={s.pagina}>
         <Cabecera farmacia={farmacia} fecha={fecha} />

@@ -9,7 +9,7 @@ export default async function Inicio() {
   if (farmacias?.length === 1) redirect(`/app/f/${farmacias[0].id}`)
   return (
     <div className="space-y-8">
-      <h1 className="text-[2rem] leading-tight">{farmacias?.length ? 'Elige farmacia' : 'Bienvenida a SkinCheck'}</h1>
+      <h1 className="text-[2rem] leading-tight">{farmacias?.length ? 'Elige farmacia' : 'Bienvenida a SkinRead'}</h1>
       {!farmacias?.length && (
         <p className="text-gris text-lg max-w-[60ch]">
           {esAdmin ? 'Aún no hay farmacias. Créalas en Farmacias y usuarios.' : 'Tu cuenta aún no está asociada a ninguna farmacia. Escríbenos y te damos acceso en el día.'}

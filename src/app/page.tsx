@@ -9,7 +9,7 @@ import { FormularioInfo } from '@/components/web/FormularioInfo'
 import { Logo } from '@/components/Logo'
 
 export const metadata = {
-  title: 'SkinCheck · Análisis de piel con IA para farmacias',
+  title: 'SkinRead · Análisis de piel con IA para farmacias',
   description: 'Análisis facial con IA en el mostrador: 11 parámetros de la piel, simulación del antes y después y una rutina con el stock de tu farmacia.',
 }
 
@@ -38,7 +38,7 @@ const ACTIVOS: [string, string][] = [
 
 const PREGUNTAS: [string, string][] = [
   ['¿Tengo que comprar algún aparato?', 'No. Funciona en el navegador de cualquier iPad con cámara frontal. Lo dejas en el mostrador y listo.'],
-  ['¿Funciona con mi programa de gestión?', 'Exportas el stock en Excel o CSV desde Farmatic, Nixfarma, Unycop u otro programa y lo subes. SkinCheck reconoce las columnas y recuerda tu formato para la próxima vez.'],
+  ['¿Funciona con mi programa de gestión?', 'Exportas el stock en Excel o CSV desde Farmatic, Nixfarma, Unycop u otro programa y lo subes. SkinRead reconoce las columnas y recuerda tu formato para la próxima vez.'],
   ['¿Qué pasa con las fotos de las clientas?', 'La farmacia no guarda fotos ni nombres. La foto se envía al servicio de análisis, que la elimina tras un periodo limitado. Solo quedan puntuaciones anónimas.'],
   ['¿Es un diagnóstico médico?', 'No. Es un análisis cosmético orientativo. Si las respuestas indican algo que necesita consulta, la pantalla lo recomienda en lugar de vender.'],
   ['¿Puedo cobrar el análisis a la clienta?', 'Sí, lo decides tú. Puedes cobrarlo como servicio, descontarlo de la compra o regalarlo.'],
@@ -57,7 +57,7 @@ export default function Inicio() {
     <div className="bg-papel">
       <header className="sticky top-0 z-[var(--z-sticky-nav)] bg-papel border-b border-linea">
         <nav className="contenedor h-16 flex items-center gap-8" aria-label="Principal">
-          <Link href="/" aria-label="SkinCheck, inicio"><Logo /></Link>
+          <Link href="/" aria-label="SkinRead, inicio"><Logo /></Link>
           <div className="hidden lg:flex items-center gap-7 text-[0.9375rem] text-tinta-2 whitespace-nowrap">
             <a href="#como" className="hover:text-tinta">Cómo funciona</a>
             <a href="#ventajas" className="hover:text-tinta">Para tu farmacia</a>
@@ -260,7 +260,7 @@ export default function Inicio() {
           <p className="text-[length:var(--text-2xl)] font-semibold tracking-[-0.03em] max-w-[24ch] leading-tight">Consejo dermocosmético con el stock de tu farmacia.</p>
           <div className="flex flex-wrap items-center gap-x-8 gap-y-4 border-t border-sobre-marca/20 pt-6 text-sm">
             <Logo claro />
-            <span className="text-sobre-marca-suave">© 2026 SkinCheck</span>
+            <span className="text-sobre-marca-suave">© 2026 SkinRead</span>
             <Link href="/login" className="sm:ml-auto hover:underline underline-offset-4">Acceso farmacias</Link>
             <a href="#contacto" className="hover:underline underline-offset-4">Pedir información</a>
           </div>

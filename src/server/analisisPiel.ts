@@ -1,5 +1,5 @@
 // Análisis de la foto con Perfect Corp (YouCam AI API v2). Cambiar de proveedor = cambiar este archivo.
-// La foto se envía al proveedor y no se guarda en SkinCheck. Perfect Corp devuelve puntuaciones
+// La foto se envía al proveedor y no se guarda en SkinRead. Perfect Corp devuelve puntuaciones
 // y enlaces a imágenes (cara con zonas marcadas y simulación del "después") que caducan en unas 2 horas.
 
 export type Puntuaciones = Record<string, number> // aspecto -> 0..100 (más alto = más marcado)

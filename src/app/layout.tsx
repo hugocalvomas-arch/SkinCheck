@@ -13,7 +13,7 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "SkinCheck",
+  title: "SkinRead",
   description: "Consejo dermocosmético con el stock de tu farmacia",
 };
 

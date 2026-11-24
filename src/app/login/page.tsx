@@ -37,7 +37,7 @@ export default function Login() {
             </button>
           </p>
         </form>
-        <p className="text-sm text-gris">¿Tu farmacia aún no usa SkinCheck? <Link href="/#contacto" className="enlace">Pide información</Link></p>
+        <p className="text-sm text-gris">¿Tu farmacia aún no usa SkinRead? <Link href="/#contacto" className="enlace">Pide información</Link></p>
       </div>
       <aside className="hidden md:flex flex-col justify-between bg-marca-suave text-tinta p-12 border-l border-linea">
         <EscalaDecorativa />
