@@ -345,6 +345,8 @@ function pauta(r, P, c, veto, modo){
       const sc = Math.max(...acts.map(a => pts(a) * (pesoEn(a, objetivo) >= 1 ? 1 : .5)));
       if(!mejor || sc > mejor.sc + 1e-9) mejor = {x, sc, acts: d.humectante ? null : acts.slice().sort((a, b) => pts(b) - pts(a) || a.localeCompare(b))};
     }
+    // R4 (Hugo): embarazo con manchas, azelaico ya en la básica
+    if(c.embarazo && !c.lactancia && nb("manchas") <= 69 + B3 && !veto.azelaico){ const dp = lista.find(x => ["despigmentante", "azelaico_mixto"].includes(x.k)); if(dp) mejor = {x: dp, sc: 0, acts: ["azelaico"].concat(((deseoDe(dp.k) || {}).activos || []).filter(a => a !== "azelaico" && !veto[a]))}; }
     if(!mejor && !veto.pha && !c.sequedad_activa) mejor = {x: {k: "pha", por: orden[0]}, sc: 0, acts: null};
     for(const x of lista) if(!mejor || x !== mejor.x){ const nom = nombreDeseo(x.k); if(!fuera.some(f => f.que === nom)) fuera.push({k: x.k, que: nom, por: "Tu piel está en la franja leve: un solo activo suave, dirigido a tu nota más baja. Lo demás se cuida con la rutina base."}); }
     // la media y la completa no rellenan: solo suman los pasos con indicación de Hugo (R21: retinoide desde los 35 con arrugas <70 o poros <55; R35: manchas <60, vitamina C o azelaico de mañana)
@@ -834,17 +836,23 @@ function elegir(pa, ctx){
   let vueltas = 0;
   while(total() > tope && vueltas++ < 60){
     let mejor = null;
+    const falta = total() - tope;
+    const minimo = cuenta().reduce((a, [slot, e]) => a + Math.min(e.p.pvp_eur, ...cand[slot].principales.filter(x => !usados.has(x.p.id)).map(x => x.p.pvp_eur)), 0);
+    for(const suelo of (minimo <= tope ? [.5, -Infinity] : [.5])){   // si ni lo más barato entra, no se baja a productos flojos para nada   // primero sin bajar a productos que la piel apenas puntúa; si no hay, como antes
     for(const [slot, e] of cuenta()){
       for(const alt of cand[slot].principales){
         if(usados.has(alt.p.id) || alt.p.pvp_eur >= e.p.pvp_eur) continue;
+        if(alt.score < suelo && alt.score < e.score) continue;
         const bon = ctx.r.bonus_activos || {}; if(alt.activo && (bon[alt.activo] || 0) < 0 && !((bon[e.activo] || 0) < 0)) continue;   // el ahorro no mete un activo que una regla de la foto pide evitar
         if(/^serum/.test(slot) && alt.activo && Object.entries(sel).some(([s2, e2]) => s2 !== slot && /^serum/.test(s2) && e2.activo === alt.activo)) continue;   // sin dos sérums con el mismo activo
         if(slot !== "L" && ACIDOS_EXF.some(k => llevaAcido(alt.p, k)) && Object.entries(sel).some(([s2, e2]) => s2 !== slot && s2 !== "L" && ACIDOS_EXF.some(k => llevaAcido(e2.p, k)))) continue;   // el ahorro no mete un segundo producto con ácido (R2)
         const ahorro = e.p.pvp_eur - alt.p.pvp_eur, perdida = Math.max(e.score - alt.score, .02);
-        const ratio = ahorro / perdida;
+        const cierra = ahorro >= falta;   // si un cambio basta para entrar en el presupuesto, el que menos calidad pierde
+        const ratio = cierra ? 1e6 - perdida : ahorro / perdida;
         if(!mejor || ratio > mejor.ratio) mejor = {slot, alt, ratio};
       }
     }
+    if(mejor) break; }
     if(mejor){ usados.delete(sel[mejor.slot].p.id); sel[mejor.slot] = mejor.alt; usados.add(mejor.alt.p.id); continue; }
     // no queda nada más barato: se quita el último paso opcional
     const opc = ["humectante", "H2", "contorno", "serum3", "serum2", "posafeitado"].find(s => sel[s]);
