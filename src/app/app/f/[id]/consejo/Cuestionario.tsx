@@ -81,7 +81,7 @@ export function Cuestionario({ farmaciaId, farmacia }: { farmaciaId: string; far
         >
           {enviando ? (foto ? 'Analizando la piel… (hasta 1 minuto)' : 'Calculando…') : 'Ver rutinas'}
         </button>
-        <span className="text-sm text-gris">{faltan.length ? `Faltan ${faltan.length} preguntas` : 'Listo'}</span>
+        <span className="text-sm text-gris">{faltan.length ? (faltan.length === 1 ? 'Falta 1 pregunta' : `Faltan ${faltan.length} preguntas`) : 'Listo'}</span>
         {error && <span className="text-sm text-error">{error}</span>}
       </div>
     </div>

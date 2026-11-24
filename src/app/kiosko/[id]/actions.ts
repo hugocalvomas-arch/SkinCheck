@@ -120,7 +120,17 @@ export async function buscarSeguimiento(farmaciaId: string, codigo: string) {
 export async function borrarSeguimiento(farmaciaId: string, consejoId: string) {
   const sb = await supabaseServer()
   await sb.from('fotos_seguimiento').delete().eq('consejo_id', consejoId).eq('farmacia_id', farmaciaId)
-  const { error } = await sb.from('consejos').update({ codigo: null }).eq('id', consejoId).eq('farmacia_id', farmaciaId)
+  // Supresión (art. 17 RGPD): igual que la purga de los 12 meses. Se borran las respuestas de salud, las puntuaciones,
+  // el perfil y el código; la farmacia conserva solo la rutina propuesta y si la vendió.
+  const { data: c } = await sb.from('consejos').select('rutinas').eq('id', consejoId).eq('farmacia_id', farmaciaId).maybeSingle()
+  const rutinas = c?.rutinas && typeof c.rutinas === 'object' ? structuredClone(c.rutinas) : c?.rutinas ?? null
+  if (rutinas && typeof rutinas === 'object') {
+    for (const k of ['perfil', 'derivacion', 'no_recomiendo']) delete rutinas[k]
+    for (const n of ['basica', 'media', 'completa']) if (rutinas.rutinas?.[n]) delete rutinas.rutinas[n].avisos
+  }
+  const { error } = await sb.from('consejos')
+    .update({ codigo: null, respuestas: { purgado: true, borrado_por_la_clienta: new Date().toISOString() }, puntuaciones_foto: null, rutinas })
+    .eq('id', consejoId).eq('farmacia_id', farmaciaId)
   if (error) return { error: 'No se ha podido borrar. Pide ayuda en el mostrador.' }
   return { ok: true as const }
 }

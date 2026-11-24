@@ -10,7 +10,7 @@ async function Contenido({ params }: { params: Promise<{ id: string }> }) {
   const { sb } = await usuarioActual()
   const { data: f } = await sb.from('farmacias').select('id, nombre').eq('id', id).maybeSingle()
   if (!f) return <p className="p-10">Este usuario no tiene acceso a esta farmacia.</p>
-  return <Kiosko farmaciaId={f.id} farmacia={f.nombre} precio="9,99 €" />
+  return <Kiosko farmaciaId={f.id} farmacia={f.nombre} precio="9,99 €" emailActivo={!!process.env.RESEND_API_KEY && !!process.env.INFORME_REMITENTE} />
 }
 
 export default function Pagina({ params }: { params: Promise<{ id: string }> }) {

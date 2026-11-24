@@ -59,7 +59,7 @@ export default async function Hoja({ params, searchParams }: { params: Promise<{
       <Lista titulo="Por la mañana" items={manana} />
       <Lista titulo="Por la noche" items={noche} />
       {r.escalado && <p className="text-sm"><b>Cómo empezar:</b> {r.escalado}</p>}
-      {r.avisos?.length > 0 && <ul className="list-disc pl-5 text-sm space-y-1">{r.avisos.map((a: string, i: number) => <li key={i}>{a}</li>)}</ul>}
+      {r.avisos?.length > 0 && <ul className="list-disc pl-5 text-sm space-y-1">{r.avisos.filter((a: string) => !r.escalado || !a.startsWith(r.escalado)).map((a: string, i: number) => <li key={i}>{a}</li>)}</ul>}
       {R.derivacion?.length > 0 && <ul className="list-disc pl-5 text-sm space-y-1 text-error">{R.derivacion.map((d: any, i: number) => <li key={i}>{d.texto}</li>)}</ul>}
       <div className="flex justify-between border-t pt-3 font-semibold"><span>Total</span><span>{eur(r.total)}</span></div>
       <p className="text-xs text-gris">Esto no es un diagnóstico ni sustituye a una consulta médica. Si algo te preocupa o no mejora, consúltalo con tu farmacéutico o tu médico.</p>
