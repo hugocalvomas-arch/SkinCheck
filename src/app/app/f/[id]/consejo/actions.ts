@@ -5,7 +5,8 @@ import { supabaseServer } from '@/lib/supabase/server'
 import { pendientes, visibles, type Respuestas } from '@/lib/cuestionario'
 import { calcularRutinas } from '@/server/rutinas'
 import { recomiendaSinStock } from '@/server/ajustesFarmacia'
-import { analizarFoto, problemasDesdeFoto, type ResultadoFoto } from '@/server/analisisPiel'
+import { analizarFoto, type ResultadoFoto } from '@/server/analisisPiel'
+import { conReglasFoto } from '@/server/reglasFoto'
 import { registroConsentimiento } from '@/lib/privacidad'
 
 export async function crearConsejo(farmaciaId: string, r: Respuestas, foto: string | null = null, acepta = false) {
@@ -22,7 +23,7 @@ export async function crearConsejo(farmaciaId: string, r: Respuestas, foto: stri
     const a = await analizarFoto(foto)
     if ('error' in a) return { error: a.error }
     puntuaciones = a
-    limpias.problemas_extra = problemasDesdeFoto(a.puntuaciones)
+    conReglasFoto(limpias, a, false)   // en el mostrador, el tipo de piel lo dice la clienta
   }
   const stock: { producto_id: string; pvp: number | null; unidades: number }[] = []
   for (let desde = 0; ; desde += 1000) {

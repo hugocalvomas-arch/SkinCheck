@@ -1,0 +1,2819 @@
+{
+ "version": "0.1.0",
+ "date": "2026-11-24",
+ "methodology": "Base de conocimiento SkinRead (OUTPUTS/skincheck/base-conocimiento, entregas 1-4). Notas de Perfect Corp de 0 a 100, más alto es mejor. Bandas: Bien >=75, Leve 50-74, Moderado 30-49, Marcado <30. Evidencia: A guía o metaanálisis, B ensayo clínico, C mecanismo o criterio de experto. Reglas deterministas: se evalúan todas y se suman sus efectos. Pendiente de validación de Hugo.",
+ "aspect_reach": {
+  "acne": 1.0,
+  "brillo": 1.0,
+  "manchas": 1.0,
+  "hidratacion": 1.0,
+  "textura": 1.0,
+  "tono": 1.0,
+  "arrugas": 0.7,
+  "poros": 0.7,
+  "rojez": 0.7,
+  "firmeza": 0.4,
+  "ojeras": 0.4
+ },
+ "actions": {
+  "add_problem": "Añade un problema del motor (P01-P31).",
+  "remove_problem": "Quita un problema que otra regla haya añadido.",
+  "veto": "Bloquea un activo en toda la rutina.",
+  "prefer": "Suma puntos a los productos que llevan el activo o ingrediente (weight positivo).",
+  "avoid": "Resta puntos a los productos que lo llevan, sin bloquearlo (weight negativo).",
+  "set_skin": "Fija el tipo de piel que usa el motor para la textura: tirante, normal, brillo_T o brillo_total.",
+  "refer": "Aviso de consulta para la clienta.",
+  "notice": "Aviso o consejo que se añade a la rutina.",
+  "priority": "Multiplica la prioridad de un aspecto (factor)."
+ },
+ "rules": [
+  {
+   "id": "ASP-ACN-01",
+   "name": "Granitos en Moderado o Marcado",
+   "category": "aspecto",
+   "conditions": {
+    "scores": [
+     {
+      "aspect": "acne",
+      "operator": "lte",
+      "max": 49
+     }
+    ]
+   },
+   "effect": [
+    {
+     "action": "add_problem",
+     "problem": "P02",
+     "routine_step": "serum"
+    }
+   ],
+   "reason_for_client": "Vemos granitos: la rutina lleva un activo que limpia el poro y calma la inflamación.",
+   "evidence_level": "A",
+   "sources": [
+    {
+     "reference": "Guía AAD de acné 2024",
+     "doi": "10.1016/j.jaad.2023.12.017"
+    }
+   ],
+   "exceptions": "Con tratamiento con receta, el motor pasa a rutina suave.",
+   "requires_expert_validation": false
+  },
+  {
+   "id": "ASP-ACN-02",
+   "name": "Granitos leves",
+   "category": "aspecto",
+   "conditions": {
+    "scores": [
+     {
+      "aspect": "acne",
+      "operator": "between",
+      "min": 50,
+      "max": 74
+     }
+    ]
+   },
+   "effect": [
+    {
+     "action": "prefer",
+     "active": "niacinamida",
+     "weight": 0.15
+    },
+    {
+     "action": "prefer",
+     "active": "zinc",
+     "weight": 0.1
+    }
+   ],
+   "reason_for_client": "Hay algún granito: elegimos productos que además ayudan a prevenirlos.",
+   "evidence_level": "C",
+   "sources": [],
+   "exceptions": "",
+   "requires_expert_validation": true
+  },
+  {
+   "id": "ASP-ACN-03",
+   "name": "Granitos marcados: consulta",
+   "category": "seguridad",
+   "conditions": {
+    "scores": [
+     {
+      "aspect": "acne",
+      "operator": "lte",
+      "max": 29
+     }
+    ]
+   },
+   "effect": [
+    {
+     "action": "refer",
+     "text": "Vemos bastantes granitos. Te recomendamos consultar con tu médico o tu farmacéutico: hay tratamientos más eficaces."
+    }
+   ],
+   "reason_for_client": "Con muchos granitos, un profesional puede indicar un tratamiento más eficaz.",
+   "evidence_level": "A",
+   "sources": [
+    {
+     "reference": "Guía AAD de acné 2024",
+     "doi": "10.1016/j.jaad.2023.12.017"
+    }
+   ],
+   "exceptions": "",
+   "requires_expert_validation": false
+  },
+  {
+   "id": "ASP-POR-01",
+   "name": "Poro por sebo",
+   "category": "aspecto",
+   "conditions": {
+    "scores": [
+     {
+      "aspect": "poros",
+      "operator": "lte",
+      "max": 49
+     }
+    ],
+    "not": {
+     "rule": "ASP-POR-02"
+    }
+   },
+   "effect": [
+    {
+     "action": "add_problem",
+     "problem": "P07"
+    }
+   ],
+   "reason_for_client": "Los poros se ven más por la grasa: activos que los limpian y regulan el sebo.",
+   "evidence_level": "C",
+   "sources": [],
+   "exceptions": "",
+   "requires_expert_validation": true
+  },
+  {
+   "id": "ASP-POR-02",
+   "name": "Poro por pérdida de firmeza",
+   "category": "aspecto",
+   "conditions": {
+    "scores": [
+     {
+      "aspect": "poros",
+      "operator": "lte",
+      "max": 49
+     },
+     {
+      "aspect": "brillo",
+      "operator": "gte",
+      "min": 50
+     }
+    ],
+    "any": [
+     {
+      "scores": [
+       {
+        "aspect": "firmeza",
+        "operator": "lte",
+        "max": 49
+       }
+      ]
+     },
+     {
+      "client": {
+       "edad": [
+        "40-49",
+        "50+"
+       ]
+      }
+     }
+    ]
+   },
+   "effect": [
+    {
+     "action": "add_problem",
+     "problem": "P08"
+    },
+    {
+     "action": "avoid",
+     "active": "salicilico",
+     "weight": -0.5
+    }
+   ],
+   "reason_for_client": "El poro se ve más porque la piel ha perdido algo de firmeza: aquí ayuda más renovar la piel que exfoliar el poro.",
+   "evidence_level": "C",
+   "sources": [],
+   "exceptions": "",
+   "requires_expert_validation": true
+  },
+  {
+   "id": "ASP-BRI-01",
+   "name": "Brillo en Moderado o Marcado",
+   "category": "aspecto",
+   "conditions": {
+    "scores": [
+     {
+      "aspect": "brillo",
+      "operator": "lte",
+      "max": 49
+     }
+    ]
+   },
+   "effect": [
+    {
+     "action": "add_problem",
+     "problem": "P06"
+    }
+   ],
+   "reason_for_client": "Tu piel produce más grasa en la zona T: niacinamida y texturas ligeras la regulan sin resecar.",
+   "evidence_level": "B",
+   "sources": [
+    {
+     "reference": "Draelos 2006, niacinamida 2 % y sebo",
+     "doi": "10.1080/14764170600717704"
+    }
+   ],
+   "exceptions": "",
+   "requires_expert_validation": false
+  },
+  {
+   "id": "PIEL-01",
+   "name": "Piel grasa",
+   "category": "producto",
+   "conditions": {
+    "scores": [
+     {
+      "aspect": "brillo",
+      "operator": "lte",
+      "max": 49
+     },
+     {
+      "aspect": "hidratacion",
+      "operator": "gte",
+      "min": 50
+     }
+    ]
+   },
+   "effect": [
+    {
+     "action": "set_skin",
+     "value": "brillo_total"
+    }
+   ],
+   "reason_for_client": "Elegimos texturas ligeras y acabado mate.",
+   "evidence_level": "C",
+   "sources": [],
+   "exceptions": "",
+   "requires_expert_validation": false
+  },
+  {
+   "id": "PIEL-02",
+   "name": "Piel mixta",
+   "category": "producto",
+   "conditions": {
+    "scores": [
+     {
+      "aspect": "brillo",
+      "operator": "between",
+      "min": 50,
+      "max": 64
+     }
+    ]
+   },
+   "effect": [
+    {
+     "action": "set_skin",
+     "value": "brillo_T"
+    }
+   ],
+   "reason_for_client": "Elegimos texturas ligeras.",
+   "evidence_level": "C",
+   "sources": [],
+   "exceptions": "",
+   "requires_expert_validation": false
+  },
+  {
+   "id": "PIEL-03",
+   "name": "Piel que tira",
+   "category": "producto",
+   "conditions": {
+    "scores": [
+     {
+      "aspect": "hidratacion",
+      "operator": "lte",
+      "max": 49
+     },
+     {
+      "aspect": "brillo",
+      "operator": "gte",
+      "min": 65
+     }
+    ]
+   },
+   "effect": [
+    {
+     "action": "set_skin",
+     "value": "tirante"
+    }
+   ],
+   "reason_for_client": "Elegimos cremas que aportan agua y lípidos.",
+   "evidence_level": "C",
+   "sources": [],
+   "exceptions": "",
+   "requires_expert_validation": false
+  },
+  {
+   "id": "ASP-MAN-01",
+   "name": "Manchas probablemente tras granos",
+   "category": "aspecto",
+   "conditions": {
+    "scores": [
+     {
+      "aspect": "manchas",
+      "operator": "lte",
+      "max": 49
+     },
+     {
+      "aspect": "acne",
+      "operator": "lte",
+      "max": 64
+     }
+    ],
+    "client": {
+     "edad": [
+      "14-17",
+      "18-24",
+      "25-39"
+     ]
+    }
+   },
+   "effect": [
+    {
+     "action": "add_problem",
+     "problem": "P10"
+    }
+   ],
+   "reason_for_client": "Las manchas parecen marcas que dejan los granos: activos que las aclaran sin irritar.",
+   "evidence_level": "B",
+   "sources": [
+    {
+     "reference": "Hakozaki 2002, niacinamida",
+     "doi": "10.1046/j.1365-2133.2002.04834.x"
+    }
+   ],
+   "exceptions": "",
+   "requires_expert_validation": true
+  },
+  {
+   "id": "ASP-MAN-02",
+   "name": "Manchas con perfil de melasma",
+   "category": "aspecto",
+   "conditions": {
+    "scores": [
+     {
+      "aspect": "manchas",
+      "operator": "lte",
+      "max": 49
+     },
+     {
+      "aspect": "acne",
+      "operator": "gte",
+      "min": 65
+     }
+    ],
+    "client": {
+     "sexo": [
+      "mujer"
+     ]
+    },
+    "any": [
+     {
+      "client": {
+       "edad": [
+        "25-39",
+        "40-49"
+       ]
+      }
+     },
+     {
+      "client": {
+       "embarazo": [
+        "si"
+       ]
+      }
+     }
+    ]
+   },
+   "effect": [
+    {
+     "action": "add_problem",
+     "problem": "P13"
+    }
+   ],
+   "reason_for_client": "Por tu perfil, las manchas pueden ser hormonales: protector solar con color cada día y un activo que frena el pigmento.",
+   "evidence_level": "B",
+   "sources": [
+    {
+     "reference": "Thiamidol 0,2 % frente a hidroquinona 4 %",
+     "doi": "10.1111/jdv.17344"
+    },
+    {
+     "reference": "Solares con color",
+     "doi": "10.1016/j.jaad.2020.04.079"
+    }
+   ],
+   "exceptions": "La cámara no distingue melasma de lentigo: es una inferencia por edad y sexo.",
+   "requires_expert_validation": true
+  },
+  {
+   "id": "ASP-MAN-03",
+   "name": "Manchas del sol o de la edad",
+   "category": "aspecto",
+   "conditions": {
+    "scores": [
+     {
+      "aspect": "manchas",
+      "operator": "lte",
+      "max": 49
+     }
+    ],
+    "not": {
+     "any_rule": [
+      "ASP-MAN-01",
+      "ASP-MAN-02"
+     ]
+    }
+   },
+   "effect": [
+    {
+     "action": "add_problem",
+     "problem": "P12"
+    }
+   ],
+   "reason_for_client": "Vemos manchas por el sol: protector solar diario y activos que las atenúan.",
+   "evidence_level": "B",
+   "sources": [
+    {
+     "reference": "Revisión de retinoides 2022",
+     "doi": "10.1007/s12325-022-02319-7"
+    }
+   ],
+   "exceptions": "",
+   "requires_expert_validation": false
+  },
+  {
+   "id": "ASP-MAN-04",
+   "name": "Manchas marcadas: aviso",
+   "category": "seguridad",
+   "conditions": {
+    "scores": [
+     {
+      "aspect": "manchas",
+      "operator": "lte",
+      "max": 29
+     }
+    ]
+   },
+   "effect": [
+    {
+     "action": "refer",
+     "text": "Si alguna mancha cambia de forma, color o tamaño, o sangra, consulta con tu médico."
+    }
+   ],
+   "reason_for_client": "Es un aviso de seguridad, no un diagnóstico.",
+   "evidence_level": "C",
+   "sources": [],
+   "exceptions": "",
+   "requires_expert_validation": false
+  },
+  {
+   "id": "ASP-TON-01",
+   "name": "Tono apagado",
+   "category": "aspecto",
+   "conditions": {
+    "scores": [
+     {
+      "aspect": "tono",
+      "operator": "lte",
+      "max": 49
+     }
+    ]
+   },
+   "effect": [
+    {
+     "action": "add_problem",
+     "problem": "P14"
+    }
+   ],
+   "reason_for_client": "Tu piel se ve algo apagada: un antioxidante por la mañana le devuelve la luz.",
+   "evidence_level": "B",
+   "sources": [
+    {
+     "reference": "Vitamina C tópica, revisión",
+     "url": "https://pubmed.ncbi.nlm.nih.gov/29104718/"
+    }
+   ],
+   "exceptions": "",
+   "requires_expert_validation": false
+  },
+  {
+   "id": "ASP-ARR-01",
+   "name": "Arrugas a partir de 25 años",
+   "category": "aspecto",
+   "conditions": {
+    "scores": [
+     {
+      "aspect": "arrugas",
+      "operator": "lte",
+      "max": 49
+     }
+    ],
+    "client": {
+     "edad": [
+      "25-39",
+      "40-49",
+      "50+"
+     ]
+    }
+   },
+   "effect": [
+    {
+     "action": "add_problem",
+     "problem": "P17"
+    }
+   ],
+   "reason_for_client": "Vemos líneas finas: el retinoide de noche y el protector solar son lo que más ayuda.",
+   "evidence_level": "B",
+   "sources": [
+    {
+     "reference": "Kafi 2007, retinol en piel envejecida",
+     "doi": "10.1001/archderm.143.5.606"
+    }
+   ],
+   "exceptions": "Embarazo, receta o reactividad cambian el activo.",
+   "requires_expert_validation": false
+  },
+  {
+   "id": "ASP-ARR-02",
+   "name": "Arrugas por debajo de 25 años = probable deshidratación",
+   "category": "aspecto",
+   "conditions": {
+    "scores": [
+     {
+      "aspect": "arrugas",
+      "operator": "lte",
+      "max": 49
+     }
+    ],
+    "client": {
+     "edad": [
+      "14-17",
+      "18-24"
+     ]
+    }
+   },
+   "effect": [
+    {
+     "action": "add_problem",
+     "problem": "P29"
+    }
+   ],
+   "reason_for_client": "A tu edad, las líneas finas suelen ser falta de agua: una buena hidratante las rellena en días.",
+   "evidence_level": "C",
+   "sources": [],
+   "exceptions": "",
+   "requires_expert_validation": true
+  },
+  {
+   "id": "ASP-FIR-01",
+   "name": "Firmeza a partir de 25 años",
+   "category": "aspecto",
+   "conditions": {
+    "scores": [
+     {
+      "aspect": "firmeza",
+      "operator": "lte",
+      "max": 49
+     }
+    ],
+    "client": {
+     "edad": [
+      "25-39",
+      "40-49",
+      "50+"
+     ]
+    }
+   },
+   "effect": [
+    {
+     "action": "add_problem",
+     "problem": "P19"
+    },
+    {
+     "action": "prefer",
+     "active": "peptidos",
+     "weight": 0.15
+    }
+   ],
+   "reason_for_client": "El óvalo ha perdido algo de tensión: el retinoide ayuda a mantener el colágeno.",
+   "evidence_level": "B",
+   "sources": [
+    {
+     "reference": "Revisión sistemática de antiedad de venta libre 2021",
+     "doi": "10.1159/000509296"
+    }
+   ],
+   "exceptions": "Por debajo de 25 años se ignora (probable efecto del ángulo de la foto).",
+   "requires_expert_validation": false
+  },
+  {
+   "id": "ASP-TEX-01",
+   "name": "Textura",
+   "category": "aspecto",
+   "conditions": {
+    "scores": [
+     {
+      "aspect": "textura",
+      "operator": "lte",
+      "max": 49
+     }
+    ]
+   },
+   "effect": [
+    {
+     "action": "add_problem",
+     "problem": "P20"
+    }
+   ],
+   "reason_for_client": "Tu piel se ve menos lisa: una exfoliación suave unas noches por semana la iguala.",
+   "evidence_level": "B",
+   "sources": [
+    {
+     "reference": "Glicólico 5 %, ensayo 1998",
+     "doi": "10.1111/j.1524-4725.1998.tb04209.x"
+    }
+   ],
+   "exceptions": "",
+   "requires_expert_validation": false
+  },
+  {
+   "id": "ASP-ROJ-01",
+   "name": "Rojez visible (sin reactividad)",
+   "category": "aspecto",
+   "conditions": {
+    "scores": [
+     {
+      "aspect": "rojez",
+      "operator": "between",
+      "min": 30,
+      "max": 49
+     }
+    ],
+    "client": {
+     "reactiva": [
+      "nunca"
+     ]
+    }
+   },
+   "effect": [
+    {
+     "action": "veto",
+     "active": "perfume",
+     "message": "Con rojez visible, sin perfume."
+    },
+    {
+     "action": "veto",
+     "active": "alcohol",
+     "message": "Con rojez visible, sin alcohol."
+    },
+    {
+     "action": "veto",
+     "active": "mentol",
+     "message": "Con rojez visible, sin mentol ni alcanfor."
+    },
+    {
+     "action": "veto",
+     "active": "glicolico",
+     "message": "Con rojez visible, en lugar de un ácido fuerte va un exfoliante suave (PHA)."
+    },
+    {
+     "action": "veto",
+     "active": "lactico",
+     "message": "Con rojez visible, en lugar de un ácido fuerte va un exfoliante suave (PHA)."
+    },
+    {
+     "action": "prefer",
+     "active": "niacinamida",
+     "weight": 0.2
+    },
+    {
+     "action": "prefer",
+     "active": "pantenol",
+     "weight": 0.15
+    },
+    {
+     "action": "prefer",
+     "active": "ceramidas",
+     "weight": 0.15
+    },
+    {
+     "action": "veto",
+     "active": "vitc_pura",
+     "message": "Con rojez, la vitamina C pura a pH bajo escuece: mejor una vitamina C estable."
+    }
+   ],
+   "reason_for_client": "Vemos algo de rojez: productos sin perfume y que cuidan la barrera de la piel.",
+   "evidence_level": "C",
+   "sources": [
+    {
+     "reference": "Cook 2022: la rojez tiene un 64 % de acuerdo entre analizadores",
+     "doi": "10.1111/jocd.15434"
+    }
+   ],
+   "exceptions": "La foto no distingue rosácea de un sofoco o de la luz: sin reactividad declarada no se activa el modo de piel sensible ni el problema P21 (rojez fija), que en el motor bloquea el retinoide.",
+   "requires_expert_validation": true
+  },
+  {
+   "id": "ASP-ROJ-01b",
+   "name": "Rojez visible sin motivo antiedad: calmar",
+   "category": "aspecto",
+   "conditions": {
+    "scores": [
+     {
+      "aspect": "rojez",
+      "operator": "between",
+      "min": 30,
+      "max": 49
+     },
+     {
+      "aspect": "arrugas",
+      "operator": "gte",
+      "min": 50
+     },
+     {
+      "aspect": "firmeza",
+      "operator": "gte",
+      "min": 50
+     },
+     {
+      "aspect": "manchas",
+      "operator": "gte",
+      "min": 50
+     },
+     {
+      "aspect": "textura",
+      "operator": "gte",
+      "min": 50
+     }
+    ],
+    "client": {
+     "reactiva": [
+      "nunca"
+     ]
+    }
+   },
+   "effect": [
+    {
+     "action": "add_problem",
+     "problem": "P21"
+    }
+   ],
+   "reason_for_client": "Vemos algo de rojez: un activo que calma y productos sin perfume.",
+   "evidence_level": "C",
+   "sources": [
+    {
+     "reference": "Cook 2022",
+     "doi": "10.1111/jocd.15434"
+    }
+   ],
+   "exceptions": "Solo si no hay arrugas, firmeza, manchas ni textura bajas: P21 bloquea el retinoide en el motor.",
+   "requires_expert_validation": true
+  },
+  {
+   "id": "ASP-ROJ-02",
+   "name": "Rojez con reactividad = piel sensible",
+   "category": "modo",
+   "conditions": {
+    "scores": [
+     {
+      "aspect": "rojez",
+      "operator": "lte",
+      "max": 49
+     }
+    ],
+    "client": {
+     "reactiva": [
+      "a_veces",
+      "siempre"
+     ]
+    }
+   },
+   "effect": [
+    {
+     "action": "add_problem",
+     "problem": "P23"
+    },
+    {
+     "action": "veto",
+     "active": "glicolico",
+     "message": "Tu piel reacciona: en lugar de un ácido fuerte, un exfoliante suave (PHA)."
+    },
+    {
+     "action": "veto",
+     "active": "lactico",
+     "message": "Tu piel reacciona: en lugar de un ácido fuerte, un exfoliante suave (PHA)."
+    },
+    {
+     "action": "prefer",
+     "active": "ceramidas",
+     "weight": 0.15
+    },
+    {
+     "action": "prefer",
+     "active": "pantenol",
+     "weight": 0.15
+    },
+    {
+     "action": "veto",
+     "active": "vitc_pura",
+     "message": "Con rojez, la vitamina C pura a pH bajo escuece: mejor una vitamina C estable."
+    }
+   ],
+   "reason_for_client": "Tu piel se enrojece y reacciona: empezamos por lo más suave y reforzamos la barrera.",
+   "evidence_level": "C",
+   "sources": [
+    {
+     "reference": "Grupo internacional de piel sensible 2020",
+     "doi": "10.1111/jdv.16000"
+    }
+   ],
+   "exceptions": "No añade P21 (rojez fija): eso bloquearía el retinoide, y la foto no basta para decir que la rojez es fija. P21 solo con rojez Marcada.",
+   "requires_expert_validation": true
+  },
+  {
+   "id": "ASP-ROJ-03",
+   "name": "Rojez marcada",
+   "category": "modo",
+   "conditions": {
+    "scores": [
+     {
+      "aspect": "rojez",
+      "operator": "lte",
+      "max": 29
+     }
+    ]
+   },
+   "effect": [
+    {
+     "action": "add_problem",
+     "problem": "P21"
+    },
+    {
+     "action": "add_problem",
+     "problem": "P23"
+    },
+    {
+     "action": "refer",
+     "text": "Si la rojez no se va o va con picor, ardor o granitos, consulta con tu médico."
+    }
+   ],
+   "reason_for_client": "Hay bastante rojez: rutina suave y, si persiste, consulta.",
+   "evidence_level": "C",
+   "sources": [
+    {
+     "reference": "Grupo internacional de piel sensible 2020",
+     "doi": "10.1111/jdv.16000"
+    }
+   ],
+   "exceptions": "",
+   "requires_expert_validation": true
+  },
+  {
+   "id": "ASP-ROJ-04",
+   "name": "Rojez leve",
+   "category": "producto",
+   "conditions": {
+    "scores": [
+     {
+      "aspect": "rojez",
+      "operator": "between",
+      "min": 50,
+      "max": 74
+     }
+    ]
+   },
+   "effect": [
+    {
+     "action": "prefer",
+     "active": "niacinamida",
+     "weight": 0.1
+    },
+    {
+     "action": "prefer",
+     "active": "pantenol",
+     "weight": 0.1
+    },
+    {
+     "action": "avoid",
+     "active": "perfume",
+     "weight": -0.15
+    },
+    {
+     "action": "avoid",
+     "active": "vitc_pura",
+     "weight": -0.3
+    }
+   ],
+   "reason_for_client": "Hay un poco de rojez: elegimos productos calmantes y sin perfume.",
+   "evidence_level": "C",
+   "sources": [],
+   "exceptions": "",
+   "requires_expert_validation": false
+  },
+  {
+   "id": "ASP-HID-01",
+   "name": "Deshidratación",
+   "category": "aspecto",
+   "conditions": {
+    "scores": [
+     {
+      "aspect": "hidratacion",
+      "operator": "between",
+      "min": 30,
+      "max": 49
+     }
+    ]
+   },
+   "effect": [
+    {
+     "action": "add_problem",
+     "problem": "P29"
+    },
+    {
+     "action": "prefer",
+     "active": "glicerina",
+     "weight": 0.15
+    },
+    {
+     "action": "prefer",
+     "active": "hialuronico",
+     "weight": 0.15
+    },
+    {
+     "action": "notice",
+     "text": "Si tu rutina lleva retinoide, las primeras semanas aplícalo entre dos capas de crema."
+    }
+   ],
+   "reason_for_client": "A tu piel le falta agua: un sérum hidratante y una buena crema se notan en días.",
+   "evidence_level": "B",
+   "sources": [
+    {
+     "reference": "Ácido hialurónico, revisión",
+     "doi": "10.1111/dth.15903"
+    }
+   ],
+   "exceptions": "",
+   "requires_expert_validation": false
+  },
+  {
+   "id": "ASP-HID-02",
+   "name": "Deshidratación marcada",
+   "category": "aspecto",
+   "conditions": {
+    "scores": [
+     {
+      "aspect": "hidratacion",
+      "operator": "lte",
+      "max": 29
+     }
+    ]
+   },
+   "effect": [
+    {
+     "action": "add_problem",
+     "problem": "P29"
+    },
+    {
+     "action": "add_problem",
+     "problem": "P28"
+    },
+    {
+     "action": "prefer",
+     "active": "ceramidas",
+     "weight": 0.25
+    },
+    {
+     "action": "prefer",
+     "active": "glicerina",
+     "weight": 0.15
+    },
+    {
+     "action": "avoid",
+     "active": "salicilico",
+     "weight": -0.4
+    },
+    {
+     "action": "avoid",
+     "active": "glicolico",
+     "weight": -0.4
+    }
+   ],
+   "reason_for_client": "Tu piel está muy deshidratada: primero recuperarla, y los activos fuertes después.",
+   "evidence_level": "C",
+   "sources": [],
+   "exceptions": "",
+   "requires_expert_validation": true
+  },
+  {
+   "id": "ASP-HID-03",
+   "name": "Hidratación leve",
+   "category": "producto",
+   "conditions": {
+    "scores": [
+     {
+      "aspect": "hidratacion",
+      "operator": "between",
+      "min": 50,
+      "max": 74
+     }
+    ]
+   },
+   "effect": [
+    {
+     "action": "prefer",
+     "active": "glicerina",
+     "weight": 0.1
+    },
+    {
+     "action": "prefer",
+     "active": "hialuronico",
+     "weight": 0.1
+    },
+    {
+     "action": "prefer",
+     "active": "ceramidas",
+     "weight": 0.1
+    }
+   ],
+   "reason_for_client": "Elegimos productos que además hidratan.",
+   "evidence_level": "C",
+   "sources": [],
+   "exceptions": "",
+   "requires_expert_validation": false
+  },
+  {
+   "id": "ASP-OJE-01",
+   "name": "Ojeras",
+   "category": "aspecto",
+   "conditions": {
+    "scores": [
+     {
+      "aspect": "ojeras",
+      "operator": "lte",
+      "max": 49
+     }
+    ]
+   },
+   "effect": [
+    {
+     "action": "add_problem",
+     "problem": "P15"
+    }
+   ],
+   "reason_for_client": "Las ojeras dependen mucho de la genética: un contorno ayuda un poco, el solar y no frotar ayudan más.",
+   "evidence_level": "B",
+   "sources": [
+    {
+     "reference": "Revisión sistemática de hiperpigmentación periorbitaria 2021",
+     "doi": "10.1097/DSS.0000000000002484"
+    }
+   ],
+   "exceptions": "El motor solo añade contorno si sobra hueco.",
+   "requires_expert_validation": false
+  },
+  {
+   "id": "PAR-01",
+   "name": "Arrugas + manchas (fotoenvejecimiento)",
+   "category": "pareja",
+   "conditions": {
+    "scores": [
+     {
+      "aspect": "arrugas",
+      "operator": "lte",
+      "max": 49
+     },
+     {
+      "aspect": "manchas",
+      "operator": "lte",
+      "max": 49
+     },
+     {
+      "aspect": "rojez",
+      "operator": "gte",
+      "min": 50
+     }
+    ]
+   },
+   "effect": [
+    {
+     "action": "prefer",
+     "active": "vitc_pura",
+     "weight": 0.2,
+     "application_time": "AM"
+    },
+    {
+     "action": "priority",
+     "aspect": "manchas",
+     "factor": 1.1
+    }
+   ],
+   "reason_for_client": "Tienes líneas y manchas por el sol: retinoide de noche y vitamina C de mañana tratan las dos cosas.",
+   "evidence_level": "B",
+   "sources": [
+    {
+     "reference": "Revisión de retinoides 2022",
+     "doi": "10.1007/s12325-022-02319-7"
+    },
+    {
+     "reference": "Vitamina C tópica",
+     "url": "https://pubmed.ncbi.nlm.nih.gov/29104718/"
+    }
+   ],
+   "exceptions": "Con rojez, ver PAR-03 y PAR-12.",
+   "requires_expert_validation": false
+  },
+  {
+   "id": "PAR-03",
+   "name": "Arrugas + rojez",
+   "category": "pareja",
+   "conditions": {
+    "scores": [
+     {
+      "aspect": "arrugas",
+      "operator": "lte",
+      "max": 49
+     },
+     {
+      "aspect": "rojez",
+      "operator": "lte",
+      "max": 49
+     }
+    ]
+   },
+   "effect": [
+    {
+     "action": "prefer",
+     "active": "retinal",
+     "weight": 0.35,
+     "concentration": "0,05 %",
+     "frequency": "2 noches por semana",
+     "routine_step": "serum_noche"
+    },
+    {
+     "action": "avoid",
+     "active": "retinol",
+     "weight": -0.25
+    },
+    {
+     "action": "prefer",
+     "active": "ceramidas",
+     "weight": 0.2,
+     "routine_step": "hidratante"
+    },
+    {
+     "action": "prefer",
+     "active": "niacinamida",
+     "weight": 0.15
+    },
+    {
+     "action": "veto",
+     "active": "vitc_pura",
+     "message": "Con rojez, la vitamina C pura a pH bajo escuece: mejor un derivado."
+    }
+   ],
+   "reason_for_client": "Tienes líneas finas y algo de rojez: un retinoide suave, poco a poco, con una crema que repara la barrera.",
+   "evidence_level": "B",
+   "sources": [
+    {
+     "reference": "Vienne 1999, retinal en rosácea",
+     "doi": "10.1159/000051380"
+    },
+    {
+     "reference": "Hidratante con ceramidas y tolerancia a la tretinoína",
+     "url": "https://pubmed.ncbi.nlm.nih.gov/23135655/"
+    }
+   ],
+   "exceptions": "Que el retinal irrite menos que el retinol es C.",
+   "requires_expert_validation": true
+  },
+  {
+   "id": "PAR-03b",
+   "name": "Arrugas + rojez + reactividad: bakuchiol",
+   "category": "pareja",
+   "conditions": {
+    "scores": [
+     {
+      "aspect": "arrugas",
+      "operator": "lte",
+      "max": 49
+     },
+     {
+      "aspect": "rojez",
+      "operator": "lte",
+      "max": 49
+     }
+    ],
+    "client": {
+     "reactiva": [
+      "siempre"
+     ],
+     "embarazo": [
+      "no"
+     ]
+    }
+   },
+   "effect": [
+    {
+     "action": "veto",
+     "active": "retinol",
+     "message": "Tu piel reacciona con facilidad: en lugar de retinol, una alternativa más suave."
+    },
+    {
+     "action": "veto",
+     "active": "retinal",
+     "message": "Tu piel reacciona con facilidad: en lugar de un retinoide, una alternativa más suave."
+    }
+   ],
+   "reason_for_client": "Como tu piel reacciona, cambiamos el retinoide por bakuchiol, que en un ensayo igualó al retinol con menos escozor.",
+   "evidence_level": "B",
+   "sources": [
+    {
+     "reference": "Dhaliwal 2019, bakuchiol frente a retinol",
+     "doi": "10.1111/bjd.16918"
+    }
+   ],
+   "exceptions": "Decisión pendiente de Hugo: retinal a dosis baja o bakuchiol por defecto.",
+   "requires_expert_validation": true
+  },
+  {
+   "id": "PAR-04",
+   "name": "Arrugas + brillo",
+   "category": "pareja",
+   "conditions": {
+    "scores": [
+     {
+      "aspect": "arrugas",
+      "operator": "lte",
+      "max": 49
+     },
+     {
+      "aspect": "brillo",
+      "operator": "lte",
+      "max": 49
+     }
+    ]
+   },
+   "effect": [
+    {
+     "action": "prefer",
+     "active": "niacinamida",
+     "weight": 0.2
+    },
+    {
+     "action": "avoid",
+     "active": "karite",
+     "weight": -0.2
+    },
+    {
+     "action": "priority",
+     "aspect": "brillo",
+     "factor": 0.8
+    }
+   ],
+   "reason_for_client": "Tienes líneas y la piel grasa: retinoide en textura ligera y niacinamida, sin cremas pesadas.",
+   "evidence_level": "C",
+   "sources": [],
+   "exceptions": "",
+   "requires_expert_validation": true
+  },
+  {
+   "id": "PAR-05",
+   "name": "Arrugas + firmeza",
+   "category": "pareja",
+   "conditions": {
+    "scores": [
+     {
+      "aspect": "arrugas",
+      "operator": "lte",
+      "max": 49
+     },
+     {
+      "aspect": "firmeza",
+      "operator": "lte",
+      "max": 49
+     }
+    ]
+   },
+   "effect": [
+    {
+     "action": "prefer",
+     "active": "peptidos",
+     "weight": 0.2,
+     "routine_step": "hidratante"
+    }
+   ],
+   "reason_for_client": "El retinoide es la base; los péptidos en la crema son un extra.",
+   "evidence_level": "B",
+   "sources": [
+    {
+     "reference": "Revisión sistemática 2021",
+     "doi": "10.1159/000509296"
+    },
+    {
+     "reference": "Robinson 2005, pentapéptido",
+     "doi": "10.1111/j.1467-2494.2005.00261.x"
+    }
+   ],
+   "exceptions": "",
+   "requires_expert_validation": false
+  },
+  {
+   "id": "PAR-06",
+   "name": "Arrugas + hidratación",
+   "category": "pareja",
+   "conditions": {
+    "scores": [
+     {
+      "aspect": "arrugas",
+      "operator": "lte",
+      "max": 49
+     },
+     {
+      "aspect": "hidratacion",
+      "operator": "lte",
+      "max": 49
+     }
+    ]
+   },
+   "effect": [
+    {
+     "action": "prefer",
+     "active": "ceramidas",
+     "weight": 0.25,
+     "routine_step": "hidratante"
+    },
+    {
+     "action": "prefer",
+     "active": "glicerina",
+     "weight": 0.1
+    },
+    {
+     "action": "prefer",
+     "active": "hialuronico",
+     "weight": 0.1
+    },
+    {
+     "action": "avoid",
+     "active": "salicilico",
+     "weight": -0.3
+    },
+    {
+     "action": "avoid",
+     "active": "glicolico",
+     "weight": -0.3
+    },
+    {
+     "action": "priority",
+     "aspect": "hidratacion",
+     "factor": 1.3
+    },
+    {
+     "action": "notice",
+     "text": "Parte de las líneas finas son falta de agua: con la hidratante mejoran en pocos días. El retinoide, mejor entre dos capas de crema al principio."
+    }
+   ],
+   "reason_for_client": "Primero hidratar: así el retinoide se tolera mejor y las líneas por falta de agua mejoran en días.",
+   "evidence_level": "C",
+   "sources": [],
+   "exceptions": "",
+   "requires_expert_validation": true
+  },
+  {
+   "id": "PAR-09",
+   "name": "Arrugas + granitos (acné adulto)",
+   "category": "pareja",
+   "conditions": {
+    "scores": [
+     {
+      "aspect": "arrugas",
+      "operator": "lte",
+      "max": 49
+     },
+     {
+      "aspect": "acne",
+      "operator": "lte",
+      "max": 49
+     }
+    ],
+    "client": {
+     "edad": [
+      "25-39",
+      "40-49",
+      "50+"
+     ]
+    }
+   },
+   "effect": [
+    {
+     "action": "prefer",
+     "active": "retinal",
+     "weight": 0.2
+    },
+    {
+     "action": "prefer",
+     "active": "azelaico",
+     "weight": 0.25
+    },
+    {
+     "action": "avoid",
+     "active": "karite",
+     "weight": -0.2
+    },
+    {
+     "action": "priority",
+     "aspect": "arrugas",
+     "factor": 1.3
+    }
+   ],
+   "reason_for_client": "Tienes granitos y líneas: el retinoide trata las dos cosas, y el azelaico calma los granos de día.",
+   "evidence_level": "A",
+   "sources": [
+    {
+     "reference": "Guía AAD de acné 2024",
+     "doi": "10.1016/j.jaad.2023.12.017"
+    }
+   ],
+   "exceptions": "La combinación es C.",
+   "requires_expert_validation": true
+  },
+  {
+   "id": "PAR-11",
+   "name": "Manchas + textura",
+   "category": "pareja",
+   "conditions": {
+    "scores": [
+     {
+      "aspect": "manchas",
+      "operator": "lte",
+      "max": 49
+     },
+     {
+      "aspect": "textura",
+      "operator": "lte",
+      "max": 49
+     },
+     {
+      "aspect": "rojez",
+      "operator": "gte",
+      "min": 50
+     }
+    ],
+    "client": {
+     "reactiva": [
+      "nunca"
+     ]
+    }
+   },
+   "effect": [
+    {
+     "action": "prefer",
+     "active": "glicolico",
+     "weight": 0.2
+    }
+   ],
+   "reason_for_client": "Un exfoliante suave trata a la vez la textura y las manchas.",
+   "evidence_level": "B",
+   "sources": [
+    {
+     "reference": "Glicólico 5 %, ensayo 1998",
+     "doi": "10.1111/j.1524-4725.1998.tb04209.x"
+    }
+   ],
+   "exceptions": "",
+   "requires_expert_validation": false
+  },
+  {
+   "id": "PAR-12",
+   "name": "Manchas + rojez",
+   "category": "pareja",
+   "conditions": {
+    "scores": [
+     {
+      "aspect": "manchas",
+      "operator": "lte",
+      "max": 49
+     },
+     {
+      "aspect": "rojez",
+      "operator": "lte",
+      "max": 49
+     }
+    ]
+   },
+   "effect": [
+    {
+     "action": "prefer",
+     "active": "tranexamico",
+     "weight": 0.3
+    },
+    {
+     "action": "prefer",
+     "active": "niacinamida",
+     "weight": 0.2
+    },
+    {
+     "action": "prefer",
+     "active": "azelaico",
+     "weight": 0.2
+    },
+    {
+     "action": "veto",
+     "active": "vitc_pura",
+     "message": "Con rojez, la vitamina C pura a pH bajo escuece: mejor otro despigmentante."
+    },
+    {
+     "action": "avoid",
+     "active": "kojico",
+     "weight": -0.3
+    }
+   ],
+   "reason_for_client": "Tienes manchas y rojez: activos que aclaran sin irritar y protector solar mineral.",
+   "evidence_level": "B",
+   "sources": [
+    {
+     "reference": "Metaanálisis de tranexámico en melasma 2024",
+     "doi": "10.1080/09546634.2024.2361106"
+    },
+    {
+     "reference": "Vías del tranexámico",
+     "doi": "10.1111/jocd.15589"
+    }
+   ],
+   "exceptions": "El tranexámico no se usa en embarazo (sin datos).",
+   "requires_expert_validation": false
+  },
+  {
+   "id": "PAR-13",
+   "name": "Manchas + brillo",
+   "category": "pareja",
+   "conditions": {
+    "scores": [
+     {
+      "aspect": "manchas",
+      "operator": "lte",
+      "max": 49
+     },
+     {
+      "aspect": "brillo",
+      "operator": "lte",
+      "max": 49
+     }
+    ]
+   },
+   "effect": [
+    {
+     "action": "prefer",
+     "active": "niacinamida",
+     "weight": 0.25
+    }
+   ],
+   "reason_for_client": "La niacinamida regula el brillo y aclara las manchas a la vez.",
+   "evidence_level": "B",
+   "sources": [
+    {
+     "reference": "Draelos 2006",
+     "doi": "10.1080/14764170600717704"
+    },
+    {
+     "reference": "Hakozaki 2002",
+     "doi": "10.1046/j.1365-2133.2002.04834.x"
+    }
+   ],
+   "exceptions": "",
+   "requires_expert_validation": false
+  },
+  {
+   "id": "PAR-15",
+   "name": "Manchas + hidratación",
+   "category": "pareja",
+   "conditions": {
+    "scores": [
+     {
+      "aspect": "manchas",
+      "operator": "lte",
+      "max": 49
+     },
+     {
+      "aspect": "hidratacion",
+      "operator": "lte",
+      "max": 49
+     }
+    ]
+   },
+   "effect": [
+    {
+     "action": "prefer",
+     "active": "niacinamida",
+     "weight": 0.15
+    },
+    {
+     "action": "prefer",
+     "active": "tranexamico",
+     "weight": 0.15
+    },
+    {
+     "action": "prefer",
+     "active": "vitc_derivados",
+     "weight": 0.15
+    },
+    {
+     "action": "prefer",
+     "active": "lactico",
+     "weight": 0.15
+    },
+    {
+     "action": "avoid",
+     "active": "glicolico",
+     "weight": -0.25
+    },
+    {
+     "action": "avoid",
+     "active": "salicilico",
+     "weight": -0.3
+    },
+    {
+     "action": "prefer",
+     "active": "ceramidas",
+     "weight": 0.15
+    }
+   ],
+   "reason_for_client": "Aclaramos las manchas con activos que no resecan.",
+   "evidence_level": "C",
+   "sources": [],
+   "exceptions": "",
+   "requires_expert_validation": true
+  },
+  {
+   "id": "PAR-18",
+   "name": "Manchas + granitos (marcas)",
+   "category": "pareja",
+   "conditions": {
+    "scores": [
+     {
+      "aspect": "manchas",
+      "operator": "lte",
+      "max": 49
+     },
+     {
+      "aspect": "acne",
+      "operator": "lte",
+      "max": 49
+     }
+    ]
+   },
+   "effect": [
+    {
+     "action": "prefer",
+     "active": "azelaico",
+     "weight": 0.35
+    },
+    {
+     "action": "prefer",
+     "active": "niacinamida",
+     "weight": 0.25
+    },
+    {
+     "action": "notice",
+     "text": "No aprietes los granitos: es lo que más marcas deja."
+    }
+   ],
+   "reason_for_client": "El ácido azelaico y la niacinamida tratan los granitos y las marcas que dejan.",
+   "evidence_level": "A",
+   "sources": [
+    {
+     "reference": "Guía AAD de acné 2024",
+     "doi": "10.1016/j.jaad.2023.12.017"
+    },
+    {
+     "reference": "Hakozaki 2002",
+     "doi": "10.1046/j.1365-2133.2002.04834.x"
+    }
+   ],
+   "exceptions": "",
+   "requires_expert_validation": false
+  },
+  {
+   "id": "PAR-20",
+   "name": "Textura + rojez",
+   "category": "pareja",
+   "conditions": {
+    "scores": [
+     {
+      "aspect": "textura",
+      "operator": "lte",
+      "max": 49
+     },
+     {
+      "aspect": "rojez",
+      "operator": "lte",
+      "max": 49
+     }
+    ]
+   },
+   "effect": [
+    {
+     "action": "veto",
+     "active": "glicolico",
+     "message": "Con rojez, mejor un exfoliante suave (PHA)."
+    },
+    {
+     "action": "veto",
+     "active": "lactico",
+     "message": "Con rojez, mejor un exfoliante suave (PHA)."
+    },
+    {
+     "action": "prefer",
+     "active": "pha",
+     "weight": 0.2
+    }
+   ],
+   "reason_for_client": "Con rojez, la textura se trata con un exfoliante muy suave.",
+   "evidence_level": "C",
+   "sources": [
+    {
+     "reference": "Grimes 2004, PHA",
+     "url": "https://pubmed.ncbi.nlm.nih.gov/15002656/"
+    }
+   ],
+   "exceptions": "",
+   "requires_expert_validation": false
+  },
+  {
+   "id": "PAR-21",
+   "name": "Textura + brillo",
+   "category": "pareja",
+   "conditions": {
+    "scores": [
+     {
+      "aspect": "textura",
+      "operator": "lte",
+      "max": 49
+     },
+     {
+      "aspect": "brillo",
+      "operator": "lte",
+      "max": 49
+     },
+     {
+      "aspect": "rojez",
+      "operator": "gte",
+      "min": 50
+     }
+    ]
+   },
+   "effect": [
+    {
+     "action": "prefer",
+     "active": "salicilico",
+     "weight": 0.25
+    }
+   ],
+   "reason_for_client": "El ácido salicílico entra en el poro y alisa la piel grasa.",
+   "evidence_level": "A",
+   "sources": [
+    {
+     "reference": "Guía AAD de acné 2024",
+     "doi": "10.1016/j.jaad.2023.12.017"
+    }
+   ],
+   "exceptions": "En poros y textura la evidencia es C.",
+   "requires_expert_validation": false
+  },
+  {
+   "id": "PAR-23",
+   "name": "Textura + hidratación",
+   "category": "pareja",
+   "conditions": {
+    "scores": [
+     {
+      "aspect": "textura",
+      "operator": "lte",
+      "max": 49
+     },
+     {
+      "aspect": "hidratacion",
+      "operator": "lte",
+      "max": 49
+     }
+    ]
+   },
+   "effect": [
+    {
+     "action": "prefer",
+     "active": "lactico",
+     "weight": 0.2
+    },
+    {
+     "action": "prefer",
+     "active": "pha",
+     "weight": 0.2
+    },
+    {
+     "action": "avoid",
+     "active": "salicilico",
+     "weight": -0.3
+    },
+    {
+     "action": "priority",
+     "aspect": "hidratacion",
+     "factor": 1.3
+    },
+    {
+     "action": "notice",
+     "text": "Buena parte de la textura es falta de agua. Repite el análisis a las 4 semanas."
+    },
+    {
+     "action": "veto",
+     "active": "glicolico",
+     "message": "Con la piel deshidratada, en lugar del glicólico va un exfoliante más suave."
+    }
+   ],
+   "reason_for_client": "Primero hidratar; la textura mejora con ello.",
+   "evidence_level": "C",
+   "sources": [],
+   "exceptions": "",
+   "requires_expert_validation": true
+  },
+  {
+   "id": "PAR-28",
+   "name": "Rojez + brillo (piel grasa y sensible)",
+   "category": "pareja",
+   "conditions": {
+    "scores": [
+     {
+      "aspect": "rojez",
+      "operator": "lte",
+      "max": 49
+     },
+     {
+      "aspect": "brillo",
+      "operator": "lte",
+      "max": 49
+     }
+    ]
+   },
+   "effect": [
+    {
+     "action": "veto",
+     "active": "alcohol",
+     "message": "Con rojez, el alcohol irrita aunque la piel sea grasa."
+    },
+    {
+     "action": "prefer",
+     "active": "niacinamida",
+     "weight": 0.2
+    },
+    {
+     "action": "prefer",
+     "active": "azelaico",
+     "weight": 0.2
+    }
+   ],
+   "reason_for_client": "Piel grasa pero que se enrojece: regulamos la grasa sin productos que irriten.",
+   "evidence_level": "C",
+   "sources": [
+    {
+     "reference": "Piel grasa y sensible",
+     "doi": "10.1111/jocd.13347"
+    }
+   ],
+   "exceptions": "",
+   "requires_expert_validation": true
+  },
+  {
+   "id": "PAR-30",
+   "name": "Rojez + hidratación (barrera alterada)",
+   "category": "modo",
+   "conditions": {
+    "scores": [
+     {
+      "aspect": "rojez",
+      "operator": "lte",
+      "max": 49
+     },
+     {
+      "aspect": "hidratacion",
+      "operator": "lte",
+      "max": 49
+     }
+    ]
+   },
+   "effect": [
+    {
+     "action": "add_problem",
+     "problem": "P23"
+    },
+    {
+     "action": "prefer",
+     "active": "ceramidas",
+     "weight": 0.3
+    },
+    {
+     "action": "prefer",
+     "active": "pantenol",
+     "weight": 0.2
+    },
+    {
+     "action": "priority",
+     "aspect": "hidratacion",
+     "factor": 1.3
+    },
+    {
+     "action": "priority",
+     "aspect": "rojez",
+     "factor": 1.2
+    }
+   ],
+   "reason_for_client": "Tu piel tiene la barrera algo alterada: primero repararla, y los activos después.",
+   "evidence_level": "C",
+   "sources": [
+    {
+     "reference": "Grupo internacional de piel sensible 2020",
+     "doi": "10.1111/jdv.16000"
+    }
+   ],
+   "exceptions": "Se activa aunque la clienta diga que nunca se le irrita. Decisión pendiente de Hugo.",
+   "requires_expert_validation": true
+  },
+  {
+   "id": "PAR-33",
+   "name": "Rojez + granitos",
+   "category": "pareja",
+   "conditions": {
+    "scores": [
+     {
+      "aspect": "rojez",
+      "operator": "lte",
+      "max": 49
+     },
+     {
+      "aspect": "acne",
+      "operator": "lte",
+      "max": 49
+     }
+    ]
+   },
+   "effect": [
+    {
+     "action": "prefer",
+     "active": "azelaico",
+     "weight": 0.4
+    },
+    {
+     "action": "prefer",
+     "active": "ceramidas",
+     "weight": 0.15
+    }
+   ],
+   "reason_for_client": "El ácido azelaico trata los granitos y calma la rojez.",
+   "evidence_level": "A",
+   "sources": [
+    {
+     "reference": "Guía AAD de acné 2024",
+     "doi": "10.1016/j.jaad.2023.12.017"
+    },
+    {
+     "reference": "Frampton 2004, azelaico 15 % en rosácea",
+     "doi": "10.2165/00128071-200405010-00009"
+    }
+   ],
+   "exceptions": "Puede ser rosácea y no acné: si es marcada, consultar.",
+   "requires_expert_validation": false
+  },
+  {
+   "id": "PAR-34",
+   "name": "Rojez + tono",
+   "category": "pareja",
+   "conditions": {
+    "scores": [
+     {
+      "aspect": "rojez",
+      "operator": "lte",
+      "max": 49
+     },
+     {
+      "aspect": "tono",
+      "operator": "lte",
+      "max": 49
+     }
+    ]
+   },
+   "effect": [
+    {
+     "action": "prefer",
+     "active": "vitc_derivados",
+     "weight": 0.25
+    }
+   ],
+   "reason_for_client": "Una vitamina C estable ilumina sin escocer.",
+   "evidence_level": "C",
+   "sources": [],
+   "exceptions": "",
+   "requires_expert_validation": true
+  },
+  {
+   "id": "PAR-36",
+   "name": "Brillo + hidratación (grasa deshidratada)",
+   "category": "pareja",
+   "conditions": {
+    "scores": [
+     {
+      "aspect": "brillo",
+      "operator": "lte",
+      "max": 49
+     },
+     {
+      "aspect": "hidratacion",
+      "operator": "lte",
+      "max": 49
+     }
+    ]
+   },
+   "effect": [
+    {
+     "action": "set_skin",
+     "value": "brillo_T"
+    },
+    {
+     "action": "prefer",
+     "active": "niacinamida",
+     "weight": 0.2
+    },
+    {
+     "action": "prefer",
+     "active": "glicerina",
+     "weight": 0.15
+    },
+    {
+     "action": "prefer",
+     "active": "hialuronico",
+     "weight": 0.15
+    },
+    {
+     "action": "veto",
+     "active": "alcohol",
+     "message": "Tu piel es grasa pero le falta agua: el alcohol la reseca y produce más grasa."
+    },
+    {
+     "action": "avoid",
+     "active": "salicilico",
+     "weight": -0.25
+    }
+   ],
+   "reason_for_client": "Tu piel es grasa pero le falta agua: hidratante ligera con humectantes y niacinamida, sin productos que resequen.",
+   "evidence_level": "B",
+   "sources": [
+    {
+     "reference": "Draelos 2006",
+     "doi": "10.1080/14764170600717704"
+    },
+    {
+     "reference": "Tanno 2000, niacinamida y ceramidas",
+     "doi": "10.1111/j.1365-2133.2000.03705.x"
+    }
+   ],
+   "exceptions": "El concepto de piel grasa deshidratada es C.",
+   "requires_expert_validation": false
+  },
+  {
+   "id": "PAR-37",
+   "name": "Brillo + poros",
+   "category": "pareja",
+   "conditions": {
+    "scores": [
+     {
+      "aspect": "brillo",
+      "operator": "lte",
+      "max": 49
+     },
+     {
+      "aspect": "poros",
+      "operator": "lte",
+      "max": 49
+     }
+    ]
+   },
+   "effect": [
+    {
+     "action": "prefer",
+     "active": "niacinamida",
+     "weight": 0.2
+    },
+    {
+     "action": "prefer",
+     "active": "salicilico",
+     "weight": 0.15
+    }
+   ],
+   "reason_for_client": "Niacinamida y salicílico regulan la grasa y limpian el poro.",
+   "evidence_level": "C",
+   "sources": [],
+   "exceptions": "",
+   "requires_expert_validation": false
+  },
+  {
+   "id": "PAR-39",
+   "name": "Brillo + granitos",
+   "category": "pareja",
+   "conditions": {
+    "scores": [
+     {
+      "aspect": "brillo",
+      "operator": "lte",
+      "max": 49
+     },
+     {
+      "aspect": "acne",
+      "operator": "lte",
+      "max": 49
+     }
+    ]
+   },
+   "effect": [
+    {
+     "action": "prefer",
+     "active": "niacinamida",
+     "weight": 0.2
+    },
+    {
+     "action": "prefer",
+     "active": "zinc",
+     "weight": 0.1
+    },
+    {
+     "action": "avoid",
+     "active": "karite",
+     "weight": -0.3
+    }
+   ],
+   "reason_for_client": "Texturas en gel que no obstruyen el poro y activos que regulan la grasa.",
+   "evidence_level": "A",
+   "sources": [
+    {
+     "reference": "Guía AAD de acné 2024",
+     "doi": "10.1016/j.jaad.2023.12.017"
+    }
+   ],
+   "exceptions": "",
+   "requires_expert_validation": false
+  },
+  {
+   "id": "PAR-46",
+   "name": "Hidratación + poros",
+   "category": "pareja",
+   "conditions": {
+    "scores": [
+     {
+      "aspect": "hidratacion",
+      "operator": "lte",
+      "max": 49
+     },
+     {
+      "aspect": "poros",
+      "operator": "lte",
+      "max": 49
+     }
+    ]
+   },
+   "effect": [
+    {
+     "action": "avoid",
+     "active": "salicilico",
+     "weight": -0.25
+    },
+    {
+     "action": "prefer",
+     "active": "niacinamida",
+     "weight": 0.15
+    },
+    {
+     "action": "priority",
+     "aspect": "hidratacion",
+     "factor": 1.3
+    }
+   ],
+   "reason_for_client": "Primero hidratar; el poro se ve mejor con la piel hidratada.",
+   "evidence_level": "C",
+   "sources": [],
+   "exceptions": "",
+   "requires_expert_validation": true
+  },
+  {
+   "id": "PAR-48",
+   "name": "Hidratación + granitos",
+   "category": "pareja",
+   "conditions": {
+    "scores": [
+     {
+      "aspect": "hidratacion",
+      "operator": "lte",
+      "max": 49
+     },
+     {
+      "aspect": "acne",
+      "operator": "lte",
+      "max": 49
+     }
+    ]
+   },
+   "effect": [
+    {
+     "action": "prefer",
+     "active": "ceramidas",
+     "weight": 0.25,
+     "routine_step": "hidratante"
+    },
+    {
+     "action": "prefer",
+     "active": "azelaico",
+     "weight": 0.2
+    },
+    {
+     "action": "veto",
+     "active": "alcohol",
+     "message": "Con la piel deshidratada, nada que reseque."
+    },
+    {
+     "action": "avoid",
+     "active": "salicilico",
+     "weight": -0.2
+    }
+   ],
+   "reason_for_client": "Tratamos los granitos con una crema que repara la barrera desde el primer día.",
+   "evidence_level": "B",
+   "sources": [
+    {
+     "reference": "Draelos 2023, ceramidas en acné",
+     "doi": "10.36849/JDD.7142"
+    },
+    {
+     "reference": "Hidratante con ceramidas y niacinamida en acné, 2024",
+     "doi": "10.1111/jocd.16212"
+    }
+   ],
+   "exceptions": "",
+   "requires_expert_validation": false
+  },
+  {
+   "id": "PAR-49",
+   "name": "Hidratación + tono",
+   "category": "pareja",
+   "conditions": {
+    "scores": [
+     {
+      "aspect": "hidratacion",
+      "operator": "lte",
+      "max": 49
+     },
+     {
+      "aspect": "tono",
+      "operator": "lte",
+      "max": 49
+     }
+    ]
+   },
+   "effect": [
+    {
+     "action": "priority",
+     "aspect": "hidratacion",
+     "factor": 1.2
+    },
+    {
+     "action": "priority",
+     "aspect": "tono",
+     "factor": 0.8
+    }
+   ],
+   "reason_for_client": "La piel apagada mejora en días al hidratarla.",
+   "evidence_level": "C",
+   "sources": [],
+   "exceptions": "",
+   "requires_expert_validation": true
+  },
+  {
+   "id": "PAR-51",
+   "name": "Poros + granitos",
+   "category": "pareja",
+   "conditions": {
+    "scores": [
+     {
+      "aspect": "poros",
+      "operator": "lte",
+      "max": 49
+     },
+     {
+      "aspect": "acne",
+      "operator": "lte",
+      "max": 49
+     },
+     {
+      "aspect": "rojez",
+      "operator": "gte",
+      "min": 50
+     }
+    ]
+   },
+   "effect": [
+    {
+     "action": "prefer",
+     "active": "salicilico",
+     "weight": 0.25
+    }
+   ],
+   "reason_for_client": "El salicílico limpia el poro y previene los granitos.",
+   "evidence_level": "A",
+   "sources": [
+    {
+     "reference": "Guía AAD de acné 2024",
+     "doi": "10.1016/j.jaad.2023.12.017"
+    }
+   ],
+   "exceptions": "",
+   "requires_expert_validation": false
+  },
+  {
+   "id": "PAR-55",
+   "name": "Granitos + tono",
+   "category": "pareja",
+   "conditions": {
+    "scores": [
+     {
+      "aspect": "acne",
+      "operator": "lte",
+      "max": 49
+     },
+     {
+      "aspect": "tono",
+      "operator": "lte",
+      "max": 49
+     }
+    ]
+   },
+   "effect": [
+    {
+     "action": "prefer",
+     "active": "azelaico",
+     "weight": 0.2
+    },
+    {
+     "action": "prefer",
+     "active": "niacinamida",
+     "weight": 0.15
+    }
+   ],
+   "reason_for_client": "El azelaico y la niacinamida tratan los granitos y unifican el tono.",
+   "evidence_level": "B",
+   "sources": [
+    {
+     "reference": "Azelaico, revisión 2023",
+     "doi": "10.5114/ada.2023.133955"
+    }
+   ],
+   "exceptions": "",
+   "requires_expert_validation": false
+  },
+  {
+   "id": "TRI-01",
+   "name": "Grasa deshidratada con granitos",
+   "category": "combinacion",
+   "conditions": {
+    "scores": [
+     {
+      "aspect": "brillo",
+      "operator": "lte",
+      "max": 49
+     },
+     {
+      "aspect": "hidratacion",
+      "operator": "lte",
+      "max": 49
+     },
+     {
+      "aspect": "acne",
+      "operator": "lte",
+      "max": 49
+     }
+    ]
+   },
+   "effect": [
+    {
+     "action": "prefer",
+     "active": "azelaico",
+     "weight": 0.3
+    },
+    {
+     "action": "avoid",
+     "active": "salicilico",
+     "weight": -0.2
+    }
+   ],
+   "reason_for_client": "El ácido azelaico trata los granitos sin resecar una piel que ya pide agua.",
+   "evidence_level": "C",
+   "sources": [],
+   "exceptions": "",
+   "requires_expert_validation": true
+  },
+  {
+   "id": "TRI-02",
+   "name": "Fotoenvejecimiento con rojez",
+   "category": "combinacion",
+   "conditions": {
+    "scores": [
+     {
+      "aspect": "arrugas",
+      "operator": "lte",
+      "max": 49
+     },
+     {
+      "aspect": "manchas",
+      "operator": "lte",
+      "max": 49
+     },
+     {
+      "aspect": "rojez",
+      "operator": "lte",
+      "max": 49
+     }
+    ]
+   },
+   "effect": [
+    {
+     "action": "veto",
+     "active": "glicolico",
+     "message": "Con rojez, sin ácidos fuertes."
+    },
+    {
+     "action": "prefer",
+     "active": "tranexamico",
+     "weight": 0.2
+    }
+   ],
+   "reason_for_client": "Retinoide suave, un despigmentante que no irrita y solar mineral.",
+   "evidence_level": "C",
+   "sources": [],
+   "exceptions": "",
+   "requires_expert_validation": true
+  },
+  {
+   "id": "TRI-07",
+   "name": "Barrera alterada con textura",
+   "category": "combinacion",
+   "conditions": {
+    "scores": [
+     {
+      "aspect": "rojez",
+      "operator": "lte",
+      "max": 49
+     },
+     {
+      "aspect": "hidratacion",
+      "operator": "lte",
+      "max": 49
+     },
+     {
+      "aspect": "textura",
+      "operator": "lte",
+      "max": 49
+     }
+    ]
+   },
+   "effect": [
+    {
+     "action": "notice",
+     "text": "Las dos primeras semanas, solo limpiador, crema y solar. Después, si la piel está tranquila, un exfoliante muy suave una noche a la semana."
+    }
+   ],
+   "reason_for_client": "Primero calmar y reparar; la textura, después.",
+   "evidence_level": "C",
+   "sources": [],
+   "exceptions": "",
+   "requires_expert_validation": true
+  },
+  {
+   "id": "TRI-15",
+   "name": "Tres o más notas marcadas",
+   "category": "seguridad",
+   "conditions": {
+    "count_lte": {
+     "max": 29,
+     "at_least": 3
+    }
+   },
+   "effect": [
+    {
+     "action": "refer",
+     "text": "Varias cosas están marcadas a la vez: tu piel puede beneficiarse de una valoración profesional."
+    }
+   ],
+   "reason_for_client": "Tratamos lo más importante primero y, con calma, el resto.",
+   "evidence_level": "C",
+   "sources": [],
+   "exceptions": "",
+   "requires_expert_validation": true
+  },
+  {
+   "id": "MULTI-01",
+   "name": "Niacinamida cubre varias notas",
+   "category": "producto",
+   "conditions": {
+    "count_lte": {
+     "max": 49,
+     "at_least": 2,
+     "aspects": [
+      "brillo",
+      "poros",
+      "manchas",
+      "rojez",
+      "hidratacion",
+      "acne",
+      "tono"
+     ]
+    }
+   },
+   "effect": [
+    {
+     "action": "prefer",
+     "active": "niacinamida",
+     "weight": 0.15
+    }
+   ],
+   "reason_for_client": "La niacinamida trata varias de tus notas a la vez.",
+   "evidence_level": "B",
+   "sources": [
+    {
+     "reference": "Gehring 2004, niacinamida",
+     "doi": "10.1111/j.1473-2130.2004.00115.x"
+    }
+   ],
+   "exceptions": "",
+   "requires_expert_validation": false
+  },
+  {
+   "id": "MULTI-02",
+   "name": "Azelaico cubre varias notas",
+   "category": "producto",
+   "conditions": {
+    "count_lte": {
+     "max": 49,
+     "at_least": 2,
+     "aspects": [
+      "acne",
+      "rojez",
+      "manchas"
+     ]
+    }
+   },
+   "effect": [
+    {
+     "action": "prefer",
+     "active": "azelaico",
+     "weight": 0.15
+    }
+   ],
+   "reason_for_client": "El ácido azelaico trata varias de tus notas a la vez.",
+   "evidence_level": "A",
+   "sources": [
+    {
+     "reference": "Guía AAD de acné 2024",
+     "doi": "10.1016/j.jaad.2023.12.017"
+    }
+   ],
+   "exceptions": "",
+   "requires_expert_validation": false
+  },
+  {
+   "id": "SEG-01",
+   "name": "Embarazo o lactancia: sin tranexámico ni thiamidol",
+   "category": "seguridad",
+   "conditions": {
+    "client": {
+     "embarazo": [
+      "si"
+     ]
+    }
+   },
+   "effect": [
+    {
+     "action": "veto",
+     "active": "tranexamico",
+     "message": "Sin datos de seguridad en el embarazo y la lactancia."
+    },
+    {
+     "action": "veto",
+     "active": "thiamidol",
+     "message": "Sin datos de seguridad en el embarazo y la lactancia."
+    }
+   ],
+   "reason_for_client": "En el embarazo y la lactancia usamos solo activos con buen perfil de seguridad.",
+   "evidence_level": "C",
+   "sources": [
+    {
+     "reference": "Murase 2014, medicamentos dermatológicos en el embarazo",
+     "doi": "10.1016/j.jaad.2013.09.010"
+    }
+   ],
+   "exceptions": "",
+   "requires_expert_validation": true
+  },
+  {
+   "id": "SEG-02",
+   "name": "Embarazo con granitos o manchas: aviso",
+   "category": "seguridad",
+   "conditions": {
+    "client": {
+     "embarazo": [
+      "si"
+     ]
+    },
+    "any": [
+     {
+      "scores": [
+       {
+        "aspect": "acne",
+        "operator": "lte",
+        "max": 49
+       }
+      ]
+     },
+     {
+      "scores": [
+       {
+        "aspect": "manchas",
+        "operator": "lte",
+        "max": 49
+       }
+      ]
+     }
+    ]
+   },
+   "effect": [
+    {
+     "action": "prefer",
+     "active": "azelaico",
+     "weight": 0.3
+    },
+    {
+     "action": "refer",
+     "text": "En el embarazo, consulta cualquier tratamiento con tu médico o tu matrona."
+    }
+   ],
+   "reason_for_client": "El ácido azelaico es de los activos mejor estudiados en el embarazo.",
+   "evidence_level": "B",
+   "sources": [
+    {
+     "reference": "Rau 2024, acné en el embarazo",
+     "doi": "10.1007/s40257-024-00851-6"
+    }
+   ],
+   "exceptions": "",
+   "requires_expert_validation": false
+  },
+  {
+   "id": "SEG-03",
+   "name": "14-17 años: sin despigmentantes fuertes",
+   "category": "seguridad",
+   "conditions": {
+    "client": {
+     "edad": [
+      "14-17"
+     ]
+    }
+   },
+   "effect": [
+    {
+     "action": "veto",
+     "active": "tranexamico",
+     "message": "Con menos de 18 años no hace falta un despigmentante."
+    },
+    {
+     "action": "veto",
+     "active": "thiamidol",
+     "message": "Con menos de 18 años no hace falta un despigmentante."
+    },
+    {
+     "action": "veto",
+     "active": "kojico",
+     "message": "Con menos de 18 años no hace falta un despigmentante."
+    },
+    {
+     "action": "veto",
+     "active": "arbutina",
+     "message": "Con menos de 18 años no hace falta un despigmentante."
+    },
+    {
+     "action": "avoid",
+     "active": "glicolico",
+     "weight": -0.4
+    }
+   ],
+   "reason_for_client": "A tu edad, una rutina sencilla funciona mejor.",
+   "evidence_level": "C",
+   "sources": [],
+   "exceptions": "",
+   "requires_expert_validation": true
+  },
+  {
+   "id": "MANT-01",
+   "name": "Piel casi perfecta",
+   "category": "combinacion",
+   "conditions": {
+    "count_lte": {
+     "max": 74,
+     "at_most": 0
+    }
+   },
+   "effect": [
+    {
+     "action": "notice",
+     "text": "Tu piel está bien en todo lo que medimos: con limpiar, hidratar y protegerte del sol la mantienes."
+    },
+    {
+     "action": "veto",
+     "active": "glicolico",
+     "message": "Tu piel está bien: no necesita exfoliantes ahora."
+    },
+    {
+     "action": "veto",
+     "active": "lactico",
+     "message": "Tu piel está bien: no necesita exfoliantes ahora."
+    },
+    {
+     "action": "veto",
+     "active": "salicilico",
+     "message": "Tu piel está bien: no necesita exfoliantes ahora."
+    },
+    {
+     "action": "veto",
+     "active": "pha",
+     "message": "Tu piel está bien: no necesita exfoliantes ahora."
+    }
+   ],
+   "reason_for_client": "No inventamos problemas: rutina de mantenimiento.",
+   "evidence_level": "C",
+   "sources": [],
+   "exceptions": "El retinoide preventivo se deja a partir de 40 años (MANT-02). Decisión pendiente de Hugo.",
+   "requires_expert_validation": true
+  },
+  {
+   "id": "MANT-02",
+   "name": "Sin nada en Moderado o Marcado, menos de 40 años: sin retinoide",
+   "category": "combinacion",
+   "conditions": {
+    "count_lte": {
+     "max": 49,
+     "at_most": 0
+    },
+    "client": {
+     "edad": [
+      "14-17",
+      "18-24",
+      "25-39"
+     ]
+    }
+   },
+   "effect": [
+    {
+     "action": "veto",
+     "active": "retinal",
+     "message": "Tu piel no necesita un retinoide ahora: antioxidante de mañana y protector solar."
+    },
+    {
+     "action": "veto",
+     "active": "retinol",
+     "message": "Tu piel no necesita un retinoide ahora: antioxidante de mañana y protector solar."
+    },
+    {
+     "action": "veto",
+     "active": "esteres_retinilo",
+     "message": "Tu piel no necesita un retinoide ahora: antioxidante de mañana y protector solar."
+    },
+    {
+     "action": "veto",
+     "active": "hpr",
+     "message": "Tu piel no necesita un retinoide ahora: antioxidante de mañana y protector solar."
+    }
+   ],
+   "reason_for_client": "Sin nada marcado, no ponemos activos fuertes.",
+   "evidence_level": "C",
+   "sources": [],
+   "exceptions": "La base de conocimiento dice menos de 30 años; el iPad agrupa 25-39.",
+   "requires_expert_validation": true
+  }
+ ]
+}

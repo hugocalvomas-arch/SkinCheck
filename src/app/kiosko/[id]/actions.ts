@@ -3,7 +3,8 @@
 import { supabaseServer } from '@/lib/supabase/server'
 import { calcularRutinas } from '@/server/rutinas'
 import { recomiendaSinStock } from '@/server/ajustesFarmacia'
-import { analizarFoto, problemasDesdeFoto, UMBRALES_POR_DEFECTO, type ResultadoFoto } from '@/server/analisisPiel'
+import { analizarFoto, UMBRALES_POR_DEFECTO, type ResultadoFoto } from '@/server/analisisPiel'
+import { conReglasFoto } from '@/server/reglasFoto'
 import { construirLectura } from '@/server/lectura'
 import { crearInformePdf, type AnteriorPdf } from '@/server/informePdf'
 import type { Respuestas } from '@/lib/cuestionario'
@@ -68,9 +69,10 @@ export async function analizarKiosko(farmaciaId: string, s: Seguridad, foto: str
     const a = await analizarFoto(foto)
     if ('error' in a) return { error: a.error }
     fotoRes = a
-    r.problemas_extra = problemasDesdeFoto(a.puntuaciones)
+    // Tipo de piel por defecto a partir de la intensidad; las reglas de la foto lo afinan si cruzan brillo e hidratación
     const p = a.puntuaciones
     r.piel = (p.brillo ?? 0) >= 50 ? 'brillo_total' : (p.brillo ?? 0) >= 35 ? 'brillo_T' : (p.hidratacion ?? 0) >= 50 ? 'tirante' : 'normal'
+    conReglasFoto(r, a)
   } else {
     r.problemas_extra = [...new Set(mejorar.map((a) => PROBLEMA_DE[a]).filter(Boolean))]
     if (mejorar.includes('brillo')) r.piel = 'brillo_T'

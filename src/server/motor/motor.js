@@ -196,7 +196,14 @@ const PLAZOS = {
 /* ------------------------------------------------------------------ 4 · Pauta: huecos y semana */
 const DIAS = ["L", "M", "X", "J", "V", "S", "D"];
 function pauta(r, P, c, veto, modo){
-  const orden = P.slice().sort((a, b) => ORDEN_GRUPO[PROBLEMAS[a].g] - ORDEN_GRUPO[PROBLEMAS[b].g] || a.localeCompare(b));
+  // SkinRead: con foto, barrera y rojez siguen primero (seguridad) y el resto va por gravedad (prioridad_foto); sin foto, por grupo
+  const pf = r.prioridad_foto || {}, conFoto = Object.keys(pf).length > 0;
+  const orden = P.slice().sort((a, b) => {
+    const ga = ORDEN_GRUPO[PROBLEMAS[a].g], gb = ORDEN_GRUPO[PROBLEMAS[b].g];
+    if(!conFoto || (ga <= 1 && gb <= 1)) return ga - gb || a.localeCompare(b);
+    if((ga <= 1) !== (gb <= 1)) return ga <= 1 ? -1 : 1;
+    return (pf[b] || 0) - (pf[a] || 0) || ga - gb || a.localeCompare(b);
+  });
   const N0 = +r.productos || 3;
   let N = N0;
   const fuera = [], notas = [];
@@ -507,6 +514,7 @@ function candidatos(h, ctx){
     else if((c.piel === "seca" && v2.piel === "grasa o mixta") || (c.piel === "grasa" && v2.piel === "seca")) continue;
     if(p.pvp_eur == null || p.pvp_eur > 400) continue;   // sin precio, o con un precio que solo puede ser un error de ficha
     base += p._preferencia || 0;   // SkinRead: lo que la farmacia tiene en stock va antes que lo que tendría que pedir
+    for(const [k, w] of Object.entries(r.bonus_activos || {})) if(lleva(p, k)) base += w;   // SkinRead: puntos de las reglas de la foto (reglas-foto.json)
     // lo que resta sin vetar
     if(c.reactiva_a_veces && (p.fragancia === true || lleva(p, "perfume"))) base -= .3;
     if((c.piel === "seca" || c.sequedad_activa) && (p.alcohol_denat === true)) base -= .25;
@@ -609,6 +617,7 @@ function calcular(r){
     for(const dia of pa.semana) dia.noche = dia.noche.map(t => t === de ? a : t); });
   const manana = productos.filter(x => ["AM", "AMPM"].includes(x.turno)).map(x => x.paso), noche = productos.filter(x => ["PM", "AMPM"].includes(x.turno) && x.slot !== "contorno" || x.slot === "contorno").filter(x => x.turno !== "AM").map(x => x.paso);
   const avisos = pa.notas.slice();
+  for(const t of r.avisos_extra || []) if(t && !avisos.includes(t)) avisos.push(t);   // SkinRead: avisos de las reglas de la foto
   if(pa.serums.some(s => s.k === "pha")) avisos.push("El PHA es un exfoliante suave: una noche a la semana para empezar. Si escuece o enrojece, déjalo.");
   if(pa.escalado) avisos.push(pa.escalado + " Cantidad: un guisante para toda la cara. Si irrita, baja un escalón y refuerza la hidratante.");
   if(P.includes("P09")) avisos.push("Lo que más cuenta aquí es la técnica: a favor del pelo, sin tensar la piel, sin apurar, hoja afilada, agua templada y espuma, dos pasadas como mucho.");
