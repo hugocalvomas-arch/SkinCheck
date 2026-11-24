@@ -664,6 +664,7 @@ function candidatos(h, ctx){
       if(otros.length && (ctx.modo === "suave" || c.reactiva || !ep && (c.reactiva_a_veces || c.fototipo_oscuro || hayRetinoide && !RETINOIDES.includes(k)))) continue;
       if(otros.length && hayRetinoide && h.deseo.k === "despigmentante") continue;   // un despigmentante que además exfolia (glicólico, mandélico, PHA) no se suma a la rutina del retinoide, aunque tenga ensayo propio
       if(otros.length && !ep) base -= .25;
+      if(!["aha", "pha", "salicilico", "glicolico_afeitado"].includes(h.deseo.k) && ACIDOS_EXF.some(x => x !== k && llevaAcido(p, x))) base -= .5;   // R2: un sérum de otra función que además trae ácido exfoliante, solo si no hay otro
       // secundarios que suman
       const e = estado(p);
       if(k === "vitc_pura" && (e.vitamina_e || e.ferulico)){ base += .2; pegas.push("lleva además vitamina E o ferúlico, que refuerzan a la vitamina C"); }
@@ -776,6 +777,7 @@ function elegir(pa, ctx){
       for(const alt of cand[slot].principales){
         if(usados.has(alt.p.id) || alt.p.pvp_eur >= e.p.pvp_eur) continue;
         if(/^serum/.test(slot) && alt.activo && Object.entries(sel).some(([s2, e2]) => s2 !== slot && /^serum/.test(s2) && e2.activo === alt.activo)) continue;   // sin dos sérums con el mismo activo
+        if(slot !== "L" && ACIDOS_EXF.some(k => llevaAcido(alt.p, k)) && Object.entries(sel).some(([s2, e2]) => s2 !== slot && s2 !== "L" && ACIDOS_EXF.some(k => llevaAcido(e2.p, k)))) continue;   // el ahorro no mete un segundo producto con ácido (R2)
         const ahorro = e.p.pvp_eur - alt.p.pvp_eur, perdida = Math.max(e.score - alt.score, .02);
         const ratio = ahorro / perdida;
         if(!mejor || ratio > mejor.ratio) mejor = {slot, alt, ratio};
