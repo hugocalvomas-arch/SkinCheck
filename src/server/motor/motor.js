@@ -809,6 +809,7 @@ function candidatos(h, ctx){
 }
 
 const TOPE = {bajo: 30, medio: 60, alto: Infinity};
+const EMPATE = .05;   // diferencia de puntos por debajo de la cual dos productos se consideran empatados (Hugo, 24/11: hasta 3 opciones)
 function elegir(pa, ctx){
   const tope = TOPE[ctx.r.presupuesto] || 60;
   const cand = {}, sel = {}, usados = new Set(), sinProducto = [];
@@ -916,9 +917,15 @@ function calcular(r){
         alternativas: alt.map(a => ficha(a, h))});
       continue;
     }
-    const alts = el.cand[h.slot].principales.filter(a => a.p.id !== e.p.id && !Object.values(el.sel).some(s => s.p.id === a.p.id)).slice(0, 2);
+    const libres = el.cand[h.slot].principales.filter(a => a.p.id !== e.p.id && !Object.values(el.sel).some(s => s.p.id === a.p.id));
+    const alts = libres.slice(0, 2);
+    // empate (Hugo, 24/11): si otros productos quedan a ≤0,05 puntos del elegido, se ofrecen hasta 3 opciones; mismo activo, dentro del presupuesto, orden por puntos y luego id
+    const holgura = el.tope === Infinity ? Infinity : el.tope - el.total;
+    const empate = libres.filter(a => Math.abs(a.score - e.score) <= EMPATE && a.activo === e.activo && (h.slot === "S" || a.p.pvp_eur - e.p.pvp_eur <= holgura))
+      .sort((a, b) => b.score - a.score || a.p.id.localeCompare(b.p.id)).slice(0, 2);
     productos.push(Object.assign(ficha(e, h), {slot: h.slot, paso: h.etiqueta, turno: h.turno, aparte: !!h.aparte, para: paraQue(h, e, pa),
-      alternativas: alts.map(a => ficha(a, h)).concat(el.cand[h.slot].sin_dosis.slice(0, 1).map(a => Object.assign(ficha(a, h), {sin_dosis: true})))}));
+      alternativas: alts.map(a => ficha(a, h)).concat(el.cand[h.slot].sin_dosis.slice(0, 1).map(a => Object.assign(ficha(a, h), {sin_dosis: true}))),
+      empate: empate.map(a => ficha(a, h))}));
   }
   // frecuencia: el sérum de retinoide o de ácido dice cuántas noches va, igual que la semana
   const FREC = {L: "lunes", M: "martes", X: "miércoles", J: "jueves", V: "viernes", S: "sábado", D: "domingo"};

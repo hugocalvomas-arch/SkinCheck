@@ -69,7 +69,7 @@ function resumen(res){
   for(const [k] of L.NIVELES){ const x = res[k];
     o[k] = { modo: x.modo, problemas: x.perfil.problemas.map(p => p.id + " " + p.corto), ingredientes: (x.ingredientes_piel || []).slice(0, 6),
       opciones: (x.opciones || []).map(op => ({ papel: op.papel, nombre: op.nombre, por_que: op.por_que, motivo: op.motivo })), prioridad: x.prioridad,
-      productos: x.productos.map(p => ({ paso: p.paso, turno: p.turno, slot: p.slot, id: p.id || null, marca: p.marca || null, producto: p.producto || null, activo: p.activo || null, dosis: p.dosis || null, score: p.score ?? null, desglose: p.desglose || null, frecuencia: p.frecuencia || null, para: p.para || null, motivo: p.producto ? null : p.motivo || null, precio: p.precio ?? null })),
+      productos: x.productos.map(p => ({ paso: p.paso, turno: p.turno, slot: p.slot, id: p.id || null, marca: p.marca || null, producto: p.producto || null, activo: p.activo || null, dosis: p.dosis || null, score: p.score ?? null, desglose: p.desglose || null, frecuencia: p.frecuencia || null, para: p.para || null, motivo: p.producto ? null : p.motivo || null, precio: p.precio ?? null, empate: (p.empate || []).map(a => a.marca + " · " + a.producto) })),
       queda_fuera: x.queda_fuera, avisos: x.avisos, derivacion: x.derivacion.map(d => d.texto), total: x.total };
   }
   return o;
