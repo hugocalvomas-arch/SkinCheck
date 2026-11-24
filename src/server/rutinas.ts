@@ -6,9 +6,10 @@ const { TODOS } = require('./motor/catalogo.js')
 
 type Stock = { producto_id: string; pvp: number | null; unidades: number }
 
+// Sin tope de precio en ningún nivel (Hugo, 24/11): los niveles solo cambian el número de productos.
 export const NIVELES = [
-  { clave: 'basica', nombre: 'Básica', productos: 3, presupuesto: 'bajo' },
-  { clave: 'media', nombre: 'Media', productos: 4, presupuesto: 'medio' },
+  { clave: 'basica', nombre: 'Básica', productos: 3, presupuesto: 'alto' },
+  { clave: 'media', nombre: 'Media', productos: 4, presupuesto: 'alto' },
   { clave: 'completa', nombre: 'Completa', productos: 5, presupuesto: 'alto' },
 ] as const
 

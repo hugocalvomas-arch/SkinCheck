@@ -17,7 +17,7 @@ function cargar(){
 }
 const ASP = ["arrugas", "manchas", "textura", "rojez", "brillo", "firmeza", "hidratacion", "poros", "ojeras", "acne", "tono"];
 const EDAD_MOTOR = { "25-34": "25-39", "35-44": "25-39", "45-54": "40-49", "55+": "50+", "55-64": "50+", "65+": "50+" };
-const NIVELES = [["basica", 3, "bajo"], ["media", 4, "medio"], ["completa", 5, "alto"]];
+const NIVELES = [["basica", 3, "alto"], ["media", 4, "alto"], ["completa", 5, "alto"]];
 
 /* ---------------------------------------------------------------- generador */
 function rng(seed){ let s = seed >>> 0 || 1; return () => { s = (s * 1664525 + 1013904223) >>> 0; return s / 4294967296; }; }

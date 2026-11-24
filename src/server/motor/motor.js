@@ -349,7 +349,7 @@ function pauta(r, P, c, veto, modo){
       if(!mejor || sc > mejor.sc + 1e-9) mejor = {x, sc, acts: d.humectante ? null : acts.slice().sort((a, b) => pts(b) - pts(a) || a.localeCompare(b))};
     }
     // R4 (Hugo): embarazo con manchas, azelaico ya en la básica
-    if(c.embarazo && !c.lactancia && nb("manchas") <= 69 + B3 && !veto.azelaico){ const dp = lista.find(x => ["despigmentante", "azelaico_mixto"].includes(x.k)); if(dp) mejor = {x: dp, sc: 0, acts: ["azelaico"].concat(((deseoDe(dp.k) || {}).activos || []).filter(a => a !== "azelaico" && !veto[a]))}; }
+    if(c.embarazo && !c.lactancia && nb("manchas") <= 69 + B3 && !veto.azelaico){ const dp = lista.find(x => ["despigmentante", "azelaico_mixto"].includes(x.k)); if(dp) mejor = {x: dp, sc: 0, acts: ["azelaico"].concat(((deseoDe(dp.k) || {}).activos || []).filter(a => a !== "azelaico" && !veto[a]))}; else mejor = {x: {k: "azelaico_mixto", por: orden[0]}, sc: 0, acts: ["azelaico"]}; }   // sin deseo de manchas (p. ej. el problema es el acné), el azelaico igual (ciclo 6)
     if(!mejor && !veto.pha && !c.sequedad_activa) mejor = {x: {k: "pha", por: orden[0]}, sc: 0, acts: null};
     for(const x of lista) if((!mejor || x !== mejor.x) && !x._tabla){ const nom = nombreDeseo(x.k); if(!fuera.some(f => f.que === nom)) fuera.push({k: x.k, que: nom, por: "Tu piel está en la franja leve: un solo activo suave, dirigido a tu nota más baja. Lo demás se cuida con la rutina base."}); }
     // la media y la completa no rellenan: solo suman los pasos con indicación de Hugo (R21: retinoide desde los 35 con arrugas <70 o poros <55; R35: manchas <60, vitamina C o azelaico de mañana)
@@ -520,7 +520,7 @@ const A_FOTO = ["arrugas", "manchas", "textura", "rojez", "brillo", "firmeza", "
 const SEBORREGULADORA = /cloud clear|water cream|day light|oil control|seborregul|matific|\bmate\b|anti.?brillo|purif/;
 const LIGERA = /plump.?tide|day light|hydration station|water gel|water cream|watery|aqua gel|\bgel\b/;
 const DE_DIA = /morning|\bday\b|\bdia\b|de jour/;
-const NO_HIDRATANTE = /\bserum\b|\bsarum\b|tonico|toner|essence|esencia|ampoule|ampolla|callosidades|mascarilla|\bmask\b/;
+const NO_HIDRATANTE = /vaselina pura|petrolatum puro|\bserum\b|\bsarum\b|tonico|toner|essence|esencia|ampoule|ampolla|callosidades|mascarilla|\bmask\b/;
 const PIEL_OK = {seca: ["seca", "normal a seca", "todas"], normal: ["normal a seca", "normal a grasa", "todas"], mixta: ["normal a grasa", "grasa o mixta", "todas"], grasa: ["grasa o mixta", "normal a grasa", "todas"]};
 
 function dosisDe(p, k, rango, c, ep){
@@ -691,7 +691,7 @@ function candidatos(h, ctx){
       const ep0 = CFG.ensayo_producto[p.id];
       if(ep0 && !ep0.funciones.includes(h.deseo.k)) continue;                            // el ensayo vale para la función estudiada, no para otras
       const ep = ep0 && (!ep0.problemas || ep0.problemas.includes(h.deseo.por)) ? ep0 : null;
-      if(hayRetinoide && h.deseo.k !== "retinoide" && RETINOIDES.some(x => lleva(p, x))) continue;   // un solo retinoide en la rutina, también entre sérums
+      if(hayRetinoide && h.deseo.k !== "retinoide" && RETINOIDES.concat("bakuchiol").some(x => lleva(p, x))) continue;   // un solo retinoide en la rutina, también entre sérums
       if(v2.exfoliante && !["aha", "pha", "salicilico", "glicolico_afeitado"].includes(h.deseo.k)) continue;   // un exfoliante no vale como sérum de otra función
       if(k === "thiamidol"){
         if(h.deseo.por === "P12" || !["P10", "P13"].some(x => P.includes(x))) continue;
@@ -812,6 +812,7 @@ function candidatos(h, ctx){
 }
 
 const TOPE = {bajo: 30, medio: 60, alto: Infinity};
+const CARO = 50, CASI_IGUAL = .2;   // «muy caro» desde 50 €; «cumple casi igual» = como mucho 0,2 puntos menos y mismo activo (Hugo, 24/11)
 const EMPATE = .05;   // diferencia de puntos por debajo de la cual dos productos se consideran empatados (Hugo, 24/11: hasta 3 opciones)
 function elegir(pa, ctx){
   const tope = TOPE[ctx.r.presupuesto] || 60;
@@ -926,9 +927,12 @@ function calcular(r){
     const holgura = el.tope === Infinity ? Infinity : el.tope - el.total;
     const empate = libres.filter(a => Math.abs(a.score - e.score) <= EMPATE && a.activo === e.activo && (h.slot === "S" || a.p.pvp_eur - e.p.pvp_eur <= holgura))
       .sort((a, b) => b.score - a.score || a.p.id.localeCompare(b.p.id)).slice(0, 2);
+    // opción económica (Hugo, 24/11): si el elegido es muy caro, uno con el mismo activo que cumpla casi igual y cueste mucho menos
+    const economica = e.p.pvp_eur >= CARO ? libres.filter(a => a.activo === e.activo && a.score >= e.score - CASI_IGUAL && a.p.pvp_eur <= e.p.pvp_eur * .6 && !empate.includes(a))
+      .sort((a, b) => b.score - a.score || a.p.pvp_eur - b.p.pvp_eur || a.p.id.localeCompare(b.p.id))[0] || null : null;
     productos.push(Object.assign(ficha(e, h), {slot: h.slot, paso: h.etiqueta, turno: h.turno, aparte: !!h.aparte, para: paraQue(h, e, pa),
       alternativas: alts.map(a => ficha(a, h)).concat(el.cand[h.slot].sin_dosis.slice(0, 1).map(a => Object.assign(ficha(a, h), {sin_dosis: true}))),
-      empate: empate.map(a => ficha(a, h))}));
+      empate: empate.map(a => ficha(a, h)), economica: economica ? ficha(economica, h) : null}));
   }
   // frecuencia: el sérum de retinoide o de ácido dice cuántas noches va, igual que la semana
   const FREC = {L: "lunes", M: "martes", X: "miércoles", J: "jueves", V: "viernes", S: "sábado", D: "domingo"};
