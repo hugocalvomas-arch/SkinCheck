@@ -500,6 +500,8 @@ function candidatos(h, ctx){
       if(!dosis) continue;
       if(k === "retinol" && estado(p).retinol.pct > CFG.retinol_max) continue;
       activo = k; base = 1 + dosis.ok + (ep ? (ep.control === false ? .1 : .2) : dosis.tipo === "estudiada" ? .2 : 0); cubre.push(h.deseo.f);
+      // una regla de la foto que «evita» este activo (avoid) pesa de verdad cuando es el protagonista del sérum: entra solo si no hay otra opción
+      if(((r.bonus_activos || {})[k] || 0) < 0) base -= 1;
       if(ep) pegas.push("la eficacia está estudiada en el producto acabado");
       if(h.deseo.turno === "AM" && RETINOIDES.some(x => lleva(p, x))) continue;        // retinoides, solo de noche
       // un solo activo fuerte por producto y por turno: el sérum no trae otro ácido o retinoide a dosis
@@ -551,7 +553,12 @@ function elegir(pa, ctx){
   const semilla = hash(JSON.stringify(ctx.r));
   for(const h of pa.huecos){
     let l = cand[h.slot].principales.filter(x => !usados.has(x.p.id));
-    if(h.deseo && l.length){ const ya = Object.entries(sel).filter(([s]) => /^serum/.test(s)).map(([, e]) => e.activo); const otros = l.filter(x => !ya.includes(x.activo)); if(otros.length) l = otros; }
+    // un sérum no repite el activo de otro sérum, ni uno que otro sérum ya lleva a dosis (p. ej. niacinamida dentro del glicólico)
+    if(h.deseo && l.length){ const prev = Object.entries(sel).filter(([s]) => /^serum/.test(s)).map(([, e]) => e); const ya = prev.map(e => e.activo);
+      const otros = l.filter(x => !ya.includes(x.activo) && !(x.activo && prev.some(e => aDosis(e.p, x.activo)))); if(otros.length) l = otros; }
+    // la hidratante no repite a dosis el activo que ya lleva un sérum (tres productos con niacinamida no suman)
+    if(["H", "H2"].includes(h.slot) && l.length){ const act = Object.entries(sel).filter(([s]) => /^serum/.test(s)).map(([, e]) => e.activo).filter(Boolean);
+      const otros = l.filter(x => !act.some(a => aDosis(x.p, a))); if(otros.length) l = otros; }
     if(!l.length){ sinProducto.push(h); continue; }
     const mejores = l.filter(x => x.score >= l[0].score - .12).slice(0, 6);
     const e = mejores[(semilla + hash(h.slot)) % mejores.length];
@@ -621,6 +628,13 @@ function calcular(r){
     productos.push(Object.assign(ficha(e, h), {slot: h.slot, paso: h.etiqueta, turno: h.turno, aparte: !!h.aparte, para: paraQue(h, e, pa),
       alternativas: alts.map(a => ficha(a, h)).concat(el.cand[h.slot].sin_dosis.slice(0, 1).map(a => Object.assign(ficha(a, h), {sin_dosis: true})))}));
   }
+  // frecuencia: el sérum de retinoide o de ácido dice cuántas noches va, igual que la semana
+  const FREC = {L: "lunes", M: "martes", X: "miércoles", J: "jueves", V: "viernes", S: "sábado", D: "domingo"};
+  pa.serums.forEach((sr, i) => { const pr = productos.find(x => x.slot === "serum" + (i + 1)); if(!pr) return;
+    const noches = sr.k === "retinoide" ? pa.nochesRet : ["aha", "pha", "glicolico_afeitado"].includes(sr.k) ? pa.nochesAha : null;
+    if(!noches || !noches.length || noches.length >= 7) return;
+    pr.noches = noches.slice();
+    pr.frecuencia = noches.length === 1 ? `Una noche a la semana (${FREC[noches[0]]})` : `${noches.length} noches a la semana (${noches.map(d => FREC[d]).join(", ")})`; });
   // en la semana, el sérum de cada noche se nombra por el activo que lleva el producto elegido
   pa.serums.forEach((sr, i) => { const pr = productos.find(x => x.slot === "serum" + (i + 1)); if(!pr || !pr.activo || !sr.flexible) return;
     const de = etiquetaDeseo(sr.k), a = pr.activo.charAt(0).toUpperCase() + pr.activo.slice(1);

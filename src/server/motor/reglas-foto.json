@@ -1,5 +1,5 @@
 {
- "version": "0.2.0",
+ "version": "0.2.1",
  "date": "2026-11-24",
  "methodology": "Base de conocimiento SkinRead (OUTPUTS/skincheck/base-conocimiento, entregas 1-4). Notas de Perfect Corp de 0 a 100, más alto es mejor. Bandas: Bien >=75, Leve 50-74, Moderado 30-49, Marcado <30. Evidencia: A guía o metaanálisis, B ensayo clínico, C mecanismo o criterio de experto. Reglas deterministas: se evalúan todas y se suman sus efectos. Pendiente de validación de Hugo.",
  "aspect_reach": {
@@ -20,7 +20,7 @@
   "remove_problem": "Quita un problema que otra regla haya añadido.",
   "veto": "Bloquea un activo en toda la rutina.",
   "prefer": "Suma puntos a los productos que llevan el activo o ingrediente (weight positivo).",
-  "avoid": "Resta puntos a los productos que lo llevan, sin bloquearlo (weight negativo).",
+  "avoid": "Resta puntos a los productos que lo llevan, sin bloquearlo (weight negativo). Si es el activo protagonista de un sérum, ese sérum solo entra cuando no hay otra opción.",
   "set_skin": "Fija el tipo de piel que usa el motor para la textura: tirante, normal, brillo_T o brillo_total.",
   "refer": "Aviso de consulta para la clienta.",
   "notice": "Aviso o consejo que se añade a la rutina.",

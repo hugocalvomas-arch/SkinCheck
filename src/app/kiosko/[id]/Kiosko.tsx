@@ -456,7 +456,7 @@ export function Informe({ res, foto, farmacia, onFin }: { res: any; foto: string
   async function generarQr() {
     const lineas = [`Mi rutina SkinRead (${farmacia})`, '']
     if (manana.length) lineas.push('Mañana:', ...manana.map((p: any) => `- ${p.marca} ${p.producto}${p.bajo_pedido ? ' (bajo pedido)' : ''}`), '')
-    if (noche.length) lineas.push('Noche:', ...noche.map((p: any) => `- ${p.marca} ${p.producto}${p.bajo_pedido ? ' (bajo pedido)' : ''}`), '')
+    if (noche.length) lineas.push('Noche:', ...noche.map((p: any) => `- ${p.marca} ${p.producto}${p.bajo_pedido ? ' (bajo pedido)' : ''}${p.frecuencia ? ` · ${p.frecuencia.toLowerCase()}` : ''}`), '')
     lineas.push(`Total: ${eur(rut.total)}`, res.codigo ? `Código de revisión: ${res.codigo}. Vuelve en 4 semanas para comparar.` : 'Repite el análisis en 4 semanas para comparar.')
     setQr(await QRCode.toDataURL(`https://wa.me/?text=${encodeURIComponent(lineas.join('\n'))}`, { margin: 1, width: 400, errorCorrectionLevel: 'L', color: { dark: '#0f1b1d', light: '#ffffff' } }))
   }
@@ -660,7 +660,7 @@ function Turno({ icono, titulo, productos }: { icono: React.ReactNode; titulo: s
           <li key={k} className="grid grid-cols-[1fr_auto] gap-x-4 gap-y-0.5 pb-4 border-b border-[var(--k-line)]">
             <span className="text-sm text-[var(--k-muted)]">{k + 1}. {p.paso}</span>
             <span className="row-span-2 self-center cifra text-lg">{eur(p.precio)}</span>
-            <span className="text-lg leading-snug">{p.marca} {p.producto}{p.bajo_pedido && <span className="block text-sm text-[var(--k-muted)]">Bajo pedido: la farmacia te lo consigue</span>}</span>
+            <span className="text-lg leading-snug">{p.marca} {p.producto}{p.bajo_pedido && <span className="block text-sm text-[var(--k-muted)]">Bajo pedido: la farmacia te lo consigue</span>}{p.frecuencia && <span className="block text-sm text-[var(--k-accent)]">{p.frecuencia}</span>}</span>
           </li>
         ))}
         {!productos.length && <li className="text-[var(--k-muted)]">Sin productos en este turno.</li>}

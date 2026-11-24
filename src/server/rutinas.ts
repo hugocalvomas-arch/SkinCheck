@@ -47,7 +47,7 @@ function resumen(out: any, bajoPedido: Set<string>) {
       paso: p.paso, turno: p.turno, slot: p.slot, id: p.id ?? null, marca: p.marca ?? null, producto: p.producto ?? null,
       precio: p.precio ?? null, formato_ml: p.formato_ml ?? null, para: p.para, activo: p.activo ?? null, dosis: p.dosis ?? null,
       motivo: p.producto ? null : p.motivo ?? null, aparte: !!p.aparte,
-      dosis_tipo: p.dosis_tipo ?? null, ademas: p.ademas ?? [],
+      dosis_tipo: p.dosis_tipo ?? null, ademas: p.ademas ?? [], frecuencia: p.frecuencia ?? null,
       bajo_pedido: p.id ? bajoPedido.has(p.id) : false,
     })),
     rutina: out.rutina,
