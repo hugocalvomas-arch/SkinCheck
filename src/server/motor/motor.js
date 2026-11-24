@@ -351,7 +351,7 @@ function pauta(r, P, c, veto, modo){
       if(!mejor || sc > mejor.sc + 1e-9) mejor = {x, sc, acts: d.humectante ? null : acts.slice().sort((a, b) => pts(b) - pts(a) || a.localeCompare(b))};
     }
     // R4 (Hugo): embarazo con manchas, azelaico ya en la básica
-    if(c.embarazo && !c.lactancia && nb("manchas") <= 69 + B3 && !veto.azelaico){ const dp = lista.find(x => ["despigmentante", "azelaico_mixto"].includes(x.k)); if(dp) mejor = {x: dp, sc: 0, acts: ["azelaico"].concat(((deseoDe(dp.k) || {}).activos || []).filter(a => a !== "azelaico" && !veto[a]))}; else mejor = {x: {k: "azelaico_mixto", por: orden[0]}, sc: 0, acts: ["azelaico"]}; }   // sin deseo de manchas (p. ej. el problema es el acné), el azelaico igual (ciclo 6)
+    if(c.embarazo && !c.lactancia && nb("manchas") <= 69 + B3 && !veto.azelaico){ const dp = lista.find(x => ["despigmentante", "azelaico_mixto"].includes(x.k)); if(dp) mejor = {x: dp, sc: 0, acts: ["azelaico"]}; else mejor = {x: {k: "azelaico_mixto", por: orden[0]}, sc: 0, acts: ["azelaico"]}; }   // sin deseo de manchas (p. ej. el problema es el acné), el azelaico igual (ciclo 6)
     if(!mejor && !veto.pha && !c.sequedad_activa) mejor = {x: {k: "pha", por: orden[0]}, sc: 0, acts: null};
     for(const x of lista) if((!mejor || x !== mejor.x) && !x._tabla){ const nom = nombreDeseo(x.k); if(!fuera.some(f => f.que === nom)) fuera.push({k: x.k, que: nom, por: "Tu piel está en la franja leve: un solo activo suave, dirigido a tu nota más baja. Lo demás se cuida con la rutina base."}); }
     // la media y la completa no rellenan: solo suman los pasos con indicación de Hugo (R21: retinoide desde los 35 con arrugas <70 o poros <55; R35: manchas <60, vitamina C o azelaico de mañana)
@@ -783,6 +783,8 @@ function candidatos(h, ctx){
       if(rojezB && h.deseo){ const e = estado(p); if(["centella", "ectoina", "pantenol"].some(k => e[k])) base += .3; if(e.niacinamida && e.niacinamida.pct > 5) base -= .5; }
       // piel que reacciona a veces: sin alcohol secante entre los tres primeros ingredientes de un producto sin aclarado (revisión clínica, C11-07)
       if(h.slot !== "L" && r.reactiva === "a_veces" && (p.inci_completo || []).slice(0, 3).some(i => /^(alcohol denat|alcohol|sd alcohol|isopropyl alcohol|ethanol)\b/.test(n(i)))) base -= .5;
+      // sin granos ni brillo, nada de gamas antiimperfecciones en los pasos de tratamiento (revisión clínica, C13-03)
+      if(h.slot !== "L" && h.slot !== "S" && (nf.acne ?? 0) >= 70 && (nf.brillo ?? 0) >= 70 && /imperfec|blemish|cleanance|effaclar|sebium|hyseac|keracnyl|comedomed|normaderm|sebiaclear|acniben|acnestil/.test(nom)) base -= .5;
       // piel que reacciona casi siempre: sin solar 100 % mineral ni mucina de caracol
       if(r.reactiva === "siempre" && ((h.slot === "S" && p.tipo_filtro === "mineral") || (p.inci_completo || []).some(i => /snail/.test(n(i))))) base -= 1;
       // manchas en buen estado: sin despigmentantes que no hacen falta
