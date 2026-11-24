@@ -430,7 +430,7 @@ function pauta(r, P, c, veto, modo){
   // salicílico: 3 días por semana (2 si la nota es leve), sin coincidir con el retinoide ni con el ácido
   const salS = serums.find(s => s.k === "salicilico");
   let nochesSal = [];
-  if(salS){ const n0 = (notaDe(salS.por) ?? 0) >= 50 ? 2 : 3; nochesSal = (salS.turno === "AM" ? ["L", "X", "V"] : ["M", "X", "S", "V", "D", "L"].filter(x => !nochesRet.includes(x))).slice(0, n0); }
+  if(salS){ const n0 = (notaDe(salS.por) ?? 0) >= 50 ? 2 : 3; nochesSal = (salS.turno === "AM" ? ["M", "X", "V", "S", "D", "L"] : ["M", "X", "S", "V", "D", "L"]).filter(x => !nochesRet.includes(x)).slice(0, n0); }   // ni la mañana del día del retinoide (auditoría 24/11)
   let nochesAha = [];
   if(aha){ nochesAha = aha.k === "glicolico_afeitado" ? (ret ? ["M", "S"] : ["M", "J", "S"]) : ["D"].filter(x => !nochesRet.includes(x)); if(aha.k !== "glicolico_afeitado" && !nochesAha.length) nochesAha = ["S"]; if(c.fototipo_oscuro) nochesAha = nochesAha.slice(0, 1); }
   const semana = DIAS.map(dia => {

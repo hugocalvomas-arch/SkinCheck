@@ -7,6 +7,7 @@ const BASE = require("./catalogo.json"), CORR = require("./correcciones.json"), 
 const n = s => String(s || "").toLowerCase();
 // restos de la web pegados al final del INCI al fichar (HTML, scripts, reseñas, instrucciones): se corta en el primero
 const BASURA_INCI = /<|>|addEventListener|function\s*\(|window\.|document\.|customer reviews|add a review|review for|^tu rutina$|^paso$|reseñas|^\d+([.,]\d+)?$|[{};]|=>|https?:|^c[oó]mo (utilizar|usar|aplicar)|^modo de (uso|empleo)|^paso \d/i;
+const TENSIOACTIVO = /laur[ey]th sulfate|lauryl sulfate|coco-?betaine|cocamidopropyl betaine|coco-glucoside|decyl glucoside|lauryl glucoside|cocoamphoacetate|isethionate/i;
 function limpiaInci(a){ if(!Array.isArray(a)) return a; const i = a.findIndex(x => BASURA_INCI.test(String(x)) || String(x).length > 150); return i < 0 ? a : a.slice(0, i); }
 function aplicar(p){
   const c = CORR[p.id]; let q = p;
@@ -31,7 +32,8 @@ function aplicar(p){
   // una «hidratante» que por el nombre es un limpiador (Lavant, Nettoyant, Cleanser…)
   // crema-gel de tratamiento: ocupa el hueco de la hidratante, no el del sérum (Hugo, 24/11)
   if(v2 && HUECO_H.has(p.id)) v2 = Object.assign({}, v2, {hueco: "H"});
-  if(v2 && v2.hueco === "H" && /lavant|nettoyant|limpiador|limpiadora|cleanser|cleansing|face wash/i.test(q.producto)) v2 = Object.assign({}, v2, {hueco: "L"});
+  // también por la espuma en el nombre o por un tensioactivo de lavado entre los tres primeros del INCI (Effaclar Gel Moussant, Normaderm Phytosolution)
+  if(v2 && v2.hueco === "H" && (/lavant|nettoyant|limpiador|limpiadora|cleanser|cleansing|face wash|moussant|foaming/i.test(q.producto) || (q.inci_completo || []).slice(0, 3).some(i => TENSIOACTIVO.test(String(i))))) v2 = Object.assign({}, v2, {hueco: "L"});
   const inci = limpiaInci(q.inci_completo);
   return Object.assign({}, q, {v2}, inci !== q.inci_completo ? {inci_completo: inci} : {});
 }
