@@ -2460,5 +2460,101 @@
    "acne": 80,
    "tono": 80
   }
+ },
+ {
+  "id": "C112",
+  "perfil": "Arrugas + rojez moderada, nunca reacciona (P-03: retinal suave)",
+  "edad": "40-49",
+  "edad_tramo": "45-54",
+  "sexo": "mujer",
+  "embarazo": "no",
+  "lactancia": "no",
+  "receta": "no",
+  "reactiva": "nunca",
+  "notas": {
+   "arrugas": 40,
+   "manchas": 70,
+   "textura": 70,
+   "rojez": 40,
+   "brillo": 80,
+   "firmeza": 70,
+   "hidratacion": 60,
+   "poros": 80,
+   "ojeras": 80,
+   "acne": 80,
+   "tono": 80
+  }
+ },
+ {
+  "id": "C113",
+  "perfil": "Arrugas + rojez moderada, a veces reacciona (sin retinoide)",
+  "edad": "40-49",
+  "edad_tramo": "45-54",
+  "sexo": "mujer",
+  "embarazo": "no",
+  "lactancia": "no",
+  "receta": "no",
+  "reactiva": "a_veces",
+  "notas": {
+   "arrugas": 40,
+   "manchas": 70,
+   "textura": 70,
+   "rojez": 40,
+   "brillo": 80,
+   "firmeza": 70,
+   "hidratacion": 60,
+   "poros": 80,
+   "ojeras": 80,
+   "acne": 80,
+   "tono": 80
+  }
+ },
+ {
+  "id": "C114",
+  "perfil": "Arrugas + rojez moderada, nunca reacciona pero deshidratada (sin retinoide)",
+  "edad": "40-49",
+  "edad_tramo": "45-54",
+  "sexo": "mujer",
+  "embarazo": "no",
+  "lactancia": "no",
+  "receta": "no",
+  "reactiva": "nunca",
+  "notas": {
+   "arrugas": 40,
+   "manchas": 70,
+   "textura": 70,
+   "rojez": 40,
+   "brillo": 80,
+   "firmeza": 70,
+   "hidratacion": 45,
+   "poros": 80,
+   "ojeras": 80,
+   "acne": 80,
+   "tono": 80
+  }
+ },
+ {
+  "id": "C115",
+  "perfil": "Arrugas marcadas + rojez moderada + manchas, nunca reacciona",
+  "edad": "40-49",
+  "edad_tramo": "45-54",
+  "sexo": "mujer",
+  "embarazo": "no",
+  "lactancia": "no",
+  "receta": "no",
+  "reactiva": "nunca",
+  "notas": {
+   "arrugas": 28,
+   "manchas": 45,
+   "textura": 70,
+   "rojez": 40,
+   "brillo": 80,
+   "firmeza": 70,
+   "hidratacion": 60,
+   "poros": 80,
+   "ojeras": 80,
+   "acne": 80,
+   "tono": 80
+  }
  }
 ]

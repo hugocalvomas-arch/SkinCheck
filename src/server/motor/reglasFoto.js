@@ -79,7 +79,7 @@ function aplicarReglasFoto(notas, r0, op = {}){
     return true;
   };
 
-  const out = {problemas: [], quitar: [], veto: {}, bonus: {}, derivacion: [], avisos: [], piel: null, factor: {}, aspectoDe: {}, aplicadas: []};
+  const out = {problemas: [], quitar: [], veto: {}, bonus: {}, derivacion: [], avisos: [], piel: null, factor: {}, aspectoDe: {}, aplicadas: [], limites: {}};
   for(const x of reglas){
     if(!activa(x)) continue;
     const asp = x.conditions && x.conditions.scores && x.conditions.scores[0] && x.conditions.scores[0].aspect;
@@ -94,6 +94,8 @@ function aplicarReglasFoto(notas, r0, op = {}){
         case "refer": if(!out.derivacion.some(d => d.texto === e.text)) out.derivacion.push({nivel: "consulta", texto: e.text}); break;
         case "notice": if(!out.avisos.includes(e.text)) out.avisos.push(e.text); break;
         case "priority": out.factor[e.aspect] = (out.factor[e.aspect] || 1) * (e.factor || 1); break;
+        // tope que impone el código (Hugo, P-03): solo esa forma, % declarado máximo, noches, sándwich e hidratante reparadora
+        case "limit": out.limites[e.slot] = {activo: e.active, max_pct: e.max_pct, noches: e.max_nights, sandwich: !!e.sandwich, hidratante: e.moisturizer || null, mensaje: e.message || x.reason_for_client, regla: x.id}; break;
       }
     }
   }
@@ -125,6 +127,7 @@ function aplicarReglasFoto(notas, r0, op = {}){
     derivacion_extra: out.derivacion,
     avisos_extra: out.avisos,
     prioridad_foto: prioridad,
+    limites: out.limites,
     piel: out.piel,
     reglas_aplicadas: out.aplicadas,
     version_reglas: BASE.version,

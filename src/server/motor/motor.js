@@ -250,6 +250,8 @@ function pauta(r, P, c, veto, modo){
       else if(c.menor25 && !motivoAcne){ fuera.push({que: "Retinoide", por: "Con menos de 25 años no hace falta un retinoide antiedad. Antioxidante de mañana y solar."}); continue; }
       else if(c.rojez){ fuera.push({que: "Retinoide", por: "Con rojez fija, el retinoide solo entra cuando esté estable, y eso no lo puedo saber desde aquí."}); continue; }
       else if(c.sequedad_activa){ fuera.push({que: "Retinoide", por: "Mientras dure la sequedad, el retinoide espera. Cuando la piel deje de tirar, 1-2 noches por semana."}); continue; }
+      // tope de una regla de la foto (Hugo, P-03): si no hay un retinal que lo cumpla y una crema reparadora sin perfume, el retinoide no entra
+      else if(LIM(r).retinoide && !hayRetinoideTope(veto, c, LIM(r).retinoide)){ fuera.push({que: "Retinoide", por: LIM(r).retinoide.mensaje}); continue; }
     }
     if(k === "aha"){
       if(veto.glicolico){ fuera.push({que: "Exfoliante con ácido", por: veto.glicolico}); continue; }
@@ -342,6 +344,8 @@ function pauta(r, P, c, veto, modo){
     else { nochesRet = ["L", "X", "V"]; escalado = r.retinoide_exp === "reciente" ? "Ya lo usas desde hace poco: 3 noches por semana hasta la semana 12." : "Ya lo toleras: 3 noches por semana. Si quieres más, noches alternas."; }
     if(c.fototipo_oscuro && !acne && nochesRet.length > 2) nochesRet = ["L", "J"];
     if(c.mayor50 && nochesRet.length > 3) nochesRet = ["L", "X", "V"];
+    const L = LIM(r).retinoide;
+    if(L){ nochesRet = ["L", "J"].slice(0, L.noches || 2); escalado = `Retinal suave (hasta ${fmt(L.max_pct)} %) ${nochesRet.length} noches por semana, no seguidas, en sándwich: hidratante, retinal, hidratante. Mientras haya rojez no se sube de ${nochesRet.length} noches.`; }
   }
   let nochesAha = [];
   if(aha){ nochesAha = aha.k === "glicolico_afeitado" ? (ret ? ["M", "S"] : ["M", "J", "S"]) : ["D"].filter(x => !nochesRet.includes(x)); if(aha.k !== "glicolico_afeitado" && !nochesAha.length) nochesAha = ["S"]; if(c.fototipo_oscuro) nochesAha = nochesAha.slice(0, 1); }
@@ -352,7 +356,7 @@ function pauta(r, P, c, veto, modo){
       if((s.k === "aha" || s.k === "pha" || s.k === "glicolico_afeitado") && !nochesAha.includes(dia)) continue;
       paso.push(etiquetaDeseo(s.k));
     }
-    paso.push(ret && nochesRet.includes(dia) && c.reactiva ? "Hidratante (antes y después)" : "Hidratante");
+    paso.push(ret && nochesRet.includes(dia) && (c.reactiva || (ret.k === "retinoide" && LIM(r).retinoide && LIM(r).retinoide.sandwich)) ? "Hidratante (antes y después)" : "Hidratante");
     return {dia, noche: paso};
   });
   const vistos = new Set(), fuera1 = fuera.filter(x => !vistos.has(x.que) && vistos.add(x.que));
@@ -390,10 +394,30 @@ function dosisDe(p, k, rango, c, ep){
   return {ok: .3, txt: "dosis no declarada por la marca", tipo: "no_declarada"};
 }
 const fmt = x => String(+(+x).toFixed(2)).replace(".", ",");
+/* Tope de retinoide impuesto por una regla de la foto (Hugo, P-03): solo la forma indicada, con % declarado ≤ el máximo. */
+function cumpleTopeRet(p, L){
+  const e = estado(p)[L.activo];
+  return !!e && e.estado === "declarada" && typeof e.pct === "number" && e.pct <= L.max_pct + 1e-9;
+}
+/* La hidratante que acompaña a ese retinoide: con ceramidas o pantenol y sin perfume. */
+function esReparadora(p, H){
+  if(!H) return true;
+  const e = estado(p);
+  if(H.fragrance_free && (p.fragancia !== false || lleva(p, "perfume"))) return false;
+  return (H.one_of || []).some(k => e[k]);
+}
+/* El rango eficaz de siempre, recortado por arriba al máximo de la regla. */
+function rangoTope(L){ const r = R[L.activo] || [0, L.max_pct]; return [r[0], Math.min(r[1], L.max_pct)]; }
+function hayRetinoideTope(veto, c, L){
+  const ser = (LISTA || CATALOGO).some(p => p.v2 && p.v2.protagonista === L.activo && ["PM", "AM/PM"].includes(p.v2.hueco) && !vetado(p, veto) && cumpleTopeRet(p, L) && dosisDe(p, L.activo, rangoTope(L), c));
+  const hid = (LISTA || CATALOGO).some(p => p.v2 && p.v2.hueco === "H" && !vetado(p, veto) && esReparadora(p, L.hidratante));
+  return ser && hid;
+}
 /** ¿Hay en el catálogo un sérum de bakuchiol que se pueda recomendar? Si no, el retinoide queda fuera sin dejar un paso vacío. */
 function hayBakuchiol(veto, c){
   return (LISTA || CATALOGO).some(p => p.v2 && p.v2.protagonista === "bakuchiol" && ["AM", "PM", "AM/PM"].includes(p.v2.hueco) && !vetado(p, veto) && dosisDe(p, "bakuchiol", R.bakuchiol, c));
 }
+const LIM = r => (r && r.limites) || {};
 function rangoPara(k, deseo){
   if(k === "niacinamida") return deseo && deseo.k === "sebo" ? R.niacinamida.sebo : R.niacinamida.resto;
   return {vitc_pura: R.vitc_pura, vitc_derivados: R.vitc_derivados, retinol: R.retinol, retinal: R.retinal, bakuchiol: R.bakuchiol, glicolico: R.glicolico, lactico: R.lactico, salicilico: R.salicilico, azelaico: R.azelaico, tranexamico: R.tranexamico, thiamidol: R.thiamidol}[k] || null;
@@ -443,6 +467,7 @@ function candidatos(h, ctx){
       if(["glicolico", "lactico", "mandelico", "pha", "salicilico", "lha"].some(k => aDosis(p, k)) || v2.exfoliante) continue;   // la hidratante no exfolia
       if(h.slot === "H" && /\bnoche\b|\bnight\b|\bnuit\b/.test(n(p.producto))) continue;   // la hidratante va mañana y noche: una crema de noche solo en el hueco de noche (H2)
       if(NO_HIDRATANTE.test(n(p.producto)) || /corporal/.test(n(p.subcategoria)) || (p.textura === "aceite" && /\boil\b|aceite|huile/.test(n(p.producto)) && !/oil.free|oil control|anti.oil/.test(n(p.producto)))) continue;   // sérums, tónicos, aceites y productos de cuerpo no son la hidratante
+      if(hayRetinoide && LIM(r).retinoide && !esReparadora(p, LIM(r).retinoide.hidratante)) continue;   // con el retinal de la regla P-03, la hidratante es reparadora (ceramidas o pantenol, sin perfume)
       if(hayRetinoide && RETINOIDES.concat("bakuchiol").some(k => lleva(p, k))) continue;       // un solo retinoide en la rutina, y retinoide o bakuchiol, no los dos
       if(!hayRetinoide && RETINOIDES.concat("bakuchiol").some(k => aDosis(p, k)) && (c.menor25 || ctx.modo !== "normal" || hayAcido || !["P08", "P17", "P18", "P19"].some(x => P.includes(x)))) continue;   // una hidratante antiedad solo si hay un motivo antiedad
       base = 1;
@@ -507,6 +532,7 @@ function candidatos(h, ctx){
       dosis = dosisDe(p, k, rangoPara(k, h.deseo), c, ep);
       if(!dosis) continue;
       if(k === "retinol" && estado(p).retinol.pct > CFG.retinol_max) continue;
+      if(h.deseo.k === "retinoide" && LIM(r).retinoide && (k !== LIM(r).retinoide.activo || !cumpleTopeRet(p, LIM(r).retinoide))) continue;   // tope de la regla P-03: solo retinal con % declarado ≤0,05
       activo = k; base = 1 + dosis.ok + (ep ? (ep.control === false ? .1 : .2) : dosis.tipo === "estudiada" ? .2 : 0); cubre.push(h.deseo.f);
       // una regla de la foto que «evita» este activo (avoid) pesa de verdad cuando es el protagonista del sérum: entra solo si no hay otra opción
       if(((r.bonus_activos || {})[k] || 0) < 0) base -= 1;

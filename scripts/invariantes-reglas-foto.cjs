@@ -16,7 +16,7 @@ for(const c of CASOS){
   const r = { edad: c.edad, edad_tramo: c.edad_tramo, sexo: c.sexo, embarazo: c.sexo === "hombre" ? "no" : c.embarazo || "no", lactancia: c.lactancia || "no",
     receta: c.receta || "no", reactiva: c.reactiva || "nunca", sienta: ["nada"], retinoide_exp: "nunca", fototipo: "III", textura: "igual", preocupa: ["nada"], piel: "normal", kiosko: true };
   const rf = aplicarReglasFoto(c.notas, r);
-  Object.assign(r, { problemas_extra: rf.problemas_extra, veto_extra: rf.veto_extra, bonus_activos: rf.bonus_activos, derivacion_extra: rf.derivacion_extra, avisos_extra: rf.avisos_extra, prioridad_foto: rf.prioridad_foto });
+  Object.assign(r, { problemas_extra: rf.problemas_extra, veto_extra: rf.veto_extra, bonus_activos: rf.bonus_activos, derivacion_extra: rf.derivacion_extra, avisos_extra: rf.avisos_extra, prioridad_foto: rf.prioridad_foto, limites: rf.limites });
   if(rf.piel) r.piel = rf.piel;
   const embOLac = r.embarazo === "si" || r.lactancia === "si";
   const todoBien = Object.values(c.notas).every(v => v >= 75);
@@ -44,6 +44,19 @@ for(const c of CASOS){
     for(const p of prods) for(const k of ["retinol", "esteres_retinilo"]) if(lleva(p, k) && estado(p)[k].estado !== "declarada" && !(p.flags || []).includes("conforme_2024_996")) mal(`${p.producto}: ${k} sin porcentaje declarado`);
     if(r.reactiva === "siempre" && out.productos.length > 4) mal(`reactividad frecuente con ${out.productos.length} productos`);
     if(r.reactiva === "siempre" && tiene("vitc_pura")) mal("reactividad frecuente con vitamina C pura");
+    // P-03 (Hugo, 24/11): con arrugas y rojez 30-49, retinal solo si nunca reacciona y la hidratación es ≥50; hasta 0,05 %, 2 noches, sándwich y crema reparadora
+    if(c.notas.arrugas <= 49 && c.notas.rojez >= 30 && c.notas.rojez <= 49){
+      const ret = prods.filter(p => RETINOIDES.some(k => lleva(p, k)));
+      const p03 = r.reactiva === "nunca" && c.notas.hidratacion >= 50;
+      if(!p03 && ret.length) mal(`rojez ${c.notas.rojez} sin P-03 con retinoide (${ret[0].producto})`);
+      for(const p of ret){ const e = estado(p).retinal; if(!e || e.estado !== "declarada" || e.pct > 0.05 || RETINOIDES.some(k => k !== "retinal" && lleva(p, k))) mal(`P-03: ${p.producto} no es retinal ≤0,05 % declarado`); }
+      const sr = out.productos.find(p => p.id && ret.some(x => x.id === p.id));
+      if(sr && (!sr.noches || sr.noches.length > 2)) mal(`P-03: retinal ${sr.noches ? sr.noches.length : "sin"} noches`);
+      if(ret.length){
+        for(const h of out.productos.filter(p => ["H", "H2"].includes(p.slot) && p.id)){ const ph = POR_ID.get(h.id), e = estado(ph); if(ph.fragancia !== false || lleva(ph, "perfume") || !(e.ceramidas || e.pantenol)) mal(`P-03: hidratante no reparadora (${ph.producto})`); }
+        if(!out.semana.some(d => d.noche.includes("Hidratante (antes y después)"))) mal("P-03: el retinal va sin sándwich");
+      }
+    }
   }
 }
 console.log(`${CASOS.length} casos, ${rutinas} rutinas, ${errores.length} fallos`);

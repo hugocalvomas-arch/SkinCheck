@@ -1,5 +1,5 @@
 {
- "version": "0.3.0",
+ "version": "0.4.0",
  "date": "2026-11-24",
  "methodology": "Base de conocimiento SkinRead (OUTPUTS/skincheck/base-conocimiento, entregas 1-4). Notas de Perfect Corp de 0 a 100, más alto es mejor. Bandas: Bien >=75, Leve 50-74, Moderado 30-49, Marcado <30. Evidencia: A guía o metaanálisis, B ensayo clínico, C mecanismo o criterio de experto. Reglas deterministas: se evalúan todas y se suman sus efectos. Pendiente de validación de Hugo.",
  "aspect_reach": {
@@ -24,7 +24,8 @@
   "set_skin": "Fija el tipo de piel que usa el motor para la textura: tirante, normal, brillo_T o brillo_total.",
   "refer": "Aviso de consulta para la clienta.",
   "notice": "Aviso o consejo que se añade a la rutina.",
-  "priority": "Multiplica la prioridad de un aspecto (factor)."
+  "priority": "Multiplica la prioridad de un aspecto (factor).",
+  "limit": "Pone un tope que el código impone a un activo: solo esa forma, % máximo declarado, noches por semana, sándwich y la hidratante que lo acompaña. Si no hay un producto que lo cumpla, el activo no entra."
  },
  "rules": [
   {
@@ -1140,7 +1141,7 @@
   },
   {
    "id": "PAR-03",
-   "name": "Arrugas + rojez, barrera estable: retinal suave",
+   "name": "Arrugas + rojez, piel que nunca reacciona: retinal suave con crema reparadora",
    "category": "pareja",
    "conditions": {
     "scores": [
@@ -1163,24 +1164,36 @@
     ],
     "client": {
      "reactiva": [
-      "nunca",
-      "a_veces"
+      "nunca"
      ]
     }
    },
    "effect": [
     {
-     "action": "prefer",
+     "action": "limit",
+     "slot": "retinoide",
      "active": "retinal",
-     "weight": 0.35,
-     "concentration": "0,05 %",
-     "frequency": "2 noches por semana",
-     "routine_step": "serum_noche"
+     "max_pct": 0.05,
+     "max_nights": 2,
+     "sandwich": true,
+     "moisturizer": {
+      "one_of": [
+       "ceramidas",
+       "pantenol"
+      ],
+      "fragrance_free": true
+     },
+     "message": "Con rojez, el retinal solo entra suave (hasta 0,05 %) y con una crema reparadora sin perfume en la farmacia."
     },
     {
      "action": "avoid",
      "active": "retinol",
      "weight": -0.25
+    },
+    {
+     "action": "veto",
+     "active": "perfume",
+     "message": "Con rojez, la rutina va sin perfume."
     },
     {
      "action": "prefer",
@@ -1199,7 +1212,7 @@
      "message": "Con rojez, la vitamina C pura a pH bajo escuece: mejor un derivado."
     }
    ],
-   "reason_for_client": "Tienes líneas finas y algo de rojez: un retinoide suave, poco a poco, con una crema que repara la barrera.",
+   "reason_for_client": "Tienes líneas finas y algo de rojez: un retinoide suave dos noches por semana, entre dos capas de una crema que repara la barrera.",
    "evidence_level": "B",
    "sources": [
     {
@@ -1211,7 +1224,71 @@
      "url": "https://pubmed.ncbi.nlm.nih.gov/23135655/"
     }
    ],
-   "exceptions": "Decisión de Hugo (24/11): retinal 0,05 % con reactividad ocasional solo si la barrera está estable (hidratación ≥50 y rojez no marcada). Que el retinal irrite menos que el retinol es C. La concentración no se puede comprobar hasta que el catálogo la guarde.",
+   "exceptions": "Decisión de Hugo (24/11, auditoría P-03): retinal solo si la clienta dice que su piel nunca reacciona y la barrera está estable (hidratación ≥50). El código impone retinal con % declarado ≤0,05, 2 noches por semana, sándwich y una hidratante con ceramidas o pantenol sin perfume, que ocupa el hueco de la hidratante (no suma producto). Si no hay producto que lo cumpla, el retinal no entra. Que el retinal irrite menos que el retinol es C.",
+   "requires_expert_validation": true
+  },
+  {
+   "id": "PAR-03c",
+   "name": "Arrugas + rojez, piel que a veces reacciona: sin retinoide de momento",
+   "category": "pareja",
+   "conditions": {
+    "scores": [
+     {
+      "aspect": "arrugas",
+      "operator": "lte",
+      "max": 49
+     },
+     {
+      "aspect": "rojez",
+      "operator": "between",
+      "min": 30,
+      "max": 49
+     }
+    ],
+    "not": {
+     "any_rule": [
+      "PAR-03",
+      "PAR-03b"
+     ]
+    }
+   },
+   "effect": [
+    {
+     "action": "veto",
+     "active": "retinol",
+     "message": "Con rojez, el retinoide espera a que la piel esté estable y no reaccione."
+    },
+    {
+     "action": "veto",
+     "active": "retinal",
+     "message": "Con rojez, el retinoide espera a que la piel esté estable y no reaccione."
+    },
+    {
+     "action": "veto",
+     "active": "hpr",
+     "message": "Con rojez, el retinoide espera a que la piel esté estable y no reaccione."
+    },
+    {
+     "action": "veto",
+     "active": "vitc_pura",
+     "message": "Con rojez, la vitamina C pura a pH bajo escuece: mejor un derivado."
+    },
+    {
+     "action": "prefer",
+     "active": "ceramidas",
+     "weight": 0.3,
+     "routine_step": "hidratante"
+    },
+    {
+     "action": "prefer",
+     "active": "niacinamida",
+     "weight": 0.15
+    }
+   ],
+   "reason_for_client": "Tienes líneas finas y algo de rojez: primero calmamos y reforzamos la barrera, y el retinoide queda para más adelante.",
+   "evidence_level": "C",
+   "sources": [],
+   "exceptions": "Decisión de Hugo (24/11, auditoría P-03): con rojez 30-49, el retinal solo si la piel nunca reacciona y la hidratación es ≥50. En el resto de casos (a veces reacciona, sin respuesta o piel deshidratada), sin retinoide.",
    "requires_expert_validation": true
   },
   {

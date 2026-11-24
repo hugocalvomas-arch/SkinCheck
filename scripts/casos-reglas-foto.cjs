@@ -40,7 +40,7 @@ function caso(c){
   const rNuevo = base(c);
   rNuevo.piel = pielAntes(c.notas);
   const rf = aplicarReglasFoto(c.notas, rNuevo);
-  Object.assign(rNuevo, { problemas_extra: rf.problemas_extra, veto_extra: rf.veto_extra, bonus_activos: rf.bonus_activos, derivacion_extra: rf.derivacion_extra, avisos_extra: rf.avisos_extra, prioridad_foto: rf.prioridad_foto });
+  Object.assign(rNuevo, { problemas_extra: rf.problemas_extra, veto_extra: rf.veto_extra, bonus_activos: rf.bonus_activos, derivacion_extra: rf.derivacion_extra, avisos_extra: rf.avisos_extra, prioridad_foto: rf.prioridad_foto, limites: rf.limites });
   if(rf.piel) rNuevo.piel = rf.piel;
   const rAntes = { ...base(c), piel: pielAntes(c.notas), problemas_extra: problemasAntes(c.notas) };
   return { ...c, reglas: rf.reglas_aplicadas, prioridad: rf.prioridad_foto, bonus: rf.bonus_activos, vetos_reglas: Object.keys(rf.veto_extra), piel: rNuevo.piel,

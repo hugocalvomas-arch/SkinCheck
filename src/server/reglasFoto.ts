@@ -17,6 +17,7 @@ export function conReglasFoto(r: Respuestas, foto: ResultadoFoto, fijarPiel = tr
   r.derivacion_extra = [...(r.derivacion_extra ?? []), ...rf.derivacion_extra]
   r.avisos_extra = rf.avisos_extra
   r.prioridad_foto = rf.prioridad_foto
+  r.limites = rf.limites
   r.reglas_foto = { version: rf.version_reglas, ids: rf.reglas_aplicadas.map((x: any) => x.id) }
   if (fijarPiel && rf.piel) r.piel = rf.piel
   return rf
