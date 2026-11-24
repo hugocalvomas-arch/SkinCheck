@@ -175,7 +175,8 @@ const F = {
   glicolico_afeitado: {f: "F6", turno: "PM", activos: ["glicolico"], para: "evitar que el pelo se encarne", fuerte: true},
   // Piel sensible o reactiva: el exfoliante suave es un PHA (gluconolactona, ácido lactobiónico). Rutina suave: niacinamida para la barrera.
   pha: {f: "F6", turno: "PM", activos: ["pha"], para: "exfoliar de forma suave", fuerte: true},
-  barrera: {f: "F12", turno: "AM", activos: ["niacinamida"], para: "reforzar la barrera con un activo suave", flexible: true}
+  barrera: {f: "F12", turno: "AM", activos: ["niacinamida"], para: "reforzar la barrera con un activo suave", flexible: true},
+  niacinamida: {f: "F8", turno: "AM", activos: ["niacinamida"], para: "afinar el poro, regular el brillo y unificar el tono", flexible: true}   // vía Leve: el ingrediente de la tabla aunque ningún problema lo pida (ciclo 5)
 };
 const DESEOS = {
   P01: ["retinoide", "antiacne", "salicilico"], P02: ["retinoide", "antiacne"], P03: ["antiacne", "retinoide"], P04: ["antiacne"], P05: ["antiacne"],
@@ -337,6 +338,7 @@ function pauta(r, P, c, veto, modo){
     const objetivo = notasF.filter(k => k !== "ojeras").sort((a, b) => nf[a] - nf[b] || a.localeCompare(b))[0];
     const NO_SUAVE = ["aha", "pha", "salicilico", "glicolico_afeitado"];   // exfoliantes: no son el activo suave único; en la completa entran solo con su indicación
     let mejor = null;
+    if(!veto.niacinamida && !lista.some(x => ((x.activos || (deseoDe(x.k) || {}).activos) || []).includes("niacinamida"))) lista.push({k: "niacinamida", por: orden[0], _tabla: true});
     for(const x of lista){
       if(NO_SUAVE.includes(x.k) || (r._excluir || []).includes(x.k)) continue;
       const d = deseoDe(x.k); if(!d) continue;
@@ -349,10 +351,11 @@ function pauta(r, P, c, veto, modo){
     // R4 (Hugo): embarazo con manchas, azelaico ya en la básica
     if(c.embarazo && !c.lactancia && nb("manchas") <= 69 + B3 && !veto.azelaico){ const dp = lista.find(x => ["despigmentante", "azelaico_mixto"].includes(x.k)); if(dp) mejor = {x: dp, sc: 0, acts: ["azelaico"].concat(((deseoDe(dp.k) || {}).activos || []).filter(a => a !== "azelaico" && !veto[a]))}; }
     if(!mejor && !veto.pha && !c.sequedad_activa) mejor = {x: {k: "pha", por: orden[0]}, sc: 0, acts: null};
-    for(const x of lista) if(!mejor || x !== mejor.x){ const nom = nombreDeseo(x.k); if(!fuera.some(f => f.que === nom)) fuera.push({k: x.k, que: nom, por: "Tu piel está en la franja leve: un solo activo suave, dirigido a tu nota más baja. Lo demás se cuida con la rutina base."}); }
+    for(const x of lista) if((!mejor || x !== mejor.x) && !x._tabla){ const nom = nombreDeseo(x.k); if(!fuera.some(f => f.que === nom)) fuera.push({k: x.k, que: nom, por: "Tu piel está en la franja leve: un solo activo suave, dirigido a tu nota más baja. Lo demás se cuida con la rutina base."}); }
     // la media y la completa no rellenan: solo suman los pasos con indicación de Hugo (R21: retinoide desde los 35 con arrugas <70 o poros <55; R35: manchas <60, vitamina C o azelaico de mañana)
     // y en la completa, el exfoliante que deja entrar la regla de nota leve (Hugo: con 50-69, solo en la completa y 2 noches)
     const conIndicacion = N0 >= 4 ? lista.filter(x => x !== (mejor && mejor.x) && ((x.k === "retinoide" && combo40) || (nb("manchas") < 60 && ["vitc", "despigmentante", "azelaico_mixto"].includes(x.k)) || (N0 >= 5 && ["aha", "pha", "salicilico"].includes(x.k)))) : [];
+    { const exf = conIndicacion.filter(x => ["aha", "pha", "salicilico"].includes(x.k)); for(const x of exf.slice(1)){ conIndicacion.splice(conIndicacion.indexOf(x), 1); } }   // R1: un solo exfoliante sin aclarado, también en la completa (ciclo 5)
     for(const x of lista) if(conIndicacion.includes(x)){ const nom = nombreDeseo(x.k), i = fuera.findIndex(f => f.que === nom); if(i >= 0) fuera.splice(i, 1); }
     lista.length = 0;
     if(mejor){ const y = Object.assign({}, mejor.x, {leve: true}); if(mejor.acts) y.activos = mejor.acts; lista.push(y); }
@@ -494,7 +497,7 @@ function pauta(r, P, c, veto, modo){
   const vistos = new Set(), fuera1 = fuera.filter(x => !vistos.has(x.que) && vistos.add(x.que));
   return {orden, N, N0, huecos, serums, semana, escalado, fuera: fuera1, notas, nochesRet, nochesAha, nochesSal, lista, leve};
 }
-const NOMBRE_DESEO = {retinoide: "Retinoide", bakuchiol: "Bakuchiol", aha: "Exfoliante con ácido", salicilico: "Loción de salicílico", antiacne: "Azelaico o niacinamida",
+const NOMBRE_DESEO = {niacinamida: "Niacinamida", retinoide: "Retinoide", bakuchiol: "Bakuchiol", aha: "Exfoliante con ácido", salicilico: "Loción de salicílico", antiacne: "Azelaico o niacinamida",
   despigmentante: "Despigmentante", pha: "Exfoliante suave (PHA)", barrera: "Niacinamida", vitc: "Vitamina C", calma: "Niacinamida o azelaico", sebo: "Niacinamida", humectante: "Sérum hidratante", glicolico_afeitado: "Loción con glicólico", azelaico_noche: "Ácido azelaico", azelaico_mixto: "Ácido azelaico"};
 const nombreDeseo = k => NOMBRE_DESEO[k] || k;
 const etiquetaDeseo = k => ({retinoide: "Retinoide", pha: "PHA (exfoliante suave)", barrera: "Niacinamida", aha: "Ácido exfoliante", glicolico_afeitado: "Glicólico", despigmentante: "Despigmentante", azelaico_noche: "Azelaico", azelaico_mixto: "Azelaico", antiacne: "Azelaico o niacinamida", calma: "Niacinamida o azelaico", sebo: "Niacinamida", bakuchiol: "Bakuchiol", humectante: "Sérum hidratante"}[k] || nombreDeseo(k));
