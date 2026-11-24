@@ -355,7 +355,9 @@ function pauta(r, P, c, veto, modo){
     // la media y la completa no rellenan: solo suman los pasos con indicación de Hugo (R21: retinoide desde los 35 con arrugas <70 o poros <55; R35: manchas <60, vitamina C o azelaico de mañana)
     // y en la completa, el exfoliante que deja entrar la regla de nota leve (Hugo: con 50-69, solo en la completa y 2 noches)
     const conIndicacion = N0 >= 4 ? lista.filter(x => x !== (mejor && mejor.x) && ((x.k === "retinoide" && combo40) || (nb("manchas") < 60 && ["vitc", "despigmentante", "azelaico_mixto"].includes(x.k)) || (N0 >= 5 && ["aha", "pha", "salicilico"].includes(x.k)))) : [];
-    { const exf = conIndicacion.filter(x => ["aha", "pha", "salicilico"].includes(x.k)); for(const x of exf.slice(1)){ conIndicacion.splice(conIndicacion.indexOf(x), 1); } }   // R1: un solo exfoliante sin aclarado, también en la completa (ciclo 5)
+    { const exf = conIndicacion.filter(x => ["aha", "pha", "salicilico"].includes(x.k)); for(const x of exf.slice(1)){ conIndicacion.splice(conIndicacion.indexOf(x), 1); } }
+    // R35: un solo paso de mañana para las manchas, el primero de la lista, y el mismo en la media y la completa (ciclo 11, C11-05)
+    { const PREF = ["vitc", "azelaico_mixto", "despigmentante"], mch = conIndicacion.filter(x => PREF.includes(x.k)); for(const x of mch.slice(1)) conIndicacion.splice(conIndicacion.indexOf(x), 1); }
     for(const x of lista) if(conIndicacion.includes(x)){ const nom = nombreDeseo(x.k), i = fuera.findIndex(f => f.que === nom); if(i >= 0) fuera.splice(i, 1); }
     lista.length = 0;
     if(mejor){ const y = Object.assign({}, mejor.x, {leve: true}); if(mejor.acts) y.activos = mejor.acts; lista.push(y); }
@@ -576,7 +578,9 @@ function hayBakuchiol(veto, c){
 }
 const LIM = r => (r && r.limites) || {};
 function rangoPara(k, deseo, r){
-  if(k === "retinal") return !r || !r.retinoide_exp || r.retinoide_exp === "nunca" || (deseo && deseo.leve) ? R.retinal_inicio : R.retinal_retinizada;   // vía Leve: concentración baja aunque ya lo use
+  // concentración alta solo si ya lo tolera; si lo empezó hace poco, si la piel reacciona o está deshidratada, la de inicio (revisión clínica, C11-08)
+  if(k === "retinal"){ const nfR = (r && r.notas_foto) || {}; const fragil = r && (r.reactiva === "siempre" || (nfR.hidratacion ?? 100) < 55 + B3);
+    return !r || r.retinoide_exp !== "tolera" || fragil || (deseo && deseo.leve) ? R.retinal_inicio : R.retinal_retinizada; }   // vía Leve: concentración baja aunque ya lo use
   if(k === "niacinamida") return deseo && deseo.k === "sebo" ? R.niacinamida.sebo : R.niacinamida.resto;
   return {vitc_pura: R.vitc_pura, vitc_derivados: R.vitc_derivados, retinol: R.retinol, retinal: R.retinal, bakuchiol: R.bakuchiol, glicolico: R.glicolico, lactico: R.lactico, salicilico: R.salicilico, azelaico: R.azelaico, tranexamico: R.tranexamico, thiamidol: R.thiamidol}[k] || null;
 }
@@ -667,6 +671,9 @@ function candidatos(h, ctx){
       if(r.mantenimiento && (!["cafeina", "peptidos"].some(k => lleva(p, k)) || RETINOIDES.concat("bakuchiol").some(k => lleva(p, k)))) continue;   // mantenimiento: contorno con cafeína o péptidos (Hugo, 24/11)
       if(hayRetinoide && RETINOIDES.concat("bakuchiol").some(k => lleva(p, k))) continue;
       if((LIM(r).retinoide || (r._excluir || []).includes("retinoide")) && RETINOIDES.some(k => lleva(p, k))) continue;   // si el retinoide de la cara tiene tope o se ha quitado, el contorno no lo trae por otra vía
+      // piel con rojez, que reacciona o deshidratada y sin retinoide en la cara: el contorno tampoco lo lleva (la piel del ojo es la más fina; revisión clínica, C11-06)
+      const nfO = r.notas_foto || {};
+      if(!hayRetinoide && ((nfO.rojez ?? 100) < 55 + B3 || ["a_veces", "siempre"].includes(r.reactiva) || c.reactiva || c.rojez || (nfO.hidratacion ?? 100) < 55 + B3) && RETINOIDES.some(k => lleva(p, k))) continue;
       base = 1; const pr = v2.preocupacion || p.preocupacion || [];
       if(ACIDOS_EXF.concat("pha").some(k => llevaAcido(p, k))) base -= 1;   // en el contorno, sin ácidos exfoliantes
       if(P.includes("P15") && pr.includes("ojeras")) base += .5;
@@ -759,6 +766,8 @@ function candidatos(h, ctx){
       const madura = ((nf.arrugas ?? 100) < 55 || (nf.firmeza ?? 100) < 55) && ["40-49", "50+"].includes(r.edad) || (r.edad_tramo === "65+" || r.edad === "50+") && (nf.brillo ?? 0) >= 65;   // desde los 50 sin brillo, crema y no gel (informe, 24/11)
       if(h.slot === "L" && (((nf.hidratacion ?? 100) < 55 + B3) || sensible || madura) && /espum|foam|mousse|moussant/.test(nom)) base -= 1;
       if(h.slot === "L" && sensible && /normal a grasa|oil control|purif|seborregul/.test(nom)) base -= 1;
+      // piel con brillo o granos, sin sequedad ni rojez: limpiador en gel, no en crema o leche (revisión clínica, ciclo 11)
+      if(h.slot === "L" && !sensible && !madura && (nf.hidratacion ?? 100) >= 55 + B3 && ((nf.brillo ?? 100) <= 60 + B3 || (nf.acne ?? 100) < 65) && !/\bgel\b|espum|foam|mousse/.test(nom) && (["crema", "locion", "balsamo", "aceite", "gel-crema"].includes(p.textura) || /crem|cream|creme|lait|leche|son lavant|caring wash|inconfort|lotion|locion|balm|baume|balsamo|aceite|huile/.test(nom))) base -= .6;
       if(["H", "H2"].includes(h.slot) && (sensible || madura) && !brillo){ const e = estado(p);
         if(!["crema", "balsamo"].includes(p.textura) || LIGERA.test(nom) || !["ceramidas", "escualano", "karite", "colesterol", "vaselina"].some(k => e[k])) base -= 1;
         if(SEBORREGULADORA.test(nom) || /gel/.test(p.textura || "")) base -= 1; }
@@ -768,6 +777,8 @@ function candidatos(h, ctx){
       // R33: con manchas bien y rojez por debajo de 55, nada de arbutina ni kójico; un sérum calmante (centella, ectoína, pantenol, niacinamida hasta 5 %)
       if(rojezB && (nf.manchas ?? 0) >= 70 - B3 && ["arbutina", "kojico"].some(k => lleva(p, k))) continue;
       if(rojezB && h.deseo){ const e = estado(p); if(["centella", "ectoina", "pantenol"].some(k => e[k])) base += .3; if(e.niacinamida && e.niacinamida.pct > 5) base -= .5; }
+      // piel que reacciona a veces: sin alcohol secante entre los tres primeros ingredientes de un producto sin aclarado (revisión clínica, C11-07)
+      if(h.slot !== "L" && r.reactiva === "a_veces" && (p.inci_completo || []).slice(0, 3).some(i => /^(alcohol denat|alcohol|sd alcohol|isopropyl alcohol|ethanol)\b/.test(n(i)))) base -= .5;
       // piel que reacciona casi siempre: sin solar 100 % mineral ni mucina de caracol
       if(r.reactiva === "siempre" && ((h.slot === "S" && p.tipo_filtro === "mineral") || (p.inci_completo || []).some(i => /snail/.test(n(i))))) base -= 1;
       // manchas en buen estado: sin despigmentantes que no hacen falta

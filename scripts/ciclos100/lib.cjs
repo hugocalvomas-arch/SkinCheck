@@ -36,6 +36,7 @@ const ARQ = [
 const UMBRALES = [50, 55, 60, 65, 70, 75];
 /** 10 casos del ciclo n. Deterministas: el mismo ciclo da siempre los mismos casos. */
 function generarCiclo(nc){
+  if(nc >= 11) return generarCiclo2(nc);
   const R = rng(9000 + nc * 7919), pick = a => a[Math.floor(R() * a.length)], ent = (a, b) => a + Math.floor(R() * (b - a + 1));
   const arqs = ARQ.slice().sort(() => R() - .5);
   const bajos = new Set([Math.floor(R() * 10)]); if(R() < .5) bajos.add((Math.floor(R() * 9) + 1 + [...bajos][0]) % 10);
@@ -79,6 +80,71 @@ function generarCiclo(nc){
   // un segundo límite de umbral en otro caso
   { const j = (limite + 5) % 10, C2 = out[j]; if(!C2.limite){ const ks = ASP.filter(k => C2.notas[k] < 78); const k = ks.length ? pick(ks) : "tono"; const u = pick([55, 60, 65, 70]); C2.notas[k] = R() < .5 ? u - 1 : u; C2.limite = `${k} = ${C2.notas[k]}, en el umbral ${u}`; } }
   // ningún caso fuera de banda: como mucho 2 con alguna nota < 50
+  const conBajo = out.filter(c => ASP.some(k => c.notas[k] < 50));
+  for(const c of conBajo.slice(2)) for(const k of ASP) c.notas[k] = Math.max(c.notas[k], 50);
+  return out;
+}
+
+
+/* Serie 2 (ciclos 11-20, Hugo 24/11): población más variada de farmacia. Cada perfil fija edad, sexo, condiciones y notas
+   correlacionadas como pasarían de verdad; la mayoría de notas 55-90 y 1-2 casos por ciclo con alguna <50. */
+const PERFILES = [
+  { k: "adolescente_acne", w: 3, edades: ["14-17"], hombre: .55, bajos: { acne: [50, 64], brillo: [48, 62], poros: [55, 68], textura: [60, 74] }, reactiva: [.75, .2] },
+  { k: "joven_acne_inflamado", w: 3, edades: ["18-24"], hombre: .45, bajos: { acne: [50, 60], brillo: [52, 66], rojez: [58, 70], manchas: [62, 74] }, receta: .2, ret: [.6, .25] },
+  { k: "joven_marcas_postacne", w: 2, edades: ["18-24", "25-34"], hombre: .35, bajos: { manchas: [52, 64], textura: [56, 68], acne: [62, 74] } },
+  { k: "joven_seca_deshidratada", w: 2, edades: ["18-24", "25-34"], hombre: .3, bajos: { hidratacion: [50, 62], textura: [60, 72], rojez: [62, 74] }, reactiva: [.5, .35] },
+  { k: "mixta_poros_brillo", w: 2, edades: ["25-34", "35-44"], hombre: .45, bajos: { brillo: [50, 62], poros: [52, 64], textura: [60, 72] } },
+  { k: "hombre_afeitado_rojez", w: 2, edades: ["25-34", "35-44", "45-54"], hombre: 1, bajos: { rojez: [54, 66], textura: [58, 70], acne: [64, 76] }, reactiva: [.5, .4] },
+  { k: "rojez_sensible", w: 2, edades: ["35-44", "45-54", "55-64"], hombre: .2, bajos: { rojez: [50, 62], hidratacion: [56, 68] }, reactiva: [.15, .5] },
+  { k: "barrera_atopica", w: 1, edades: ["18-24", "25-34", "35-44", "65+"], hombre: .35, bajos: { hidratacion: [48, 60], rojez: [54, 66], textura: [58, 70] }, reactiva: [.1, .4] },
+  { k: "melasma_embarazo", w: 1, edades: ["25-34", "35-44"], hombre: 0, bajos: { manchas: [50, 64], tono: [56, 68] }, embarazo: .7 },
+  { k: "ojeras_cansancio", w: 2, edades: ["25-34", "35-44"], hombre: .35, bajos: { ojeras: [50, 62], tono: [60, 70] } },
+  { k: "prevencion_casi_perfecta", w: 2, edades: ["25-34", "35-44"], hombre: .35, bajos: {}, perfecta: true },
+  { k: "primeras_arrugas", w: 2, edades: ["35-44"], hombre: .35, bajos: { arrugas: [58, 70], tono: [60, 72], ojeras: [60, 72] }, ret: [.5, .3] },
+  { k: "menopausia", w: 2, edades: ["45-54", "55-64"], hombre: 0, bajos: { firmeza: [52, 64], hidratacion: [54, 66], arrugas: [54, 66] }, ret: [.5, .3] },
+  { k: "hombre_manchas_sol", w: 1, edades: ["45-54", "55-64", "65+"], hombre: 1, bajos: { manchas: [50, 62], arrugas: [56, 68], textura: [60, 72] } },
+  { k: "madura_seca_65", w: 2, edades: ["65+"], hombre: .3, bajos: { arrugas: [50, 62], firmeza: [50, 62], hidratacion: [52, 64], manchas: [56, 68] }, ret: [.6, .25] },
+];
+function generarCiclo2(nc){
+  const R = rng(51000 + nc * 7907), pick = a => a[Math.floor(R() * a.length)], ent = (a, b) => a + Math.floor(R() * (b - a + 1));
+  const bolsa = PERFILES.flatMap(p => Array(p.w).fill(p));
+  const out = [], usados = new Set();
+  const bajos = new Set([Math.floor(R() * 10)]); if(R() < .5) bajos.add((Math.floor(R() * 9) + 1 + [...bajos][0]) % 10);
+  for(let i = 0; i < 10; i++){
+    let a = pick(bolsa); for(let t = 0; t < 6 && usados.has(a.k); t++) a = pick(bolsa); usados.add(a.k);
+    const edad = pick(a.edades), sexo = R() < a.hombre ? "hombre" : "mujer";
+    const edadNum = { "14-17": 16, "18-24": 21, "25-34": 30, "35-44": 40, "45-54": 50, "55-64": 60, "65+": 70 }[edad];
+    const notas = {};
+    for(const k of ASP) notas[k] = ent(70, 90);
+    if(edadNum >= 40){ notas.arrugas = Math.min(notas.arrugas, ent(62, 80)); notas.firmeza = Math.min(notas.firmeza, ent(64, 82)); }
+    if(edadNum >= 55){ notas.arrugas = Math.min(notas.arrugas, ent(55, 70)); notas.firmeza = Math.min(notas.firmeza, ent(55, 70)); notas.manchas = Math.min(notas.manchas, ent(60, 76)); }
+    if(edadNum <= 24){ notas.arrugas = Math.max(notas.arrugas, ent(80, 92)); notas.firmeza = Math.max(notas.firmeza, ent(80, 92)); }
+    for(const [k, [lo, hi]] of Object.entries(a.bajos)) notas[k] = ent(lo, hi);
+    if(a.perfecta) for(const k of ASP) notas[k] = ent(74, 92);
+    if(["adolescente_acne", "joven_acne_inflamado", "mixta_poros_brillo"].includes(a.k)) notas.hidratacion = ent(64, 86);
+    if(R() < .6){ const extra = pick(ASP); notas[extra] = Math.min(notas[extra], ent(62, 76)); }
+    const c = { id: `C${nc}-${String(i + 1).padStart(2, "0")}`, ciclo: nc, serie: 2, arquetipo: a.k, edad, sexo, embarazo: "no", receta: "no", reactiva: "nunca", retinoide: "nunca", notas, limite: null };
+    const fertil = sexo === "mujer" && ["18-24", "25-34", "35-44"].includes(edad);
+    if(fertil && R() < (a.embarazo || .12)) c.embarazo = R() < .55 ? "embarazo" : "lactancia";
+    if(R() < (a.receta || .06)) c.receta = "si";
+    { const [p0, p1] = a.reactiva || [.62, .3]; const x = R(); c.reactiva = x < p0 ? "nunca" : x < p0 + p1 ? "a_veces" : "siempre"; }
+    { const [p0, p1] = a.ret || [.75, .15]; const x = R(); if(edad !== "14-17" && c.embarazo === "no" && c.receta !== "si") c.retinoide = x < p0 ? "nunca" : x < p0 + p1 ? "reciente" : "tolera"; }
+    if(bajos.has(i)){ const ks = Object.keys(a.bajos).length ? Object.keys(a.bajos) : ASP; const k = pick(ks); notas[k] = ent(32, 48); if(R() < .35){ const k2 = pick(ASP.filter(x => x !== k)); notas[k2] = ent(40, 49); } c.bajo = true; }
+    else for(const k of ASP) notas[k] = Math.max(notas[k], 50);
+    out.push(c);
+  }
+  // un caso límite por ciclo: nota en un umbral o condición de seguridad
+  // el caso límite se aplica a un perfil compatible (no se convierte una adolescente en embarazada)
+  const tipo = nc % 5;
+  const compatible = c => tipo === 1 ? c.sexo === "mujer" && ["25-34", "35-44"].includes(c.edad) : tipo === 2 ? ["14-17", "18-24"].includes(c.edad) : true;
+  const idx = [...Array(10).keys()], pref = idx.filter(i => !bajos.has(i) && compatible(out[i]));
+  const li = pref.find(i => i === (nc * 7) % 10) ?? pref[0] ?? idx.find(i => !bajos.has(i) && i === (nc * 7) % 10) ?? idx.find(i => !bajos.has(i));
+  const L = out[li];
+  if(tipo === 0){ const k = Object.keys((PERFILES.find(x => x.k === L.arquetipo) || {}).bajos || {})[0] || "manchas"; const u = pick(UMBRALES); L.notas[k] = u - 1; L.limite = `${k} = ${u - 1}, a 1 punto del umbral ${u}`; }
+  else if(tipo === 1){ L.sexo = "mujer"; L.edad = pick(["25-34", "35-44"]); L.embarazo = pick(["embarazo", "lactancia"]); L.retinoide = "nunca"; const k = pick(["acne", "manchas", "arrugas"]); L.notas[k] = pick([54, 59, 60, 64]); L.limite = `${L.embarazo} con ${k} ${L.notas[k]}`; }
+  else if(tipo === 2){ L.edad = "14-17"; L.embarazo = "no"; L.retinoide = "nunca"; L.reactiva = pick(["nunca", "a_veces"]); L.notas.acne = pick([50, 54, 55, 59]); L.limite = `menor con imperfecciones ${L.notas.acne}`; }
+  else if(tipo === 3){ L.receta = "si"; L.retinoide = "nunca"; const k = pick(["acne", "rojez", "hidratacion"]); L.notas[k] = pick([50, 54, 55]); L.limite = `receta con ${k} ${L.notas[k]}`; }
+  else { L.reactiva = "siempre"; const k = pick(["arrugas", "rojez", "manchas", "acne"]); L.notas[k] = pick([50, 54, 55, 59, 60]); L.limite = `reactividad «siempre» con ${k} ${L.notas[k]}`; }
   const conBajo = out.filter(c => ASP.some(k => c.notas[k] < 50));
   for(const c of conBajo.slice(2)) for(const k of ASP) c.notas[k] = Math.max(c.notas[k], 50);
   return out;

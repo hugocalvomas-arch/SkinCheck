@@ -22,7 +22,7 @@ function pasar(casos, M, conEstabilidad){
 }
 function todosLosCasos(){
   const casos = JSON.parse(fs.readFileSync(path.join(__dirname, "antiguos148.json"), "utf8"));
-  for(let n = 1; n <= 10; n++){ const f = path.join(OUT, `ciclo${n}_casos.json`); if(fs.existsSync(f)) casos.push(...JSON.parse(fs.readFileSync(f, "utf8"))); }
+  for(let n = 1; n <= 20; n++){ const f = path.join(OUT, `ciclo${n}_casos.json`); if(fs.existsSync(f)) casos.push(...JSON.parse(fs.readFileSync(f, "utf8"))); }
   return casos;
 }
 const huella = x => x.fallos.map(f => `${f.nivel}|${f.sev}|${f.tipo}`).sort();
