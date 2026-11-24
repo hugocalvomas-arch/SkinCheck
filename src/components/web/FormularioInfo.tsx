@@ -1,4 +1,5 @@
 'use client'
+import Link from 'next/link'
 import { useActionState } from 'react'
 import { CheckCircle } from '@phosphor-icons/react'
 import { pedirInformacion, type EstadoSolicitud } from '@/app/acciones-web'
@@ -34,7 +35,7 @@ export function FormularioInfo() {
       <input type="text" name="web" tabIndex={-1} autoComplete="off" className="hidden" aria-hidden="true" />
       <label className="sm:col-span-2 flex gap-3 text-sm text-gris">
         <input type="checkbox" name="privacidad" required className="mt-0.5 w-5 h-5 shrink-0 accent-marca" />
-        <span>Acepto que SkinRead use estos datos solo para enviarme información comercial y contactarme sobre el servicio.</span>
+        <span>Acepto que SkinRead use estos datos para contactarme y enviarme información comercial sobre el servicio. Puedo retirar el permiso cuando quiera. Más información en la <Link href="/privacidad#web" className="underline underline-offset-4">política de privacidad</Link>.</span>
       </label>
       {estado?.error && <p role="alert" className="sm:col-span-2 text-sm rounded-[var(--radius-input)] bg-aviso-suave text-aviso p-4">{estado.error}</p>}
       <div className="sm:col-span-2">

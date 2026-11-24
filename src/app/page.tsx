@@ -48,7 +48,7 @@ const PREGUNTAS: [string, string][] = [
 const VENTAJAS = [
   { i: Storefront, t: 'Solo recomienda lo que tienes en la estantería', d: 'La rutina se calcula con tu stock y tus precios. Tres opciones para cada clienta: básica, media y completa.' },
   { i: ChartLineUp, t: 'Ves lo que vende', d: 'Cuántas clientas se analizan, cuántas compran y qué rutina eligen.' },
-  { i: Repeat, t: 'Vuelve a las 6 semanas', d: 'La clienta repite el análisis y compara su piel con la del primer día. Tú ganas otra visita y la reposición.' },
+  { i: Repeat, t: 'Vuelve a las 4 semanas', d: 'La clienta vuelve con su código, repite el análisis y ve el antes y el después. Tú ganas otra visita y la reposición.' },
   { i: LockKey, t: 'Privacidad por diseño', d: 'Sin fotos ni nombres en la farmacia. La pantalla vuelve al inicio sola.' },
 ]
 
@@ -115,7 +115,7 @@ export default function Inicio() {
                 {[
                   [Crosshair, 'Sobre su cara, no sobre una modelo', 'Misma foto, mismo encuadre y misma luz.'],
                   [ShieldCheck, 'Etiquetada como simulación', 'Siempre indica que es una imagen generada con IA.'],
-                  [Repeat, 'Comparación real a las 6 semanas', 'La clienta repite el análisis y ve su evolución.'],
+                  [Repeat, 'Comparación real a las 4 semanas', 'La clienta repite el análisis y ve su evolución.'],
                 ].map(([I, t, d]) => {
                   const Icono = I as typeof Crosshair
                   return (
@@ -263,6 +263,8 @@ export default function Inicio() {
             <span className="text-sobre-marca-suave">© 2026 SkinRead</span>
             <Link href="/login" className="sm:ml-auto hover:underline underline-offset-4">Acceso farmacias</Link>
             <a href="#contacto" className="hover:underline underline-offset-4">Pedir información</a>
+            <Link href="/privacidad" className="hover:underline underline-offset-4">Privacidad</Link>
+            <Link href="/aviso-legal" className="hover:underline underline-offset-4">Aviso legal</Link>
           </div>
         </div>
       </footer>

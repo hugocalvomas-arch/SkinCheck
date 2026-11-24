@@ -5,8 +5,10 @@ import { calcularRutinas } from '@/server/rutinas'
 import { recomiendaSinStock } from '@/server/ajustesFarmacia'
 import { analizarFoto, problemasDesdeFoto, UMBRALES_POR_DEFECTO, type ResultadoFoto } from '@/server/analisisPiel'
 import { construirLectura } from '@/server/lectura'
-import { crearInformePdf } from '@/server/informePdf'
+import { crearInformePdf, type AnteriorPdf } from '@/server/informePdf'
 import type { Respuestas } from '@/lib/cuestionario'
+import { randomInt } from 'node:crypto'
+import { registroConsentimiento } from '@/lib/privacidad'
 
 export type Seguridad = { edad: string; sexo: 'mujer' | 'hombre' | 'nd'; embarazo: 'si' | 'no'; receta: 'si' | 'no'; reactiva: 'nunca' | 'a_veces' | 'siempre' }
 
@@ -24,8 +26,20 @@ const MAX_ENVIOS_POR_ANALISIS = 3
 
 const PROBLEMA_DE: Record<string, string> = Object.fromEntries(UMBRALES_POR_DEFECTO.map((u) => [u.aspecto, u.problema]))
 
+/** Datos del primer análisis que se enseñan en la revisión. */
+export type Anterior = { fecha: string; dias: number; ui: Record<string, number>; global?: number; edad?: number; foto: string | null }
+export type Extra = { guardarFoto?: boolean; seguimientoDe?: string }
+
+// Sin letras ni números que se confundan (O/0, I/1, S/5, B/8)
+const ALFABETO = 'ACDEFGHJKMNPQRTUVWXY34679'
+const nuevoCodigo = () => Array.from({ length: 6 }, () => ALFABETO[randomInt(ALFABETO.length)]).join('').replace(/^(...)(...)$/, '$1-$2')
+const normalizar = (c: string) => c.toUpperCase().replace(/[^A-Z0-9]/g, '').replace(/^(...)(...)$/, '$1-$2')
+const diasDesde = (f: string) => Math.max(0, Math.floor((Date.now() - new Date(f).getTime()) / 86_400_000))
+
 /** Recorrido de la clienta en el iPad: 4 respuestas de seguridad + foto (o, si no hay foto, lo que quiere mejorar). */
-export async function analizarKiosko(farmaciaId: string, s: Seguridad, foto: string | null, mejorar: string[] = []) {
+export async function analizarKiosko(farmaciaId: string, s: Seguridad, foto: string | null, mejorar: string[] = [], acepta = false, extra: Extra = {}) {
+  // Embarazo y tratamientos médicos son datos de salud (art. 9 RGPD): sin permiso expreso no se trata nada
+  if (acepta !== true) return { error: 'Necesitamos tu permiso para continuar. Si lo prefieres, pide consejo en el mostrador.' }
   const sb = await supabaseServer()
   // Se comprueba que el usuario del iPad es de esta farmacia ANTES de gastar un análisis de la API:
   // un admin que no es miembro vería la farmacia, pagaría el análisis y luego no podría guardarlo.
@@ -46,6 +60,7 @@ export async function analizarKiosko(farmaciaId: string, s: Seguridad, foto: str
     preocupa: ['nada'],
     piel: 'normal',
     kiosko: true,
+    consentimiento: registroConsentimiento(!!foto, 'kiosko', !!extra.guardarFoto && !extra.seguimientoDe),
   }
 
   let fotoRes: ResultadoFoto | null = null
@@ -70,14 +85,64 @@ export async function analizarKiosko(farmaciaId: string, s: Seguridad, foto: str
     if (!data || data.length < 1000) break
   }
   const rutinas = calcularRutinas(r, stock, await recomiendaSinStock(sb, farmaciaId))
-  const { data, error } = await sb.from('consejos').insert({ farmacia_id: farmaciaId, respuestas: r, puntuaciones_foto: fotoRes, rutinas }).select('id').single()
-  if (error) return { error: error.message }
+
+  // Revisión: el primer análisis tiene que ser de esta farmacia (lo garantiza también la RLS)
+  let anterior: Anterior | null = null
+  if (extra.seguimientoDe) {
+    const { data: a } = await sb.from('consejos').select('id, creado, puntuaciones_foto').eq('id', extra.seguimientoDe).eq('farmacia_id', farmaciaId).maybeSingle()
+    const pf = a?.puntuaciones_foto as ResultadoFoto | null
+    if (a && pf?.ui) {
+      const { data: fs } = await sb.from('fotos_seguimiento').select('jpeg_base64').eq('consejo_id', a.id).maybeSingle()
+      anterior = { fecha: a.creado, dias: diasDesde(a.creado), ui: pf.ui, global: pf.puntuacion_global, edad: pf.edad_piel, foto: fs ? `data:image/jpeg;base64,${fs.jpeg_base64}` : null }
+    }
+  }
+
+  // Código de revisión solo si hay foto (sin puntuaciones no hay nada que comparar) y no es ya una revisión
+  const conCodigo = !!fotoRes && !extra.seguimientoDe
+  let fila: { id: string; codigo: string | null } | null = null
+  for (let intento = 0; intento < 4 && !fila; intento++) {
+    const codigo = conCodigo ? nuevoCodigo() : null
+    const { data, error } = await sb.from('consejos')
+      .insert({ farmacia_id: farmaciaId, respuestas: r, puntuaciones_foto: fotoRes, rutinas, codigo, seguimiento_de: anterior ? extra.seguimientoDe : null })
+      .select('id, codigo').single()
+    if (!error) fila = data
+    else if (error.code !== '23505') return { error: error.message } // 23505: código repetido en esta farmacia, se prueba otro
+  }
+  if (!fila) return { error: 'No se ha podido guardar el análisis. Inténtalo de nuevo.' }
+
+  // Foto guardada 35 días solo con el permiso aparte; si falla, el análisis sigue valiendo
+  if (foto && fotoRes && extra.guardarFoto && !extra.seguimientoDe) {
+    const { error } = await sb.from('fotos_seguimiento').insert({ consejo_id: fila.id, farmacia_id: farmaciaId, jpeg_base64: foto })
+    if (error) console.error('[seguimiento] foto no guardada', error.message)
+  }
+
   const lectura = construirLectura(fotoRes, mejorar, rutinas)
-  return { id: data.id as string, rutinas: rutinas as unknown as Record<string, unknown>, foto: fotoRes, lectura }
+  return { id: fila.id, codigo: fila.codigo, rutinas: rutinas as unknown as Record<string, unknown>, foto: fotoRes, lectura, anterior }
+}
+
+/** Revisión: busca el primer análisis por su código, solo dentro de esta farmacia. */
+export async function buscarSeguimiento(farmaciaId: string, codigo: string) {
+  const c = normalizar(codigo)
+  if (!/^[A-Z0-9]{3}-[A-Z0-9]{3}$/.test(c)) return { error: 'El código tiene 6 caracteres, por ejemplo K7P-4QX.' }
+  const sb = await supabaseServer()
+  const { data } = await sb.from('consejos').select('id, creado').eq('farmacia_id', farmaciaId).eq('codigo', c).maybeSingle()
+  if (!data) return { error: 'No encontramos ese código en esta farmacia. Revísalo o pide ayuda en el mostrador.' }
+  const { count } = await sb.from('fotos_seguimiento').select('consejo_id', { count: 'exact', head: true }).eq('consejo_id', data.id)
+  return { id: data.id as string, fecha: data.creado as string, dias: diasDesde(data.creado), conFoto: (count ?? 0) > 0 }
+}
+
+/** Derecho de supresión desde el iPad: borra la foto guardada y anula el código. */
+export async function borrarSeguimiento(farmaciaId: string, consejoId: string) {
+  const sb = await supabaseServer()
+  await sb.from('fotos_seguimiento').delete().eq('consejo_id', consejoId).eq('farmacia_id', farmaciaId)
+  const { error } = await sb.from('consejos').update({ codigo: null }).eq('id', consejoId).eq('farmacia_id', farmaciaId)
+  if (error) return { error: 'No se ha podido borrar. Pide ayuda en el mostrador.' }
+  return { ok: true as const }
 }
 
 /**
- * Informe completo en PDF al email de la clienta. El email solo se usa para este envío: no se guarda en ningún sitio.
+ * Informe completo en PDF al email de la clienta. SkinRead no guarda el email; Resend conserva un registro del envío
+ * (en su cuenta, en EE. UU.), así que hay que contarlo en el aviso (AVISO_EMAIL).
  * Necesita RESEND_API_KEY y INFORME_REMITENTE (p. ej. "SkinRead <informe@tudominio.es>") en Vercel.
  */
 export async function enviarInformeEmail(consejoId: string, email: string, fotoCliente: string | null, nivel: string) {
@@ -87,7 +152,7 @@ export async function enviarInformeEmail(consejoId: string, email: string, fotoC
   if (!clave || !remitente) return { error: 'El envío por email aún no está activado en esta farmacia. Pide el informe en el mostrador.' }
 
   const sb = await supabaseServer()
-  const { data: c } = await sb.from('consejos').select('creado, respuestas, puntuaciones_foto, rutinas, farmacias(nombre)').eq('id', consejoId).maybeSingle()
+  const { data: c } = await sb.from('consejos').select('creado, respuestas, puntuaciones_foto, rutinas, codigo, seguimiento_de, farmacias(nombre)').eq('id', consejoId).maybeSingle()
   if (!c) return { error: 'No encontramos tu análisis. Pide ayuda en el mostrador.' }
   if (Date.now() - new Date(c.creado as string).getTime() > 60 * 60 * 1000) return { error: 'Este análisis ya no admite envíos por email. Pide el informe en el mostrador.' }
   const n = envios.get(consejoId) ?? 0
@@ -104,7 +169,16 @@ export async function enviarInformeEmail(consejoId: string, email: string, fotoC
 
   let pdf: Buffer
   try {
-    pdf = await crearInformePdf({ farmacia, foto, fotoCliente, lectura, rutina, avisos: rutina?.avisos ?? [] })
+    let anterior: AnteriorPdf | null = null
+    if (c.seguimiento_de) {
+      const { data: a } = await sb.from('consejos').select('creado, puntuaciones_foto').eq('id', c.seguimiento_de).maybeSingle()
+      const pf = a?.puntuaciones_foto as ResultadoFoto | null
+      if (a && pf?.ui) {
+        const { data: fs } = await sb.from('fotos_seguimiento').select('jpeg_base64').eq('consejo_id', c.seguimiento_de).maybeSingle()
+        anterior = { fecha: a.creado, ui: pf.ui, global: pf.puntuacion_global, edad: pf.edad_piel, foto: fs ? `data:image/jpeg;base64,${fs.jpeg_base64}` : null }
+      }
+    }
+    pdf = await crearInformePdf({ farmacia, foto, fotoCliente, lectura, rutina, avisos: rutina?.avisos ?? [], codigo: c.codigo as string | null, anterior })
   } catch {
     return { error: 'No hemos podido preparar el informe. Inténtalo de nuevo.' }
   }
