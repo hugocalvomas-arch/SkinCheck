@@ -425,6 +425,8 @@ function pauta(r, P, c, veto, modo){
     if(c.fototipo_oscuro && !acne && nochesRet.length > 2) nochesRet = ["L", "J"];
     if(c.mayor50 && nochesRet.length > 3) nochesRet = ["L", "X", "V"];
     const L = LIM(r).retinoide;
+    // concentración según la experiencia (Hugo, 24/11)
+    escalado = (r.retinoide_exp === "nunca" || !r.retinoide_exp ? "Es tu primer retinoide: empiezas con una concentración baja y subes cuando la piel lo tolere, a partir de unos 3 meses. " : r.retinoide_exp === "tolera" ? "Como ya lo toleras, sigues con una concentración media o alta. " : "Como ya lo usas, sigues con una concentración media. ") + escalado;
     if(L){ nochesRet = ["L", "J"].slice(0, L.noches || 2); escalado = `Retinal suave (hasta ${fmt(L.max_pct)} %) ${nochesRet.length} noches por semana, no seguidas, en sándwich: hidratante, retinal, hidratante. Mientras haya rojez no se sube de ${nochesRet.length} noches.`; }
   }
   // salicílico: 3 días por semana (2 si la nota es leve), sin coincidir con el retinoide ni con el ácido
@@ -527,7 +529,8 @@ function hayBakuchiol(veto, c){
   return (LISTA || CATALOGO).some(p => p.v2 && p.v2.protagonista === "bakuchiol" && ["AM", "PM", "AM/PM"].includes(p.v2.hueco) && !vetado(p, veto) && dosisDe(p, "bakuchiol", R.bakuchiol, c));
 }
 const LIM = r => (r && r.limites) || {};
-function rangoPara(k, deseo){
+function rangoPara(k, deseo, r){
+  if(k === "retinal") return !r || !r.retinoide_exp || r.retinoide_exp === "nunca" ? R.retinal_inicio : R.retinal_retinizada;
   if(k === "niacinamida") return deseo && deseo.k === "sebo" ? R.niacinamida.sebo : R.niacinamida.resto;
   return {vitc_pura: R.vitc_pura, vitc_derivados: R.vitc_derivados, retinol: R.retinol, retinal: R.retinal, bakuchiol: R.bakuchiol, glicolico: R.glicolico, lactico: R.lactico, salicilico: R.salicilico, azelaico: R.azelaico, tranexamico: R.tranexamico, thiamidol: R.thiamidol}[k] || null;
 }
@@ -645,7 +648,7 @@ function candidatos(h, ctx){
       }
       if(k === "niacinamida" && h.deseo.k === "despigmentante" && c.fototipo_oscuro) base -= .2;
       if(k === "azelaico" && c.fototipo_oscuro) base += .3;
-      dosis = dosisDe(p, k, rangoPara(k, h.deseo), c, ep);
+      dosis = dosisDe(p, k, rangoPara(k, h.deseo, r), c, ep);
       if(!dosis) continue;
       if(k === "retinol" && estado(p).retinol.pct > CFG.retinol_max) continue;
       if(h.deseo.k === "retinoide" && LIM(r).retinoide && (k !== LIM(r).retinoide.activo || !cumpleTopeRet(p, LIM(r).retinoide))) continue;   // tope de la regla P-03: solo retinal con % declarado ≤0,05

@@ -12,7 +12,7 @@ import type { Respuestas } from '@/lib/cuestionario'
 import { randomInt } from 'node:crypto'
 import { registroConsentimiento } from '@/lib/privacidad'
 
-export type Seguridad = { edad: string; sexo: 'mujer' | 'hombre' | 'nd'; embarazo: 'embarazo' | 'lactancia' | 'no'; receta: 'si' | 'no'; reactiva: 'nunca' | 'a_veces' | 'siempre' }
+export type Seguridad = { edad: string; sexo: 'mujer' | 'hombre' | 'nd'; embarazo: 'embarazo' | 'lactancia' | 'no'; receta: 'si' | 'no'; reactiva: 'nunca' | 'a_veces' | 'siempre'; retinoide?: 'nunca' | 'reciente' | 'tolera' }
 
 async function esDeLaFarmacia(sb: Awaited<ReturnType<typeof supabaseServer>>, farmaciaId: string) {
   const { data: u } = await sb.auth.getUser()
@@ -63,7 +63,7 @@ export async function analizarKiosko(farmaciaId: string, s: Seguridad, foto: str
     receta: s.receta,
     reactiva: s.reactiva,
     sienta: ['nada'],
-    retinoide_exp: 'nunca',
+    retinoide_exp: s.retinoide === 'reciente' || s.retinoide === 'tolera' ? s.retinoide : 'nunca',   // sin respuesta, lo prudente: empezar por abajo
     fototipo: 'III',
     textura: 'igual',
     preocupa: ['nada'],

@@ -25,6 +25,8 @@ const PREGUNTAS: { id: keyof Seguridad; t: string; nota: string; ops: [string, s
   { id: 'embarazo', si: (s) => s.sexo !== 'hombre' && !['55+', '55-64', '65+'].includes(s.edad ?? ''), t: '¿Estás embarazada o dando el pecho?', nota: 'Hay ingredientes que no se recomiendan en el embarazo, y otros que conviene evitar mientras das el pecho.', ops: [['embarazo', 'Estoy embarazada'], ['lactancia', 'Estoy dando el pecho'], ['no', 'No, o no aplica']] },
   { id: 'receta', t: '¿Sigues algún tratamiento para la piel indicado por un médico?', nota: 'Si es así, no añadiremos activos que interfieran con él.', ops: [['no', 'No'], ['si', 'Sí']] },
   { id: 'reactiva', t: '¿Tu piel reacciona cuando pruebas un producto nuevo?', nota: 'Picor, rojez o escozor. Así sabemos si empezar por lo más suave.', ops: [['nunca', 'Casi nunca'], ['a_veces', 'A veces'], ['siempre', 'Casi siempre']] },
+  // Hugo, 24/11: quien empieza con un retinoide va a la concentración baja; quien ya lo tolera sigue con la suya
+  { id: 'retinoide', si: (s) => s.edad !== '14-17' && s.embarazo !== 'embarazo' && s.embarazo !== 'lactancia' && s.receta !== 'si', t: '¿Usas ya retinol o retinal?', nota: 'De esto depende la concentración con la que empiezas y cuántas noches a la semana.', ops: [['nunca', 'No, nunca'], ['reciente', 'Sí, desde hace menos de 3 meses'], ['tolera', 'Sí, y lo tolero bien']] },
 ]
 
 const MEJORAR: [string, string][] = [
@@ -71,7 +73,7 @@ export function Kiosko({ farmaciaId, farmacia, precio }: Props) {
 
   function responder(id: keyof Seguridad, v: string) {
     const s = { ...seg, [id]: v }
-    if (PREGUNTAS[i + 1]?.si && !PREGUNTAS[i + 1].si!(s)) (s as Partial<Seguridad>).embarazo = 'no'
+    if (PREGUNTAS[i + 1]?.id === 'embarazo' && !PREGUNTAS[i + 1].si!(s)) (s as Partial<Seguridad>).embarazo = 'no'
     setSeg(s)
     if (id === 'edad' && v === '-14') return setPaso('menor')
     const k = siguiente(i + 1, s)
