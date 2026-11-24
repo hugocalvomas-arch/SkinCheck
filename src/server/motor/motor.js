@@ -633,7 +633,7 @@ function candidatos(h, ctx){
     } else if(h.slot === "H" || h.slot === "H2"){
       if(v2.hueco !== "H") continue;
       if(["glicolico", "lactico", "mandelico", "pha", "salicilico", "lha"].some(k => aDosis(p, k)) || v2.exfoliante) continue;   // la hidratante no exfolia
-      if(h.slot === "H" && /\bnoche\b|\bnight\b|\bnuit\b/.test(n(p.producto))) continue;
+      if(h.slot === "H" && /\bnoche\b|\bnight\b|\bnuit\b|\bpm\b/.test(n(p.producto))) continue;   // «PM» también (ciclo 19: CeraVe Loción de Rostro PM de mañana)
       if(/hidratacion-cuerpo|corporal|body lotion/.test(n(p.url_producto || "") + " " + n(p.producto)) && p.formato_ml >= 400) continue;   // loción corporal de bote grande: no es la hidratante de la cara (revisión clínica, C12-07)
       if(/parpado|contorno|\beye\b|\byeux\b|ojos/.test(n(p.producto))) continue;   // una crema de ojos no es la hidratante de la cara   // la hidratante va mañana y noche: una crema de noche solo en el hueco de noche (H2)
       if(NO_HIDRATANTE.test(n(p.producto)) || /corporal/.test(n(p.subcategoria)) || /crema-corporal|body-lotion|locion-corporal/.test(n(p.url_producto)) || (p.textura === "aceite" && /\boil\b|aceite|huile/.test(n(p.producto)) && !/oil.free|oil control|anti.oil/.test(n(p.producto)))) continue;   // sérums, tónicos, aceites y productos de cuerpo no son la hidratante
