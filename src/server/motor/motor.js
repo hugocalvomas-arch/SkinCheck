@@ -631,7 +631,9 @@ function candidatos(h, ctx){
       if(!hayRetinoide && RETINOIDES.concat("bakuchiol").some(k => aDosis(p, k)) && (c.menor25 || ctx.modo !== "normal" || hayAcido || !["P08", "P17", "P18", "P19"].some(x => P.includes(x)))) continue;   // una hidratante antiedad solo si hay un motivo antiedad
       base = 1;
       if(ACIDOS_EXF.some(k => llevaAcido(p, k))) base -= 1;                              // la hidratante no lleva ácidos exfoliantes: el ácido, como mucho, en un producto
-      if(/atopic/.test(n(p.producto)) && !c.barrera && !P.includes("P27")) base -= .5;   // una crema de piel atópica, solo si hace falta
+      { const nfH = r.notas_foto || {}, oclusiva = /^(mineral oil|paraffinum|petrolatum|butyrospermum|cera alba|beeswax|vaselin)/.test(n((p.inci_completo || [])[0] || ""));
+        if(oclusiva && c.piel !== "seca" && ((nfH.hidratacion ?? 0) >= 70 || (nfH.acne ?? 100) < 65 + B3 || (nfH.brillo ?? 100) <= 65)) base -= .6; }   // una crema oclusiva (aceite mineral o cera de primer ingrediente) solo si la piel la pide (ciclo 3)
+      if(/atopi/.test(n(p.producto)) && !c.barrera && !P.includes("P27")) base -= .5;   // una crema de piel atópica, solo si hace falta
       const e = estado(p);
       if(quiere("h_niacinamida") && e.niacinamida && e.niacinamida.estado !== "tras_linea" && !(e.niacinamida.pct > 5 && (c.reactiva || c.rojez || c.barrera))){ base += .35; cubre.push("F8"); }
       if(quiere("h_barrera") || c.reactiva || c.barrera){ if(["ceramidas", "pantenol", "bisabolol", "karite"].some(k => e[k]) && p.fragancia === false){ base += .4; cubre.push("F12"); } else if(ctx.modo !== "normal" || c.barrera) base -= .3; }
@@ -794,7 +796,7 @@ function candidatos(h, ctx){
     const pref = tx && ["H", "S"].includes(h.slot) && tx.includes(p.textura) ? .08 : 0;
     // Paso 2: el producto se puntúa entero: lo demás que cubre de lo que esta piel necesita (sin contar el limpiador, que se aclara) y la calidad de su fórmula
     if(ctx.ing && h.slot !== "L"){ let cob = 0; for(const x of ctx.ing.ranking){ if(x.k === activo || !x.puntos || !aDosis(p, x.k)) continue; cob += x.puntos / ctx.ing.max * (x.clase === "tratamiento" ? 1 : .5); }
-      desglose.cobertura = Math.round(PESO_PRODUCTO.cobertura * Math.min(1, cob) * 100) / 100; base += desglose.cobertura; }
+      desglose.cobertura = Math.round(PESO_PRODUCTO.cobertura * Math.min(1, cob) * (h.slot === "S" ? .5 : 1) * 100) / 100; base += desglose.cobertura; }   // en el solar manda la protección: lo que lleva de más cuenta la mitad (ciclo 3, diversidad)
     { const q = (CALIDAD[p.id] || {}).calidad; if(q != null){ desglose.calidad = Math.round(PESO_PRODUCTO.calidad * q / 10 * 100) / 100; base += desglose.calidad; } }
     out.push({p, score: base + pref, cubre, dosis, activo, extra: pegas, desglose});
   }
@@ -822,6 +824,8 @@ function elegir(pa, ctx){
     if((h.deseo || ["H", "H2", "S"].includes(h.slot)) && l.length){ const prev = Object.entries(sel).filter(([s]) => /^serum|^H/.test(s)).map(([, e]) => e.p);
       const esAcido = h.deseo && ["aha", "salicilico", "glicolico_afeitado"].includes(h.deseo.k), habra = pa.serums.some(x => ["aha", "salicilico", "glicolico_afeitado"].includes(x.k));
       if(prev.some(q => ACIDOS_EXF.some(k => llevaAcido(q, k))) || (habra && !esAcido)){ const otros = l.filter(x => !ACIDOS_EXF.some(k => llevaAcido(x.p, k))); if(otros.length) l = otros; } }
+    // un activo que una regla de la foto pide evitar solo entra si no hay otro producto válido para el hueco (ciclo 3)
+    if(l.length){ const bon = ctx.r.bonus_activos || {}; const otros = l.filter(x => !(x.activo && (bon[x.activo] || 0) < 0) && x.score >= .5); if(otros.length && otros.length < l.length) l = otros; }
     if(!l.length){ sinProducto.push(h); continue; }
     const e = l[0];
     sel[h.slot] = e; usados.add(e.p.id);
