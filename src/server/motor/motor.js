@@ -340,6 +340,7 @@ function pauta(r, P, c, veto, modo){
     for(const x of lista){
       if(NO_SUAVE.includes(x.k) || (r._excluir || []).includes(x.k)) continue;
       const d = deseoDe(x.k); if(!d) continue;
+      if(r.reactiva === "siempre" && d.fuerte) continue;   // piel que reacciona casi siempre: el activo único no es fuerte (ciclo 4)
       const acts = d.humectante ? ["hialuronico"] : (x.activos || d.activos || []).filter(a => !veto[a]);
       if(!acts.length) continue;
       const sc = Math.max(...acts.map(a => pts(a) * (pesoEn(a, objetivo) >= 1 ? 1 : .5)));

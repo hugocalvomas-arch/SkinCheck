@@ -182,7 +182,7 @@ function revisar(c, res, M){
     for(const s of o.productos.filter(p => /^serum/.test(p.slot) && p.producto)){ const nom = s.producto.toLowerCase();
       if(/limpia|cleanser|lavant|wash|mascarilla|\bmask\b|solar|spf\b|contorno|eye/.test(nom)) add("GRAVE", "el sérum no es un sérum", s.producto);
       if(s.turno === "AM" && RETINOIDES.some(k => aDosis(M.POR.get(s.id), k))) add("CRÍTICO", "retinoide de mañana", s.producto); }
-    for(const s of o.productos.filter(p => /^serum/.test(p.slot) && p.activo_clave && ((res.bonus || {})[p.activo_clave] || 0) < 0)) add((s.alternativas || []).some(a => !a.sin_dosis && a.activo_clave && !(((res.bonus || {})[a.activo_clave] || 0) < 0)) ? "GRAVE" : "MENOR", "activo que la foto pide evitar", `${s.producto} (${s.activo_clave})`);
+    for(const s of o.productos.filter(p => /^serum/.test(p.slot) && p.activo_clave && ((res.bonus || {})[p.activo_clave] || 0) < 0)) add((s.alternativas || []).some(a => !a.sin_dosis && a.activo_clave && !(((res.bonus || {})[a.activo_clave] || 0) < 0) && !o.productos.some(q => q !== s && /^serum/.test(q.slot) && q.id && M.AC.aDosis(M.POR.get(q.id), a.activo_clave))) ? "GRAVE" : "MENOR", "activo que la foto pide evitar", `${s.producto} (${s.activo_clave})`);
     for(const T of ["AM", "PM"]){ const d = o.productos.filter(p => /^serum/.test(p.slot) && p.turno === T && p.id && !p.noches && !p.frecuencia);
       const parAz = d.length === 2 && d.some(p => /azelaico/i.test(p.activo || "")) && d.some(p => /vitamina C|niacinamida/i.test(p.activo || ""));
       if(d.length > 1 && !parAz) add("GRAVE", "dos sérums diarios en el mismo turno (R8)", d.map(p => p.producto).join(" + ")); }

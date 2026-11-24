@@ -71,7 +71,7 @@ function ficha(p){
   // alertas
   const alertas = [];
   if(p.fragancia === true || lleva(p, "perfume")){ alertas.push("perfume"); nota -= (p.alergenos_declarados || []).length >= 3 ? 1.5 : 1; }
-  const iAlc = inci.findIndex(i => /alcohol denat|sd alcohol/i.test(i));
+  const iAlc = inci.findIndex(i => /alcohol denat|sd alcohol|isopropyl alcohol|^\s*alcohol\s*$/i.test(i));
   if(iAlc >= 0 && iAlc < 6){ alertas.push("alcohol alto en la fórmula"); nota -= 1; } else if(iAlc >= 0){ alertas.push("alcohol (bajo en la fórmula)"); nota -= .3; }
   if(inci.some(i => ACEITES_ESENCIALES.test(i))){ alertas.push("aceites esenciales o alérgenos de fragancia"); nota -= .5; }
   if(lleva(p, "mentol")){ alertas.push("mentol o alcanfor"); nota -= .5; }
