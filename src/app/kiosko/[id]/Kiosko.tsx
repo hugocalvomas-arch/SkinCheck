@@ -52,10 +52,13 @@ export function Kiosko({ farmaciaId, farmacia, precio }: Props) {
   const [error, setError] = useState('')
   const [revision, setRevision] = useState<Revision | null>(null)
   const [guardarFoto, setGuardarFoto] = useState(false)
+  // Hugo, 24/11: las preguntas van justo después de la foto. Antes solo se pregunta la edad (menores de 14, sin foto).
+  const [pend, setPend] = useState<{ b64: string | null; m: string[] } | null>(null)
+  const [listas, setListas] = useState(false)
   const [, start] = useTransition()
 
   const reiniciar = useCallback(() => {
-    setPaso('reclamo'); setI(0); setSeg({}); setFoto(null); setRes(null); setError(''); setRevision(null); setGuardarFoto(false)
+    setPaso('reclamo'); setI(0); setSeg({}); setFoto(null); setRes(null); setError(''); setRevision(null); setGuardarFoto(false); setPend(null); setListas(false)
   }, [])
 
   // Privacidad: sin interacción, vuelve al inicio y descarta todo
@@ -75,17 +78,26 @@ export function Kiosko({ farmaciaId, farmacia, precio }: Props) {
     const s = { ...seg, [id]: v }
     if (PREGUNTAS[i + 1]?.id === 'embarazo' && !PREGUNTAS[i + 1].si!(s)) (s as Partial<Seguridad>).embarazo = 'no'
     setSeg(s)
-    if (id === 'edad' && v === '-14') return setPaso('menor')
+    if (id === 'edad') return setPaso(v === '-14' ? 'menor' : 'consentimiento')
     const k = siguiente(i + 1, s)
-    if (k < PREGUNTAS.length) setI(k)
-    else setPaso('consentimiento')
+    if (k < PREGUNTAS.length) return setI(k)
+    setListas(true)
+    analizar(pend?.b64 ?? null, pend?.m ?? [], s)
   }
 
-  function analizar(fotoB64: string | null, mejorar: string[] = []) {
+  // Con la foto hecha (o los objetivos elegidos), las preguntas; si ya estaban contestadas (repetir foto tras un error), directo al análisis
+  function trasCaptura(b64: string | null, m: string[]) {
+    if (listas) return analizar(b64, m)
+    setPend({ b64, m })
+    setI(siguiente(1, seg))
+    setPaso('preguntas')
+  }
+
+  function analizar(fotoB64: string | null, mejorar: string[] = [], s: Partial<Seguridad> = seg) {
     setError('')
     setPaso('analizando')
     start(async () => {
-      const r = await analizarKiosko(farmaciaId, seg as Seguridad, fotoB64, mejorar, true, { guardarFoto, seguimientoDe: revision?.id })
+      const r = await analizarKiosko(farmaciaId, s as Seguridad, fotoB64, mejorar, true, { guardarFoto, seguimientoDe: revision?.id })
       if ('error' in r) { setError(r.error ?? 'No se ha podido completar el análisis.'); setPaso(fotoB64 ? 'camara' : 'mejorar'); return }
       setRes(r)
       setPaso('resultado')
@@ -115,7 +127,7 @@ export function Kiosko({ farmaciaId, farmacia, precio }: Props) {
             <button onClick={reiniciar} className="boton">Volver al inicio</button>
           </Bloque>
         )}
-        {paso === 'preguntas' && <Pregunta q={PREGUNTAS[i]} n={i} valor={seg[PREGUNTAS[i].id]} onResp={(v) => responder(PREGUNTAS[i].id, v)} onAtras={() => { const k = anterior(i - 1, seg); return k >= 0 ? setI(k) : setPaso('aviso') }} />}
+        {paso === 'preguntas' && <Pregunta q={PREGUNTAS[i]} n={i} valor={seg[PREGUNTAS[i].id]} onResp={(v) => responder(PREGUNTAS[i].id, v)} onAtras={() => { if (i === 0) return setPaso('aviso'); const k = anterior(i - 1, seg); return k >= 1 ? setI(k) : setPaso(pend?.b64 ? 'camara' : 'mejorar') }} />}
         {paso === 'menor' && (
           <Bloque>
             <h2 className="titulo">Para menores de 14 años, mejor en persona</h2>
@@ -124,8 +136,8 @@ export function Kiosko({ farmaciaId, farmacia, precio }: Props) {
           </Bloque>
         )}
         {paso === 'consentimiento' && <Consentimiento revision={!!revision} guardar={guardarFoto} onGuardar={setGuardarFoto} onFoto={() => setPaso('camara')} onSinFoto={() => setPaso('mejorar')} />}
-        {paso === 'camara' && <Camara error={error} onFoto={(b64, url) => { setFoto(url); analizar(b64) }} />}
-        {paso === 'mejorar' && <Mejorar error={error} onListo={(m) => analizar(null, m)} />}
+        {paso === 'camara' && <Camara error={error} onFoto={(b64, url) => { setFoto(url); trasCaptura(b64, []) }} />}
+        {paso === 'mejorar' && <Mejorar error={error} onListo={(m) => trasCaptura(null, m)} />}
         {paso === 'analizando' && <Analizando foto={foto} />}
         {paso === 'resultado' && res && <Informe res={res} foto={foto} farmacia={farmacia} onFin={reiniciar} />}
       </main>
