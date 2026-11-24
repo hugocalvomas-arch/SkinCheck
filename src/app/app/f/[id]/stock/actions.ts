@@ -105,3 +105,10 @@ export async function guardarStock(
     total: filas.length,
   }
 }
+
+export async function cambiarSinStock(farmaciaId: string, valor: boolean) {
+  const sb = await supabaseServer()
+  const { error } = await sb.rpc('cambiar_recomendar_sin_stock', { p_farmacia: farmaciaId, p_valor: valor })
+  if (error) return { error: error.message.includes('sin_acceso') ? 'Tu usuario no puede cambiar esta farmacia.' : 'Esta opción aún no está activada. Avisa a SkinRead.' }
+  return { ok: true }
+}

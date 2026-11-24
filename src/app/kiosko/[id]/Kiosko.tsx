@@ -352,8 +352,8 @@ export function Informe({ res, foto, farmacia, onFin }: { res: any; foto: string
 
   async function generarQr() {
     const lineas = [`Mi rutina SkinRead (${farmacia})`, '']
-    if (manana.length) lineas.push('Mañana:', ...manana.map((p: any) => `- ${p.marca} ${p.producto}`), '')
-    if (noche.length) lineas.push('Noche:', ...noche.map((p: any) => `- ${p.marca} ${p.producto}`), '')
+    if (manana.length) lineas.push('Mañana:', ...manana.map((p: any) => `- ${p.marca} ${p.producto}${p.bajo_pedido ? ' (bajo pedido)' : ''}`), '')
+    if (noche.length) lineas.push('Noche:', ...noche.map((p: any) => `- ${p.marca} ${p.producto}${p.bajo_pedido ? ' (bajo pedido)' : ''}`), '')
     lineas.push(`Total: ${eur(rut.total)}`, 'Repite el análisis en 6 semanas para comparar.')
     setQr(await QRCode.toDataURL(`https://wa.me/?text=${encodeURIComponent(lineas.join('\n'))}`, { margin: 1, width: 400, errorCorrectionLevel: 'L', color: { dark: '#0f1b1d', light: '#ffffff' } }))
   }
@@ -406,7 +406,7 @@ export function Informe({ res, foto, farmacia, onFin }: { res: any; foto: string
                   <span className="text-2xl font-medium tracking-[-0.02em]">{g.nombre}</span>
                   <span className="text-[var(--k-muted)] leading-snug"><span className="text-[var(--k-accent)] font-medium">Para {lista(g.para.map((n: string) => n.toLowerCase()))}.</span> {g.frase ?? g.por_que}</span>
                   <span className="mt-2 pt-3 border-t border-[var(--k-line)] flex items-baseline justify-between gap-3">
-                    {pr ? <><span className="leading-snug"><span className="block text-sm text-[var(--k-muted)]">{pr.marca}</span>{pr.producto}</span><span className="cifra text-lg whitespace-nowrap">{eur(pr.precio)}</span></>
+                    {pr ? <><span className="leading-snug"><span className="block text-sm text-[var(--k-muted)]">{pr.marca}{pr.bajo_pedido ? ' · Bajo pedido' : ''}</span>{pr.producto}</span><span className="cifra text-lg whitespace-nowrap">{eur(pr.precio)}</span></>
                       : <span className="text-sm text-[var(--k-muted)]">{g.ahora ? 'Pide en el mostrador un producto con este ingrediente.' : g.motivo ?? 'Entra más adelante.'}</span>}
                   </span>
                 </li>
@@ -500,7 +500,7 @@ function Turno({ icono, titulo, productos }: { icono: React.ReactNode; titulo: s
           <li key={k} className="grid grid-cols-[1fr_auto] gap-x-4 gap-y-0.5 pb-4 border-b border-[var(--k-line)]">
             <span className="text-sm text-[var(--k-muted)]">{k + 1}. {p.paso}</span>
             <span className="row-span-2 self-center cifra text-lg">{eur(p.precio)}</span>
-            <span className="text-lg leading-snug">{p.marca} {p.producto}</span>
+            <span className="text-lg leading-snug">{p.marca} {p.producto}{p.bajo_pedido && <span className="block text-sm text-[var(--k-muted)]">Bajo pedido: la farmacia te lo consigue</span>}</span>
           </li>
         ))}
         {!productos.length && <li className="text-[var(--k-muted)]">Sin productos en este turno.</li>}

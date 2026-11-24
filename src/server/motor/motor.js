@@ -506,6 +506,7 @@ function candidatos(h, ctx){
     if(["L", "H", "H2", "S"].includes(h.slot)){ if(!PIEL_OK[c.piel].includes(v2.piel)) continue; if(v2.piel !== "todas") base += .15; }
     else if((c.piel === "seca" && v2.piel === "grasa o mixta") || (c.piel === "grasa" && v2.piel === "seca")) continue;
     if(p.pvp_eur == null || p.pvp_eur > 400) continue;   // sin precio, o con un precio que solo puede ser un error de ficha
+    base += p._preferencia || 0;   // SkinRead: lo que la farmacia tiene en stock va antes que lo que tendría que pedir
     // lo que resta sin vetar
     if(c.reactiva_a_veces && (p.fragancia === true || lleva(p, "perfume"))) base -= .3;
     if((c.piel === "seca" || c.sequedad_activa) && (p.alcohol_denat === true)) base -= .25;

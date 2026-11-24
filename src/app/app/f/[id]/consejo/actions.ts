@@ -4,6 +4,7 @@ import { revalidatePath } from 'next/cache'
 import { supabaseServer } from '@/lib/supabase/server'
 import { pendientes, visibles, type Respuestas } from '@/lib/cuestionario'
 import { calcularRutinas } from '@/server/rutinas'
+import { recomiendaSinStock } from '@/server/ajustesFarmacia'
 import { analizarFoto, problemasDesdeFoto, type ResultadoFoto } from '@/server/analisisPiel'
 
 export async function crearConsejo(farmaciaId: string, r: Respuestas, foto: string | null = null) {
@@ -27,7 +28,7 @@ export async function crearConsejo(farmaciaId: string, r: Respuestas, foto: stri
     stock.push(...(data ?? []))
     if (!data || data.length < 1000) break
   }
-  const resultado = calcularRutinas(limpias, stock)
+  const resultado = calcularRutinas(limpias, stock, await recomiendaSinStock(sb, farmaciaId))
   const { data, error } = await sb.from('consejos').insert({ farmacia_id: farmaciaId, respuestas: limpias, puntuaciones_foto: puntuaciones, rutinas: resultado }).select('id').single()
   if (error) return { error: error.message }
   redirect(`/app/f/${farmaciaId}/consejo/${data.id}`)

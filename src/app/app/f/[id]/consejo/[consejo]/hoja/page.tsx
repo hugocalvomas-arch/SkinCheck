@@ -36,7 +36,7 @@ export default async function Hoja({ params, searchParams }: { params: Promise<{
           <li key={i} className="flex gap-3">
             <span className="text-gris w-5">{i + 1}.</span>
             <div>
-              <div className="font-medium">{p.paso}: {p.marca} {p.producto}</div>
+              <div className="font-medium">{p.paso}: {p.marca} {p.producto}{p.bajo_pedido ? ' (bajo pedido)' : ''}</div>
               <div className="text-sm text-gris">{p.para}</div>
             </div>
             <span className="ml-auto whitespace-nowrap text-sm">{eur(p.precio)}</span>

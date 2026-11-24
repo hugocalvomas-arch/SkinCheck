@@ -203,6 +203,7 @@ export async function crearInformePdf(o: { farmacia: string; foto: ResultadoFoto
                 <View style={{ flex: 1 }}>
                   <Text style={[s.gris, { fontSize: 8.5 }]}>{p.paso}</Text>
                   <Text style={{ fontWeight: 500 }}>{p.marca} {p.producto}</Text>
+                  {p.bajo_pedido && <Text style={s.gris}>Bajo pedido: la farmacia te lo consigue</Text>}
                   {p.para && <Text style={s.gris}>{p.para}</Text>}
                 </View>
                 <Text style={{ width: 50, textAlign: 'right' }}>{eur(p.precio)}</Text>

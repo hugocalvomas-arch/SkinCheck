@@ -2,6 +2,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { supabaseServer } from '@/lib/supabase/server'
 import { calcularRutinas } from '@/server/rutinas'
+import { recomiendaSinStock } from '@/server/ajustesFarmacia'
 import { analizarFoto, problemasDesdeFoto, UMBRALES_POR_DEFECTO, type ResultadoFoto } from '@/server/analisisPiel'
 import { construirLectura } from '@/server/lectura'
 import { crearInformePdf } from '@/server/informePdf'
@@ -68,7 +69,7 @@ export async function analizarKiosko(farmaciaId: string, s: Seguridad, foto: str
     stock.push(...(data ?? []))
     if (!data || data.length < 1000) break
   }
-  const rutinas = calcularRutinas(r, stock)
+  const rutinas = calcularRutinas(r, stock, await recomiendaSinStock(sb, farmaciaId))
   const { data, error } = await sb.from('consejos').insert({ farmacia_id: farmaciaId, respuestas: r, puntuaciones_foto: fotoRes, rutinas }).select('id').single()
   if (error) return { error: error.message }
   const lectura = construirLectura(fotoRes, mejorar, rutinas)
