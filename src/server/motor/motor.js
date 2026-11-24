@@ -345,7 +345,7 @@ function pauta(r, P, c, veto, modo){
       if(r.reactiva === "siempre" && d.fuerte) continue;   // piel que reacciona casi siempre: el activo único no es fuerte (ciclo 4)
       const acts = d.humectante ? ["hialuronico"] : (x.activos || d.activos || []).filter(a => !veto[a]);
       if(!acts.length) continue;
-      const sc = Math.max(...acts.map(a => pts(a) * (pesoEn(a, objetivo) >= 1 ? 1 : .5)));
+      const sc = Math.max(...acts.map(a => pts(a) * (.5 + .5 * Math.min(3, pesoEn(a, objetivo)) / 3)));   // cuanto más trata la nota más baja, más cuenta (antes: todo o nada desde peso 1; ciclo 7)
       if(!mejor || sc > mejor.sc + 1e-9) mejor = {x, sc, acts: d.humectante ? null : acts.slice().sort((a, b) => pts(b) - pts(a) || a.localeCompare(b))};
     }
     // R4 (Hugo): embarazo con manchas, azelaico ya en la básica
@@ -801,6 +801,7 @@ function candidatos(h, ctx){
     // Paso 2: el producto se puntúa entero: lo demás que cubre de lo que esta piel necesita (sin contar el limpiador, que se aclara) y la calidad de su fórmula
     if(ctx.ing && h.slot !== "L"){ let cob = 0; for(const x of ctx.ing.ranking){ if(x.k === activo || !x.puntos || !aDosis(p, x.k)) continue; cob += x.puntos / ctx.ing.max * (x.clase === "tratamiento" ? 1 : .5); }
       desglose.cobertura = Math.round(PESO_PRODUCTO.cobertura * Math.min(1, cob) * (h.slot === "S" ? .5 : 1) * 100) / 100; base += desglose.cobertura; }   // en el solar manda la protección: lo que lleva de más cuenta la mitad (ciclo 3, diversidad)
+    if((CALIDAD[p.id] || {}).revisar && ["H", "H2"].includes(h.slot)) base -= .3;   // hidratante con ficha de confianza baja (INCI incompleto o contaminado): solo si no hay otra igual de buena (ciclo 7)
     { const q = (CALIDAD[p.id] || {}).calidad; if(q != null){ desglose.calidad = Math.round(PESO_PRODUCTO.calidad * q / 10 * 100) / 100; base += desglose.calidad; } }
     out.push({p, score: base + pref, cubre, dosis, activo, extra: pegas, desglose});
   }
