@@ -3,7 +3,7 @@
 // la versión que aceptó la clienta (art. 7.1 RGPD: hay que poder demostrar el consentimiento).
 // Los plazos y proveedores salen de la revisión del 24/11/2026; los debe validar el asesor legal.
 
-export const VERSION_CONSENTIMIENTO = '2026-11-24.2'
+export const VERSION_CONSENTIMIENTO = '2026-11-24.3'
 
 /** Días que se guarda la foto para el antes y el después de la revisión (solo con permiso aparte). */
 export const DIAS_FOTO = 35
@@ -21,7 +21,7 @@ export function registroConsentimiento(foto: boolean, via: Consentimiento['via']
 export const AVISO_INICIO = (farmacia: string) => [
   `${farmacia} es responsable de tus datos y los usa solo para recomendarte productos para tu piel.`,
   'Te preguntaremos si estás embarazada, si sigues un tratamiento médico y cómo reacciona tu piel. Son datos de salud: necesitamos tu permiso expreso.',
-  `No pedimos tu nombre. Tus respuestas se guardan sin nombre ${MESES_RETENCION} meses y después se borran. Te daremos un código para comparar tu piel en la revisión.`,
+  `No pedimos tu nombre. Tus respuestas se guardan sin nombre ${MESES_RETENCION} meses y después se borran. Si haces la foto, te daremos un código para comparar tu piel en la revisión.`,
   'Puedes retirar tu permiso, pedir información o ejercer tus derechos en el mostrador.',
 ]
 
@@ -42,8 +42,8 @@ export const AVISO_FOTO = [
   'La IA mide el aspecto de la piel; no te identifica. La simulación del "después" también la genera una IA.',
 ]
 
-export const AVISO_EMAIL =
-  'Acepto recibir el informe en este email. El PDF incluye mi foto. Ni la farmacia ni SkinRead guardan el email; lo envía Resend (EE. UU.), que conserva un registro del envío.'
+export const AVISO_EMAIL = (conFoto: boolean) =>
+  `Acepto recibir el informe en este email.${conFoto ? ' El PDF incluye mi foto.' : ''} Ni la farmacia ni SkinRead guardan el email; lo envía Resend (EE. UU.), que conserva un registro del envío.`
 
 /** Permiso aparte (casilla sin marcar por defecto) para guardar la foto hasta la revisión. */
 export const AVISO_GUARDAR_FOTO =

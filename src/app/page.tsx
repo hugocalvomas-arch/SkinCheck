@@ -39,7 +39,7 @@ const ACTIVOS: [string, string][] = [
 const PREGUNTAS: [string, string][] = [
   ['¿Tengo que comprar algún aparato?', 'No. Funciona en el navegador de cualquier iPad con cámara frontal. Lo dejas en el mostrador y listo.'],
   ['¿Funciona con mi programa de gestión?', 'Exportas el stock en Excel o CSV desde Farmatic, Nixfarma, Unycop u otro programa y lo subes. SkinRead reconoce las columnas y recuerda tu formato para la próxima vez.'],
-  ['¿Qué pasa con las fotos de las clientas?', 'La farmacia no guarda fotos ni nombres. La foto se envía al servicio de análisis, que la elimina tras un periodo limitado. Solo quedan puntuaciones anónimas.'],
+  ['¿Qué pasa con las fotos de las clientas?', 'No se piden nombres. La foto se envía al servicio de análisis (Perfect Corp), que la borra en un plazo de 30 días. Solo se guarda en la farmacia si la clienta lo acepta aparte, 35 días, para enseñarle el antes y el después en su revisión. Las respuestas y puntuaciones se guardan sin nombre 12 meses.'],
   ['¿Es un diagnóstico médico?', 'No. Es un análisis cosmético orientativo. Si las respuestas indican algo que necesita consulta, la pantalla lo recomienda en lugar de vender.'],
   ['¿Puedo cobrar el análisis a la clienta?', 'Sí, lo decides tú. Puedes cobrarlo como servicio, descontarlo de la compra o regalarlo.'],
   ['¿Cuánto cuesta?', 'Una cuota mensual por farmacia, sin permanencia. Déjanos tus datos y te enviamos las tarifas.'],
@@ -49,7 +49,7 @@ const VENTAJAS = [
   { i: Storefront, t: 'Solo recomienda lo que tienes en la estantería', d: 'La rutina se calcula con tu stock y tus precios. Tres opciones para cada clienta: básica, media y completa.' },
   { i: ChartLineUp, t: 'Ves lo que vende', d: 'Cuántas clientas se analizan, cuántas compran y qué rutina eligen.' },
   { i: Repeat, t: 'Vuelve a las 4 semanas', d: 'La clienta vuelve con su código, repite el análisis y ve el antes y el después. Tú ganas otra visita y la reposición.' },
-  { i: LockKey, t: 'Privacidad por diseño', d: 'Sin fotos ni nombres en la farmacia. La pantalla vuelve al inicio sola.' },
+  { i: LockKey, t: 'Privacidad por diseño', d: 'Sin nombres y con permiso expreso de la clienta. La foto solo se guarda si ella lo pide. La pantalla vuelve al inicio sola.' },
 ]
 
 export default function Inicio() {

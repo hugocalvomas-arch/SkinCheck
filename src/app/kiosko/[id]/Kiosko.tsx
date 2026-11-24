@@ -15,7 +15,7 @@ import { AVISO_DETALLE, AVISO_EMAIL, AVISO_FOTO, AVISO_GUARDAR_FOTO, AVISO_INICI
 // reclamo → aviso de privacidad y permiso expreso → 4 preguntas de seguridad → consentimiento de la foto → foto → análisis → informe → vuelta al reclamo
 
 type Paso = 'reclamo' | 'codigo' | 'aviso' | 'no_acepta' | 'preguntas' | 'consentimiento' | 'camara' | 'mejorar' | 'analizando' | 'resultado' | 'menor'
-type Props = { farmaciaId: string; farmacia: string; precio: string }
+type Props = { farmaciaId: string; farmacia: string; precio: string; emailActivo: boolean }
 type Revision = { id: string; fecha: string; dias: number; conFoto: boolean }
 
 const PREGUNTAS: { id: keyof Seguridad; t: string; nota: string; ops: [string, string][]; si?: (s: Partial<Seguridad>) => boolean }[] = [
@@ -40,7 +40,7 @@ const lista = (l: string[]) => (l.length > 1 ? `${l.slice(0, -1).join(', ')} y $
 const eur = (n: number | null | undefined) => (n == null ? '' : n.toLocaleString('es-ES', { style: 'currency', currency: 'EUR' }))
 const INACTIVIDAD_MS = 150_000
 
-export function Kiosko({ farmaciaId, farmacia, precio }: Props) {
+export function Kiosko({ farmaciaId, farmacia, precio, emailActivo }: Props) {
   const [paso, setPaso] = useState<Paso>('reclamo')
   const [i, setI] = useState(0)
   const [seg, setSeg] = useState<Partial<Seguridad>>({})
@@ -124,7 +124,7 @@ export function Kiosko({ farmaciaId, farmacia, precio }: Props) {
         {paso === 'camara' && <Camara error={error} onFoto={(b64, url) => { setFoto(url); analizar(b64) }} />}
         {paso === 'mejorar' && <Mejorar error={error} onListo={(m) => analizar(null, m)} />}
         {paso === 'analizando' && <Analizando foto={foto} />}
-        {paso === 'resultado' && res && <Informe res={res} foto={foto} farmacia={farmacia} onFin={reiniciar} />}
+        {paso === 'resultado' && res && <Informe res={res} foto={foto} farmacia={farmacia} emailActivo={emailActivo} onFin={reiniciar} />}
       </main>
     </div>
   )
@@ -255,7 +255,7 @@ function Codigo({ farmaciaId, onSeguir, onFin }: { farmaciaId: string; onSeguir:
     return (
       <Bloque>
         <h2 className="titulo">Datos borrados</h2>
-        <p className="texto">Hemos borrado tu foto guardada y anulado tu código.</p>
+        <p className="texto">Hemos borrado tus respuestas, tus medidas y tu foto guardada, y hemos anulado tu código.</p>
         <button onClick={onFin} className="boton">Volver al inicio</button>
       </Bloque>
     )
@@ -264,7 +264,7 @@ function Codigo({ farmaciaId, onSeguir, onFin }: { farmaciaId: string; onSeguir:
     return (
       <Bloque>
         <h2 className="titulo">Tu primer análisis fue el {fecha}</h2>
-        <p className="texto">Hace {hallado.dias} días. {hallado.dias < 21 ? 'Para ver cambios, lo ideal es esperar unas 4 semanas, pero puedes repetirlo ya. ' : ''}{hallado.conFoto ? 'Tenemos tu foto guardada para enseñarte el antes y el después.' : 'Compararemos tus medidas. No guardamos foto del primer día.'}</p>
+        <p className="texto">{hallado.dias === 0 ? 'Fue hoy. ' : hallado.dias === 1 ? 'Fue ayer. ' : `Hace ${hallado.dias} días. `}{hallado.dias < 21 ? 'Para ver cambios, lo ideal es esperar unas 4 semanas, pero puedes repetirlo ya. ' : ''}{hallado.conFoto ? 'Tenemos tu foto guardada para enseñarte el antes y el después.' : 'Compararemos tus medidas. No guardamos foto del primer día.'}</p>
         <p className="texto">Para que la comparación sea justa, colócate en el mismo sitio y sin maquillaje.</p>
         <div className="flex flex-wrap gap-3">
           <button onClick={() => onSeguir(hallado)} className="boton">Empezar la revisión <ArrowRight size={20} weight="bold" /></button>
@@ -433,7 +433,7 @@ export function Analizando({ foto }: { foto: string | null }) {
   )
 }
 
-export function Informe({ res, foto, farmacia, onFin }: { res: any; foto: string | null; farmacia: string; onFin: () => void }) {
+export function Informe({ res, foto, farmacia, emailActivo = true, onFin }: { res: any; foto: string | null; farmacia: string; emailActivo?: boolean; onFin: () => void }) {
   // Resumen para leer en menos de un minuto en el iPad. El detalle completo va en el PDF que se envía por email.
   const R = res.rutinas
   const F = res.foto
@@ -542,8 +542,8 @@ export function Informe({ res, foto, farmacia, onFin }: { res: any; foto: string
       </section>
 
       {/* 4. Llevársela: informe completo por email y rutina en el móvil */}
-      <section className="grid md:grid-cols-2 gap-4">
-        <InformeEmail consejo={res.id} foto={foto} nivel={nivel} />
+      <section className={`grid gap-4 ${emailActivo ? 'md:grid-cols-2' : ''}`}>
+        {emailActivo && <InformeEmail consejo={res.id} foto={foto} nivel={nivel} />}
         <div className="rounded-[var(--radius-card)] bg-[var(--k-accent-soft)] p-6 grid grid-cols-[1fr_auto] gap-6 items-center">
           <div className="space-y-2">
             <p className="text-xl font-medium flex items-center gap-2"><CalendarCheck size={22} className="text-[var(--k-accent)]" /> Llévatela en el móvil</p>
@@ -564,7 +564,7 @@ export function Informe({ res, foto, farmacia, onFin }: { res: any; foto: string
       )}
 
       <div className="flex justify-center pb-2">
-        <button onClick={onFin} className="boton-sec"><Trash size={20} /> Terminar y borrar mis datos</button>
+        <button onClick={onFin} className="boton-sec">Terminar y salir</button>
       </div>
       <p className="text-sm text-[var(--k-muted)] text-center pb-6">Análisis cosmético orientativo, no un diagnóstico médico. La simulación está generada con IA y no es una promesa de resultado.</p>
     </div>
@@ -586,7 +586,7 @@ function InformeEmail({ consejo, foto, nivel }: { consejo: string; foto: string 
       <p className="text-xl font-medium flex items-center gap-2"><EnvelopeSimple size={22} className="text-[var(--k-accent)]" /> Informe completo por email</p>
       {estado === 'ok' ? <p className="text-[var(--k-muted)] leading-relaxed">Enviado a {email.trim()}. Revisa también la carpeta de spam.</p> : (
         <>
-          <p className="text-[var(--k-muted)] leading-relaxed">Un PDF con tus fotos por zona, cada medida explicada, los ingredientes y la rutina paso a paso.</p>
+          <p className="text-[var(--k-muted)] leading-relaxed">{foto ? 'Un PDF con tus fotos por zona, cada medida explicada, los ingredientes y la rutina paso a paso.' : 'Un PDF con los ingredientes y la rutina paso a paso.'}</p>
           <div className="flex gap-2">
             <input type="email" inputMode="email" autoComplete="off" value={email} onChange={(e) => setEmail(e.target.value)} placeholder="tu@email.com"
               className="flex-1 min-w-0 h-12 px-4 rounded-[var(--radius-input)] border border-[var(--k-line)] bg-[var(--k-bg)] text-lg" />
@@ -594,7 +594,7 @@ function InformeEmail({ consejo, foto, nivel }: { consejo: string; foto: string 
           </div>
           <label className="flex items-start gap-2 text-sm text-[var(--k-muted)]">
             <input type="checkbox" checked={acepta} onChange={(e) => setAcepta(e.target.checked)} className="mt-0.5 w-5 h-5 accent-[var(--k-accent)]" />
-            {AVISO_EMAIL}
+            {AVISO_EMAIL(!!foto)}
           </label>
           {estado && estado !== 'enviando' && <p className="text-sm text-[var(--k-warn)]">{estado}</p>}
         </>

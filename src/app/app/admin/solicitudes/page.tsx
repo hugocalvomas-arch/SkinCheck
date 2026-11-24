@@ -19,7 +19,7 @@ export default async function Solicitudes() {
               {s.programa && <p className="text-sm text-gris">Programa: {s.programa}</p>}
               {s.mensaje && <p className="mt-2">{s.mensaje}</p>}
             </div>
-            <p className="text-sm text-gris num">{new Date(s.creado).toLocaleString('es-ES')}</p>
+            <p className="text-sm text-gris num">{new Date(s.creado).toLocaleString('es-ES', { timeZone: 'Europe/Madrid' })}</p>
           </li>
         ))}
       </ul>
