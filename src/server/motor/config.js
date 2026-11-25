@@ -30,7 +30,7 @@ module.exports = {
     vitc_pura: [10, 20], vitc_derivados: [2, 20],   // derivados: mínimo 2 % para ser protagonista (propuesta 24/11, pendiente de Hugo)
     retinol: [0.1, 0.3], retinal: [0.05, 0.1],
     // Hugo, 24/11: quien nunca ha usado un retinoide empieza por la concentración baja; quien ya lo usa, sigue o sube
-    retinal_inicio: [0.01, 0.05], retinal_retinizada: [0.05, 0.2], bakuchiol: [0.5, 1],
+    retinal_inicio: [0.01, 0.05], retinal_intermedio: [0.03, 0.06], retinal_retinizada: [0.05, 0.2], bakuchiol: [0.5, 1],
     glicolico: [4, 10], lactico: [5, 10], salicilico: [0.5, 2],
     azelaico: [8, 10], tranexamico: [3, 5], thiamidol: [0.1, 0.2]
   },

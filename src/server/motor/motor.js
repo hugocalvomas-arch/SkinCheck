@@ -594,7 +594,9 @@ const LIM = r => (r && r.limites) || {};
 function rangoPara(k, deseo, r){
   // concentración alta solo si ya lo tolera; si lo empezó hace poco, si la piel reacciona o está deshidratada, la de inicio (revisión clínica, C11-08)
   if(k === "retinal"){ const nfR = (r && r.notas_foto) || {}; const fragil = r && (r.reactiva === "siempre" || (nfR.hidratacion ?? 100) < 55 + B3);
-    return !r || r.retinoide_exp !== "tolera" || fragil || (deseo && deseo.leve) ? R.retinal_inicio : R.retinal_retinizada; }   // vía Leve: concentración baja aunque ya lo use
+    // Hugo, 25/11 (preguntas 7 y 17): quien ya tolera un retinoide no baja a la dosis de inicio. En la vía Leve o con la piel frágil, escalón intermedio (Crystal Retinal 3), nunca el 1
+    if(r && r.retinoide_exp === "tolera") return fragil || (deseo && deseo.leve) ? R.retinal_intermedio : R.retinal_retinizada;
+    return R.retinal_inicio; }
   if(k === "niacinamida") return deseo && deseo.k === "sebo" ? R.niacinamida.sebo : R.niacinamida.resto;
   return {vitc_pura: R.vitc_pura, vitc_derivados: R.vitc_derivados, retinol: R.retinol, retinal: R.retinal, bakuchiol: R.bakuchiol, glicolico: R.glicolico, lactico: R.lactico, salicilico: R.salicilico, azelaico: R.azelaico, tranexamico: R.tranexamico, thiamidol: R.thiamidol}[k] || null;
 }
@@ -1009,6 +1011,14 @@ function calcular(r){
   { const i = productos.findIndex(x => x.slot === "contorno"), j = productos.findIndex(x => /^serum/.test(x.slot)); if(i > j && j >= 0) productos.splice(j, 0, productos.splice(i, 1)[0]); }
   const manana = productos.filter(x => ["AM", "AMPM"].includes(x.turno)).map(x => x.paso), noche = productos.filter(x => ["PM", "AMPM"].includes(x.turno) && x.slot !== "contorno" || x.slot === "contorno").filter(x => x.turno !== "AM").map(x => x.paso);
   const avisos = pa.notas.slice();
+  // Retinoide propio (Hugo, 25/11, pregunta 15): si ya usa uno y la rutina no lo trae, se le dice qué hacer con él en lugar de ignorarlo
+  if(["reciente", "tolera"].includes(r.retinoide_exp) && !c.menor18 && !c.receta && !Object.values(el.sel || {}).some(e => e && e.p && RETINOIDES.some(k => aDosis(e.p, k)))){
+    const nfR = r.notas_foto || {};
+    if(c.embarazo || c.barrera || (nfR.rojez ?? 100) < 45) avisos.push(c.embarazo ? `Suspende tu retinoide actual durante ${c.lactancia ? "la lactancia" : "el embarazo"}. Lo retomas después.` : "Suspende tu retinoide actual hasta que tu piel recupere la calma. Lo retomas después.");
+    else if((nfR.hidratacion ?? 100) < 55 + B3 || c.sequedad_activa || r.reactiva === "siempre") avisos.push("Mantén tu retinoide actual 2 o 3 noches por semana, o aplícalo en sándwich sobre la hidratante, mientras recuperamos la hidratación de tu piel.");
+    else { const act = productos.filter(x => /^serum/.test(x.slot) && x.producto && ["PM", "AMPM"].includes(x.turno) && x.activo && (x.frecuencia || ["ácido", "salicílico", "glicólico", "láctico", "azelaico"].some(w => x.activo.includes(w)))).map(x => x.activo);
+      avisos.push(act.length ? `Puedes seguir con tu retinoide actual las noches que no uses ${act.join(" ni ")}, con al menos 1 o 2 noches de descanso a la semana.` : "Puedes seguir con tu retinoide actual por la noche, como hasta ahora."); }
+  }
   for(const t of r.avisos_extra || []) if(t && !avisos.includes(t)) avisos.push(t);   // SkinRead: avisos de las reglas de la foto
   { const fp = x => (LISTA || CATALOGO).find(q => q.id === x.id), perf = productos.filter(x => /^serum/.test(x.slot) && x.id && fp(x) && (fp(x).fragancia === true || lleva(fp(x), "perfume")));
     if(c.reactiva_a_veces && perf.length) avisos.push(`${perf.map(x => x.marca + " " + x.producto).join(" y ")} lleva perfume o alérgenos de fragancia (como la cumarina). Pruébalo antes en una zona pequeña, detrás de la oreja, 2 o 3 días. Empieza 2 noches por semana y déjalo mientras la piel esté irritada.`); }
