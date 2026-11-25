@@ -1,4 +1,5 @@
 import Link from 'next/link'
+import Image from 'next/image'
 import { existsSync } from 'node:fs'
 import { join } from 'node:path'
 import { CaretDown, ChartLineUp, Crosshair, DeviceTablet, FileXls, LockKey, Repeat, ShieldCheck, Storefront } from '@phosphor-icons/react/dist/ssr'
@@ -37,6 +38,8 @@ const TECNOLOGIA: [string, string][] = [
   ['3×', 'más fiel a la edad real en arrugas que un equipo de cabina profesional.'],
   ['859', 'marcas de belleza y dermocosmética trabajan ya con esta tecnología.'],
 ]
+
+const ZONAS_IA: [string, string][] = [['arrugas', 'Arrugas'], ['hidratacion', 'Hidratación'], ['rojez', 'Rojez'], ['manchas', 'Manchas']]
 
 const ACTIVOS: [string, string][] = [
   ['Niacinamida', 'Niacinamide'], ['Retinal', 'Retinal'], ['Ácido azelaico', 'Azelaic Acid'], ['Ácido tranexámico', 'Tranexamic Acid'], ['Ácido salicílico', 'Salicylic Acid'],
@@ -118,8 +121,19 @@ export default function Inicio() {
           <div className="contenedor">
             <div className="rejilla gap-y-5 items-end border-t border-linea pt-[var(--section-gap-s)]">
               <h2 className="col-span-12 lg:col-span-6 titulo-seccion">La misma IA que usan las grandes marcas de dermocosmética</h2>
-              <p className="col-span-12 lg:col-span-5 lg:col-start-8 lead">El análisis lo hace la tecnología de Perfect Corp, empresa que cotiza en la Bolsa de Nueva York, validada por el Departamento de Dermatología de la Wake Forest School of Medicine.</p>
+              <p className="col-span-12 lg:col-span-5 lg:col-start-8 lead">El análisis lo hace la tecnología de Perfect Corp, empresa que cotiza en la Bolsa de Nueva York, validada por el Departamento de Dermatología de la Wake Forest School of Medicine con el mismo aparato que usa SkinRead: un iPad.</p>
             </div>
+            <figure className="mt-16 m-0">
+              <ul className="grid grid-cols-2 md:grid-cols-4 gap-3 list-none p-0 m-0">
+                {ZONAS_IA.map(([f, t]) => (
+                  <li key={f} className="grid gap-2">
+                    <Image src={`/ejemplos/tecnologia/${f}.webp`} alt={`Mapa de ${t.toLowerCase()} detectado por la IA sobre el rostro`} width={900} height={1125} sizes="(min-width: 768px) 25vw, 50vw" className="w-full h-auto rounded-[var(--radius-card)] bg-suave" />
+                    <span className="text-sm font-medium">{t}</span>
+                  </li>
+                ))}
+              </ul>
+              <figcaption className="mt-3 text-sm text-gris">Resultado real del análisis, sobre un rostro generado con IA. Cada aspecto sale con su zona marcada.</figcaption>
+            </figure>
             <dl className="mt-16 grid sm:grid-cols-2 lg:grid-cols-4 gap-x-[var(--gap-columns)] gap-y-10 m-0">
               {TECNOLOGIA.map(([c, t]) => (
                 <div key={c} className="border-t border-tinta pt-6 grid gap-3 content-start">
