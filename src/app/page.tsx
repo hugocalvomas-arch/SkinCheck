@@ -1,4 +1,5 @@
 import Link from 'next/link'
+import Image from 'next/image'
 import { existsSync } from 'node:fs'
 import { join } from 'node:path'
 import { CaretDown, ChartLineUp, Crosshair, DeviceTablet, FileXls, LockKey, Repeat, ShieldCheck, Storefront } from '@phosphor-icons/react/dist/ssr'
@@ -31,6 +32,15 @@ const MIDE: [string, string][] = [
   ['Edad de la piel', 'Y una puntuación global que sirve de punto de partida para el seguimiento.'],
 ]
 
+const TECNOLOGIA: [string, string][] = [
+  ['70.000+', 'imágenes de calidad médica, de distintos tonos de piel y edades, para entrenar el modelo.'],
+  ['84 %', 'de coincidencia con un dermatólogo al valorar la rojez, y 82 % en arrugas.'],
+  ['3×', 'más fiel a la edad real en arrugas que un equipo de cabina profesional.'],
+  ['859', 'marcas de belleza y dermocosmética trabajan ya con esta tecnología.'],
+]
+
+const ZONAS_IA: [string, string][] = [['arrugas', 'Arrugas, una a una'], ['rojez', 'Rojez por zonas'], ['hidratacion', 'Mapa de hidratación'], ['textura', 'Textura de la superficie']]
+
 const ACTIVOS: [string, string][] = [
   ['Niacinamida', 'Niacinamide'], ['Retinal', 'Retinal'], ['Ácido azelaico', 'Azelaic Acid'], ['Ácido tranexámico', 'Tranexamic Acid'], ['Ácido salicílico', 'Salicylic Acid'],
   ['Vitamina C', 'Ascorbic Acid'], ['Ceramidas', 'Ceramide NP'], ['Péptidos', 'Palmitoyl Tripeptide'], ['Pantenol', 'Panthenol'], ['Ácido hialurónico', 'Sodium Hyaluronate'],
@@ -60,6 +70,7 @@ export default function Inicio() {
           <Link href="/" aria-label="SkinRead, inicio"><Logo /></Link>
           <div className="hidden lg:flex items-center gap-7 text-[0.9375rem] text-tinta-2 whitespace-nowrap">
             <a href="#como" className="hover:text-tinta">Cómo funciona</a>
+            <a href="#tecnologia" className="hover:text-tinta">Tecnología</a>
             <a href="#ventajas" className="hover:text-tinta">Para tu farmacia</a>
             <a href="#preguntas" className="hover:text-tinta">Preguntas</a>
           </div>
@@ -102,6 +113,38 @@ export default function Inicio() {
                 </li>
               ))}
             </ol>
+          </div>
+        </section>
+
+        {/* Tecnología: de dónde sale el análisis */}
+        <section id="tecnologia" className="pb-[var(--section-gap)] scroll-mt-16">
+          <div className="contenedor">
+            <div className="rejilla gap-y-5 items-end border-t border-linea pt-[var(--section-gap-s)]">
+              <h2 className="col-span-12 lg:col-span-6 titulo-seccion">La misma IA que usan las grandes marcas de dermocosmética</h2>
+              <p className="col-span-12 lg:col-span-5 lg:col-start-8 lead">El análisis lo hace la tecnología de Perfect Corp, empresa que cotiza en la Bolsa de Nueva York, validada por el Departamento de Dermatología de la Wake Forest School of Medicine con el mismo aparato que usa SkinRead: un iPad.</p>
+            </div>
+            <figure className="mt-16 m-0">
+              <ul className="grid grid-cols-2 md:grid-cols-4 gap-3 list-none p-0 m-0">
+                {ZONAS_IA.map(([f, t]) => (
+                  <li key={f} className="grid gap-2">
+                    <Image src={`/ejemplos/tecnologia/${f}-cara.webp`} alt={`Detalle del análisis: ${t.toLowerCase()}, marcado por la IA sobre la piel`} width={900} height={1125} sizes="(min-width: 768px) 25vw, 50vw" className="w-full h-auto rounded-[var(--radius-card)] bg-suave" />
+                    <span className="text-sm font-medium">{t}</span>
+                  </li>
+                ))}
+              </ul>
+              <figcaption className="mt-3 text-sm text-gris">Resultado real del análisis, sobre un rostro generado con IA. Cada aspecto sale con su zona marcada.</figcaption>
+            </figure>
+            <dl className="mt-16 grid sm:grid-cols-2 lg:grid-cols-4 gap-x-[var(--gap-columns)] gap-y-10 m-0">
+              {TECNOLOGIA.map(([c, t]) => (
+                <div key={c} className="border-t border-tinta pt-6 grid gap-3 content-start">
+                  <dt className="cifra text-[3rem] leading-none text-marca">{c}</dt>
+                  <dd className="m-0 text-tinta-2 max-w-[30ch]">{t}</dd>
+                </div>
+              ))}
+            </dl>
+            <p className="mt-10 text-sm text-gris max-w-[80ch]">
+              Estudios: Cook MK, Feldman SR <i>et al.</i> <a className="enlace" href="https://doi.org/10.1080/09546634.2022.2127305" target="_blank" rel="noopener noreferrer">J Dermatolog Treat 2022</a> y <a className="enlace" href="https://doi.org/10.1111/jocd.15434" target="_blank" rel="noopener noreferrer">J Cosmet Dermatol 2022</a>. Análisis cosmético, no diagnóstico médico.
+            </p>
           </div>
         </section>
 
