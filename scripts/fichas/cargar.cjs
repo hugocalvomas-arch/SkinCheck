@@ -31,6 +31,9 @@ const noFarmacia = c => /^(no|false)$/i.test(s(c && c.farmacia_verificada).trim(
 const confirmadoBaja = e => /^(descatalogado|sustituido)\b/i.test(s(e).trim()) && !/no confirmado|probabl|posible/i.test(s(e));
 const PATRONES = Object.entries(A).map(([k, v]) => [k, v[0]]);
 const activoConocido = inci => { const t = s(inci).toLowerCase(); const m = PATRONES.find(([, pats]) => pats.some(p => t.includes(p))); return m ? m[0] : null; };
+// % escrito dentro de un texto en español («ácido hialurónico 1,5 % (declarado por la marca)»): solo un activo suelto, no sumas (AHA = glicólico + málico)
+const ES_ACT = [[/^(el |la )?(ácido|acido) hialur[oó]nico\b/i, "hialuronico"], [/^(la )?manteca de karit[eé]\b/i, "karite"], [/^(la )?urea\b/i, "urea"], [/^(la )?niacinamida\b/i, "niacinamida"], [/^(el )?pantenol\b/i, "pantenol"]];
+const pctTexto = v => { const t = s(v).trim(); if(!/declarado por la marca/i.test(t)) return null; const m = /^(.+?)\s+(\d+(?:[.,]\d+)?)\s*%/.exec(t); if(!m) return null; const k = ES_ACT.find(([re]) => re.test(m[1])); return k ? {activo: k[1], pct: +m[2].replace(",", "."), inci: m[1]} : null; };
 const pctNum = v => { const m = /^\s*(\d+(?:[.,]\d+)?)\s*%/.exec(s(v)); return m && !/suma|total|no encontrado|no declarado/i.test(s(v)) ? +m[1].replace(",", ".") : null; };
 const spfNum = v => { const t = s(v).trim(); if(/seg[uú]n el cat[aá]logo|no comprobado|no aplica|no encontrado/i.test(t)) return null; const m = /^SPF\s*(\d{2})\+?/i.exec(t); return m ? +m[1] : null; };
 const limpiaInci = l => l.map(x => s(x).replace(/\s+/g, " ").trim()).filter(Boolean);
@@ -61,6 +64,8 @@ for(const [id, x] of fichas){
   for(const a of (x.activos_y_porcentajes || [])){
     if(!a || typeof a !== "object") continue;
     const v = pctNum(a.pct_declarado_marca), k = activoConocido(a.inci);
+    const tx = v == null ? pctTexto(a.pct_declarado_marca) : null;
+    if(tx) { pct.push(tx); inf.pct.push(id + ": " + tx.activo + " " + tx.pct + " % (texto)"); continue; }
     if(v != null && k && v > 0 && v <= 50) { pct.push({inci: s(a.inci).replace(/\s*\(.*$/, "").trim(), pct: v, activo: k}); inf.pct.push(id + ": " + k + " " + v + " %"); }
   }
   if(pct.length) o.pct_declarados = pct;
