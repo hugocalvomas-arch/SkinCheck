@@ -822,7 +822,12 @@ function candidatos(h, ctx){
         if(!["crema", "balsamo"].includes(p.textura) || LIGERA.test(nom) || !["ceramidas", "escualano", "karite", "colesterol", "vaselina"].some(k => e[k])) base -= 1;
         if(SEBORREGULADORA.test(nom) || /gel/.test(p.textura || "")) base -= 1; }
       // R32 con piel grasa (Hugo, 24/11; revisión clínica C17-01): rojez <55 y brillo: ni gel ni crema densa, una emulsión o fluido ligero
-      if(["H", "H2"].includes(h.slot) && rojezB && brillo && (/gel/.test(p.textura || "") || /\bgel\b/.test(nom))) base -= 1;
+      // Hugo, 25/11 (pregunta 12): R26 gana a R9. Con rojez y brillo, fuera los geles puros y las cremas ricas; emulsión ligera, fluido o gel-crema con calmantes
+      if(["H", "H2"].includes(h.slot) && rojezB && brillo){
+        const gelCrema = p.textura === "gel-crema" || /gel.?cr[eè]m|gel.?cream/.test(nom);
+        if(!gelCrema && (p.textura === "gel" || /\bgel\b/.test(nom))) continue;
+        if(["fluido", "locion", "gel-crema"].includes(p.textura) || gelCrema) base += .3;
+        const e = estado(p); if(["centella", "pantenol", "niacinamida", "ectoina", "bisabolol", "madecasosido"].some(k => e[k])) base += .3; }
       // R36: con poco brillo (≥75), sin hidratantes matificantes; la crema de tarro de CeraVe, solo en piel muy seca
       if(["H", "H2"].includes(h.slot) && (nf.brillo ?? 0) >= 75 && (SEBORREGULADORA.test(nom) || /shine control/.test(nom))) base -= 1.5;
       if(["H", "H2"].includes(h.slot) && p.id === "cerave-crema-hidratante" && !((nf.hidratacion ?? 100) < 50)) base -= 1.5;

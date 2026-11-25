@@ -241,7 +241,7 @@ function revisar(c, res, M){
       if(/\bsolar\b|\bspf\b|fotoprotector/.test(nom) && !/hidrat|crema/.test(nom)) add("MENOR", "la hidratante es un solar", h.producto);
       if(/contorno|eye|ojos|labio|lip/.test(nom)) add("GRAVE", "la hidratante es de ojos o labios", h.producto);
       const P = M.POR.get(h.id);
-      if((nb("rojez") < 55) && P && (/gel/.test(P.textura || "") || /water gel|gel.?cream|gel-crema/.test(nom))) add("GRAVE", "hidratante en gel con rojez <55 (R26/R32)", h.producto);
+      if((nb("rojez") < 55) && P && (/gel/.test(P.textura || "") || /water gel|gel.?cream|gel-crema/.test(nom)) && !(nb("brillo") <= 60 && (P.textura === "gel-crema" || /gel.?cr[eè]m|gel.?cream/.test(nom)))) add("GRAVE", "hidratante en gel con rojez <55 (R26/R32)", h.producto);
       if(nb("brillo") <= 60 && P && (P.textura === "balsamo" || /intensive|\brich\b|\brica\b|piel seca|dry skin|baume|bálsamo/.test(nom))) add("MENOR", "crema densa con brillo ≤60 (R9/R20)", h.producto);
       if(nb("brillo") >= 75 && /matific|\bmate\b|oil control|shine|seborreg|purif/.test(nom)) add("MENOR", "hidratante matificante con brillo ≥75 (R36)", h.producto);
       if(nb("hidratacion") < 55 && nb("brillo") >= 65 && P && (P.textura === "gel" || /matific|seborreg|water cream|oil control/.test(nom))) add("MENOR", "gel seborregulador con piel deshidratada (R20)", h.producto); }
