@@ -398,6 +398,9 @@ function pauta(r, P, c, veto, modo){
       const rt = lista.find(x => x.k === "retinoide") || {k: "retinoide", por: orden[0] || "P17"}; conIndicacion.push(rt); }
     for(const x of lista) if(conIndicacion.includes(x)){ const nom = nombreDeseo(x.k), i = fuera.findIndex(f => f.que === nom); if(i >= 0) fuera.splice(i, 1); }
     conIndicacion.sort((a, b) => ["aha", "pha", "salicilico"].includes(a.k) - ["aha", "pha", "salicilico"].includes(b.k));   // el exfoliante, el último: antes la vitamina C y el renovador (Hugo, 25/11, pregunta 16)
+    // la completa de la franja leve (pregunta 16): vitamina C de mañana y retinal de noche. Con un sérum por turno, el activo suave de la básica cede su sitio al retinal
+    if(N0 >= 5 && mejor && conIndicacion.some(x => x.k === "retinoide") && conIndicacion.some(x => x.k === "vitc") && (deseoDe(mejor.x.k) || {}).flexible && !["vitc", "azelaico_mixto", "despigmentante", "retinoide"].includes(mejor.x.k) && r.reactiva !== "siempre"){
+      const nom = nombreDeseo(mejor.x.k); if(!fuera.some(f => f.que === nom)) fuera.push({k: mejor.x.k, que: nom, por: "En la rutina completa, la mañana es para la vitamina C y la noche para el retinal: un sérum por momento del día."}); mejor = null; }
     lista.length = 0;
     if(mejor){ const y = Object.assign({}, mejor.x, {leve: true}); if(mejor.acts) y.activos = mejor.acts; lista.push(y); }
     lista.push(...conIndicacion);
