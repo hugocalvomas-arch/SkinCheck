@@ -94,8 +94,20 @@ function aplicarReglasFoto(notas, r0, op = {}){
     return true;
   };
 
+  // Hugo, 25/11 (pregunta 13): las reglas de preferencia (solo «prefer» o «avoid» sobre notas) no se encienden de golpe en el umbral.
+  // Su peso sube en rampa: entero a 3 puntos dentro del umbral, nada a 3 puntos fuera. Las de seguridad siguen con corte duro.
+  const suave = x => (x.effect || []).length && x.effect.every(e => e.action === "prefer" || e.action === "avoid") && x.conditions && x.conditions.scores && !x.conditions.count_lte && !x.conditions.any && !x.conditions.not;
+  const rampa = (c, v) => { const W = BANDA, cl = t => Math.max(0, Math.min(1, t));
+    if(typeof v !== "number") return 0;
+    const alto = c.max != null ? cl((c.max + W - v) / (2 * W)) : 1, bajo = c.min != null ? cl((v - (c.min - W)) / (2 * W)) : 1;
+    return c.operator === "lte" ? alto : c.operator === "gte" ? bajo : alto * bajo; };
+  const intensidad = x => (cumpleCliente(x.conditions.client, r) && !(x.conditions.client_not && Object.entries(x.conditions.client_not).some(([k, vals]) => vals.includes(r[k])))) ? x.conditions.scores.reduce((a, c) => a * rampa(c, notas[c.aspect]), 1) : 0;
   const out = {problemas: [], quitar: [], veto: {}, bonus: {}, derivacion: [], avisos: [], piel: null, factor: {}, aspectoDe: {}, aplicadas: [], limites: {}, mantenimiento: false, solar_color: false, hidratante: []};
   for(const x of reglas){
+    if(suave(x)){ const f = intensidad(x); if(f <= 0) continue;
+      out.aplicadas.push({id: x.id, nombre: x.name, motivo: x.reason_for_client, evidencia: x.evidence_level, validar: !!x.requires_expert_validation, peso: Math.round(f * 100) / 100});
+      for(const e of x.effect) out.bonus[e.active] = Math.round(((out.bonus[e.active] || 0) + (e.weight || 0) * f) * 1000) / 1000;
+      continue; }
     if(!activa(x)) continue;
     const asp = x.conditions && x.conditions.scores && x.conditions.scores[0] && x.conditions.scores[0].aspect;
     out.aplicadas.push({id: x.id, nombre: x.name, motivo: x.reason_for_client, evidencia: x.evidence_level, validar: !!x.requires_expert_validation});
@@ -110,7 +122,7 @@ function aplicarReglasFoto(notas, r0, op = {}){
         case "notice": if(!out.avisos.includes(e.text)) out.avisos.push(e.text); break;
         case "priority": out.factor[e.aspect] = (out.factor[e.aspect] || 1) * (e.factor || 1); break;
         // tope que impone el código (Hugo, P-03): solo esa forma, % declarado máximo, noches, sándwich e hidratante reparadora
-        case "maintenance": out.mantenimiento = true; break;
+        case "maintenance": if(ASPECTOS.every(a => typeof notas[a] !== "number" || notas[a] >= 85)) out.mantenimiento = true; break;   // Hugo, 25/11 (pregunta 8): mantenimiento puro solo con todo ≥85; entre 70 y 84, un activo suave a la nota más baja
         case "tinted_spf": out.solar_color = true; break;
         case "moisturizer": out.hidratante.push({one_of: e.one_of || null, texture: e.texture || null, fragrance_free: !!e.fragrance_free, regla: x.id}); break;
         case "limit": out.limites[e.slot] = {activo: e.active, max_pct: e.max_pct, noches: e.max_nights, sandwich: !!e.sandwich, hidratante: e.moisturizer || null, mensaje: e.message || x.reason_for_client, regla: x.id}; break;

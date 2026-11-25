@@ -241,7 +241,7 @@ function revisar(c, res, M){
       if(/\bsolar\b|\bspf\b|fotoprotector/.test(nom) && !/hidrat|crema/.test(nom)) add("MENOR", "la hidratante es un solar", h.producto);
       if(/contorno|eye|ojos|labio|lip/.test(nom)) add("GRAVE", "la hidratante es de ojos o labios", h.producto);
       const P = M.POR.get(h.id);
-      if((nb("rojez") < 55) && P && (/gel/.test(P.textura || "") || /water gel|gel.?cream|gel-crema/.test(nom))) add("GRAVE", "hidratante en gel con rojez <55 (R26/R32)", h.producto);
+      if((nb("rojez") < 55) && P && (/gel/.test(P.textura || "") || /water gel|gel.?cream|gel-crema/.test(nom)) && !(nb("brillo") <= 60 && (P.textura === "gel-crema" || /gel.?cr[eè]m|gel.?cream/.test(nom)))) add("GRAVE", "hidratante en gel con rojez <55 (R26/R32)", h.producto);
       if(nb("brillo") <= 60 && P && (P.textura === "balsamo" || /intensive|\brich\b|\brica\b|piel seca|dry skin|baume|bálsamo/.test(nom))) add("MENOR", "crema densa con brillo ≤60 (R9/R20)", h.producto);
       if(nb("brillo") >= 75 && /matific|\bmate\b|oil control|shine|seborreg|purif/.test(nom)) add("MENOR", "hidratante matificante con brillo ≥75 (R36)", h.producto);
       if(nb("hidratacion") < 55 && nb("brillo") >= 65 && P && (P.textura === "gel" || /matific|seborreg|water cream|oil control/.test(nom))) add("MENOR", "gel seborregulador con piel deshidratada (R20)", h.producto); }
@@ -256,7 +256,7 @@ function revisar(c, res, M){
     for(const k of FUERTES){ const l = noAcl.filter(x => x.s.slot !== "contorno" && aDosis(x.p, k) && (estado(x.p)[k].estado === "declarada" || estado(x.p)[k].estado === "probable" || ["retinal", "retinol", "esteres_retinilo", "thiamidol", "bakuchiol"].includes(k)));
       if(l.length > 1) add(k === "niacinamida" ? "MENOR" : "GRAVE", "activo duplicado", `${k} en ${l.map(x => x.p.producto).join(" + ")}`); }
     { const l = noAcl.filter(x => { const e = estado(x.p).niacinamida; return e && e.estado === "declarada" && e.pct >= 2; }); if(l.length > 2) add("MENOR", "niacinamida en 3 productos", l.map(x => x.p.producto).join(" + ")); }
-    if(RETINOIDES.some(k => noAcl.some(x => aDosis(x.p, k))) && o.productos.some(p => /^serum/.test(p.slot) && p.turno === "AM" && p.id && ["glicolico", "lactico"].some(k => lleva(M.POR.get(p.id), k)))) add("GRAVE", "glicólico de mañana con retinoide (R14)", "");
+    if(RETINOIDES.some(k => noAcl.some(x => aDosis(x.p, k))) && o.productos.some(p => /^serum/.test(p.slot) && p.turno === "AM" && p.id && ["glicolico", "lactico"].some(k => aDosis(M.POR.get(p.id), k)))) add("GRAVE", "glicólico de mañana con retinoide (R14)", "");
     // retinoide en menores de 30 sin indicación (R21/R31)
     if(["18-24", "25-34"].includes(c.edad) && noAcl.some(x => RETINOIDES.some(k => aDosis(x.p, k))) && !(nb("acne") < 65 || nb("textura") < 60 || nb("poros") < 55 || nb("arrugas") < 65)) add("GRAVE", "retinoide sin indicación con menos de 30 (R31)", "");
     // primer retinoide fuerte
@@ -275,7 +275,7 @@ function revisar(c, res, M){
       if(!trat.length && !(peor === "rojez" && o.productos.some(p => ["H"].includes(p.slot) && p.id))) add("GRAVE", "la básica no trata el problema principal (R16)", `${peor} ${nb(peor)}`);
     }
     // manchas <60 sin vitamina C o azelaico de mañana (R35)
-    if(nivel !== "basica" && nb("manchas") < 60 && c.receta !== "si" && c.edad !== "14-17" && o.modo === "normal" && !o.productos.some(p => /^serum/.test(p.slot) && p.turno === "AM" && p.id && ["vitc_pura", "vitc_derivados", "azelaico", "tranexamico", "thiamidol"].some(k => aDosis(M.POR.get(p.id), k)))) add(o.queda_fuera.some(q => /presupuesto/.test(q.por)) ? "MENOR" : "GRAVE", "manchas <60 sin vitamina C ni azelaico de mañana (R35)", o.queda_fuera.some(q => /presupuesto/.test(q.por)) ? "no cabe en el presupuesto" : "");
+    if(nivel !== "basica" && nb("manchas") < 60 && c.receta !== "si" && !(c.reactiva === "siempre" && nb("rojez") < 60 && nivel !== "completa") && c.edad !== "14-17" && o.modo === "normal" && !o.productos.some(p => /^serum/.test(p.slot) && p.turno === "AM" && p.id && ["vitc_pura", "vitc_derivados", "azelaico", "tranexamico", "thiamidol"].some(k => aDosis(M.POR.get(p.id), k)))) add(o.queda_fuera.some(q => /presupuesto/.test(q.por)) || c.reactiva === "siempre" ? "MENOR" : "GRAVE", "manchas <60 sin vitamina C ni azelaico de mañana (R35)", o.queda_fuera.some(q => /presupuesto/.test(q.por)) ? "no cabe en el presupuesto" : "");
     for(const x of ps){ const nom = x.p.producto.toLowerCase();
       if(/[ií]ntim|pliegue|zonas con pelo|corporal|\bbody\b|\bpies\b|\bmanos\b|cuero cabelludo|capilar|pañal|panal|bebé|bebe\b|labial|\blip\b/.test(nom)) add("GRAVE", "producto que no es de cara", `${x.p.marca} · ${x.p.producto}`);
       if(/dermatitis seborreica|kelual|psoria|atópic|atopic|eccema|eczema/.test(nom) && !o._c.barrera) add("MENOR", "producto para una afección sin indicación", `${x.p.marca} · ${x.p.producto}`); }
@@ -292,7 +292,10 @@ function revisar(c, res, M){
     // pasos vacíos
     for(const p of o.productos.filter(p => !p.producto && p.slot !== "S")) add(/^serum1$/.test(p.slot) ? "GRAVE" : "MENOR", "paso sin producto", `${p.paso}: ${p.motivo || ""}`);
     // perfume con rojez o reactividad
-    if((nb("rojez") < 55 || c.reactiva !== "nunca") && !(o._veto && o._veto.perfume)) for(const x of ps.filter(x => x.s.slot !== "S" && (x.p.fragancia === true || lleva(x.p, "perfume")))) add("MENOR", "perfume con rojez o reactividad", x.p.producto);
+    if((nb("rojez") < 55 || c.reactiva !== "nunca") && !(o._veto && o._veto.perfume)) for(const x of ps.filter(x => x.s.slot !== "S" && (x.p.fragancia === true || lleva(x.p, "perfume")))){
+      // Hugo, 25/11 (pregunta 1): con reactividad «a veces» y sin rojez marcada, el sérum activo con perfume vale si lleva su aviso
+      if(c.reactiva === "a_veces" && nb("rojez") >= 55 && /^serum/.test(x.s.slot) && o.avisos.some(a => a.includes(x.p.producto) && /perfume/.test(a))) continue;
+      add("MENOR", "perfume con rojez o reactividad", x.p.producto); }
   }
   // receta: las tres rutinas iguales
   // dedupe
