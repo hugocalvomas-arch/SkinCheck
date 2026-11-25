@@ -352,6 +352,9 @@ function pauta(r, P, c, veto, modo){
       const sc = Math.max(...acts.map(a => pts(a) * (.5 + .5 * Math.min(3, pesoEn(a, objetivo)) / 3)));   // cuanto más trata la nota más baja, más cuenta (antes: todo o nada desde peso 1; ciclo 7)
       if(!mejor || sc > mejor.sc + 1e-9) mejor = {x, sc, acts: d.humectante ? null : acts.slice().sort((a, b) => pts(b) - pts(a) || a.localeCompare(b))};
     }
+    // Hugo, 25/11 (pregunta 11): granitos y manchas por debajo de 65 a la vez, el azelaico de mañana es el activo único (trata las dos cosas)
+    const azMix = nb("acne") < 65 && nb("manchas") < 65 && Math.max(nb("acne"), nb("manchas")) < Math.min(...notasF.filter(k => !["acne", "manchas", "ojeras", "hidratacion"].includes(k)).map(k => nf[k]), 101) && !veto.azelaico && !(r._excluir || []).includes("azelaico_mixto");
+    if(azMix && !c.embarazo){ const am = lista.find(x => x.k === "azelaico_mixto"); if(am) mejor = {x: am, sc: 0, acts: ["azelaico"]}; }
     // R4 (Hugo): embarazo con manchas, azelaico ya en la básica; también en la lactancia (Hugo, 25/11, pregunta 3)
     if(c.embarazo && nb("manchas") <= 69 + B3 && !veto.azelaico && !(r._excluir || []).some(k => ["despigmentante", "azelaico_mixto"].includes(k))){ const dp = lista.find(x => ["despigmentante", "azelaico_mixto"].includes(x.k)); if(dp) mejor = {x: dp, sc: 0, acts: ["azelaico"]}; else mejor = {x: {k: "azelaico_mixto", por: orden[0]}, sc: 0, acts: ["azelaico"]}; }   // sin deseo de manchas (p. ej. el problema es el acné), el azelaico igual (ciclo 6)
     if(!mejor && !veto.pha && !c.sequedad_activa) mejor = {x: {k: "pha", por: orden[0]}, sc: 0, acts: null};
@@ -360,6 +363,15 @@ function pauta(r, P, c, veto, modo){
     // y en la completa, el exfoliante que deja entrar la regla de nota leve (Hugo: con 50-69, solo en la completa y 2 noches)
     const conIndicacion = N0 >= 4 ? lista.filter(x => x !== (mejor && mejor.x) && !(r._excluir || []).includes(x.k) && ((x.k === "retinoide" && combo40) || (nb("manchas") < 60 && ["vitc", "despigmentante", "azelaico_mixto"].includes(x.k)) || (N0 >= 5 && ["aha", "pha", "salicilico"].includes(x.k)))) : [];
     { const exf = conIndicacion.filter(x => ["aha", "pha", "salicilico"].includes(x.k)); for(const x of exf.slice(1)){ conIndicacion.splice(conIndicacion.indexOf(x), 1); } }
+    // …con el azelaico de mañana, sin salicílico sin aclarado, y de noche un retinoide suave o niacinamida desde la media (pregunta 11)
+    if(azMix && mejor && mejor.x.k === "azelaico_mixto"){
+      for(const x of conIndicacion.filter(y => ["salicilico", "aha", "pha", "vitc", "despigmentante"].includes(y.k))) conIndicacion.splice(conIndicacion.indexOf(x), 1);
+      if(N0 >= 4 && !conIndicacion.some(x => x.k === "retinoide")){
+        const okRet = !c.embarazo && !c.menor18 && !veto.retinal && !(r._excluir || []).includes("retinoide") && nb("hidratacion") >= 55 + B3;
+        const rt = okRet ? (lista.find(x => x.k === "retinoide") || {k: "retinoide", por: orden[0]}) : (!veto.niacinamida ? (lista.find(x => x.k === "niacinamida") || {k: "niacinamida", por: orden[0], _tabla: true}) : null);
+        if(rt && !conIndicacion.includes(rt)) conIndicacion.push(rt);
+      }
+    }
     // R35: un solo paso de mañana para las manchas y el mismo en la media y la completa: vitamina C primero, salvo que la foto pida evitarla (ciclos 11-12, C11-05, C12-06)
     { const PREF = ["vitc", "azelaico_mixto", "despigmentante"], mch = conIndicacion.filter(x => PREF.includes(x.k)); if(!(((r.bonus_activos || {}).vitc_pura || 0) < 0)) mch.sort((a, b) => PREF.indexOf(a.k) - PREF.indexOf(b.k)); for(const x of mch.slice(1)) conIndicacion.splice(conIndicacion.indexOf(x), 1); }
     // Vitamina C estable de mañana en la media y la completa (Hugo, 25/11: «podría ponerse una vitamina C, quizá no un 15 %, pero sí una estabilizada más suave»):
@@ -367,7 +379,7 @@ function pauta(r, P, c, veto, modo){
     { const vc = lista.find(x => x.k === "vitc"), tm = x => (deseoDe(x.k) || {}).turno;
       // Hugo, 25/11 (pregunta 16): desde los 35 años, la vitamina C de mañana es el escalón de la media en la franja leve, salvo reactividad «siempre» o rojez marcada
       const vc2 = vc || (de35 && mejor && mejor.x.k !== "vitc" ? {k: "vitc", por: orden[0] || "P31"} : null);
-      if(N0 >= 4 && vc2 && mejor && vc2 !== mejor.x && !conIndicacion.includes(vc2) && (tm(mejor.x) === "PM" || (deseoDe(mejor.x.k) || {}).flexible) && !conIndicacion.some(x => tm(x) === "AM" || ["vitc", "azelaico_mixto", "despigmentante"].includes(x.k))
+      if(N0 >= 4 && vc2 && mejor && vc2 !== mejor.x && !(azMix && mejor.x.k === "azelaico_mixto") && !conIndicacion.includes(vc2) && (tm(mejor.x) === "PM" || (deseoDe(mejor.x.k) || {}).flexible) && !conIndicacion.some(x => tm(x) === "AM" || ["vitc", "azelaico_mixto", "despigmentante"].includes(x.k))
         && !veto.vitc_derivados && !(((r.bonus_activos || {}).vitc_derivados || 0) < 0) && r.reactiva !== "siempre" && nb("rojez") >= 55 - B3 && (de35 || ["tono", "manchas", "arrugas", "firmeza"].some(k => nb(k) < 70))){ vc2.activos = ["vitc_derivados"]; conIndicacion.push(vc2); } }
     // …y la completa suma un activo renovador de noche desde los 35 años (retinal suave según tolerancia), si aún no lo lleva
     if(N0 >= 5 && de35 && mejor && !c.embarazo && !c.menor25 && !veto.retinal && mejor.x.k !== "retinoide" && !conIndicacion.some(x => x.k === "retinoide") && !(r._excluir || []).includes("retinoide") && !r.mantenimiento && nb("hidratacion") >= 55 + B3){
