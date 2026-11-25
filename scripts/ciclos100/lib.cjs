@@ -256,7 +256,7 @@ function revisar(c, res, M){
     for(const k of FUERTES){ const l = noAcl.filter(x => x.s.slot !== "contorno" && aDosis(x.p, k) && (estado(x.p)[k].estado === "declarada" || estado(x.p)[k].estado === "probable" || ["retinal", "retinol", "esteres_retinilo", "thiamidol", "bakuchiol"].includes(k)));
       if(l.length > 1) add(k === "niacinamida" ? "MENOR" : "GRAVE", "activo duplicado", `${k} en ${l.map(x => x.p.producto).join(" + ")}`); }
     { const l = noAcl.filter(x => { const e = estado(x.p).niacinamida; return e && e.estado === "declarada" && e.pct >= 2; }); if(l.length > 2) add("MENOR", "niacinamida en 3 productos", l.map(x => x.p.producto).join(" + ")); }
-    if(RETINOIDES.some(k => noAcl.some(x => aDosis(x.p, k))) && o.productos.some(p => /^serum/.test(p.slot) && p.turno === "AM" && p.id && ["glicolico", "lactico"].some(k => lleva(M.POR.get(p.id), k)))) add("GRAVE", "glicólico de mañana con retinoide (R14)", "");
+    if(RETINOIDES.some(k => noAcl.some(x => aDosis(x.p, k))) && o.productos.some(p => /^serum/.test(p.slot) && p.turno === "AM" && p.id && ["glicolico", "lactico"].some(k => aDosis(M.POR.get(p.id), k)))) add("GRAVE", "glicólico de mañana con retinoide (R14)", "");
     // retinoide en menores de 30 sin indicación (R21/R31)
     if(["18-24", "25-34"].includes(c.edad) && noAcl.some(x => RETINOIDES.some(k => aDosis(x.p, k))) && !(nb("acne") < 65 || nb("textura") < 60 || nb("poros") < 55 || nb("arrugas") < 65)) add("GRAVE", "retinoide sin indicación con menos de 30 (R31)", "");
     // primer retinoide fuerte

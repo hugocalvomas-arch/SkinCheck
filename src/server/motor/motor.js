@@ -353,12 +353,12 @@ function pauta(r, P, c, veto, modo){
       if(!mejor || sc > mejor.sc + 1e-9) mejor = {x, sc, acts: d.humectante ? null : acts.slice().sort((a, b) => pts(b) - pts(a) || a.localeCompare(b))};
     }
     // R4 (Hugo): embarazo con manchas, azelaico ya en la básica; también en la lactancia (Hugo, 25/11, pregunta 3)
-    if(c.embarazo && nb("manchas") <= 69 + B3 && !veto.azelaico){ const dp = lista.find(x => ["despigmentante", "azelaico_mixto"].includes(x.k)); if(dp) mejor = {x: dp, sc: 0, acts: ["azelaico"]}; else mejor = {x: {k: "azelaico_mixto", por: orden[0]}, sc: 0, acts: ["azelaico"]}; }   // sin deseo de manchas (p. ej. el problema es el acné), el azelaico igual (ciclo 6)
+    if(c.embarazo && nb("manchas") <= 69 + B3 && !veto.azelaico && !(r._excluir || []).some(k => ["despigmentante", "azelaico_mixto"].includes(k))){ const dp = lista.find(x => ["despigmentante", "azelaico_mixto"].includes(x.k)); if(dp) mejor = {x: dp, sc: 0, acts: ["azelaico"]}; else mejor = {x: {k: "azelaico_mixto", por: orden[0]}, sc: 0, acts: ["azelaico"]}; }   // sin deseo de manchas (p. ej. el problema es el acné), el azelaico igual (ciclo 6)
     if(!mejor && !veto.pha && !c.sequedad_activa) mejor = {x: {k: "pha", por: orden[0]}, sc: 0, acts: null};
     for(const x of lista) if((!mejor || x !== mejor.x) && !x._tabla){ const nom = nombreDeseo(x.k); if(!fuera.some(f => f.que === nom)) fuera.push({k: x.k, que: nom, por: "Tu piel está en la franja leve: un solo activo suave, dirigido a tu nota más baja. Lo demás se cuida con la rutina base."}); }
     // la media y la completa no rellenan: solo suman los pasos con indicación de Hugo (R21: retinoide desde los 35 con arrugas <70 o poros <55; R35: manchas <60, vitamina C o azelaico de mañana)
     // y en la completa, el exfoliante que deja entrar la regla de nota leve (Hugo: con 50-69, solo en la completa y 2 noches)
-    const conIndicacion = N0 >= 4 ? lista.filter(x => x !== (mejor && mejor.x) && ((x.k === "retinoide" && combo40) || (nb("manchas") < 60 && ["vitc", "despigmentante", "azelaico_mixto"].includes(x.k)) || (N0 >= 5 && ["aha", "pha", "salicilico"].includes(x.k)))) : [];
+    const conIndicacion = N0 >= 4 ? lista.filter(x => x !== (mejor && mejor.x) && !(r._excluir || []).includes(x.k) && ((x.k === "retinoide" && combo40) || (nb("manchas") < 60 && ["vitc", "despigmentante", "azelaico_mixto"].includes(x.k)) || (N0 >= 5 && ["aha", "pha", "salicilico"].includes(x.k)))) : [];
     { const exf = conIndicacion.filter(x => ["aha", "pha", "salicilico"].includes(x.k)); for(const x of exf.slice(1)){ conIndicacion.splice(conIndicacion.indexOf(x), 1); } }
     // R35: un solo paso de mañana para las manchas y el mismo en la media y la completa: vitamina C primero, salvo que la foto pida evitarla (ciclos 11-12, C11-05, C12-06)
     { const PREF = ["vitc", "azelaico_mixto", "despigmentante"], mch = conIndicacion.filter(x => PREF.includes(x.k)); if(!(((r.bonus_activos || {}).vitc_pura || 0) < 0)) mch.sort((a, b) => PREF.indexOf(a.k) - PREF.indexOf(b.k)); for(const x of mch.slice(1)) conIndicacion.splice(conIndicacion.indexOf(x), 1); }
@@ -628,6 +628,9 @@ function candidatos(h, ctx){
     const v2 = p.v2; if(!v2) continue;
     let base = 0, cubre = [], dosis = null, activo = null, pegas = [];
     const desglose = {ingrediente: 0, cobertura: 0, calidad: 0};
+    // calidad mínima de fórmula (Hugo, 25/11, pregunta 5): en sérums y contorno, nunca por debajo de 2/10; con embarazo, lactancia o piel reactiva, de 3/10.
+    // Si no queda ninguno, la cascada ya existente busca otro activo y, si tampoco, deja el hueco vacío
+    if((/^serum/.test(h.slot) || h.slot === "contorno") && (CALIDAD[p.id] || {}).calidad != null && CALIDAD[p.id].calidad < (c.embarazo || c.reactiva || c.reactiva_a_veces ? 3 : 2)) continue;
     // Hugo, 25/11 (pregunta 1): con reactividad «a veces», limpiador e hidratante sin perfume; en el sérum activo se permite con aviso
     if(c.reactiva_a_veces && ["L", "H", "H2"].includes(h.slot) && (p.fragancia === true || lleva(p, "perfume"))) continue;
     if(h.slot === "L"){
@@ -799,7 +802,7 @@ function candidatos(h, ctx){
       if(["H", "H2"].includes(h.slot) && (nf.brillo ?? 0) >= 75 && (SEBORREGULADORA.test(nom) || /shine control/.test(nom))) base -= 1.5;
       if(["H", "H2"].includes(h.slot) && p.id === "cerave-crema-hidratante" && !((nf.hidratacion ?? 100) < 50)) base -= 1.5;
       // R33: con manchas bien y rojez por debajo de 55, nada de arbutina ni kójico; un sérum calmante (centella, ectoína, pantenol, niacinamida hasta 5 %)
-      if(rojezB && (nf.manchas ?? 0) >= 70 - B3 && ["arbutina", "kojico"].some(k => lleva(p, k))) continue;
+      if((rojezB || h.slot !== "L") && (nf.manchas ?? 0) >= 70 - B3 && ["arbutina", "kojico"].some(k => lleva(p, k))) continue;   // R28: sin manchas, ningún producto sin aclarado con arbutina o kójico
       if(rojezB && h.deseo){ const e = estado(p); if(["centella", "ectoina", "pantenol"].some(k => e[k])) base += .3; if(e.niacinamida && e.niacinamida.pct > 5) base -= .5; }
       // piel que reacciona a veces: sin alcohol secante entre los tres primeros ingredientes de un producto sin aclarado (revisión clínica, C11-07)
       if(h.slot !== "L" && r.reactiva === "a_veces" && (p.inci_completo || []).slice(0, 3).some(i => /^(alcohol denat|alcohol|sd alcohol|isopropyl alcohol|ethanol)\b/.test(n(i)))) base -= .5;
@@ -819,7 +822,7 @@ function candidatos(h, ctx){
       if(h.deseo && h.deseo.turno === "PM" && DE_DIA.test(nom)) continue;
       if(h.deseo && h.deseo.turno === "AM" && /\bnoche\b|\bnight\b|\bnuit\b/.test(nom)) continue;
       // con retinoide por la noche, nada de glicólico o láctico de mañana
-      if(h.deseo && h.deseo.turno === "AM" && hayRetinoide && ["glicolico", "lactico"].some(k => lleva(p, k))) continue; }
+      if(h.deseo && h.deseo.turno === "AM" && hayRetinoide && ["glicolico", "lactico"].some(k => aDosis(p, k))) continue; }
     // tipo de piel: un producto pensado para un tipo no sale en el contrario
     if(["L", "H", "H2", "S"].includes(h.slot)){ if(!PIEL_OK[c.piel].includes(v2.piel)) continue; if(v2.piel !== "todas") base += .15; }
     else if((c.piel === "seca" && v2.piel === "grasa o mixta") || (c.piel === "grasa" && v2.piel === "seca")) continue;
@@ -874,7 +877,8 @@ function elegir(pa, ctx){
     // un solo producto sin aclarado con ácido exfoliante en toda la rutina (Hugo, 24/11): el ácido secundario de otro sérum también cuenta
     if((h.deseo || ["H", "H2", "S"].includes(h.slot)) && l.length){ const prev = Object.entries(sel).filter(([s]) => /^serum|^H/.test(s)).map(([, e]) => e.p);
       const esAcido = h.deseo && ["aha", "salicilico", "glicolico_afeitado"].includes(h.deseo.k), habra = pa.serums.some(x => ["aha", "salicilico", "glicolico_afeitado"].includes(x.k));
-      if(prev.some(q => ACIDOS_EXF.some(k => llevaAcido(q, k))) || (habra && !esAcido)){ const otros = l.filter(x => !ACIDOS_EXF.some(k => llevaAcido(x.p, k))); if(otros.length) l = otros; } }
+      if(prev.some(q => ACIDOS_EXF.some(k => llevaAcido(q, k))) || (habra && !esAcido)){ const otros = l.filter(x => !ACIDOS_EXF.some(k => llevaAcido(x.p, k))); if(otros.length) l = otros;
+        else if(esAcido && prev.some(q => ACIDOS_EXF.some(k => llevaAcido(q, k)))) l = []; } }   // el sérum exfoliante sobra si otro producto sin aclarado ya lleva ácido (R1): la cascada lo quita
     // ningún activo fuerte a dosis en dos productos sin aclarado, tampoco como secundario (fichas verificadas, 25/11: Blemish SOS lleva azelaico)
     if(h.slot !== "L" && h.slot !== "contorno" && l.length){ const prevP = Object.entries(sel).filter(([s]) => s !== "L" && s !== "contorno").map(([, e]) => e.p);
       const rep = x => FUERTES_DUP.some(k => aDosis(x.p, k) && prevP.some(q => aDosis(q, k)));
@@ -939,9 +943,9 @@ function calcular(r){
   // Si un sérum no tiene ningún producto que cumpla (dosis, perfume, tipo de piel…), entra otro activo en su lugar (Hugo, 24/11: primero el
   // mismo activo en otro producto, luego otro activo; si no hay, el hueco queda vacío). Se recalcula la pauta sin esa función, dos veces como mucho.
   let pa = pauta(r, P, c, veto, modo), el0 = null; const sinProd = [];
-  for(let vuelta = 0; vuelta < 2; vuelta++){
+  for(let vuelta = 0; vuelta < 4; vuelta++){
     el0 = elegir(pa, {c, veto, P, r, serums: pa.serums, modo, ing: ING});
-    const vacio = pa.huecos.find(h => h.deseo && !el0.sel[h.slot] && !el0.quitados.includes(h) && !(el0.cand[h.slot] || {principales: []}).principales.length);
+    const vacio = pa.huecos.find(h => h.deseo && !el0.sel[h.slot] && !el0.quitados.includes(h));   // también si los candidatos se cayeron por duplicados o ácidos (Hugo, 25/11: cascada mismo activo → otro activo → vacío)
     if(!vacio) break;
     const excl = (r._excluir || []).concat(vacio.deseo.k);
     const pa2 = pauta(Object.assign({}, r, {_excluir: excl}), P, c, veto, modo);
