@@ -355,6 +355,13 @@ function pauta(r, P, c, veto, modo){
     // Hugo, 25/11 (pregunta 11): granitos y manchas por debajo de 65 a la vez, el azelaico de mañana es el activo único (trata las dos cosas)
     const azMix = nb("acne") < 65 && nb("manchas") < 65 && Math.max(nb("acne"), nb("manchas")) < Math.min(...notasF.filter(k => !["acne", "manchas", "ojeras", "hidratacion"].includes(k)).map(k => nf[k]), 101) && !veto.azelaico && !(r._excluir || []).includes("azelaico_mixto");
     if(azMix && !c.embarazo){ const am = lista.find(x => x.k === "azelaico_mixto"); if(am) mejor = {x: am, sc: 0, acts: ["azelaico"]}; }
+    // Hugo, 25/11 (pregunta 18): piel que reacciona siempre con rojez <60 y manchas <60. Primero la barrera 4 semanas; en la completa, el puente es el azelaico suave de mañana (nunca vitamina C pura)
+    const barreraPrimero = r.reactiva === "siempre" && nb("rojez") < 60 && nb("manchas") < 60;
+    if(barreraPrimero){
+      if(N0 >= 5 && !veto.azelaico && !(r._excluir || []).includes("azelaico_mixto")){ mejor = {x: lista.find(x => x.k === "azelaico_mixto") || {k: "azelaico_mixto", por: orden[0]}, sc: 0, acts: ["azelaico"]};
+        notas.push("Empieza el ácido azelaico 3 mañanas por semana y sube a diario si no pica ni enrojece. Las manchas mejoran cuando la piel está tranquila."); }
+      else notas.push("Las manchas se tratan a partir de la cuarta semana, cuando tu piel esté más tranquila. Ahora lo primero es reparar la barrera.");
+    }
     // R4 (Hugo): embarazo con manchas, azelaico ya en la básica; también en la lactancia (Hugo, 25/11, pregunta 3)
     if(c.embarazo && nb("manchas") <= 69 + B3 && !veto.azelaico && !(r._excluir || []).some(k => ["despigmentante", "azelaico_mixto"].includes(k))){ const dp = lista.find(x => ["despigmentante", "azelaico_mixto"].includes(x.k)); if(dp) mejor = {x: dp, sc: 0, acts: ["azelaico"]}; else mejor = {x: {k: "azelaico_mixto", por: orden[0]}, sc: 0, acts: ["azelaico"]}; }   // sin deseo de manchas (p. ej. el problema es el acné), el azelaico igual (ciclo 6)
     if(!mejor && !veto.pha && !c.sequedad_activa) mejor = {x: {k: "pha", por: orden[0]}, sc: 0, acts: null};
