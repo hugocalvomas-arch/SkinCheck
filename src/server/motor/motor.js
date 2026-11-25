@@ -1073,6 +1073,10 @@ function calcular(r){
   for(const t of r.avisos_extra || []) if(t && !avisos.includes(t)) avisos.push(t);   // SkinRead: avisos de las reglas de la foto
   { const fp = x => (LISTA || CATALOGO).find(q => q.id === x.id), perf = productos.filter(x => /^serum/.test(x.slot) && x.id && fp(x) && (fp(x).fragancia === true || lleva(fp(x), "perfume")));
     if(c.reactiva_a_veces && perf.length) avisos.push(`${perf.map(x => x.marca + " " + x.producto).join(" y ")} lleva perfume o alérgenos de fragancia (como la cumarina). Pruébalo antes en una zona pequeña, detrás de la oreja, 2 o 3 días. Empieza 2 noches por semana y déjalo mientras la piel esté irritada.`); }
+  // revisión externa (25/11, C16-04): retinoide con perfume o alérgenos de fragancia en piel con la barrera débil (hidratación <60, rojez o piel que reacciona)
+  { const nfB = r.notas_foto || {}, retP = productos.filter(x => /^serum/.test(x.slot) && x.id && el.sel[x.slot] && RETINOIDES.some(k => aDosis(el.sel[x.slot].p, k)) && (el.sel[x.slot].p.fragancia === true || lleva(el.sel[x.slot].p, "perfume")));
+    if(retP.length && ((nfB.hidratacion ?? 100) < 60 || (nfB.rojez ?? 100) < 60 || r.reactiva !== "nunca") && !c.reactiva_a_veces)
+      avisos.push(`${retP.map(x => x.marca + " " + x.producto).join(" y ")} lleva alérgenos de fragancia (como la cumarina). Empieza solo con la piel tranquila y déjalo si notas picor, escozor o descamación que no se pasa. Si ya te ha dado alergia algún perfume, pide en el mostrador uno sin fragancia.`); }
   if(pa.serums.some(s => s.k === "pha")) avisos.push("El PHA es un exfoliante suave: una noche a la semana para empezar. Si escuece o enrojece, déjalo.");
   if(pa.escalado) avisos.push(pa.escalado + " Cantidad: un guisante para toda la cara. Si irrita, baja un escalón y refuerza la hidratante.");
   if(P.includes("P09")) avisos.push("Lo que más cuenta aquí es la técnica: a favor del pelo, sin tensar la piel, sin apurar, hoja afilada, agua templada y espuma, dos pasadas como mucho.");
@@ -1172,7 +1176,9 @@ function opciones(P, pa, el, productos, veto, c, r){
 
 const nombreEn = (p, k) => { const ep = CFG.ensayo_producto[p.id]; return ep && ep.activo === k && ep.etiqueta ? ep.etiqueta : nombre(k); };
 function ficha(e, h){
-  return {id: e.p.id, marca: e.p.marca, producto: e.p.producto, precio: e.p.pvp_eur, formato_ml: e.p.formato_ml, foto: e.p.foto || null, compra: e.p.compra || null, url: e.p.url_producto || null,
+  // el solar siempre dice su SPF en el nombre (revisión externa, 25/11: «SVR Fluide Photo-Age» no parecía un fotoprotector)
+  const nomP = h && h.slot === "S" && e.p.spf && !/\b(spf|fps|ip)\s*\d/i.test(e.p.producto) ? `${e.p.producto} SPF ${e.p.spf >= 50 ? "50+" : e.p.spf}` : e.p.producto;
+  return {id: e.p.id, marca: e.p.marca, producto: nomP, spf: h && h.slot === "S" ? e.p.spf || null : undefined, precio: e.p.pvp_eur, formato_ml: e.p.formato_ml, foto: e.p.foto || null, compra: e.p.compra || null, url: e.p.url_producto || null,
     activo: e.activo ? nombreEn(e.p, e.activo) : null, activo_clave: e.activo || null, dosis: e.dosis ? e.dosis.txt : null, dosis_tipo: e.dosis ? e.dosis.tipo : null, funciones: e.cubre, ademas: e.extra || [], score: Math.round(e.score * 100) / 100,
     desglose: e.desglose || null, calidad: (CALIDAD[e.p.id] || {}).calidad ?? null};
 }
