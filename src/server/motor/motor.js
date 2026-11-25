@@ -341,6 +341,10 @@ function pauta(r, P, c, veto, modo){
     // la hidratación la cubre la hidratante: si otra nota está a 3 puntos o menos, el activo único va a esa (revisión clínica, C12-10)
     if(objetivo === "hidratacion"){ const otra = notasF.filter(k => !["ojeras", "hidratacion"].includes(k)).sort((a, b) => nf[a] - nf[b] || a.localeCompare(b))[0]; if(otra && nf[otra] - nf.hidratacion <= B3) objetivo = otra; }
     const NO_SUAVE = ["aha", "pha", "salicilico", "glicolico_afeitado"];   // exfoliantes: no son el activo suave único; en la completa entran solo con su indicación
+    const notasObj = notasF.filter(k => k !== "ojeras"), minN = Math.min(...notasObj.map(k => nf[k]));
+    const wObj = Object.fromEntries(notasObj.map(k => [k, Math.exp(-(nf[k] - minN) / 3) * (k === "hidratacion" ? .5 : 1)]));
+    const sumW = Object.values(wObj).reduce((a, b) => a + b, 0) || 1;
+    const pesoObj = a => notasObj.reduce((acc, k) => acc + wObj[k] * Math.min(3, pesoEn(a, k)) / 3, 0) / sumW;
     let mejor = null;
     if(!veto.niacinamida && !lista.some(x => ((x.activos || (deseoDe(x.k) || {}).activos) || []).includes("niacinamida"))) lista.push({k: "niacinamida", por: orden[0], _tabla: true});
     for(const x of lista){
@@ -349,7 +353,8 @@ function pauta(r, P, c, veto, modo){
       if(r.reactiva === "siempre" && d.fuerte && x.k !== "retinoide") continue;   // piel que reacciona casi siempre: el activo único no es fuerte (ciclo 4), salvo el retinoide en fórmula calmante y dosis de inicio (Hugo, 25/11)
       const acts = d.humectante ? ["hialuronico"] : (x.activos || d.activos || []).filter(a => !veto[a]);
       if(!acts.length) continue;
-      const sc = Math.max(...acts.map(a => pts(a) * (.5 + .5 * Math.min(3, pesoEn(a, objetivo)) / 3)));   // cuanto más trata la nota más baja, más cuenta (antes: todo o nada desde peso 1; ciclo 7)
+      // Hugo, 25/11 (pregunta 13): sin salto en «la nota más baja». Cada nota pesa más cuanto más cerca está de la más baja (a 3 puntos, ~1/3)
+      const sc = Math.max(...acts.map(a => pts(a) * (.5 + .5 * pesoObj(a))));   // cuanto más trata la nota más baja, más cuenta (antes: todo o nada desde peso 1; ciclo 7)
       if(!mejor || sc > mejor.sc + 1e-9) mejor = {x, sc, acts: d.humectante ? null : acts.slice().sort((a, b) => pts(b) - pts(a) || a.localeCompare(b))};
     }
     // Hugo, 25/11 (pregunta 11): granitos y manchas por debajo de 65 a la vez, el azelaico de mañana es el activo único (trata las dos cosas)
@@ -717,10 +722,15 @@ function candidatos(h, ctx){
       if(p.fotoestable === false) continue;
       const color = !!p.oxidos_hierro;
       if(quiere("solar_color_oblig") || r.solar_color){ if(!color) continue; cubre.push("F3"); }
-      else if(quiere("solar_color_pref") || c.fototipo_oscuro){ if(color){ base += .4; cubre.push("F3"); } }
-      else if(color) base -= .15;
-      if((quiere("solar_mineral") || tiene(r, "sienta", "filtros_quimicos")) ){ if(p.tipo_filtro === "mineral") base += .5; else if(tiene(r, "sienta", "filtros_quimicos")) continue; }
-      if(quiere("solar_mate") || c.piel === "grasa"){ if(["fluido", "gel", "gel-crema"].includes(p.textura)) base += .25; }
+      // Hugo, 25/11 (pregunta 13): las preferencias del solar suben en rampa con la nota, sin salto en el umbral
+      else { const nfS = r.notas_foto || {}, rp = (v, lo, hi) => typeof v === "number" ? Math.max(0, Math.min(1, (hi - v) / (hi - lo))) : 0;
+        const fC = c.fototipo_oscuro ? 1 : Object.keys(nfS).length ? rp(nfS.manchas, 60, 72) : (quiere("solar_color_pref") ? 1 : 0);
+        if(color){ base += .4 * fC - .15 * (1 - fC); if(fC >= .5) cubre.push("F3"); } }
+      { const nfS = r.notas_foto || {}, rp = (v, lo, hi) => typeof v === "number" ? Math.max(0, Math.min(1, (hi - v) / (hi - lo))) : 0;
+        const fM = tiene(r, "sienta", "filtros_quimicos") ? 1 : Math.max(Object.keys(nfS).length ? rp(nfS.rojez, 50, 62) : 0, quiere("solar_mineral") && (c.reactiva || c.rojez) ? 1 : 0, quiere("solar_mineral") && !Object.keys(nfS).length ? 1 : 0);
+        if(p.tipo_filtro === "mineral") base += .5 * fM; else if(tiene(r, "sienta", "filtros_quimicos")) continue;
+        const fT = c.piel === "grasa" ? 1 : Object.keys(nfS).length ? Math.max(rp(nfS.brillo, 55, 70), rp(nfS.acne, 55, 70), rp(nfS.poros, 50, 65)) : (quiere("solar_mate") ? 1 : 0);
+        if(["fluido", "gel", "gel-crema"].includes(p.textura)) base += .25 * fT; }
       if(p.uva_pf_ok) base += .1;
       if(typeof p.cosmeticidad === "number") base += p.cosmeticidad / 50;
       cubre.push("F2");
