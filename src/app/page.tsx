@@ -39,7 +39,7 @@ const TECNOLOGIA: [string, string][] = [
   ['859', 'marcas de belleza y dermocosmética trabajan ya con esta tecnología.'],
 ]
 
-const ZONAS_IA: [string, string][] = [['arrugas', 'Arrugas'], ['hidratacion', 'Hidratación'], ['rojez', 'Rojez'], ['manchas', 'Manchas']]
+const ZONAS_IA: [string, string][] = [['arrugas', 'Arrugas, una a una'], ['poros', 'Cada poro dilatado'], ['manchas', 'Manchas y tono'], ['textura', 'Textura de la superficie']]
 
 const ACTIVOS: [string, string][] = [
   ['Niacinamida', 'Niacinamide'], ['Retinal', 'Retinal'], ['Ácido azelaico', 'Azelaic Acid'], ['Ácido tranexámico', 'Tranexamic Acid'], ['Ácido salicílico', 'Salicylic Acid'],
@@ -127,12 +127,12 @@ export default function Inicio() {
               <ul className="grid grid-cols-2 md:grid-cols-4 gap-3 list-none p-0 m-0">
                 {ZONAS_IA.map(([f, t]) => (
                   <li key={f} className="grid gap-2">
-                    <Image src={`/ejemplos/tecnologia/${f}.webp`} alt={`Mapa de ${t.toLowerCase()} detectado por la IA sobre el rostro`} width={900} height={1125} sizes="(min-width: 768px) 25vw, 50vw" className="w-full h-auto rounded-[var(--radius-card)] bg-suave" />
+                    <Image src={`/ejemplos/tecnologia/${f}-detalle.webp`} alt={`Detalle del análisis: ${t.toLowerCase()}, marcado por la IA sobre la piel`} width={720} height={720} sizes="(min-width: 768px) 25vw, 50vw" className="w-full h-auto rounded-[var(--radius-card)] bg-suave" />
                     <span className="text-sm font-medium">{t}</span>
                   </li>
                 ))}
               </ul>
-              <figcaption className="mt-3 text-sm text-gris">Resultado real del análisis, sobre un rostro generado con IA. Cada aspecto sale con su zona marcada.</figcaption>
+              <figcaption className="mt-3 text-sm text-gris">Detalle ampliado de un análisis real, sobre un rostro generado con IA. La IA marca cada arruga, cada poro y cada mancha.</figcaption>
             </figure>
             <dl className="mt-16 grid sm:grid-cols-2 lg:grid-cols-4 gap-x-[var(--gap-columns)] gap-y-10 m-0">
               {TECNOLOGIA.map(([c, t]) => (
