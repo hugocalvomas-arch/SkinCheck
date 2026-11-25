@@ -133,6 +133,7 @@ function condiciones(r, P){
       : "Durante el embarazo no se usan retinoides. En su lugar va el ácido azelaico.");
     if(CFG.embarazo_veta_arbutina_kojico) v(["arbutina", "kojico"], c.lactancia ? "Sin datos de seguridad durante la lactancia." : "Sin datos de seguridad en el embarazo.");
     if(CFG.embarazo_acidos === "vetar") v(ACIDOS, "Durante el embarazo prefiero no usar ácidos.");
+    v(["thiamidol"], c.lactancia ? "Sin datos de seguridad durante la lactancia: por prudencia, mejor el ácido azelaico." : "Sin datos de seguridad en el embarazo: por prudencia, mejor el ácido azelaico.");   // revisión de 2025 (biblioteca de criterio, 25/11)
   }
   if(c.menor18) v(RETINOIDES.concat("bakuchiol"), "Con menos de 18 años no se usan retinoides ni rutina antiedad.");
   if(c.rojez) v(["glicolico", "lactico", "mandelico", "salicilico", "lha", "urea", "alcohol", "perfume", "mentol"], "Con rojez fija, los ácidos fuertes, el alcohol, el perfume y el mentol la empeoran.");
