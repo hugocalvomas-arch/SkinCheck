@@ -126,7 +126,7 @@ export async function analizarKiosko(farmaciaId: string, s: Seguridad, foto: str
     if (error) console.error('[seguimiento] foto no guardada', error.message)
   }
 
-  const lectura = construirLectura(fotoRes, mejorar, rutinas)
+  const lectura = construirLectura(fotoRes, mejorar, rutinas, r)
   return { id: fila.id, codigo: fila.codigo, rutinas: rutinas as unknown as Record<string, unknown>, foto: fotoRes, lectura, anterior }
 }
 
@@ -173,7 +173,7 @@ export async function enviarInformeEmail(consejoId: string, email: string, fotoC
   const foto = (c.puntuaciones_foto ?? null) as ResultadoFoto | null
   const extra: string[] = (c.respuestas as any)?.problemas_extra ?? []
   const mejorar = UMBRALES_POR_DEFECTO.filter((u) => extra.includes(u.problema)).map((u) => u.aspecto)
-  const lectura = construirLectura(foto, mejorar, rutinas)
+  const lectura = construirLectura(foto, mejorar, rutinas, c.respuestas)
   const rutina = rutinas?.rutinas?.[nivel] ?? rutinas?.rutinas?.media
   const farmacia = (c.farmacias as any)?.nombre ?? 'Tu farmacia'
 

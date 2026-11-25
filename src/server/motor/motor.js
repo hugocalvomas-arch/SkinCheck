@@ -361,6 +361,11 @@ function pauta(r, P, c, veto, modo){
     { const exf = conIndicacion.filter(x => ["aha", "pha", "salicilico"].includes(x.k)); for(const x of exf.slice(1)){ conIndicacion.splice(conIndicacion.indexOf(x), 1); } }
     // R35: un solo paso de mañana para las manchas y el mismo en la media y la completa: vitamina C primero, salvo que la foto pida evitarla (ciclos 11-12, C11-05, C12-06)
     { const PREF = ["vitc", "azelaico_mixto", "despigmentante"], mch = conIndicacion.filter(x => PREF.includes(x.k)); if(!(((r.bonus_activos || {}).vitc_pura || 0) < 0)) mch.sort((a, b) => PREF.indexOf(a.k) - PREF.indexOf(b.k)); for(const x of mch.slice(1)) conIndicacion.splice(conIndicacion.indexOf(x), 1); }
+    // Vitamina C estable de mañana en la media y la completa (Hugo, 25/11: «podría ponerse una vitamina C, quizá no un 15 %, pero sí una estabilizada más suave»):
+    // solo derivados, solo si el activo único va de noche (un sérum por momento del día) y con tono, manchas, arrugas o firmeza por debajo de 70
+    { const vc = lista.find(x => x.k === "vitc"), tm = x => (deseoDe(x.k) || {}).turno;
+      if(N0 >= 4 && vc && mejor && vc !== mejor.x && !conIndicacion.includes(vc) && tm(mejor.x) === "PM" && !conIndicacion.some(x => tm(x) === "AM" || ["vitc", "azelaico_mixto", "despigmentante"].includes(x.k))
+        && !veto.vitc_derivados && !(((r.bonus_activos || {}).vitc_derivados || 0) < 0) && ["tono", "manchas", "arrugas", "firmeza"].some(k => nb(k) < 70)){ vc.activos = ["vitc_derivados"]; conIndicacion.push(vc); } }
     for(const x of lista) if(conIndicacion.includes(x)){ const nom = nombreDeseo(x.k), i = fuera.findIndex(f => f.que === nom); if(i >= 0) fuera.splice(i, 1); }
     lista.length = 0;
     if(mejor){ const y = Object.assign({}, mejor.x, {leve: true}); if(mejor.acts) y.activos = mejor.acts; lista.push(y); }
@@ -442,6 +447,8 @@ function pauta(r, P, c, veto, modo){
   if(r.reactiva === "a_veces"){ const FK = ["retinoide", "aha", "pha", "salicilico", "glicolico_afeitado", "bakuchiol"]; const fu = serums.filter(s => FK.includes(s.k));
     for(const s of fu.slice(1)){ serums.splice(serums.indexOf(s), 1); fuera.push({k: s.k, que: nombreDeseo(s.k), por: "Tu piel reacciona a veces: empieza con un solo activo fuerte. Este se añade a partir del mes, si el primero te sienta bien."}); }
     if(fu.length > 1) notas.push("Como tu piel reacciona a veces, empiezas con un solo activo fuerte. El segundo se añade a partir del mes, si el primero te sienta bien."); }
+  // si al quitar un sérum la mañana se queda sin ninguno, el flexible que se pasó a la noche vuelve a la mañana (Lucía, 25/11: niacinamida de noche junto al retinal)
+  if(!serums.some(s => s.turno === "AM" && !CON_FRECUENCIA.includes(s.k))){ const f = serums.find(s => s.turno === "PM" && s.flexible && !CON_FRECUENCIA.includes(s.k) && serums.some(o => o !== s && o.turno === "PM")); if(f) f.turno = "AM"; }
   serums.forEach((s, i) => huecos.push({slot: "serum" + (i + 1), etiqueta: s.turno === "PM" ? "Sérum de noche" : "Sérum de mañana", turno: s.turno, deseo: s}));
   huecos.push({slot: "H", etiqueta: "Hidratante", turno: "AMPM"});
   let contornoOjeras = false;

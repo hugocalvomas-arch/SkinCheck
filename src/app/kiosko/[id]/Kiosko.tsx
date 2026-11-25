@@ -38,7 +38,6 @@ const NOMBRE: Record<string, string> = Object.fromEntries(MEJORAR)
 const NOMBRE_RESULTADO: Record<string, string> = { ...NOMBRE, tono: 'Luminosidad', hidratacion: 'Hidratación' }
 const PASOS_ANALISIS = ['Detectar el rostro', 'Medir poros, textura y brillo', 'Medir manchas, rojeces y ojeras', 'Medir arrugas y firmeza', 'Elegir ingredientes', 'Preparar tu rutina', 'Generar la simulación']
 // "Vitamina C pura" y "vitamina C estable" cuentan como el mismo ingrediente al buscarlo en la rutina
-const raiz = (t: string) => t.toLowerCase().replace(/\s+(pura|estable)$/, '')
 const lista = (l: string[]) => (l.length > 1 ? `${l.slice(0, -1).join(', ')} y ${l[l.length - 1]}` : l[0] ?? '')
 const eur = (n: number | null | undefined) => (n == null ? '' : n.toLocaleString('es-ES', { style: 'currency', currency: 'EUR' }))
 const INACTIVIDAD_MS = 150_000
@@ -460,9 +459,8 @@ export function Informe({ res, foto, farmacia, onFin }: { res: any; foto: string
   const consultas = textosConsulta(R.derivacion)
   const objetivos: any[] = res.lectura?.objetivos ?? []
   const productos = (rut.productos ?? []).filter((p: any) => p.producto)
-  const conProducto = (g: any) => productos.find((p: any) => p.activo && raiz(p.activo) === raiz(g.nombre))
-  // Los 3 ingredientes clave: primero los que ya van en la rutina de este nivel
-  const clave: any[] = [...(res.lectura?.ingredientes ?? [])].sort((a, b) => Number(!!conProducto(b)) - Number(!!conProducto(a))).slice(0, 3)
+  // Los ingredientes clave, siempre con su producto: de este nivel o del nivel en que entra (Hugo, 25/11)
+  const clave: any[] = res.lectura?.tarjetas?.[nivel] ?? []
   const marcas: string | undefined = F?.imagenes?.marcas?.find((u: string) => u !== F.imagenes.despues)
   const manana = productos.filter((p: any) => p.turno === 'AM' || p.turno === 'AMPM')
   const noche = productos.filter((p: any) => p.turno === 'PM' || p.turno === 'AMPM')
@@ -530,15 +528,14 @@ export function Informe({ res, foto, farmacia, onFin }: { res: any; foto: string
           <h3 className="text-[2rem] leading-[1.05] tracking-[-0.03em]">Tus ingredientes clave</h3>
           <ol className="grid md:grid-cols-3 gap-4 list-none p-0 m-0">
             {clave.map((g: any) => {
-              const pr = conProducto(g)
+              const pr = g.producto
               return (
                 <li key={g.nombre} className="rounded-[var(--radius-card)] border border-[var(--k-line)] bg-[var(--k-bg)] p-5 grid grid-rows-[auto_auto_1fr_auto] gap-2">
-                  <span className="inline-flex items-center gap-1.5 text-sm text-[var(--k-muted)]">{g.turno === 'PM' ? <Moon size={16} /> : <Sun size={16} />}{g.turno === 'PM' ? 'Noche' : 'Mañana'}</span>
+                  <span className="inline-flex items-center gap-1.5 text-sm text-[var(--k-muted)]">{g.turno === 'PM' ? <Moon size={16} /> : <Sun size={16} />}{g.turno === 'PM' ? 'Noche' : g.turno === 'AMPM' ? 'Mañana y noche' : 'Mañana'}</span>
                   <span className="text-2xl font-medium tracking-[-0.02em]">{g.nombre}</span>
                   <span className="text-[var(--k-muted)] leading-snug"><span className="text-[var(--k-accent)] font-medium">Para {lista(g.para.map((n: string) => n.toLowerCase()))}.</span> {g.frase ?? g.por_que}</span>
                   <span className="mt-2 pt-3 border-t border-[var(--k-line)] flex items-baseline justify-between gap-3">
-                    {pr ? <><span className="leading-snug"><span className="block text-sm text-[var(--k-muted)]">{pr.marca}{pr.bajo_pedido ? ' · Bajo pedido' : ''}</span>{pr.producto}</span><span className="cifra text-lg whitespace-nowrap">{eur(pr.precio)}</span></>
-                      : <span className="text-sm text-[var(--k-muted)]">{g.ahora ? 'Pide en el mostrador un producto con este ingrediente.' : g.motivo ?? 'Entra más adelante.'}</span>}
+                    <span className="leading-snug"><span className="block text-sm text-[var(--k-muted)]">{g.desde ? `En la rutina ${g.desde.toLowerCase()} · ` : ''}{pr.marca}{pr.bajo_pedido ? ' · Bajo pedido' : ''}</span>{pr.producto}</span><span className="cifra text-lg whitespace-nowrap">{eur(pr.precio)}</span>
                   </span>
                 </li>
               )

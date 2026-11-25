@@ -5,6 +5,9 @@
 import { NOMBRE_ASPECTO, UMBRALES_POR_DEFECTO, aspectosObjetivo, type ResultadoFoto } from '@/server/analisisPiel'
 // Fichas de ingredientes de la web de Hugo (hugosbeautyproject.com, contenido/panel-ingrediente), copiadas el 23/11/2026
 import FICHAS from '@/server/datos/fichas-ingredientes.json'
+// eslint-disable-next-line @typescript-eslint/no-require-imports
+const { TODOS } = require('./motor/catalogo.js')
+const POR_ID = new Map<string, any>((TODOS as any[]).map((p) => [p.id, p]))
 
 const FICHA = FICHAS as Record<string, { frase: string; resumen: Record<string, string> }>
 
@@ -38,13 +41,51 @@ const PROBLEMA_DE: Record<string, string> = Object.fromEntries(UMBRALES_POR_DEFE
 
 export type Ingrediente = { nombre: string; turno: string | null; para: string[]; ahora: boolean; por_que: string; motivo: string | null; frase: string | null; cuando: string | null }
 export type Objetivo = { aspecto: string; nombre: string; nota: number | null; que_es: string; alcance: string | null; plazo: string | null; ingredientes: string[] }
-export type Lectura = { objetivos: Objetivo[]; ingredientes: Ingrediente[] }
+export type ProductoTarjeta = { marca: string; producto: string; precio: number | null; bajo_pedido: boolean }
+/** Tarjeta de «Tus ingredientes clave»: siempre con el producto que lo lleva, de este nivel o, si no, del nivel en que entra. */
+export type Tarjeta = { nombre: string; turno: string | null; para: string[]; frase: string | null; por_que: string; producto: ProductoTarjeta; desde: string | null }
+export type Lectura = { objetivos: Objetivo[]; ingredientes: Ingrediente[]; tarjetas?: Record<string, Tarjeta[]> }
+
+const raiz = (t: string) => t.toLowerCase().replace(/\s+(pura|estable)$/, '')
+const NIVELES_ORDEN = ['basica', 'media', 'completa']
+const conCeramidas = (id: string | null) => !!id && ((POR_ID.get(id)?.inci_completo ?? []) as string[]).some((i) => /ceramide|ceramida/i.test(i))
+
+/**
+ * Las tarjetas de cada nivel (Hugo, 25/11: un ingrediente recomendado nunca se queda sin producto).
+ * Solo salen los ingredientes que llevan producto en este nivel o en uno mayor (con «desde»); con piel reactiva o rojez,
+ * la crema con ceramidas de la rutina tiene su tarjeta de barrera.
+ */
+function tarjetas(ingredientes: Ingrediente[], rutinas: any, reactiva: boolean): Record<string, Tarjeta[]> {
+  const out: Record<string, Tarjeta[]> = {}
+  for (const [i, nivel] of NIVELES_ORDEN.entries()) {
+    const l: Tarjeta[] = []
+    for (const g of ingredientes) {
+      let desde: string | null = null, pr: any = null
+      for (const n of NIVELES_ORDEN.slice(i)) {
+        pr = (rutinas?.rutinas?.[n]?.productos ?? []).find((p: any) => p.producto && p.activo && raiz(p.activo) === raiz(g.nombre))
+        if (pr) { if (n !== nivel) desde = rutinas.rutinas[n].nombre; break }
+      }
+      if (!pr) continue
+      l.push({ nombre: g.nombre, turno: pr.turno ?? g.turno, para: g.para, frase: g.frase, por_que: g.por_que, desde,
+        producto: { marca: pr.marca, producto: pr.producto, precio: pr.precio ?? null, bajo_pedido: !!pr.bajo_pedido } })
+    }
+    l.sort((a, b) => Number(!!a.desde) - Number(!!b.desde))
+    const h = (rutinas?.rutinas?.[nivel]?.productos ?? []).find((p: any) => ['H', 'H2'].includes(p.slot) && conCeramidas(p.id))
+    if (reactiva && h) {
+      const f = FICHA['ceramidas']
+      l.splice(Math.min(2, l.length), 0, { nombre: 'Ceramidas', turno: 'AMPM', para: ['Reparar la barrera'], frase: f?.frase || 'Son los lípidos que sellan la piel: refuerzan la barrera y la hacen menos reactiva.', por_que: '', desde: null,
+        producto: { marca: h.marca, producto: h.producto, precio: h.precio ?? null, bajo_pedido: !!h.bajo_pedido } })
+    }
+    out[nivel] = l.slice(0, 3)
+  }
+  return out
+}
 
 /**
  * Objetivos en orden de prioridad (de la foto: del más marcado al menos; sin foto: lo que eligió la clienta)
  * y los ingredientes clave, una sola vez cada uno, con los objetivos que trata.
  */
-export function construirLectura(foto: ResultadoFoto | null, mejorar: string[], rutinas: any): Lectura {
+export function construirLectura(foto: ResultadoFoto | null, mejorar: string[], rutinas: any, respuestas?: any): Lectura {
   const aspectos = (foto ? aspectosObjetivo(foto.puntuaciones).map((u) => u.aspecto) : mejorar.filter((a) => PROBLEMA_DE[a])).slice(0, 3)
   const problemas: any[] = rutinas?.perfil?.problemas ?? []
   const opciones: any[] = (rutinas?.rutinas?.completa?.ingredientes ?? []).filter((o: any) => o.papel !== 'alternativa')
@@ -72,5 +113,7 @@ export function construirLectura(foto: ResultadoFoto | null, mejorar: string[], 
     }
   })
   // Primero los que entran ya en la rutina
-  return { objetivos, ingredientes: [...ingredientes.values()].sort((x, y) => Number(y.ahora) - Number(x.ahora)) }
+  const lista = [...ingredientes.values()].sort((x, y) => Number(y.ahora) - Number(x.ahora))
+  const reactiva = (respuestas?.reactiva != null && respuestas.reactiva !== 'nunca') || (foto?.ui?.rojez ?? 100) < 55
+  return { objetivos, ingredientes: lista, tarjetas: tarjetas(lista, rutinas, reactiva) }
 }
