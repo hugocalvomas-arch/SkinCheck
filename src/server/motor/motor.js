@@ -525,7 +525,8 @@ function pauta(r, P, c, veto, modo){
   let nochesSal = [];
   if(salS){ const n0 = (notaDe(salS.por) ?? 0) >= 50 ? 2 : 3; nochesSal = (salS.turno === "AM" ? ["M", "X", "V", "S", "D", "L"] : ["M", "X", "S", "V", "D", "L"]).filter(x => !nochesRet.includes(x)).slice(0, n0); }   // ni la mañana del día del retinoide (auditoría 24/11)
   let nochesAha = [];
-  if(aha){ nochesAha = aha.k === "glicolico_afeitado" ? (ret ? ["M", "S"] : ["M", "J", "S"]) : ["D"].filter(x => !nochesRet.includes(x)); if(aha.k !== "glicolico_afeitado" && !nochesAha.length) nochesAha = ["S"]; if(c.fototipo_oscuro) nochesAha = nochesAha.slice(0, 1); }
+  // Hugo, 25/11 (pregunta 20): AHA 2 noches separadas en la completa con piel que no reacciona y sin retinoide; 1 noche con retinoide o reactividad
+  if(aha){ nochesAha = aha.k === "glicolico_afeitado" ? (ret ? ["M", "S"] : ["M", "J", "S"]) : aha.k === "aha" && !ret && N0 >= 5 && r.reactiva === "nunca" && !c.reactiva && !c.rojez ? ["M", "S"] : ["D"].filter(x => !nochesRet.includes(x)); if(aha.k !== "glicolico_afeitado" && !nochesAha.length) nochesAha = ["S"]; if(c.fototipo_oscuro) nochesAha = nochesAha.slice(0, 1); }
   const semana = DIAS.map(dia => {
     const paso = ["Limpiador"];
     const hayFrec = (ret && ret.k === "retinoide" && nochesRet.includes(dia)) || (aha && nochesAha.includes(dia)) || (salS && salS.turno === "PM" && nochesSal.includes(dia));
