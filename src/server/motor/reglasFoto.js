@@ -110,7 +110,7 @@ function aplicarReglasFoto(notas, r0, op = {}){
         case "notice": if(!out.avisos.includes(e.text)) out.avisos.push(e.text); break;
         case "priority": out.factor[e.aspect] = (out.factor[e.aspect] || 1) * (e.factor || 1); break;
         // tope que impone el código (Hugo, P-03): solo esa forma, % declarado máximo, noches, sándwich e hidratante reparadora
-        case "maintenance": out.mantenimiento = true; break;
+        case "maintenance": if(ASPECTOS.every(a => typeof notas[a] !== "number" || notas[a] >= 85)) out.mantenimiento = true; break;   // Hugo, 25/11 (pregunta 8): mantenimiento puro solo con todo ≥85; entre 70 y 84, un activo suave a la nota más baja
         case "tinted_spf": out.solar_color = true; break;
         case "moisturizer": out.hidratante.push({one_of: e.one_of || null, texture: e.texture || null, fragrance_free: !!e.fragrance_free, regla: x.id}); break;
         case "limit": out.limites[e.slot] = {activo: e.active, max_pct: e.max_pct, noches: e.max_nights, sandwich: !!e.sandwich, hidratante: e.moisturizer || null, mensaje: e.message || x.reason_for_client, regla: x.id}; break;

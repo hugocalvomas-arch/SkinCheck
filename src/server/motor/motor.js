@@ -334,7 +334,7 @@ function pauta(r, P, c, veto, modo){
   // El activo sale de la tabla ingrediente × aspecto (suma de todas las notas); los ácidos exfoliantes sin aclarado no son «suaves».
   const ING = c.ing, notasF = A_FOTO.filter(k => typeof nf[k] === "number");
   const leve = !!ING && notasF.length > 0 && !r.mantenimiento && !suave && !c.menor18 && !c.barrera && !c.receta && Math.min(...notasF.map(k => nf[k])) >= 50 - B3;
-  if(leve && lista.length){
+  if(leve && (lista.length || !veto.niacinamida)){
     const pts = k => (ING.ranking.find(x => x.k === k) || {puntos: 0}).puntos;
     const pesoEn = (k, a) => ((NEC.TABLA.ingredientes[k] || {}).pesos || {})[a] || 0;
     let objetivo = notasF.filter(k => k !== "ojeras").sort((a, b) => nf[a] - nf[b] || a.localeCompare(b))[0];
@@ -365,9 +365,15 @@ function pauta(r, P, c, veto, modo){
     // Vitamina C estable de mañana en la media y la completa (Hugo, 25/11: «podría ponerse una vitamina C, quizá no un 15 %, pero sí una estabilizada más suave»):
     // solo derivados, solo si el activo único va de noche (un sérum por momento del día) y con tono, manchas, arrugas o firmeza por debajo de 70
     { const vc = lista.find(x => x.k === "vitc"), tm = x => (deseoDe(x.k) || {}).turno;
-      if(N0 >= 4 && vc && mejor && vc !== mejor.x && !conIndicacion.includes(vc) && tm(mejor.x) === "PM" && !conIndicacion.some(x => tm(x) === "AM" || ["vitc", "azelaico_mixto", "despigmentante"].includes(x.k))
-        && !veto.vitc_derivados && !(((r.bonus_activos || {}).vitc_derivados || 0) < 0) && ["tono", "manchas", "arrugas", "firmeza"].some(k => nb(k) < 70)){ vc.activos = ["vitc_derivados"]; conIndicacion.push(vc); } }
+      // Hugo, 25/11 (pregunta 16): desde los 35 años, la vitamina C de mañana es el escalón de la media en la franja leve, salvo reactividad «siempre» o rojez marcada
+      const vc2 = vc || (de35 && mejor && mejor.x.k !== "vitc" ? {k: "vitc", por: orden[0] || "P31"} : null);
+      if(N0 >= 4 && vc2 && mejor && vc2 !== mejor.x && !conIndicacion.includes(vc2) && (tm(mejor.x) === "PM" || (deseoDe(mejor.x.k) || {}).flexible) && !conIndicacion.some(x => tm(x) === "AM" || ["vitc", "azelaico_mixto", "despigmentante"].includes(x.k))
+        && !veto.vitc_derivados && !(((r.bonus_activos || {}).vitc_derivados || 0) < 0) && r.reactiva !== "siempre" && nb("rojez") >= 55 - B3 && (de35 || ["tono", "manchas", "arrugas", "firmeza"].some(k => nb(k) < 70))){ vc2.activos = ["vitc_derivados"]; conIndicacion.push(vc2); } }
+    // …y la completa suma un activo renovador de noche desde los 35 años (retinal suave según tolerancia), si aún no lo lleva
+    if(N0 >= 5 && de35 && mejor && !c.embarazo && !c.menor25 && !veto.retinal && mejor.x.k !== "retinoide" && !conIndicacion.some(x => x.k === "retinoide") && !(r._excluir || []).includes("retinoide") && !r.mantenimiento && nb("hidratacion") >= 55 + B3){
+      const rt = lista.find(x => x.k === "retinoide") || {k: "retinoide", por: orden[0] || "P17"}; conIndicacion.push(rt); }
     for(const x of lista) if(conIndicacion.includes(x)){ const nom = nombreDeseo(x.k), i = fuera.findIndex(f => f.que === nom); if(i >= 0) fuera.splice(i, 1); }
+    conIndicacion.sort((a, b) => ["aha", "pha", "salicilico"].includes(a.k) - ["aha", "pha", "salicilico"].includes(b.k));   // el exfoliante, el último: antes la vitamina C y el renovador (Hugo, 25/11, pregunta 16)
     lista.length = 0;
     if(mejor){ const y = Object.assign({}, mejor.x, {leve: true}); if(mejor.acts) y.activos = mejor.acts; lista.push(y); }
     lista.push(...conIndicacion);
