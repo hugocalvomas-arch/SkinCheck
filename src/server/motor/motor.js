@@ -688,7 +688,8 @@ function candidatos(h, ctx){
       base = 1;
       if(ACIDOS_EXF.some(k => llevaAcido(p, k))) base -= 1;                              // la hidratante no lleva ácidos exfoliantes: el ácido, como mucho, en un producto
       { const nfH = r.notas_foto || {}, oclusiva = /^(mineral oil|paraffinum|petrolatum|butyrospermum|cera alba|beeswax|vaselin)/.test(n((p.inci_completo || [])[0] || ""));
-        if(oclusiva && c.piel !== "seca" && ((nfH.hidratacion ?? 0) >= 70 || (nfH.acne ?? 100) < 65 + B3 || (nfH.brillo ?? 100) <= 65)) base -= .6; }   // una crema oclusiva (aceite mineral o cera de primer ingrediente) solo si la piel la pide (ciclo 3)
+        // Hugo, 25/11 (pregunta 14): oclusiva solo en piel seca, o con hidratación <60 sin granitos ni brillo alto
+        if(oclusiva && !(c.piel === "seca" || ((nfH.hidratacion ?? 100) < 60 && (nfH.acne ?? 100) >= 65 && (nfH.brillo ?? 100) > 65))) base -= .6; }   // una crema oclusiva (aceite mineral o cera de primer ingrediente) solo si la piel la pide (ciclo 3)
       if(/atopi/.test(n(p.producto)) && !c.barrera && !P.includes("P27")) base -= .5;
       // un bálsamo o pomada como hidratante de mañana y noche, solo con piel muy seca (<40), atópica o en barrera; si no, una crema (revisión clínica, C18-05)
       if(h.slot === "H" && (p.textura === "balsamo" || /balsamo|baume|\bbalm\b|ointment|pomada/.test(n(p.producto))) && !c.barrera && !P.includes("P27") && !((r.notas_foto || {}).hidratacion < 40)) base -= .5;   // una crema de piel atópica, solo si hace falta
@@ -892,7 +893,7 @@ function candidatos(h, ctx){
 const TOPE = {bajo: 30, medio: 60, alto: Infinity};
 const CARO = 50, CASI_IGUAL = .2;   // «muy caro» desde 50 €; «cumple casi igual» = como mucho 0,2 puntos menos y mismo activo (Hugo, 24/11)
 const FUERTES_DUP = ["retinal", "retinol", "esteres_retinilo", "hpr", "glicolico", "lactico", "mandelico", "salicilico", "azelaico", "vitc_pura", "tranexamico", "thiamidol", "bakuchiol"];
-const EMPATE = .05;   // diferencia de puntos por debajo de la cual dos productos se consideran empatados (Hugo, 24/11: hasta 3 opciones)
+const EMPATE = .15;   // Hugo, 25/11 (pregunta 14): margen de empate hasta 0,15, con 3 opciones como mucho. Antes, 0,05   // diferencia de puntos por debajo de la cual dos productos se consideran empatados (Hugo, 24/11: hasta 3 opciones)
 function elegir(pa, ctx){
   const tope = TOPE[ctx.r.presupuesto] || 60;
   const cand = {}, sel = {}, usados = new Set(), sinProducto = [];
