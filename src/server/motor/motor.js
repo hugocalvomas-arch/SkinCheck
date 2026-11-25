@@ -3,7 +3,7 @@
    Lo que es criterio vive en config.js y en las tablas de este archivo (PROBLEMAS, DESEOS). */
 "use strict";
 const CFG = require("./config.js");
-const {CATALOGO} = require("./catalogo.js");
+const {CATALOGO, HUECO_H} = require("./catalogo.js");
 // SkinRead: el catálogo que ve el motor se puede limitar al stock de una farmacia (calcularCon)
 let LISTA = null;
 const {RETINOIDES, ACIDOS, nombre, estado, lleva, aDosis, n} = require("./activos.js");
@@ -672,7 +672,11 @@ function candidatos(h, ctx){
       cubre.push("F1");
     } else if(h.slot === "H" || h.slot === "H2"){
       if(v2.hueco !== "H") continue;
-      if(["glicolico", "lactico", "mandelico", "pha", "salicilico", "lha"].some(k => aDosis(p, k)) || v2.exfoliante) continue;   // la hidratante no exfolia
+      // la hidratante no exfolia… salvo la hidratante de tratamiento para granitos (Hugo, 25/11, pregunta 19): con imperfecciones o brillo, sin sérum exfoliante ni retinoide, y en piel que no reacciona
+      const nfT = r.notas_foto || {};
+      const tratH = HUECO_H.has(p.id) && h.slot === "H" && ((nfT.acne ?? 100) < 65 || (nfT.brillo ?? 100) <= 60) && !hayAcido && !hayRetinoide && !c.reactiva && !c.reactiva_a_veces && !c.rojez && (nfT.rojez ?? 100) >= 55 + B3 && (nfT.hidratacion ?? 100) >= 55 + B3;
+      if((["glicolico", "lactico", "mandelico", "pha", "salicilico", "lha"].some(k => aDosis(p, k)) || v2.exfoliante) && !tratH) continue;
+      if(tratH) base += .3;
       if(h.slot === "H" && /\bnoche\b|\bnight\b|\bnuit\b|\bpm\b/.test(n(p.producto))) continue;   // «PM» también (ciclo 19: CeraVe Loción de Rostro PM de mañana)
       if(/hidratacion-cuerpo|corporal|body lotion/.test(n(p.url_producto || "") + " " + n(p.producto)) && p.formato_ml >= 400) continue;   // loción corporal de bote grande: no es la hidratante de la cara (revisión clínica, C12-07)
       if(/parpado|contorno|\beye\b|\byeux\b|ojos/.test(n(p.producto))) continue;   // una crema de ojos no es la hidratante de la cara   // la hidratante va mañana y noche: una crema de noche solo en el hueco de noche (H2)

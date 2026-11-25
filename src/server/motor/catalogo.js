@@ -2,7 +2,7 @@
    lib/catalogo.json no se toca: el motor publicado sigue usándolo tal cual. */
 "use strict";
 const PRECIOS = require("./precios.json");
-const HUECO_H = new Set(["la-roche-posay-effaclar-duo-m", "avene-cleanance-comedomed"]);
+const HUECO_H = new Set(["la-roche-posay-effaclar-duo-m", "avene-cleanance-comedomed", "uriage-hyseac-3-regul-plus"]);   // hidratantes de tratamiento (Hugo, 25/11, pregunta 19: también Hyséac 3-Regul+; Keracnyl PP+ ya es hidratante)
 const BASE = require("./catalogo.json"), CORR = require("./correcciones.json"), VERIF = require("./fichas-verificadas.json"), NUEVOS = require("./contornos.json"), FICHAS = require("./fichas.json");
 const n = s => String(s || "").toLowerCase();
 // restos de la web pegados al final del INCI al fichar (HTML, scripts, reseñas, instrucciones): se corta en el primero
@@ -69,4 +69,4 @@ const MARCAS_FARMACIA = new Set(["La Roche-Posay", "Vichy", "CeraVe", "SkinCeuti
 for(const p of TODOS) if(!MARCAS_FARMACIA.has(sinTilde(p.marca)) || p.no_farmacia) p.fuera_farmacia = true;
 // Lo que el motor puede recomendar: ni retirados ni fichas que no se han podido verificar, ni marcas que no están en farmacia.
 const CATALOGO = TODOS.filter(p => !p.retirado && !p.sin_verificar && !p.sin_precio_es && !p.fuera_farmacia);
-module.exports = {CATALOGO, TODOS};
+module.exports = {HUECO_H, CATALOGO, TODOS};
