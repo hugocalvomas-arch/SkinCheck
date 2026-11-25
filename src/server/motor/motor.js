@@ -470,7 +470,8 @@ function pauta(r, P, c, veto, modo){
   if(P.includes("P15") && suave) fuera.push({que: "Contorno de ojos", por: "Queda para más adelante: primero la consulta y que la piel esté tranquila."});
   if(P.includes("P09") && !suave) huecos.push({slot: "posafeitado", etiqueta: "Después del afeitado", turno: "AM"});
   // el contorno solo entra si lo que se quiere mejorar está en los ojos (ojeras, arrugas, firmeza)
-  if(N >= 5 && (ojos || r.mantenimiento) && !suave && !c.menor18) huecos.push({slot: "contorno", etiqueta: "Contorno de ojos", turno: "AMPM"});
+  // Hugo, 25/11 (pregunta 9): el contorno entra solo por su nota de ojeras (<75 en la completa), nunca por las arrugas de la cara
+  if(N >= 5 && (nb("ojeras") < 75 || r.mantenimiento) && !suave && !c.menor18 && !huecos.some(h => h.slot === "contorno") && huecos.length + 2 <= 6) huecos.push({slot: "contorno", etiqueta: "Contorno de ojos", turno: "AMPM"});
   if(N >= 6 && !suave && serums.length < 3){
     if(c.piel === "seca" || P.includes("P28")) huecos.push({slot: "H2", etiqueta: "Crema de noche", turno: "PM"});
   }
@@ -703,6 +704,7 @@ function candidatos(h, ctx){
       if((LIM(r).retinoide || (r._excluir || []).includes("retinoide")) && RETINOIDES.some(k => lleva(p, k))) continue;   // si el retinoide de la cara tiene tope o se ha quitado, el contorno no lo trae por otra vía
       // piel con rojez, que reacciona o deshidratada y sin retinoide en la cara: el contorno tampoco lo lleva (la piel del ojo es la más fina; revisión clínica, C11-06)
       const nfO = r.notas_foto || {};
+      if(RETINOIDES.some(k => lleva(p, k)) && (!r.retinoide_exp || r.retinoide_exp === "nunca")) continue;   // sin experiencia con retinoides, el contorno no lo trae (Hugo, 25/11, pregunta 9): cafeína, vitamina K, niacinamida, péptidos, hialurónico o ceramidas
       if(!hayRetinoide && ((nfO.rojez ?? 100) < 55 + B3 || ["a_veces", "siempre"].includes(r.reactiva) || c.reactiva || c.rojez || (nfO.hidratacion ?? 100) < 55 + B3) && RETINOIDES.some(k => lleva(p, k))) continue;
       base = 1; const pr = v2.preocupacion || p.preocupacion || [];
       if(ACIDOS_EXF.concat("pha").some(k => llevaAcido(p, k))) base -= 1;   // en el contorno, sin ácidos exfoliantes
