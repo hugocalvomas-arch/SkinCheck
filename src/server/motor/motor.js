@@ -921,7 +921,7 @@ function calcular(r){
     const excl = (r._excluir || []).concat(vacio.deseo.k);
     const pa2 = pauta(Object.assign({}, r, {_excluir: excl}), P, c, veto, modo);
     if(!pa2.serums.length && pa.serums.length > 1) break;
-    sinProd.push({k: vacio.deseo.k, que: nombreDeseo(vacio.deseo.k), por: "No hay ningún producto que cumpla lo que pide este paso para tu piel (dosis, sin perfume, tipo de piel). Va otro activo en su lugar."});
+    sinProd.push({k: vacio.deseo.k, que: nombreDeseo(vacio.deseo.k), por: "Ahora mismo no lo tenemos en la farmacia en una versión adecuada para tu piel. Pregunta en el mostrador: pueden pedírtelo."});
     pa2.fuera = sinProd.concat(pa2.fuera.filter(f => !sinProd.some(x => x.que === f.que)));
     pa = pa2; r = Object.assign({}, r, {_excluir: excl});
   }
