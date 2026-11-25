@@ -435,11 +435,14 @@ function pauta(r, P, c, veto, modo){
     for(;;){
       const diarios = serums.filter(s => s.turno === T && !CON_FRECUENCIA.includes(s.k));
       if(diarios.length <= 1) break;
-      // excepción de Hugo (24/11): por la mañana, azelaico con vitamina C o con niacinamida sí van juntos
-      if(T === "AM" && diarios.length === 2){
-        const AZ = ["azelaico_mixto", "despigmentante", "antiacne", "calma"], PAR = ["vitc", "sebo", "barrera", "despigmentante", "antiacne", "calma"];
-        const az = diarios.find(s => AZ.includes(s.k) && ((s.activos || (F[s.k] || {}).activos || []).includes("azelaico") || s.k === "azelaico_mixto") && !veto.azelaico), otroS = az && diarios.find(s => s !== az && PAR.includes(s.k));
-        if(az && otroS){ az.activos = ["azelaico"]; az.par_azelaico = true; if(otroS.k !== "vitc") otroS.activos = ["niacinamida"]; otroS.par_azelaico = true; break; }
+      // Hugo, 25/11 (pregunta 10): un sérum por turno, sin excepciones. Si chocan vitamina C y azelaico de mañana, azelaico con rojez, granitos, embarazo o lactancia; si no, vitamina C
+      if(T === "AM"){
+        const esAz = s => s.k === "azelaico_mixto" || ((s.activos || (F[s.k] || {}).activos || []).includes("azelaico") && ["despigmentante", "antiacne", "calma"].includes(s.k));
+        const az = diarios.find(esAz), vc = diarios.find(s => s.k === "vitc");
+        if(az && vc){ const prefAz = nb("rojez") < 60 || nb("acne") < 65 || c.embarazo; const q = prefAz ? vc : az;
+          const libre2 = !serums.some(s => s.turno === "PM" && !CON_FRECUENCIA.includes(s.k));
+          if(q === az && libre2 && !serums.some(s => s.k === "retinoide")){ az.turno = "PM"; continue; }
+          serums.splice(serums.indexOf(q), 1); fuera.push({k: q.k, que: nombreDeseo(q.k), por: "Un sérum por momento del día: por la mañana va " + (prefAz ? "el azelaico, que también calma y trata los granitos." : "la vitamina C.")}); continue; }
       }
       const otro = T === "AM" ? "PM" : "AM", libre = !serums.some(s => s.turno === otro && !CON_FRECUENCIA.includes(s.k));
       const mov = diarios.filter(s => s.flexible && !(otro === "PM" && ["vitc", "despigmentante", "azelaico_mixto"].includes(s.k))).pop();
