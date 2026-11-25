@@ -20,7 +20,7 @@ const A = {
   azelaico: [["azelaic acid"], "alta", "ácido azelaico"],
   niacinamida: [["niacinamide"], "alta", "niacinamida"],
   vitc_pura: [["ascorbic acid"], "alta", "vitamina C pura"],
-  vitc_derivados: [["ascorbyl", "ethyl ascorbic"], "alta", "vitamina C estable"],
+  vitc_derivados: [["ascorbyl", "ethyl ascorbic", "tetrahexyldecyl ascorbate"], "alta", "vitamina C estable"],
   tranexamico: [["tranexamic", "tranexamate"], "alta", "ácido tranexámico"],
   thiamidol: [["thiazolyl resorcinol"], "muy_baja", "thiamidol"],
   arbutina: [["arbutin"], "alta", "arbutina"],

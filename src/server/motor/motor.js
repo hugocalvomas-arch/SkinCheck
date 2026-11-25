@@ -824,6 +824,9 @@ function candidatos(h, ctx){
     // Paso 2: el producto se puntúa entero: lo demás que cubre de lo que esta piel necesita (sin contar el limpiador, que se aclara) y la calidad de su fórmula
     if(ctx.ing && h.slot !== "L"){ let cob = 0; for(const x of ctx.ing.ranking){ if(x.k === activo || !x.puntos || !aDosis(p, x.k)) continue; cob += x.puntos / ctx.ing.max * (x.clase === "tratamiento" ? 1 : .5); }
       desglose.cobertura = Math.round(PESO_PRODUCTO.cobertura * Math.min(1, cob) * (h.slot === "S" ? .5 : 1) * 100) / 100; base += desglose.cobertura; }   // en el solar manda la protección: lo que lleva de más cuenta la mitad (ciclo 3, diversidad)
+    // R35 (Hugo): con manchas <60, el sérum de mañana que además lleva vitamina C, azelaico, tranexámico o thiamidol a dosis cubre ese paso dentro del mismo producto (fichas verificadas, 25/11)
+    if(/^serum/.test(h.slot) && /AM/.test(h.turno || (h.deseo || {}).turno || "") && ((ctx.r.notas_foto || {}).manchas ?? 100) < 60
+      && ["vitc_pura", "vitc_derivados", "azelaico", "tranexamico", "thiamidol"].some(k => k !== activo && !ctx.veto[k] && aDosis(p, k))){ desglose.manchas_am = .5; base += .5; }
     if((CALIDAD[p.id] || {}).revisar && ["H", "H2"].includes(h.slot)) base -= .3;   // hidratante con ficha de confianza baja (INCI incompleto o contaminado): solo si no hay otra igual de buena (ciclo 7)
     { const q = (CALIDAD[p.id] || {}).calidad; if(q != null){ desglose.calidad = Math.round(PESO_PRODUCTO.calidad * q / 10 * 100) / 100; base += desglose.calidad; } }
     out.push({p, score: base + pref, cubre, dosis, activo, extra: pegas, desglose});
@@ -837,6 +840,7 @@ function candidatos(h, ctx){
 
 const TOPE = {bajo: 30, medio: 60, alto: Infinity};
 const CARO = 50, CASI_IGUAL = .2;   // «muy caro» desde 50 €; «cumple casi igual» = como mucho 0,2 puntos menos y mismo activo (Hugo, 24/11)
+const FUERTES_DUP = ["retinal", "retinol", "esteres_retinilo", "hpr", "glicolico", "lactico", "mandelico", "salicilico", "azelaico", "vitc_pura", "tranexamico", "thiamidol", "bakuchiol"];
 const EMPATE = .05;   // diferencia de puntos por debajo de la cual dos productos se consideran empatados (Hugo, 24/11: hasta 3 opciones)
 function elegir(pa, ctx){
   const tope = TOPE[ctx.r.presupuesto] || 60;
@@ -846,7 +850,10 @@ function elegir(pa, ctx){
     let l = cand[h.slot].principales.filter(x => !usados.has(x.p.id));
     // un sérum no repite el activo de otro sérum, ni uno que otro sérum ya lleva a dosis (p. ej. niacinamida dentro del glicólico)
     if(h.deseo && l.length){ const prev = Object.entries(sel).filter(([s]) => /^serum/.test(s)).map(([, e]) => e); const ya = prev.map(e => e.activo);
-      const otros = l.filter(x => !ya.includes(x.activo) && !(x.activo && prev.some(e => aDosis(e.p, x.activo)))); if(otros.length) l = otros; }
+      const otros = l.filter(x => !ya.includes(x.activo) && !(x.activo && prev.some(e => aDosis(e.p, x.activo))));
+      // …salvo que quitar la repetición deje solo activos que una regla de la foto pide evitar (C01-08: vitamina C pura con rojez)
+      const bon = ctx.r.bonus_activos || {}, valeFoto = a => a.some(x => !(x.activo && (bon[x.activo] || 0) < 0));
+      if(otros.length && (valeFoto(otros) || !valeFoto(l))) l = otros; }
     // la hidratante y el solar no repiten a dosis el activo que ya lleva un sérum (R12: el solar cuenta para los duplicados)
     if(["H", "H2", "S"].includes(h.slot) && l.length){ const act = Object.entries(sel).filter(([s]) => /^serum/.test(s)).map(([, e]) => e.activo).filter(Boolean);
       const otros = l.filter(x => !act.some(a => aDosis(x.p, a))); if(otros.length) l = otros; }
@@ -854,6 +861,10 @@ function elegir(pa, ctx){
     if((h.deseo || ["H", "H2", "S"].includes(h.slot)) && l.length){ const prev = Object.entries(sel).filter(([s]) => /^serum|^H/.test(s)).map(([, e]) => e.p);
       const esAcido = h.deseo && ["aha", "salicilico", "glicolico_afeitado"].includes(h.deseo.k), habra = pa.serums.some(x => ["aha", "salicilico", "glicolico_afeitado"].includes(x.k));
       if(prev.some(q => ACIDOS_EXF.some(k => llevaAcido(q, k))) || (habra && !esAcido)){ const otros = l.filter(x => !ACIDOS_EXF.some(k => llevaAcido(x.p, k))); if(otros.length) l = otros; } }
+    // ningún activo fuerte a dosis en dos productos sin aclarado, tampoco como secundario (fichas verificadas, 25/11: Blemish SOS lleva azelaico)
+    if(h.slot !== "L" && h.slot !== "contorno" && l.length){ const prevP = Object.entries(sel).filter(([s]) => s !== "L" && s !== "contorno").map(([, e]) => e.p);
+      const rep = x => FUERTES_DUP.some(k => aDosis(x.p, k) && prevP.some(q => aDosis(q, k)));
+      const otros = l.filter(x => !rep(x)); if(otros.length) l = otros; }
     // un activo que una regla de la foto pide evitar solo entra si no hay otro producto válido para el hueco (ciclo 3)
     if(l.length){ const bon = ctx.r.bonus_activos || {}; const otros = l.filter(x => !(x.activo && (bon[x.activo] || 0) < 0) && x.score >= .5); if(otros.length && otros.length < l.length) l = otros; }
     if(!l.length){ sinProducto.push(h); continue; }
