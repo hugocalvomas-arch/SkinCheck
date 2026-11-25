@@ -292,7 +292,10 @@ function revisar(c, res, M){
     // pasos vacíos
     for(const p of o.productos.filter(p => !p.producto && p.slot !== "S")) add(/^serum1$/.test(p.slot) ? "GRAVE" : "MENOR", "paso sin producto", `${p.paso}: ${p.motivo || ""}`);
     // perfume con rojez o reactividad
-    if((nb("rojez") < 55 || c.reactiva !== "nunca") && !(o._veto && o._veto.perfume)) for(const x of ps.filter(x => x.s.slot !== "S" && (x.p.fragancia === true || lleva(x.p, "perfume")))) add("MENOR", "perfume con rojez o reactividad", x.p.producto);
+    if((nb("rojez") < 55 || c.reactiva !== "nunca") && !(o._veto && o._veto.perfume)) for(const x of ps.filter(x => x.s.slot !== "S" && (x.p.fragancia === true || lleva(x.p, "perfume")))){
+      // Hugo, 25/11 (pregunta 1): con reactividad «a veces» y sin rojez marcada, el sérum activo con perfume vale si lleva su aviso
+      if(c.reactiva === "a_veces" && nb("rojez") >= 55 && /^serum/.test(x.s.slot) && o.avisos.some(a => a.includes(x.p.producto) && /perfume/.test(a))) continue;
+      add("MENOR", "perfume con rojez o reactividad", x.p.producto); }
   }
   // receta: las tres rutinas iguales
   // dedupe
