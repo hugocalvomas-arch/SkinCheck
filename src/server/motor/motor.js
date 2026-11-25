@@ -878,7 +878,7 @@ function elegir(pa, ctx){
     if((h.deseo || ["H", "H2", "S"].includes(h.slot)) && l.length){ const prev = Object.entries(sel).filter(([s]) => /^serum|^H/.test(s)).map(([, e]) => e.p);
       const esAcido = h.deseo && ["aha", "salicilico", "glicolico_afeitado"].includes(h.deseo.k), habra = pa.serums.some(x => ["aha", "salicilico", "glicolico_afeitado"].includes(x.k));
       if(prev.some(q => ACIDOS_EXF.some(k => llevaAcido(q, k))) || (habra && !esAcido)){ const otros = l.filter(x => !ACIDOS_EXF.some(k => llevaAcido(x.p, k))); if(otros.length) l = otros;
-        else if(esAcido && prev.some(q => ACIDOS_EXF.some(k => llevaAcido(q, k)))) l = []; } }   // el sérum exfoliante sobra si otro producto sin aclarado ya lleva ácido (R1): la cascada lo quita
+        else if(prev.some(q => ACIDOS_EXF.some(k => llevaAcido(q, k)))) l = []; } }   // el sérum exfoliante sobra si otro producto sin aclarado ya lleva ácido (R1): la cascada lo quita
     // ningún activo fuerte a dosis en dos productos sin aclarado, tampoco como secundario (fichas verificadas, 25/11: Blemish SOS lleva azelaico)
     if(h.slot !== "L" && h.slot !== "contorno" && l.length){ const prevP = Object.entries(sel).filter(([s]) => s !== "L" && s !== "contorno").map(([, e]) => e.p);
       const rep = x => FUERTES_DUP.some(k => aDosis(x.p, k) && prevP.some(q => aDosis(q, k)));
