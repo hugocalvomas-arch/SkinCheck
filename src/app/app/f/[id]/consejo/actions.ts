@@ -4,7 +4,9 @@ import { revalidatePath } from 'next/cache'
 import { supabaseServer } from '@/lib/supabase/server'
 import { pendientes, visibles, type Respuestas } from '@/lib/cuestionario'
 import { calcularRutinas } from '@/server/rutinas'
-import { analizarFoto, problemasDesdeFoto, type ResultadoFoto } from '@/server/analisisPiel'
+import { recomiendaSinStock } from '@/server/ajustesFarmacia'
+import { analizarFoto, type ResultadoFoto } from '@/server/analisisPiel'
+import { conReglasFoto } from '@/server/reglasFoto'
 import { registroConsentimiento } from '@/lib/privacidad'
 
 export async function crearConsejo(farmaciaId: string, r: Respuestas, foto: string | null = null, acepta = false) {
@@ -21,7 +23,7 @@ export async function crearConsejo(farmaciaId: string, r: Respuestas, foto: stri
     const a = await analizarFoto(foto)
     if ('error' in a) return { error: a.error }
     puntuaciones = a
-    limpias.problemas_extra = problemasDesdeFoto(a.puntuaciones)
+    conReglasFoto(limpias, a, false)   // en el mostrador, el tipo de piel lo dice la clienta
   }
   const stock: { producto_id: string; pvp: number | null; unidades: number }[] = []
   for (let desde = 0; ; desde += 1000) {
@@ -30,7 +32,7 @@ export async function crearConsejo(farmaciaId: string, r: Respuestas, foto: stri
     stock.push(...(data ?? []))
     if (!data || data.length < 1000) break
   }
-  const resultado = calcularRutinas(limpias, stock)
+  const resultado = calcularRutinas(limpias, stock, await recomiendaSinStock(sb, farmaciaId))
   const { data, error } = await sb.from('consejos').insert({ farmacia_id: farmaciaId, respuestas: limpias, puntuaciones_foto: puntuaciones, rutinas: resultado }).select('id').single()
   if (error) return { error: error.message }
   redirect(`/app/f/${farmaciaId}/consejo/${data.id}`)

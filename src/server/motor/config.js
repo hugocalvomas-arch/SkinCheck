@@ -27,8 +27,10 @@ module.exports = {
   // Rangos de dosis por activo (función entre paréntesis)
   rangos: {
     niacinamida: {sebo: [2, 5], resto: [4, 5], aceptable_hasta: 10, aceptable_solo_reactividad: "baja"},
-    vitc_pura: [10, 20], vitc_derivados: null,
-    retinol: [0.1, 0.3], retinal: [0.05, 0.1], bakuchiol: [0.5, 1],
+    vitc_pura: [10, 20], vitc_derivados: [2, 20],   // derivados: mínimo 2 % para ser protagonista (propuesta 24/11, pendiente de Hugo)
+    retinol: [0.1, 0.3], retinal: [0.05, 0.1],
+    // Hugo, 24/11: quien nunca ha usado un retinoide empieza por la concentración baja; quien ya lo usa, sigue o sube
+    retinal_inicio: [0.01, 0.05], retinal_intermedio: [0.03, 0.06], retinal_retinizada: [0.05, 0.2], bakuchiol: [0.5, 1],
     glicolico: [4, 10], lactico: [5, 10], salicilico: [0.5, 2],
     azelaico: [8, 10], tranexamico: [3, 5], thiamidol: [0.1, 0.2]
   },
@@ -68,5 +70,15 @@ module.exports = {
   topes: {barrera: 3, rojez_sensible: 5},
   solares_excluidos: ["garnier"],         // solares de gran consumo que Hugo no quiere recomendar
   peso_precio: 0.002,                       // cuánto resta cada euro al puntuar un producto (desempate calidad/precio)
-  presupuesto: {bajo: 30, medio: 60, alto: null}                  // hay que fichar productos: hoy el catálogo tiene uno
+  presupuesto: {bajo: 30, medio: 60, alto: null},                 // hay que fichar productos: hoy el catálogo tiene uno
+  // Hito 1, propuesta 8 (Hugo, 27/11): tratamientos en consulta en las últimas 2 semanas. Sin plazos: los fija quien hizo el tratamiento.
+  // La duración de cada caso está pendiente de revisión dermatológica.
+  procedimientos: {
+    peeling: {recuperacion: true, texto: "Te hiciste un peeling {cuando}. La piel se está renovando y está más sensible: por ahora, solo limpiador suave, crema reparadora y protector solar 50+."},
+    laser: {recuperacion: true, texto: "Te hiciste un láser o luz pulsada {cuando}. Por ahora, solo limpiador suave, crema reparadora y protector solar 50+, y evita el sol directo."},
+    microagujas: {recuperacion: true, texto: "Te hiciste un tratamiento con microagujas o radiofrecuencia con agujas {cuando}. La piel tiene microheridas: por ahora, solo limpiador suave, crema reparadora y protector solar 50+."},
+    otro: {recuperacion: true, texto: "Te hiciste un tratamiento en consulta {cuando}. Como no sabemos cuál fue, lo prudente es usar solo limpiador suave, crema reparadora y protector solar 50+."},
+    limpieza: {recuperacion: false, texto: "Te hiciste una limpieza facial {cuando}. Si incluyó extracción o un peeling, o la piel sigue roja o sensible, empieza solo con el limpiador, la crema y el solar, y añade el resto de la rutina (y tu retinoide, si usas uno) cuando la piel esté tranquila."},
+    _cierre: "Sigue las indicaciones de quien te hizo el tratamiento: el plazo depende de cada tratamiento. Cuando te diga que puedes, vuelve y añadimos los activos."
+  }
 };

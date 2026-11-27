@@ -2,148 +2,276 @@
  "id": "demo",
  "codigo": "K7P-4QX",
  "rutinas": {
+  "derivacion": [],
+  "unica": false,
+  "sin_stock": false,
   "rutinas": {
    "basica": {
     "nombre": "Básica",
-    "total": 29.5,
+    "total": 92.99,
     "productos": [
      {
       "paso": "Limpiador",
       "turno": "AMPM",
-      "marca": "Eucerin",
-      "producto": "Dermato Clean Hyaluron",
-      "precio": 4.5,
+      "id": "la-roche-posay-toleriane-son-lavant-anti-inconforts",
+      "marca": "La Roche-Posay",
+      "producto": "Toleriane Son Lavant Anti-Inconforts",
+      "precio": 16.49,
       "activo": null,
-      "para": "Limpia sin resecar."
+      "para": "Limpia sin resecar.",
+      "frecuencia": null,
+      "bajo_pedido": false,
+      "empate": [
+       {
+        "id": "la-roche-posay-toleriane-caring-wash",
+        "marca": "La Roche-Posay",
+        "producto": "Toleriane Caring Wash / Crema Limpiadora",
+        "precio": 19.35,
+        "bajo_pedido": false
+       },
+       {
+        "id": "la-roche-posay-toleriane",
+        "marca": "La Roche-Posay",
+        "producto": "Toleriane",
+        "precio": 16.99,
+        "bajo_pedido": false
+       }
+      ]
      },
      {
-      "paso": "Sérum de mañana",
-      "turno": "AM",
-      "marca": "MartiDerm",
-      "producto": "The Originals Proteos Hydra Plus SP (ampollas)",
-      "precio": 15.48,
-      "activo": "vitamina C pura",
-      "para": "Para proteger de día como antioxidante, con vitamina C pura."
+      "paso": "Sérum de noche",
+      "turno": "PM",
+      "id": "medik8-crystal-retinal-1",
+      "marca": "Medik8",
+      "producto": "Crystal Retinal 1",
+      "precio": 56.5,
+      "activo": "retinal",
+      "para": "Para renovar la piel, con retinal.",
+      "frecuencia": "2 noches a la semana (lunes, jueves)",
+      "bajo_pedido": false,
+      "empate": [
+       {
+        "id": "medik8-crystal-retinal-3-serum",
+        "marca": "Medik8",
+        "producto": "Crystal Retinal 3 Serum",
+        "precio": 56,
+        "bajo_pedido": false
+       }
+      ]
      },
      {
       "paso": "Hidratante",
       "turno": "AMPM",
-      "marca": "Uriage",
-      "producto": "Bariederm-Cica Crema con Cu-Zn",
-      "precio": 9.52,
+      "id": "la-roche-posay-toleriane-sensitive-crema",
+      "marca": "La Roche-Posay",
+      "producto": "Toleriane Sensitive Crema",
+      "precio": 20,
       "activo": null,
-      "para": "Hidrata y cuida la barrera de la piel."
+      "para": "Hidrata y cuida la barrera de la piel.",
+      "frecuencia": null,
+      "bajo_pedido": false,
+      "empate": []
      },
      {
       "paso": "Protector solar",
       "turno": "AM",
-      "marca": "La Roche-Posay",
-      "producto": "Anthelios UVMune 400 Fluido Invisible SPF50+ (sin perfume)",
-      "precio": 18.69,
+      "id": "isdin-fotoultra-active-unify-color-spf50",
+      "marca": "ISDIN",
+      "producto": "Fotoprotector ISDIN FotoUltra 100 Active Unify Color Fusion Fluid SPF 50+",
+      "precio": 26.99,
       "activo": null,
-      "para": "Protege del sol. Es el paso que más cuida tu piel a largo plazo."
+      "para": "Protege del sol. Es el paso que más cuida tu piel a largo plazo.",
+      "frecuencia": null,
+      "bajo_pedido": false,
+      "empate": []
      }
     ]
    },
    "media": {
     "nombre": "Media",
-    "total": 28.97,
+    "total": 132.14,
     "productos": [
      {
       "paso": "Limpiador",
       "turno": "AMPM",
-      "marca": "Eucerin",
-      "producto": "Dermato Clean Hyaluron",
-      "precio": 4.5,
+      "id": "la-roche-posay-toleriane-son-lavant-anti-inconforts",
+      "marca": "La Roche-Posay",
+      "producto": "Toleriane Son Lavant Anti-Inconforts",
+      "precio": 16.49,
       "activo": null,
-      "para": "Limpia sin resecar."
+      "para": "Limpia sin resecar.",
+      "frecuencia": null,
+      "bajo_pedido": false,
+      "empate": [
+       {
+        "id": "la-roche-posay-toleriane-caring-wash",
+        "marca": "La Roche-Posay",
+        "producto": "Toleriane Caring Wash / Crema Limpiadora",
+        "precio": 19.35,
+        "bajo_pedido": false
+       },
+       {
+        "id": "la-roche-posay-toleriane",
+        "marca": "La Roche-Posay",
+        "producto": "Toleriane",
+        "precio": 16.99,
+        "bajo_pedido": false
+       }
+      ]
+     },
+     {
+      "paso": "Sérum de noche",
+      "turno": "PM",
+      "id": "medik8-crystal-retinal-1",
+      "marca": "Medik8",
+      "producto": "Crystal Retinal 1",
+      "precio": 56.5,
+      "activo": "retinal",
+      "para": "Para renovar la piel, con retinal.",
+      "frecuencia": "2 noches a la semana (lunes, jueves)",
+      "bajo_pedido": false,
+      "empate": [
+       {
+        "id": "medik8-crystal-retinal-3-serum",
+        "marca": "Medik8",
+        "producto": "Crystal Retinal 3 Serum",
+        "precio": 56,
+        "bajo_pedido": false
+       }
+      ]
      },
      {
       "paso": "Sérum de mañana",
       "turno": "AM",
-      "marca": "MartiDerm",
-      "producto": "The Originals Proteos Hydra Plus SP (ampollas)",
-      "precio": 15.48,
-      "activo": "vitamina C pura",
-      "para": "Para proteger de día como antioxidante, con vitamina C pura."
+      "id": "caudalie-vinergetic-c",
+      "marca": "Caudalie",
+      "producto": "Vinergetic C+",
+      "precio": 39.15,
+      "activo": "vitamina C estable",
+      "para": "Para proteger de día como antioxidante, con vitamina C estable.",
+      "frecuencia": null,
+      "bajo_pedido": false,
+      "empate": []
      },
      {
       "paso": "Hidratante",
       "turno": "AMPM",
-      "marca": "Avène",
-      "producto": "Cold Cream",
-      "precio": 8.99,
+      "id": "la-roche-posay-toleriane-sensitive-crema",
+      "marca": "La Roche-Posay",
+      "producto": "Toleriane Sensitive Crema",
+      "precio": 20,
       "activo": null,
-      "para": "Hidrata y cuida la barrera de la piel."
+      "para": "Hidrata y cuida la barrera de la piel.",
+      "frecuencia": null,
+      "bajo_pedido": false,
+      "empate": []
      },
      {
       "paso": "Protector solar",
       "turno": "AM",
-      "marca": "Uriage",
-      "producto": "Bariesun Fluido Antimanchas SPF50+",
-      "precio": 23.49,
+      "id": "isdin-fotoultra-active-unify-color-spf50",
+      "marca": "ISDIN",
+      "producto": "Fotoprotector ISDIN FotoUltra 100 Active Unify Color Fusion Fluid SPF 50+",
+      "precio": 26.99,
       "activo": null,
-      "para": "Protege del sol. Es el paso que más cuida tu piel a largo plazo."
+      "para": "Protege del sol. Es el paso que más cuida tu piel a largo plazo.",
+      "frecuencia": null,
+      "bajo_pedido": false,
+      "empate": []
      }
     ]
    },
    "completa": {
     "nombre": "Completa",
-    "total": 127.65,
+    "total": 132.14,
     "productos": [
      {
       "paso": "Limpiador",
       "turno": "AMPM",
-      "marca": "Uriage",
-      "producto": "Tolederm Control Gel-Leche Desmaquillante",
-      "precio": 11.89,
+      "id": "la-roche-posay-toleriane-son-lavant-anti-inconforts",
+      "marca": "La Roche-Posay",
+      "producto": "Toleriane Son Lavant Anti-Inconforts",
+      "precio": 16.49,
       "activo": null,
-      "para": "Limpia sin resecar."
-     },
-     {
-      "paso": "Sérum de mañana",
-      "turno": "AM",
-      "marca": "Vichy",
-      "producto": "Liftactiv Supreme Sérum 15% Vitamina C Pura",
-      "precio": 33.03,
-      "activo": "vitamina C pura",
-      "para": "Para proteger de día como antioxidante, con vitamina C pura."
+      "para": "Limpia sin resecar.",
+      "frecuencia": null,
+      "bajo_pedido": false,
+      "empate": [
+       {
+        "id": "la-roche-posay-toleriane-caring-wash",
+        "marca": "La Roche-Posay",
+        "producto": "Toleriane Caring Wash / Crema Limpiadora",
+        "precio": 19.35,
+        "bajo_pedido": false
+       },
+       {
+        "id": "la-roche-posay-toleriane",
+        "marca": "La Roche-Posay",
+        "producto": "Toleriane",
+        "precio": 16.99,
+        "bajo_pedido": false
+       }
+      ]
      },
      {
       "paso": "Sérum de noche",
       "turno": "PM",
-      "marca": "SVR",
-      "producto": "[A] Ampoule A Lift Serum Retinol 0,3%",
-      "precio": 35.15,
-      "activo": "retinol",
-      "para": "Para renovar la piel, con retinol."
+      "id": "medik8-crystal-retinal-1",
+      "marca": "Medik8",
+      "producto": "Crystal Retinal 1",
+      "precio": 56.5,
+      "activo": "retinal",
+      "para": "Para renovar la piel, con retinal.",
+      "frecuencia": "2 noches a la semana (lunes, jueves)",
+      "bajo_pedido": false,
+      "empate": [
+       {
+        "id": "medik8-crystal-retinal-3-serum",
+        "marca": "Medik8",
+        "producto": "Crystal Retinal 3 Serum",
+        "precio": 56,
+        "bajo_pedido": false
+       }
+      ]
+     },
+     {
+      "paso": "Sérum de mañana",
+      "turno": "AM",
+      "id": "caudalie-vinergetic-c",
+      "marca": "Caudalie",
+      "producto": "Vinergetic C+",
+      "precio": 39.15,
+      "activo": "vitamina C estable",
+      "para": "Para proteger de día como antioxidante, con vitamina C estable.",
+      "frecuencia": null,
+      "bajo_pedido": false,
+      "empate": []
      },
      {
       "paso": "Hidratante",
       "turno": "AMPM",
-      "marca": "Bioderma",
-      "producto": "Sensibio Defensive",
-      "precio": 16.53,
+      "id": "la-roche-posay-toleriane-sensitive-crema",
+      "marca": "La Roche-Posay",
+      "producto": "Toleriane Sensitive Crema",
+      "precio": 20,
       "activo": null,
-      "para": "Hidrata y cuida la barrera de la piel."
-     },
-     {
-      "paso": "Contorno de ojos",
-      "turno": "AMPM",
-      "marca": "Eucerin",
-      "producto": "Hyaluron-Filler Contorno de Ojos SPF 15",
-      "precio": 31.05,
-      "activo": null,
-      "para": "Formulado para la piel del contorno de los ojos."
+      "para": "Hidrata y cuida la barrera de la piel.",
+      "frecuencia": null,
+      "bajo_pedido": false,
+      "empate": []
      },
      {
       "paso": "Protector solar",
       "turno": "AM",
-      "marca": "La Roche-Posay",
-      "producto": "Anthelios UVMune 400 Fluido Invisible SPF50+ (sin perfume)",
-      "precio": 18.69,
+      "id": "isdin-fotoultra-active-unify-color-spf50",
+      "marca": "ISDIN",
+      "producto": "Fotoprotector ISDIN FotoUltra 100 Active Unify Color Fusion Fluid SPF 50+",
+      "precio": 26.99,
       "activo": null,
-      "para": "Protege del sol. Es el paso que más cuida tu piel a largo plazo."
+      "para": "Protege del sol. Es el paso que más cuida tu piel a largo plazo.",
+      "frecuencia": null,
+      "bajo_pedido": false,
+      "empate": []
      }
     ]
    }
@@ -186,8 +314,8 @@
     "alcance": "La cosmética ayuda poco: mejor tener expectativas realistas.",
     "plazo": "Resultados sutiles en el mejor de los casos.",
     "ingredientes": [
-     "Vitamina C pura",
-     "Retinol"
+     "Retinal",
+     "Vitamina C estable"
     ]
    },
    {
@@ -198,8 +326,8 @@
     "alcance": "La cosmética lo trata bien.",
     "plazo": "Unas 12 semanas.",
     "ingredientes": [
-     "Vitamina C pura",
-     "Retinol",
+     "Retinal",
+     "Vitamina C estable",
      "Exfoliante con ácido"
     ]
    },
@@ -208,58 +336,209 @@
     "nombre": "Arrugas",
     "nota": 61,
     "que_es": "Líneas finas y arrugas, sobre todo en la frente y alrededor de los ojos.",
-    "alcance": "La cosmética mejora la arruga fina; la profunda, poco.",
-    "plazo": "Mínimo 6 semanas, a veces 3 meses. El efecto completo llega hacia las 24 semanas.",
-    "ingredientes": [
-     "Vitamina C pura",
-     "Retinol",
-     "Exfoliante con ácido"
-    ]
+    "alcance": null,
+    "plazo": null,
+    "ingredientes": []
    }
   ],
   "ingredientes": [
    {
-    "nombre": "Vitamina C pura",
-    "turno": "AM",
-    "para": [
-     "Firmeza",
-     "Luminosidad",
-     "Arrugas"
-    ],
-    "ahora": true,
-    "por_que": "Para proteger de día como antioxidante. Encaja con 3 de tus objetivos.",
-    "motivo": null,
-    "frase": "La vitamina C es la de la comida, puesta en la piel: puede suavizar arrugas finas tras meses de uso.",
-    "cuando": "De día, debajo del protector · primeros cambios en unos 3 meses"
-   },
-   {
-    "nombre": "Retinol",
+    "nombre": "Retinal",
     "turno": "PM",
     "para": [
      "Firmeza",
-     "Luminosidad",
-     "Arrugas"
+     "Luminosidad"
     ],
     "ahora": true,
-    "por_que": "Para renovar la piel. Encaja con 3 de tus objetivos.",
+    "por_que": "Para renovar la piel. Encaja con 2 de tus objetivos.",
+    "motivo": null,
+    "frase": "El retinaldehído es una forma de vitamina A que ayuda a suavizar las arrugas finas y puede irritar al empezar.",
+    "cuando": "Por la noche · primeros cambios en 1–4 meses"
+   },
+   {
+    "nombre": "Vitamina C estable",
+    "turno": "AM",
+    "para": [
+     "Firmeza",
+     "Luminosidad"
+    ],
+    "ahora": true,
+    "por_que": "Para proteger de día como antioxidante. Encaja con 2 de tus objetivos.",
     "motivo": "Entra cuando lleves al menos dos semanas con el anterior y lo toleres.",
-    "frase": "El retinol es vitamina A en crema: mejora arrugas finas y aspereza, aunque puede irritar las primeras semanas.",
-    "cuando": "Noche · primeros cambios en 1–2 meses"
+    "frase": "La vitamina C es la de la comida, puesta en la piel: puede suavizar arrugas finas tras meses de uso.",
+    "cuando": "De día, debajo del protector · primeros cambios en unos 3 meses"
    },
    {
     "nombre": "Exfoliante con ácido",
     "turno": "PM",
     "para": [
-     "Luminosidad",
-     "Arrugas"
+     "Luminosidad"
     ],
     "ahora": false,
     "por_que": "Para exfoliar y alisar la textura.",
-    "motivo": "Entraría en una rutina con más pasos.",
+    "motivo": "El ácido entra cuando ya toleres el retinoide. Empezar los dos a la vez irrita.",
     "frase": "El ácido glicólico es un exfoliante que afloja las células muertas de la superficie para que se suelten antes.",
     "cuando": "Día o noche, con protector solar · cambios medidos en 6–22 semanas"
    }
-  ]
+  ],
+  "tarjetas": {
+   "basica": [
+    {
+     "nombre": "Retinal",
+     "turno": "PM",
+     "para": [
+      "Firmeza",
+      "Luminosidad"
+     ],
+     "frase": "El retinaldehído es una forma de vitamina A que ayuda a suavizar las arrugas finas y puede irritar al empezar.",
+     "por_que": "Para renovar la piel. Encaja con 2 de tus objetivos.",
+     "desde": null,
+     "producto": {
+      "marca": "Medik8",
+      "producto": "Crystal Retinal 1",
+      "precio": 56.5,
+      "bajo_pedido": false
+     }
+    },
+    {
+     "nombre": "Vitamina C estable",
+     "turno": "AM",
+     "para": [
+      "Firmeza",
+      "Luminosidad"
+     ],
+     "frase": "La vitamina C es la de la comida, puesta en la piel: puede suavizar arrugas finas tras meses de uso.",
+     "por_que": "Para proteger de día como antioxidante. Encaja con 2 de tus objetivos.",
+     "desde": "Media",
+     "producto": {
+      "marca": "Caudalie",
+      "producto": "Vinergetic C+",
+      "precio": 39.15,
+      "bajo_pedido": false
+     }
+    },
+    {
+     "nombre": "Ceramidas",
+     "turno": "AMPM",
+     "para": [
+      "Reparar la barrera"
+     ],
+     "frase": "Las ceramidas son grasas propias de tu piel que sellan su capa de fuera para que no pierda agua.",
+     "por_que": "",
+     "desde": null,
+     "producto": {
+      "marca": "La Roche-Posay",
+      "producto": "Toleriane Sensitive Crema",
+      "precio": 20,
+      "bajo_pedido": false
+     }
+    }
+   ],
+   "media": [
+    {
+     "nombre": "Retinal",
+     "turno": "PM",
+     "para": [
+      "Firmeza",
+      "Luminosidad"
+     ],
+     "frase": "El retinaldehído es una forma de vitamina A que ayuda a suavizar las arrugas finas y puede irritar al empezar.",
+     "por_que": "Para renovar la piel. Encaja con 2 de tus objetivos.",
+     "desde": null,
+     "producto": {
+      "marca": "Medik8",
+      "producto": "Crystal Retinal 1",
+      "precio": 56.5,
+      "bajo_pedido": false
+     }
+    },
+    {
+     "nombre": "Vitamina C estable",
+     "turno": "AM",
+     "para": [
+      "Firmeza",
+      "Luminosidad"
+     ],
+     "frase": "La vitamina C es la de la comida, puesta en la piel: puede suavizar arrugas finas tras meses de uso.",
+     "por_que": "Para proteger de día como antioxidante. Encaja con 2 de tus objetivos.",
+     "desde": null,
+     "producto": {
+      "marca": "Caudalie",
+      "producto": "Vinergetic C+",
+      "precio": 39.15,
+      "bajo_pedido": false
+     }
+    },
+    {
+     "nombre": "Ceramidas",
+     "turno": "AMPM",
+     "para": [
+      "Reparar la barrera"
+     ],
+     "frase": "Las ceramidas son grasas propias de tu piel que sellan su capa de fuera para que no pierda agua.",
+     "por_que": "",
+     "desde": null,
+     "producto": {
+      "marca": "La Roche-Posay",
+      "producto": "Toleriane Sensitive Crema",
+      "precio": 20,
+      "bajo_pedido": false
+     }
+    }
+   ],
+   "completa": [
+    {
+     "nombre": "Retinal",
+     "turno": "PM",
+     "para": [
+      "Firmeza",
+      "Luminosidad"
+     ],
+     "frase": "El retinaldehído es una forma de vitamina A que ayuda a suavizar las arrugas finas y puede irritar al empezar.",
+     "por_que": "Para renovar la piel. Encaja con 2 de tus objetivos.",
+     "desde": null,
+     "producto": {
+      "marca": "Medik8",
+      "producto": "Crystal Retinal 1",
+      "precio": 56.5,
+      "bajo_pedido": false
+     }
+    },
+    {
+     "nombre": "Vitamina C estable",
+     "turno": "AM",
+     "para": [
+      "Firmeza",
+      "Luminosidad"
+     ],
+     "frase": "La vitamina C es la de la comida, puesta en la piel: puede suavizar arrugas finas tras meses de uso.",
+     "por_que": "Para proteger de día como antioxidante. Encaja con 2 de tus objetivos.",
+     "desde": null,
+     "producto": {
+      "marca": "Caudalie",
+      "producto": "Vinergetic C+",
+      "precio": 39.15,
+      "bajo_pedido": false
+     }
+    },
+    {
+     "nombre": "Ceramidas",
+     "turno": "AMPM",
+     "para": [
+      "Reparar la barrera"
+     ],
+     "frase": "Las ceramidas son grasas propias de tu piel que sellan su capa de fuera para que no pierda agua.",
+     "por_que": "",
+     "desde": null,
+     "producto": {
+      "marca": "La Roche-Posay",
+      "producto": "Toleriane Sensitive Crema",
+      "precio": 20,
+      "bajo_pedido": false
+     }
+    }
+   ]
+  }
  },
  "anterior": null
 }

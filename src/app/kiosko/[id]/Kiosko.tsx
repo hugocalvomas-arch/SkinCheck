@@ -18,11 +18,17 @@ type Props = { farmaciaId: string; farmacia: string; precio: string; emailActivo
 type Revision = { id: string; fecha: string; dias: number; conFoto: boolean }
 
 const PREGUNTAS: { id: keyof Seguridad; t: string; nota: string; ops: [string, string][]; si?: (s: Partial<Seguridad>) => boolean }[] = [
-  { id: 'edad', t: '¿Qué edad tienes?', nota: 'Algunos ingredientes dependen de la edad.', ops: [['-14', 'Menos de 14'], ['14-17', '14 a 17'], ['18-24', '18 a 24'], ['25-39', '25 a 39'], ['40-49', '40 a 49'], ['50+', '50 o más']] },
+  { id: 'edad', t: '¿Qué edad tienes?', nota: 'Algunos ingredientes dependen de la edad.', ops: [['-14', 'Menos de 14'], ['14-17', '14 a 17'], ['18-24', '18 a 24'], ['25-34', '25 a 34'], ['35-44', '35 a 44'], ['45-54', '45 a 54'], ['55-64', '55 a 64'], ['65+', '65 o más']] },
   { id: 'sexo', t: '¿Eres mujer u hombre?', nota: 'El análisis de la foto no lo distingue, y cambia algunos productos (por ejemplo, el afeitado).', ops: [['mujer', 'Mujer'], ['hombre', 'Hombre'], ['nd', 'Prefiero no decirlo']] },
-  { id: 'embarazo', si: (s) => s.sexo !== 'hombre' && s.edad !== '50+', t: '¿Estás embarazada o en periodo de lactancia?', nota: 'Hay ingredientes que no se recomiendan en el embarazo ni en la lactancia.', ops: [['si', 'Sí'], ['no', 'No, o no aplica']] },
+  { id: 'embarazo', si: (s) => s.sexo !== 'hombre' && !['55+', '55-64', '65+'].includes(s.edad ?? ''), t: '¿Estás embarazada o dando el pecho?', nota: 'Hay ingredientes que no se recomiendan en el embarazo, y otros que conviene evitar mientras das el pecho.', ops: [['embarazo', 'Estoy embarazada'], ['lactancia', 'Estoy dando el pecho'], ['no', 'No, o no aplica']] },
   { id: 'receta', t: '¿Sigues algún tratamiento para la piel indicado por un médico?', nota: 'Si es así, no añadiremos activos que interfieran con él.', ops: [['no', 'No'], ['si', 'Sí']] },
   { id: 'reactiva', t: '¿Tu piel reacciona cuando pruebas un producto nuevo?', nota: 'Picor, rojez o escozor. Así sabemos si empezar por lo más suave.', ops: [['nunca', 'Casi nunca'], ['a_veces', 'A veces'], ['siempre', 'Casi siempre']] },
+  // Hugo, 24/11: quien empieza con un retinoide va a la concentración baja; quien ya lo tolera sigue con la suya
+  { id: 'retinoide', si: (s) => s.edad !== '14-17' && s.embarazo !== 'embarazo' && s.embarazo !== 'lactancia' && s.receta !== 'si', t: '¿Usas ya retinol o retinal?', nota: 'De esto depende la concentración con la que empiezas y cuántas noches a la semana.', ops: [['nunca', 'No, nunca'], ['reciente', 'Sí, desde hace menos de 3 meses'], ['tolera', 'Sí, y lo tolero bien']] },
+  // Hito 1 (Hugo, 27/11): tratamiento en consulta (cuál y cuándo) y fototipo declarado
+  { id: 'procedimiento', t: '¿Te has hecho algún tratamiento en consulta en las últimas 2 semanas?', nota: 'Después de un peeling, un láser o microagujas, la piel necesita una rutina distinta durante un tiempo.', ops: [['no', 'No'], ['peeling', 'Un peeling'], ['laser', 'Láser o luz pulsada'], ['microagujas', 'Microagujas o radiofrecuencia con agujas'], ['limpieza', 'Una limpieza facial'], ['otro', 'Otro, o no sé cuál']] },
+  { id: 'procedimiento_cuando', si: (s) => !!s.procedimiento && s.procedimiento !== 'no', t: '¿Cuándo te lo hiciste?', nota: 'Lo que puedes usar después depende del tiempo que ha pasado y de lo que te indicaron.', ops: [['semana', 'Hace menos de una semana'], ['dos_semanas', 'Hace una o dos semanas']] },
+  { id: 'fototipo', t: 'El primer día de sol fuerte, sin protección, tu piel…', nota: 'Así sé cuánto te conviene un protector solar con color. El protector 50+ va siempre.', ops: [['I', 'Se quema siempre y nunca se broncea'], ['II', 'Se quema con facilidad y coge poco color'], ['III', 'A veces se quema y se broncea poco a poco'], ['IV', 'Casi nunca se quema y se broncea bien'], ['V', 'Se pone muy morena y rara vez se quema'], ['VI', 'No se quema nunca'], ['nd', 'No lo sé']] },
 ]
 
 const MEJORAR: [string, string][] = [
@@ -41,10 +47,13 @@ export function Kiosko({ farmaciaId, farmacia, precio, emailActivo }: Props) {
   const [error, setError] = useState('')
   const [revision, setRevision] = useState<Revision | null>(null)
   const [guardarFoto, setGuardarFoto] = useState(false)
+  // Hugo, 24/11: las preguntas van justo después de la foto. Antes solo se pregunta la edad (menores de 14, sin foto).
+  const [pend, setPend] = useState<{ b64: string | null; m: string[] } | null>(null)
+  const [listas, setListas] = useState(false)
   const [, start] = useTransition()
 
   const reiniciar = useCallback(() => {
-    setPaso('reclamo'); setI(0); setSeg({}); setFoto(null); setRes(null); setError(''); setRevision(null); setGuardarFoto(false)
+    setPaso('reclamo'); setI(0); setSeg({}); setFoto(null); setRes(null); setError(''); setRevision(null); setGuardarFoto(false); setPend(null); setListas(false)
   }, [])
 
   // Privacidad: sin interacción, vuelve al inicio y descarta todo
@@ -56,25 +65,34 @@ export function Kiosko({ farmaciaId, farmacia, precio, emailActivo }: Props) {
     return () => { clearTimeout(t); window.removeEventListener('pointerdown', tocar) }
   }, [paso, reiniciar])
 
-  // Siguiente pregunta que aplica (el embarazo no se pregunta a hombres ni a partir de 50 años)
+  // Siguiente pregunta que aplica (el embarazo no se pregunta a hombres ni a partir de 55 años)
   const siguiente = (desde: number, s: Partial<Seguridad>) => { let k = desde; while (k < PREGUNTAS.length && PREGUNTAS[k].si && !PREGUNTAS[k].si!(s)) k++; return k }
   const anterior = (desde: number, s: Partial<Seguridad>) => { let k = desde; while (k >= 0 && PREGUNTAS[k].si && !PREGUNTAS[k].si!(s)) k--; return k }
 
   function responder(id: keyof Seguridad, v: string) {
     const s = { ...seg, [id]: v }
-    if (PREGUNTAS[i + 1]?.si && !PREGUNTAS[i + 1].si!(s)) (s as Partial<Seguridad>).embarazo = 'no'
+    if (PREGUNTAS[i + 1]?.id === 'embarazo' && !PREGUNTAS[i + 1].si!(s)) (s as Partial<Seguridad>).embarazo = 'no'
     setSeg(s)
-    if (id === 'edad' && v === '-14') return setPaso('menor')
+    if (id === 'edad') return setPaso(v === '-14' ? 'menor' : 'consentimiento')
     const k = siguiente(i + 1, s)
-    if (k < PREGUNTAS.length) setI(k)
-    else setPaso('consentimiento')
+    if (k < PREGUNTAS.length) return setI(k)
+    setListas(true)
+    analizar(pend?.b64 ?? null, pend?.m ?? [], s)
   }
 
-  function analizar(fotoB64: string | null, mejorar: string[] = []) {
+  // Con la foto hecha (o los objetivos elegidos), las preguntas; si ya estaban contestadas (repetir foto tras un error), directo al análisis
+  function trasCaptura(b64: string | null, m: string[]) {
+    if (listas) return analizar(b64, m)
+    setPend({ b64, m })
+    setI(siguiente(1, seg))
+    setPaso('preguntas')
+  }
+
+  function analizar(fotoB64: string | null, mejorar: string[] = [], s: Partial<Seguridad> = seg) {
     setError('')
     setPaso('analizando')
     start(async () => {
-      const r = await analizarKiosko(farmaciaId, seg as Seguridad, fotoB64, mejorar, true, { guardarFoto, seguimientoDe: revision?.id })
+      const r = await analizarKiosko(farmaciaId, s as Seguridad, fotoB64, mejorar, true, { guardarFoto, seguimientoDe: revision?.id })
       if ('error' in r) { setError(r.error ?? 'No se ha podido completar el análisis.'); setPaso(fotoB64 ? 'camara' : 'mejorar'); return }
       setRes(r)
       setPaso('resultado')
@@ -104,7 +122,7 @@ export function Kiosko({ farmaciaId, farmacia, precio, emailActivo }: Props) {
             <button onClick={reiniciar} className="boton">Volver al inicio</button>
           </Bloque>
         )}
-        {paso === 'preguntas' && <Pregunta q={PREGUNTAS[i]} n={i} valor={seg[PREGUNTAS[i].id]} onResp={(v) => responder(PREGUNTAS[i].id, v)} onAtras={() => { const k = anterior(i - 1, seg); return k >= 0 ? setI(k) : setPaso('aviso') }} />}
+        {paso === 'preguntas' && <Pregunta q={PREGUNTAS[i]} n={i} valor={seg[PREGUNTAS[i].id]} onResp={(v) => responder(PREGUNTAS[i].id, v)} onAtras={() => { if (i === 0) return setPaso('aviso'); const k = anterior(i - 1, seg); return k >= 1 ? setI(k) : setPaso(pend?.b64 ? 'camara' : 'mejorar') }} />}
         {paso === 'menor' && (
           <Bloque>
             <h2 className="titulo">Para menores de 14 años, mejor en persona</h2>
@@ -113,8 +131,8 @@ export function Kiosko({ farmaciaId, farmacia, precio, emailActivo }: Props) {
           </Bloque>
         )}
         {paso === 'consentimiento' && <Consentimiento revision={!!revision} guardar={guardarFoto} onGuardar={setGuardarFoto} onFoto={() => setPaso('camara')} onSinFoto={() => setPaso('mejorar')} />}
-        {paso === 'camara' && <Camara error={error} onFoto={(b64, url) => { setFoto(url); analizar(b64) }} />}
-        {paso === 'mejorar' && <Mejorar error={error} onListo={(m) => analizar(null, m)} />}
+        {paso === 'camara' && <Camara error={error} onFoto={(b64, url) => { setFoto(url); trasCaptura(b64, []) }} />}
+        {paso === 'mejorar' && <Mejorar error={error} onListo={(m) => trasCaptura(null, m)} />}
         {paso === 'analizando' && <Analizando foto={foto} />}
         {paso === 'resultado' && res && <Informe res={res} foto={foto} farmacia={farmacia} emailActivo={emailActivo} onFin={reiniciar} />}
       </main>
@@ -366,7 +384,7 @@ function Camara({ error, onFoto }: { error: string; onFoto: (b64: string, dataUr
       <div className="space-y-6">
         <h2 className="text-[2.25rem] leading-[1.05]">Coloca tu cara dentro del óvalo</h2>
         <ul className="space-y-3 text-lg text-[var(--k-muted)]">
-          {['Acércate hasta llenarlo', 'Mira de frente, sin sonreír', 'Sin gafas y con la frente despejada', 'Mejor sin maquillaje'].map((t) => (
+          {['Cara lavada, sin maquillaje ni crema', 'Luz de frente, sin una ventana detrás', 'Acércate hasta llenar el óvalo', 'Cabeza recta, mirando a la cámara', 'Cara relajada, sin sonreír ni fruncir', 'Sin gafas y con la frente despejada'].map((t) => (
             <li key={t} className="flex gap-3"><Check size={22} className="text-[var(--k-accent)] shrink-0 mt-0.5" />{t}</li>
           ))}
         </ul>

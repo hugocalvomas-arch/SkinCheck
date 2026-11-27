@@ -19,7 +19,7 @@ Font.register({
 })
 Font.registerHyphenationCallback((w) => [w])
 
-const C = { tinta: '#0f1b1d', tinta2: '#2b3a3c', gris: '#56676a', linea: '#dfe6e5', marca: '#0b6e5b', suave: '#e5f2ee', papel2: '#f3f6f5' }
+const C = { aviso: '#8a4b0f', avisoSuave: '#fbf0e4', tinta: '#0f1b1d', tinta2: '#2b3a3c', gris: '#56676a', linea: '#dfe6e5', marca: '#0b6e5b', suave: '#e5f2ee', papel2: '#f3f6f5' }
 const s = StyleSheet.create({
   pagina: { fontFamily: 'Geist', fontSize: 10, color: C.tinta, padding: 40, lineHeight: 1.45 },
   cab: { flexDirection: 'row', justifyContent: 'space-between', fontSize: 8.5, color: C.gris, marginBottom: 24 },
@@ -70,8 +70,12 @@ function Pie() {
 
 export type AnteriorPdf = { fecha: string; ui: Record<string, number>; global?: number; edad?: number; foto: string | null }
 
-export async function crearInformePdf(o: { farmacia: string; foto: ResultadoFoto | null; fotoCliente: string | null; lectura: Lectura; rutina: any; avisos: string[]; codigo?: string | null; anterior?: AnteriorPdf | null }) {
+export async function crearInformePdf(o: { farmacia: string; foto: ResultadoFoto | null; fotoCliente: string | null; lectura: Lectura; rutina: any; avisos: string[]; consultas?: string[]; codigo?: string | null; anterior?: AnteriorPdf | null }) {
   const { farmacia, foto: F, lectura, rutina } = o
+  // Ingredientes de este nivel, cada uno con su producto (Hugo, 25/11); sin tarjetas (análisis antiguos), los de siempre
+  const nivelClave = ({ 'Básica': 'basica', 'Media': 'media', 'Completa': 'completa' } as Record<string, string>)[rutina?.nombre] ?? 'media'
+  const tarjetas: any[] = lectura.tarjetas?.[nivelClave] ?? lectura.ingredientes
+  const enRutina = new Set(tarjetas.map((g: any) => g.nombre))
   const fecha = new Date().toLocaleDateString('es-ES', { day: 'numeric', month: 'long', year: 'numeric', timeZone: 'Europe/Madrid' })
   const notas = F ? Object.keys(NOMBRE_ASPECTO).filter((a) => F.ui?.[a] != null || F.puntuaciones[a] != null)
     .map((a) => [a, Math.round(F.ui?.[a] ?? 100 - F.puntuaciones[a])] as [string, number]).sort((x, y) => x[1] - y[1]) : []
@@ -209,18 +213,19 @@ export async function crearInformePdf(o: { farmacia: string; foto: ResultadoFoto
           <View key={x.aspecto} style={{ marginBottom: 10 }} wrap={false}>
             <Text style={{ fontWeight: 600, fontSize: 11 }}><Text style={{ color: C.marca }}>{k + 1}  </Text>{x.nombre}{x.nota != null ? <Text style={[s.gris, { fontWeight: 400 }]}>  {x.nota}/100 · {nivelPiel(x.nota)}</Text> : null}</Text>
             <Text style={s.gris}>{x.que_es}</Text>
-            {x.ingredientes.length > 0 && <Text>Lo tratan: {lista(x.ingredientes.map(min))}.</Text>}
+            {x.ingredientes.filter((i) => enRutina.has(i)).length > 0 && <Text>Lo tratan: {lista(x.ingredientes.filter((i) => enRutina.has(i)).map(min))}.</Text>}
             {(x.alcance || x.plazo) && <Text style={s.gris}>{[x.alcance, x.plazo].filter(Boolean).join(' ')}</Text>}
           </View>
         ))}
 
-        {lectura.ingredientes.length > 0 && <Text style={[s.h2, { marginTop: 12 }]}>Tus ingredientes clave</Text>}
-        {lectura.ingredientes.map((g) => (
+        {tarjetas.length > 0 && <Text style={[s.h2, { marginTop: 12 }]}>Tus ingredientes clave</Text>}
+        {tarjetas.map((g: any) => (
           <View key={g.nombre} style={{ marginBottom: 9, paddingLeft: 10, borderLeft: `2pt solid ${C.suave}` }} wrap={false}>
             <Text style={{ fontWeight: 600, fontSize: 11 }}>{g.nombre} <Text style={[s.gris, { fontWeight: 400, fontSize: 9 }]}>· {g.turno && TURNO[g.turno] ? `${TURNO[g.turno]} · ` : ''}para {lista(g.para.map(min))}</Text></Text>
             {g.frase && <Text>{g.frase}</Text>}
             {g.cuando && <Text style={s.gris}>Cuándo: {g.cuando}</Text>}
-            {!g.ahora && g.motivo && <Text style={s.gris}>{g.motivo}</Text>}
+            {g.producto ? <Text style={s.gris}>{g.desde ? `En la rutina ${g.desde.toLowerCase()}: ` : 'Lo lleva: '}{g.producto.marca} {g.producto.producto}</Text>
+              : !g.ahora && g.motivo && <Text style={s.gris}>{g.motivo}</Text>}
           </View>
         ))}
         <Pie />
@@ -238,6 +243,8 @@ export async function crearInformePdf(o: { farmacia: string; foto: ResultadoFoto
                 <View style={{ flex: 1 }}>
                   <Text style={[s.gris, { fontSize: 8.5 }]}>{p.paso}</Text>
                   <Text style={{ fontWeight: 500 }}>{p.marca} {p.producto}</Text>
+                  {p.frecuencia && <Text style={{ color: C.marca }}>{p.frecuencia}</Text>}
+                  {p.bajo_pedido && <Text style={s.gris}>Bajo pedido: la farmacia te lo consigue</Text>}
                   {p.para && <Text style={s.gris}>{p.para}</Text>}
                 </View>
                 <Text style={{ width: 50, textAlign: 'right' }}>{eur(p.precio)}</Text>
@@ -245,6 +252,12 @@ export async function crearInformePdf(o: { farmacia: string; foto: ResultadoFoto
             ))}
           </View>
         ))}
+        {(o.consultas?.length ?? 0) > 0 && (
+          <View style={{ backgroundColor: C.avisoSuave, borderRadius: 6, padding: 12, gap: 5, marginBottom: 10 }} wrap={false}>
+            <Text style={{ fontWeight: 600, color: C.aviso }}>Conviene consultarlo</Text>
+            {o.consultas!.map((a, k) => <Text key={k}>· {a}</Text>)}
+          </View>
+        )}
         {o.avisos.length > 0 && (
           <View style={{ backgroundColor: C.suave, borderRadius: 6, padding: 12, gap: 5 }} wrap={false}>
             <Text style={{ fontWeight: 600 }}>Cómo empezar</Text>

@@ -6,6 +6,7 @@ import { ArrowLeft, ArrowRight, ArrowsLeftRight, CalendarCheck, Check, Clock, Dr
 import { aTrabajar, nivelPiel } from '@/lib/escalaPiel'
 import { AVISO_EMAIL } from '@/lib/privacidad'
 import { enviarInformeEmail } from './actions'
+import { textosConsulta } from './consultas'
 
 // Resultado en el iPad como un recorrido con «Siguiente»: primero la piel (foto y medidas),
 // luego los ingredientes y por qué, luego los productos, y al final cómo llevárselo.
@@ -64,7 +65,7 @@ export function Informe({ res, foto, farmacia, emailActivo = true, onFin }: { re
       <div key={actual + nivel} className="flex-1 w-full max-w-6xl mx-auto px-6 md:px-10 pt-6 pb-10 r-paso" style={{ ['--dir' as any]: dir }}>
         {actual === 'evolucion' && <Evolucion anterior={res.anterior} F={F} foto={foto} />}
         {actual === 'piel' && <PasoPiel F={F} foto={foto} objetivos={res.lectura?.objetivos ?? []} />}
-        {actual === 'ingredientes' && <PasoIngredientes ingredientes={res.lectura?.ingredientes ?? []} objetivos={res.lectura?.objetivos ?? []} conProducto={conProducto} />}
+        {actual === 'ingredientes' && <PasoIngredientes R={R} lectura={res.lectura} nivel={nivel} conProducto={conProducto} />}
         {actual === 'productos' && <PasoProductos R={R} nivel={nivel} onNivel={setNivel} ingredientes={res.lectura?.ingredientes ?? []} />}
         {actual === 'llevar' && <PasoLlevar res={res} rut={rut} foto={foto} farmacia={farmacia} nivel={nivel} emailActivo={emailActivo} />}
       </div>
@@ -240,50 +241,84 @@ const lista = (l: string[]) => (l.length > 1 ? `${l.slice(0, -1).join(', ')} y $
 
 /* ---------- 2. Ingredientes ---------- */
 
-function PasoIngredientes({ ingredientes, objetivos, conProducto }: { ingredientes: any[]; objetivos: any[]; conProducto: (g: any) => any }) {
-  // Primero los que ya van en la rutina; como mucho 4 para que se lean de un vistazo
-  const lista4 = [...ingredientes].sort((a, b) => Number(!!conProducto(b)) - Number(!!conProducto(a)) || Number(b.ahora) - Number(a.ahora)).slice(0, 4)
+/** Foto del producto (las de la web de Hugo, en public/fotos-productos); sin foto, el icono del paso */
+function FotoProducto({ id, paso, alt, className = 'w-16 h-16' }: { id?: string | null; paso?: string; alt: string; className?: string }) {
+  const [falla, setFalla] = useState(!id)
+  return (
+    <span className={`${className} shrink-0 rounded-[var(--radius-input)] bg-white border border-[var(--k-line)] grid place-items-center overflow-hidden text-[var(--k-accent)]`}>
+      {falla ? ICONO_PASO(paso ?? '') : <img src={`/fotos-productos/${id}.webp`} alt={alt} onError={() => setFalla(true)} className="w-full h-full object-contain p-1" />}
+    </span>
+  )
+}
+
+function PasoIngredientes({ R, lectura, nivel, conProducto }: { R: any; lectura: any; nivel: Nivel; conProducto: (g: any) => any }) {
+  const ingredientes: any[] = lectura?.ingredientes ?? []
+  const objetivos: any[] = lectura?.objetivos ?? []
+  const consultas = textosConsulta(R?.derivacion)
+  // Con el motor nuevo, la lectura trae las tarjetas de cada nivel con su producto; si no, se arman aquí
+  const idDe = (pr: any) => pr?.id ?? (['basica', 'media', 'completa'] as const).flatMap((n) => R.rutinas[n]?.productos ?? []).find((p: any) => p.marca === pr?.marca && p.producto === pr?.producto)?.id
+  const tarjetas: any[] = lectura?.tarjetas?.[nivel]
+    ?? [...ingredientes].sort((a, b) => Number(!!conProducto(b)) - Number(!!conProducto(a)) || Number(b.ahora) - Number(a.ahora)).slice(0, 4)
+      .map((g) => ({ ...g, producto: conProducto(g) ?? null, despues: !g.ahora }))
+  const cuando = (n: string) => ingredientes.find((g) => g.nombre === n)?.cuando
   const nota: Record<string, number | null> = Object.fromEntries(objetivos.map((o: any) => [o.nombre, o.nota]))
-  if (!lista4.length) return <Titulo texto="Tu farmacéutico te explicará los ingredientes" />
-  const cols = lista4.length === 4 ? 2 : lista4.length
+  const cols = tarjetas.length === 4 ? 2 : Math.max(1, tarjetas.length)
+  const base = consultas.length ? 900 : 700
   return (
     <div className="grid gap-8">
       <div className="grid gap-3 max-w-3xl">
         <Titulo texto="Los ingredientes que necesita tu piel" />
         <p className="texto m-0 r-sube" style={{ ['--d' as any]: '400ms' }}>Elegidos para lo que hemos visto en tu foto.</p>
       </div>
-      <ol className="grid gap-5 list-none p-0 m-0 md:[grid-template-columns:var(--cols)]" style={{ ['--cols' as any]: `repeat(${cols}, minmax(0, 1fr))` }}>
-        {lista4.map((g: any, n: number) => {
-          const d = 700 + n * 650
-          const despues = !g.ahora
-          return (
-            <li key={g.nombre} className={`r-carta relative rounded-[var(--radius-card)] border bg-[var(--k-bg)] p-6 grid gap-4 content-start shadow-tarjeta ${despues ? 'border-dashed border-[var(--k-line)]' : 'border-[var(--k-line)]'}`} style={{ ['--d' as any]: `${d}ms` }}>
-              <div className="flex items-center justify-between gap-3">
-                <Anillo n={n + 1} retraso={d + 250} apagado={despues} />
-                <span className="inline-flex items-center gap-1.5 text-sm text-[var(--k-muted)] rounded-full bg-[var(--k-soft)] px-3 py-1.5">
-                  {g.turno === 'PM' ? <Moon size={16} /> : <Sun size={16} />}{g.turno === 'PM' ? 'Noche' : g.turno === 'AMPM' ? 'Mañana y noche' : 'Mañana'}
-                </span>
-              </div>
-              <div className="grid gap-1.5">
-                <span className={`text-[1.75rem] leading-[1.1] font-semibold tracking-[-0.025em] ${despues ? 'text-[var(--k-muted)]' : ''}`}>{g.nombre}</span>
-                <span className="text-lg leading-snug text-[var(--k-text)]">{primeraFrase(g.por_que) || primeraFrase(g.frase)}</span>
-              </div>
-              <div className="flex flex-wrap gap-2">
-                {g.para.map((a: string, m: number) => (
-                  <span key={a} className="r-chip inline-flex items-center gap-2 rounded-full bg-[var(--k-accent-soft)] text-[var(--k-accent)] pl-3 pr-1.5 py-1 text-sm font-medium" style={{ ['--d' as any]: `${d + 450 + m * 110}ms` }}>
-                    {a}{nota[a] != null && <span className="cifra rounded-full bg-papel px-2 py-0.5 text-xs text-[var(--k-text)]">{nota[a]}</span>}
+      {consultas.length > 0 && (
+        <section role="note" className="r-sube rounded-[var(--radius-card)] bg-[var(--k-warn-soft)] p-5 grid gap-2" style={{ ['--d' as any]: '600ms' }}>
+          <p className="text-lg font-medium text-[var(--k-warn)] m-0">Conviene consultarlo</p>
+          <ul className="grid gap-1.5 m-0 p-0 list-none">{consultas.map((t) => <li key={t} className="leading-relaxed">{t}</li>)}</ul>
+          <p className="text-sm text-[var(--k-muted)] m-0">Pregunta en el mostrador: el farmacéutico te dirá si hace falta ir al médico.</p>
+        </section>
+      )}
+      {!tarjetas.length ? <p className="texto">Tu farmacéutico te explicará los ingredientes de tu rutina.</p> : (
+        <ol className="grid gap-5 list-none p-0 m-0 md:[grid-template-columns:var(--cols)]" style={{ ['--cols' as any]: `repeat(${cols}, minmax(0, 1fr))` }}>
+          {tarjetas.map((g: any, n: number) => {
+            const d = base + n * 900
+            const despues = !!g.despues
+            const pr = g.producto
+            const txtCuando = despues ? `Más adelante. ${g.motivo ?? ''}` : cuando(g.nombre)
+            return (
+              <li key={g.nombre} className={`r-carta relative rounded-[var(--radius-card)] border bg-[var(--k-bg)] p-6 grid gap-4 content-start shadow-tarjeta ${despues ? 'border-dashed border-[var(--k-line)]' : 'border-[var(--k-line)]'}`} style={{ ['--d' as any]: `${d}ms` }}>
+                <div className="flex items-center justify-between gap-3">
+                  <Anillo n={n + 1} retraso={d + 250} apagado={despues} />
+                  <span className="inline-flex items-center gap-1.5 text-sm text-[var(--k-muted)] rounded-full bg-[var(--k-soft)] px-3 py-1.5">
+                    {g.turno === 'PM' ? <Moon size={16} /> : <Sun size={16} />}{g.turno === 'PM' ? 'Noche' : g.turno === 'AMPM' ? 'Mañana y noche' : 'Mañana'}
                   </span>
-                ))}
-              </div>
-              {(despues || g.cuando) && (
-                <p className="m-0 pt-3 border-t border-[var(--k-line)] text-sm text-[var(--k-muted)] flex items-start gap-2 leading-snug">
-                  <Clock size={16} className="shrink-0 mt-0.5" />{despues ? `Más adelante. ${g.motivo ?? ''}` : g.cuando}
-                </p>
-              )}
-            </li>
-          )
-        })}
-      </ol>
+                </div>
+                <div className="grid gap-1.5">
+                  <span className={`text-[1.75rem] leading-[1.1] font-semibold tracking-[-0.025em] ${despues ? 'text-[var(--k-muted)]' : ''}`}>{g.nombre}</span>
+                  <span className="text-lg leading-snug text-[var(--k-text)]">{primeraFrase(g.por_que) || primeraFrase(g.frase)}</span>
+                </div>
+                <div className="flex flex-wrap gap-2">
+                  {(g.para ?? []).map((a: string, m: number) => (
+                    <span key={a} className="r-chip inline-flex items-center gap-2 rounded-full bg-[var(--k-accent-soft)] text-[var(--k-accent)] pl-3 pr-1.5 py-1 text-sm font-medium" style={{ ['--d' as any]: `${d + 450 + m * 120}ms` }}>
+                      {a}{nota[a] != null && <span className="cifra rounded-full bg-papel px-2 py-0.5 text-xs text-[var(--k-text)]">{nota[a]}</span>}
+                    </span>
+                  ))}
+                </div>
+                {pr && (
+                  <div className="r-sube flex items-center gap-3 pt-3 border-t border-[var(--k-line)]" style={{ ['--d' as any]: `${d + 700}ms` }}>
+                    <FotoProducto id={idDe(pr)} alt={`${pr.marca} ${pr.producto}`} className="w-12 h-12" />
+                    <span className="text-sm leading-snug min-w-0"><span className="block text-[var(--k-muted)]">{g.desde ? `En la rutina ${g.desde.toLowerCase()} · ` : 'Lo llevas en '}{pr.marca}</span>{pr.producto}</span>
+                  </div>
+                )}
+                {txtCuando && (
+                  <p className="m-0 text-sm text-[var(--k-muted)] flex items-start gap-2 leading-snug">
+                    <Clock size={16} className="shrink-0 mt-0.5" />{txtCuando}
+                  </p>
+                )}
+              </li>
+            )
+          })}
+        </ol>
+      )}
     </div>
   )
 }
@@ -323,16 +358,18 @@ function PasoProductos({ R, nivel, onNivel, ingredientes }: { R: any; nivel: Niv
       <div className="flex flex-wrap items-end gap-x-6 gap-y-4">
         <div className="grid gap-3">
           <Titulo texto="Tu rutina, paso a paso" />
-          <p className="texto m-0 r-sube" style={{ ['--d' as any]: '400ms' }}>Productos que tenemos aquí, en la farmacia.</p>
+          <p className="texto m-0 r-sube" style={{ ['--d' as any]: '400ms' }}>{R.sin_stock ? 'Lo que no tengamos aquí, te lo conseguimos.' : 'Productos que tenemos aquí, en la farmacia.'}</p>
         </div>
-        <div role="tablist" aria-label="Nivel de la rutina" className="md:ml-auto inline-flex rounded-[var(--radius-card)] border border-[var(--k-line)] bg-[var(--k-bg)] p-1 r-sube" style={{ ['--d' as any]: '300ms' }}>
-          {(['basica', 'media', 'completa'] as const).map((n) => (
-            <button key={n} role="tab" aria-selected={nivel === n} onClick={() => onNivel(n)}
-              className={`h-11 px-4 rounded-lg text-sm ${nivel === n ? 'bg-[var(--k-accent)] text-sobre-marca' : 'text-[var(--k-muted)] hover:text-[var(--k-text)]'}`}>
-              {R.rutinas[n].nombre} <span className="num">{eur(R.rutinas[n].total)}</span>
-            </button>
-          ))}
-        </div>
+        {!R.unica && (
+          <div role="tablist" aria-label="Nivel de la rutina" className="md:ml-auto inline-flex rounded-[var(--radius-card)] border border-[var(--k-line)] bg-[var(--k-bg)] p-1 r-sube" style={{ ['--d' as any]: '300ms' }}>
+            {(['basica', 'media', 'completa'] as const).map((n) => (
+              <button key={n} role="tab" aria-selected={nivel === n} onClick={() => onNivel(n)}
+                className={`h-11 px-4 rounded-lg text-sm ${nivel === n ? 'bg-[var(--k-accent)] text-sobre-marca' : 'text-[var(--k-muted)] hover:text-[var(--k-text)]'}`}>
+                {R.rutinas[n].nombre} <span className="num">{eur(R.rutinas[n].total)}</span>
+              </button>
+            ))}
+          </div>
+        )}
       </div>
       {productos.length ? (
         <div className="grid md:grid-cols-2 gap-8">
@@ -347,19 +384,37 @@ function PasoProductos({ R, nivel, onNivel, ingredientes }: { R: any; nivel: Niv
 function Columna({ icono, titulo, productos, desde, nombreActivo }: { icono: React.ReactNode; titulo: string; productos: any[]; desde: number; nombreActivo: (p: any) => string | null }) {
   return (
     <div className="grid gap-3 content-start">
-      <p className="m-0 flex items-center gap-2 font-medium text-[var(--k-accent)] r-sube" style={{ ['--d' as any]: `${500 + desde * 260}ms` }}>{icono} {titulo}</p>
+      <p className="m-0 flex items-center gap-2 font-medium text-[var(--k-accent)] r-sube" style={{ ['--d' as any]: `${500 + desde * 420}ms` }}>{icono} {titulo}</p>
       <ol className="grid gap-3 list-none p-0 m-0">
         {productos.map((p: any, n: number) => {
           const act = nombreActivo(p)
+          const d = 700 + (desde + n) * 420
+          const empate: any[] = p.empate ?? []
           return (
-            <li key={`${p.paso}-${n}`} className="r-producto rounded-[var(--radius-card)] border border-[var(--k-line)] bg-[var(--k-bg)] px-4 py-3 grid grid-cols-[3rem_minmax(0,1fr)_auto] gap-x-4 gap-y-1 items-center" style={{ ['--d' as any]: `${650 + (desde + n) * 260}ms` }}>
-              <span className="row-span-2 w-12 h-12 rounded-full bg-[var(--k-accent-soft)] text-[var(--k-accent)] grid place-items-center">{ICONO_PASO(p.paso)}</span>
+            <li key={`${p.paso}-${n}`} className="r-producto rounded-[var(--radius-card)] border border-[var(--k-line)] bg-[var(--k-bg)] p-3 grid grid-cols-[4rem_minmax(0,1fr)_auto] gap-x-4 gap-y-1 items-center" style={{ ['--d' as any]: `${d}ms` }}>
+              <span className="row-span-2 r-chip" style={{ ['--d' as any]: `${d + 150}ms` }}><FotoProducto id={p.id} paso={p.paso} alt={`${p.marca} ${p.producto}`} /></span>
               <span className="text-sm text-[var(--k-muted)] flex items-center gap-2 flex-wrap">
                 {n + 1}. {p.paso}
                 {act && <span className="rounded-full bg-[var(--k-accent)] text-sobre-marca px-2 py-0.5 text-xs font-medium">{act}</span>}
               </span>
-              <span className="row-span-2 cifra text-lg whitespace-nowrap">{eur(p.precio)}</span>
-              <span className="text-lg leading-snug"><span className="text-[var(--k-muted)]">{p.marca}</span> {p.producto}</span>
+              <span className="row-span-2 cifra text-lg whitespace-nowrap self-start pt-5">{eur(p.precio)}</span>
+              <span className="leading-snug">
+                <span className="text-lg"><span className="text-[var(--k-muted)]">{p.marca}</span> {p.producto}</span>
+                {p.frecuencia && <span className="block text-sm text-[var(--k-accent)]">{p.frecuencia}</span>}
+                {p.bajo_pedido && <span className="block text-sm text-[var(--k-muted)]">Bajo pedido: la farmacia te lo consigue</span>}
+              </span>
+              {empate.length > 0 && (
+                <div className="col-span-3 mt-2 pt-2 border-t border-[var(--k-line)] grid gap-2 r-sube" style={{ ['--d' as any]: `${d + 350}ms` }}>
+                  <span className="text-sm text-[var(--k-muted)]">Igual de bueno para ti:</span>
+                  {empate.map((e: any) => (
+                    <span key={e.id ?? e.producto} className="flex items-center gap-3 text-sm">
+                      <FotoProducto id={e.id} paso={p.paso} alt={`${e.marca} ${e.producto}`} className="w-10 h-10" />
+                      <span className="flex-1 min-w-0 leading-snug"><span className="text-[var(--k-muted)]">{e.marca}</span> {e.producto}</span>
+                      <span className="cifra whitespace-nowrap">{eur(e.precio)}</span>
+                    </span>
+                  ))}
+                </div>
+              )}
             </li>
           )
         })}
@@ -378,8 +433,8 @@ function PasoLlevar({ res, rut, foto, farmacia, nivel, emailActivo }: { res: any
   const noche = productos.filter((p: any) => p.turno === 'PM' || p.turno === 'AMPM')
   async function generarQr() {
     const lineas = [`Mi rutina SkinRead (${farmacia})`, '']
-    if (manana.length) lineas.push('Mañana:', ...manana.map((p: any) => `- ${p.marca} ${p.producto}`), '')
-    if (noche.length) lineas.push('Noche:', ...noche.map((p: any) => `- ${p.marca} ${p.producto}`), '')
+    if (manana.length) lineas.push('Mañana:', ...manana.map((p: any) => `- ${p.marca} ${p.producto}${p.bajo_pedido ? ' (bajo pedido)' : ''}`), '')
+    if (noche.length) lineas.push('Noche:', ...noche.map((p: any) => `- ${p.marca} ${p.producto}${p.bajo_pedido ? ' (bajo pedido)' : ''}${p.frecuencia ? ` · ${p.frecuencia.toLowerCase()}` : ''}`), '')
     lineas.push(`Total: ${eur(rut.total)}`, res.codigo ? `Código de revisión: ${res.codigo}. Vuelve en 4 semanas para comparar.` : 'Repite el análisis en 4 semanas para comparar.')
     setQr(await QRCode.toDataURL(`https://wa.me/?text=${encodeURIComponent(lineas.join('\n'))}`, { margin: 1, width: 400, errorCorrectionLevel: 'L', color: { dark: '#0f1b1d', light: '#ffffff' } }))
   }

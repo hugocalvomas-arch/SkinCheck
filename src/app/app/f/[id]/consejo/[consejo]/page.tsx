@@ -24,7 +24,7 @@ export default async function Resultado({ params }: { params: Promise<{ id: stri
 
       {c.puntuaciones_foto?.puntuaciones && <FotoAnalisis f={c.puntuaciones_foto} />}
 
-      {R.productos_en_stock < 20 && (
+      {R.productos_en_stock < 20 && !R.sin_stock && (
         <p className="text-sm bg-aviso-suave text-aviso rounded-lg p-3">
           Solo hay {R.productos_en_stock} productos reconocidos con stock en esta farmacia. Con tan pocos, algunos pasos pueden quedar sin producto.
         </p>
@@ -79,6 +79,7 @@ export default async function Resultado({ params }: { params: Promise<{ id: stri
                     {p.producto ? (
                       <>
                         <div className="font-medium">{p.marca} {p.producto}</div>
+                        {p.bajo_pedido && <div className="text-xs text-aviso font-medium">Sin stock: pedir para la clienta</div>}
                         <div className="text-gris">{p.para}{p.dosis ? ` (${p.dosis})` : ''}</div>
                         {p.ademas?.length > 0 && <div className="text-xs text-marca">Además: {p.ademas.join('; ')}</div>}
                         <div>{eur(p.precio)}</div>

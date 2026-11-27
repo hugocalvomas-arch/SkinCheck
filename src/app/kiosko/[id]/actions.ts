@@ -2,18 +2,36 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { supabaseServer } from '@/lib/supabase/server'
 import { calcularRutinas } from '@/server/rutinas'
-import { analizarFoto, problemasDesdeFoto, UMBRALES_POR_DEFECTO, type ResultadoFoto } from '@/server/analisisPiel'
+import { recomiendaSinStock } from '@/server/ajustesFarmacia'
+import { analizarFoto, UMBRALES_POR_DEFECTO, type ResultadoFoto } from '@/server/analisisPiel'
+import { conReglasFoto } from '@/server/reglasFoto'
 import { construirLectura } from '@/server/lectura'
 import { crearInformePdf, type AnteriorPdf } from '@/server/informePdf'
+import { textosConsulta } from './consultas'
 import type { Respuestas } from '@/lib/cuestionario'
 import { randomInt } from 'node:crypto'
 import { registroConsentimiento } from '@/lib/privacidad'
 
-export type Seguridad = { edad: string; sexo: 'mujer' | 'hombre' | 'nd'; embarazo: 'si' | 'no'; receta: 'si' | 'no'; reactiva: 'nunca' | 'a_veces' | 'siempre' }
+export type Seguridad = { edad: string; sexo: 'mujer' | 'hombre' | 'nd'; embarazo: 'embarazo' | 'lactancia' | 'no'; receta: 'si' | 'no'; reactiva: 'nunca' | 'a_veces' | 'siempre'; retinoide?: 'nunca' | 'reciente' | 'tolera'
+  // Hito 1 (Hugo, 27/11): fototipo declarado (nunca deducido de la foto) y tratamiento en consulta en las últimas 2 semanas
+  fototipo?: 'I' | 'II' | 'III' | 'IV' | 'V' | 'VI' | 'nd'
+  procedimiento?: 'no' | 'peeling' | 'laser' | 'microagujas' | 'limpieza' | 'otro'
+  procedimiento_cuando?: 'semana' | 'dos_semanas' }
+
+async function esDeLaFarmacia(sb: Awaited<ReturnType<typeof supabaseServer>>, farmaciaId: string) {
+  const { data: u } = await sb.auth.getUser()
+  if (!u.user) return false
+  const { data } = await sb.from('miembros').select('farmacia_id').eq('farmacia_id', farmaciaId).eq('user_id', u.user.id).maybeSingle()
+  return !!data
+}
+
+// Freno contra el uso del iPad para mandar correos en masa: pocos envíos por análisis y solo en la hora siguiente.
+// Es por instancia del servidor (best effort); la defensa principal es que hace falta la sesión de la farmacia.
+const envios = new Map<string, number>()
+const MAX_ENVIOS_POR_ANALISIS = 3
 
 const PROBLEMA_DE: Record<string, string> = Object.fromEntries(UMBRALES_POR_DEFECTO.map((u) => [u.aspecto, u.problema]))
 
-/** Recorrido de la clienta en el iPad: 4 respuestas de seguridad + foto (o, si no hay foto, lo que quiere mejorar). */
 /** Datos del primer análisis que se enseñan en la revisión. */
 export type Anterior = { fecha: string; dias: number; ui: Record<string, number>; global?: number; edad?: number; foto: string | null }
 export type Extra = { guardarFoto?: boolean; seguimientoDe?: string }
@@ -24,23 +42,36 @@ const nuevoCodigo = () => Array.from({ length: 6 }, () => ALFABETO[randomInt(ALF
 const normalizar = (c: string) => c.toUpperCase().replace(/[^A-Z0-9]/g, '').replace(/^(...)(...)$/, '$1-$2')
 const diasDesde = (f: string) => Math.max(0, Math.floor((Date.now() - new Date(f).getTime()) / 86_400_000))
 
+const EDAD_MOTOR: Record<string, string> = { '25-34': '25-39', '35-44': '25-39', '45-54': '40-49', '55+': '50+', '55-64': '50+', '65+': '50+' }
+
+/** Recorrido de la clienta en el iPad: 4 respuestas de seguridad + foto (o, si no hay foto, lo que quiere mejorar). */
 export async function analizarKiosko(farmaciaId: string, s: Seguridad, foto: string | null, mejorar: string[] = [], acepta = false, extra: Extra = {}) {
   // Embarazo y tratamientos médicos son datos de salud (art. 9 RGPD): sin permiso expreso no se trata nada
   if (acepta !== true) return { error: 'Necesitamos tu permiso para continuar. Si lo prefieres, pide consejo en el mostrador.' }
   const sb = await supabaseServer()
-  const { data: f } = await sb.from('farmacias').select('id').eq('id', farmaciaId).maybeSingle()
-  if (!f) return { error: 'Este iPad no tiene acceso a la farmacia. Pide ayuda en el mostrador.' }
+  // Se comprueba que el usuario del iPad es de esta farmacia ANTES de gastar un análisis de la API:
+  // un admin que no es miembro vería la farmacia, pagaría el análisis y luego no podría guardarlo.
+  if (!(await esDeLaFarmacia(sb, farmaciaId))) return { error: 'Este iPad no tiene acceso a la farmacia. Pide ayuda en el mostrador.' }
+  if (foto && foto.length > 6_000_000) return { error: 'La foto es demasiado grande. Vuelve a hacerla.' }
 
   // Respuestas que lee el motor de Hugo. Lo que no se pregunta va con el valor más prudente.
   const r: Respuestas = {
-    edad: s.edad,
+    // El iPad pregunta en tramos de 10 años (decisión de Hugo, 24/11); el motor sigue con sus tramos.
+    // 35-44 va con 25-39, el tramo más prudente (sin retinoide preventivo ni poro por flacidez).
+    edad: EDAD_MOTOR[s.edad] ?? s.edad,
+    edad_tramo: s.edad,
     sexo: s.sexo ?? 'nd', // la API de piel no detecta el sexo: se pregunta
-    embarazo: s.sexo === 'hombre' ? 'no' : s.embarazo,
+    // Embarazo y lactancia van por separado: el motor mantiene los vetos prudentes en los dos y cambia los avisos
+    embarazo: s.sexo !== 'hombre' && (s.embarazo === 'embarazo' || s.embarazo === 'lactancia') ? 'si' : 'no',
+    lactancia: s.sexo !== 'hombre' && s.embarazo === 'lactancia' ? 'si' : 'no',
     receta: s.receta,
     reactiva: s.reactiva,
     sienta: ['nada'],
-    retinoide_exp: 'nunca',
-    fototipo: 'III',
+    retinoide_exp: s.retinoide === 'reciente' || s.retinoide === 'tolera' ? s.retinoide : 'nunca',   // sin respuesta, lo prudente: empezar por abajo
+    // Hito 1 (Hugo, 27/11): solo el fototipo que declara la clienta; antes iba siempre «III». «No lo sé» = sin fototipo
+    fototipo: s.fototipo && s.fototipo !== 'nd' ? s.fototipo : undefined,
+    procedimiento: s.procedimiento && s.procedimiento !== 'no' ? s.procedimiento : undefined,
+    procedimiento_cuando: s.procedimiento && s.procedimiento !== 'no' ? s.procedimiento_cuando : undefined,
     textura: 'igual',
     preocupa: ['nada'],
     piel: 'normal',
@@ -53,9 +84,10 @@ export async function analizarKiosko(farmaciaId: string, s: Seguridad, foto: str
     const a = await analizarFoto(foto)
     if ('error' in a) return { error: a.error }
     fotoRes = a
-    r.problemas_extra = problemasDesdeFoto(a.puntuaciones)
+    // Tipo de piel por defecto a partir de la intensidad; las reglas de la foto lo afinan si cruzan brillo e hidratación
     const p = a.puntuaciones
     r.piel = (p.brillo ?? 0) >= 50 ? 'brillo_total' : (p.brillo ?? 0) >= 35 ? 'brillo_T' : (p.hidratacion ?? 0) >= 50 ? 'tirante' : 'normal'
+    conReglasFoto(r, a)
   } else {
     r.problemas_extra = [...new Set(mejorar.map((a) => PROBLEMA_DE[a]).filter(Boolean))]
     if (mejorar.includes('brillo')) r.piel = 'brillo_T'
@@ -69,7 +101,7 @@ export async function analizarKiosko(farmaciaId: string, s: Seguridad, foto: str
     stock.push(...(data ?? []))
     if (!data || data.length < 1000) break
   }
-  const rutinas = calcularRutinas(r, stock)
+  const rutinas = calcularRutinas(r, stock, await recomiendaSinStock(sb, farmaciaId))
 
   // Revisión: el primer análisis tiene que ser de esta farmacia (lo garantiza también la RLS)
   let anterior: Anterior | null = null
@@ -101,7 +133,7 @@ export async function analizarKiosko(farmaciaId: string, s: Seguridad, foto: str
     if (error) console.error('[seguimiento] foto no guardada', error.message)
   }
 
-  const lectura = construirLectura(fotoRes, mejorar, rutinas)
+  const lectura = construirLectura(fotoRes, mejorar, rutinas, r)
   return { id: fila.id, codigo: fila.codigo, rutinas: rutinas as unknown as Record<string, unknown>, foto: fotoRes, lectura, anterior }
 }
 
@@ -147,13 +179,18 @@ export async function enviarInformeEmail(consejoId: string, email: string, fotoC
   if (!clave || !remitente) return { error: 'El envío por email aún no está activado en esta farmacia. Pide el informe en el mostrador.' }
 
   const sb = await supabaseServer()
-  const { data: c } = await sb.from('consejos').select('respuestas, puntuaciones_foto, rutinas, codigo, seguimiento_de, farmacias(nombre)').eq('id', consejoId).maybeSingle()
+  const { data: c } = await sb.from('consejos').select('creado, respuestas, puntuaciones_foto, rutinas, codigo, seguimiento_de, farmacias(nombre)').eq('id', consejoId).maybeSingle()
   if (!c) return { error: 'No encontramos tu análisis. Pide ayuda en el mostrador.' }
+  if (Date.now() - new Date(c.creado as string).getTime() > 60 * 60 * 1000) return { error: 'Este análisis ya no admite envíos por email. Pide el informe en el mostrador.' }
+  const n = envios.get(consejoId) ?? 0
+  if (n >= MAX_ENVIOS_POR_ANALISIS) return { error: 'Ya hemos enviado este informe varias veces. Pide ayuda en el mostrador.' }
+  envios.set(consejoId, n + 1)
+  if (envios.size > 5000) envios.clear()
   const rutinas = c.rutinas as any
   const foto = (c.puntuaciones_foto ?? null) as ResultadoFoto | null
   const extra: string[] = (c.respuestas as any)?.problemas_extra ?? []
   const mejorar = UMBRALES_POR_DEFECTO.filter((u) => extra.includes(u.problema)).map((u) => u.aspecto)
-  const lectura = construirLectura(foto, mejorar, rutinas)
+  const lectura = construirLectura(foto, mejorar, rutinas, c.respuestas)
   const rutina = rutinas?.rutinas?.[nivel] ?? rutinas?.rutinas?.media
   const farmacia = (c.farmacias as any)?.nombre ?? 'Tu farmacia'
 
@@ -168,7 +205,7 @@ export async function enviarInformeEmail(consejoId: string, email: string, fotoC
         anterior = { fecha: a.creado, ui: pf.ui, global: pf.puntuacion_global, edad: pf.edad_piel, foto: fs ? `data:image/jpeg;base64,${fs.jpeg_base64}` : null }
       }
     }
-    pdf = await crearInformePdf({ farmacia, foto, fotoCliente, lectura, rutina, avisos: rutina?.avisos ?? [], codigo: c.codigo as string | null, anterior })
+    pdf = await crearInformePdf({ farmacia, foto, fotoCliente, lectura, rutina, avisos: rutina?.avisos ?? [], consultas: textosConsulta(rutinas?.derivacion), codigo: c.codigo as string | null, anterior })
   } catch {
     return { error: 'No hemos podido preparar el informe. Inténtalo de nuevo.' }
   }

@@ -1,10 +1,11 @@
 import { usuarioActual } from '@/lib/auth'
 import { SubirCsv } from './SubirCsv'
+import { SinStock } from './SinStock'
 
 export default async function StockPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params
   const { sb } = await usuarioActual()
-  const { data: farmacia } = await sb.from('farmacias').select('id, nombre, mapeo_csv, programa_gestion, stock_subido, stock_filas').eq('id', id).maybeSingle()
+  const { data: farmacia } = await sb.from('farmacias').select('*').eq('id', id).maybeSingle()
   if (!farmacia) return <p>No tienes acceso a esta farmacia.</p>
   const [{ count: enStock }, { count: pendientes }, { data: reconocidos }, { data: sinClas }] = await Promise.all([
     sb.from('stock').select('*', { count: 'exact', head: true }).eq('farmacia_id', id),
@@ -28,6 +29,7 @@ export default async function StockPage({ params }: { params: Promise<{ id: stri
           {viejo && '. Stock desactualizado'}</dd>
         </div>
       </dl>
+      <SinStock farmaciaId={id} inicial={farmacia.recomendar_sin_stock === true} />
       <SubirCsv farmaciaId={id} mapeoGuardado={farmacia.mapeo_csv ?? {}} programaGuardado={farmacia.programa_gestion ?? ''} />
       {(reconocidos?.length ?? 0) + (sinClas?.length ?? 0) > 0 && (
         <section className="space-y-3 text-sm">
