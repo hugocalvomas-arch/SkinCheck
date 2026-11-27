@@ -804,6 +804,8 @@ function candidatos(h, ctx){
       base = 1; cubre.push("F13");
     } else if(h.deseo){
       if(!["AM", "PM", "AM/PM"].includes(v2.hueco)) continue;
+      // laboratorio (27/11, C112): un sérum que la marca fija de noche no va en el hueco de mañana (Keracnyl lleva glicólico)
+      if(v2.hueco === "PM" && (h.turno || h.deseo.turno) === "AM") continue;
       // El PHA no está fichado como protagonista en ningún producto: se busca por fórmula, y solo si no trae otro ácido ni un retinoide.
       const k = h.deseo.k === "pha" ? (aDosis(p, "pha") && !RETINOIDES.concat(ACIDOS.filter(x => x !== "pha"), ["bakuchiol"]).some(x => lleva(p, x)) ? "pha" : null)
         : (CFG.ensayo_producto[p.id] && CFG.ensayo_producto[p.id].funciones.includes(h.deseo.k) && ((ctx.modo !== "suave" && !h.deseo.par_azelaico && !h.deseo.restringido) || h.deseo.activos.includes(CFG.ensayo_producto[p.id].activo))) ? CFG.ensayo_producto[p.id].activo
@@ -1172,7 +1174,7 @@ function calcular(r){
     if(!llevaRet){ if(/^Si tu rutina lleva retinoide/.test(t)) continue; t = t.replace(/\s*El retinoide, mejor entre dos capas de crema al principio\./, ""); }   // laboratorio (T1-22, T1-30)
     if(!avisos.includes(t)) avisos.push(t); }   // SkinRead: avisos de las reglas de la foto
   { const fp = x => (LISTA || CATALOGO).find(q => q.id === x.id), perf = productos.filter(x => /^serum/.test(x.slot) && x.id && fp(x) && (fp(x).fragancia === true || lleva(fp(x), "perfume")));
-    if(c.reactiva_a_veces && perf.length) avisos.push(`${perf.map(x => x.marca + " " + x.producto).join(" y ")} lleva perfume o alérgenos de fragancia (como la cumarina). Pruébalo antes en una zona pequeña, detrás de la oreja, 2 o 3 días. Empieza 2 noches por semana y déjalo mientras la piel esté irritada.`);
+    if(c.reactiva_a_veces && perf.length) avisos.push(`${perf.map(x => x.marca + " " + x.producto).join(" y ")} lleva perfume o alérgenos de fragancia (como la cumarina). Pruébalo antes en una zona pequeña, detrás de la oreja, 2 o 3 días. Empieza 2 o 3 días por semana y déjalo mientras la piel esté irritada.`);
     // propuesta 11: aceites esenciales sin «parfum», con piel que reacciona a veces. Se nombra cuál lleva: no todos tienen la misma composición
     const ae = productos.filter(x => x.id && fp(x) && !perf.includes(x) && !perfumado(fp(x)) && lleva(fp(x), "aceite_esencial"));
     if(c.reactiva_a_veces && ae.length) avisos.push(`${ae.map(x => x.marca + " " + x.producto + " (" + aceitesEsenciales(fp(x)).slice(0, 2).join(", ") + ")").join(" y ")} lleva aceites esenciales, que perfuman y pueden llevar alérgenos de fragancia. Pruébalo antes en una zona pequeña 2 o 3 días y déjalo si te pica o enrojece.`); }
