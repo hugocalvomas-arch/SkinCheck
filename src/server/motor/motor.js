@@ -850,7 +850,9 @@ function candidatos(h, ctx){
       if(otros.length && (ctx.modo === "suave" || c.reactiva || !ep && (c.reactiva_a_veces || c.fototipo_oscuro || hayRetinoide && !RETINOIDES.includes(k)))) continue;
       if(otros.length && hayRetinoide && h.deseo.k === "despigmentante") continue;
       // laboratorio (R20, C147): con piel que reacciona a veces, un solo activo fuerte (Hugo, 24/11) aunque la fórmula tenga ensayo propio: con retinoide, el sérum no trae además un ácido a dosis
-      if(otros.length && hayRetinoide && !RETINOIDES.includes(k) && c.reactiva_a_veces) continue;   // un despigmentante que además exfolia (glicólico, mandélico, PHA) no se suma a la rutina del retinoide, aunque tenga ensayo propio
+      if(otros.length && hayRetinoide && !RETINOIDES.includes(k) && c.reactiva_a_veces) continue;
+      // laboratorio (R24, C166): con retinoide, un sérum de otra función no trae glicólico, láctico o mandélico a dosis aunque tenga ensayo propio (acabaría con ácido todas las noches sin retinoide)
+      if(hayRetinoide && !RETINOIDES.includes(k) && otros.some(x => ["glicolico", "lactico", "mandelico"].includes(x))) continue;   // un despigmentante que además exfolia (glicólico, mandélico, PHA) no se suma a la rutina del retinoide, aunque tenga ensayo propio
       if(otros.length && !ep) base -= .25;
       if(!["aha", "pha", "salicilico", "glicolico_afeitado"].includes(h.deseo.k) && ACIDOS_EXF.some(x => x !== k && llevaAcido(p, x))) base -= .5;   // R2: un sérum de otra función que además trae ácido exfoliante, solo si no hay otro
       // secundarios que suman
