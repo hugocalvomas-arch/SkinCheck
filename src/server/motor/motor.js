@@ -608,7 +608,7 @@ const NO_SOLAR_PRINCIPAL = new Set(["revolution-skincare-moisturiser", "avene-ci
 const DENSA = /intensive|intensiv|\brich\b|\brica\b|piel seca|dry skin|ceramide treatment|\bbalm\b|balsamo/;
 const A_FOTO = ["arrugas", "manchas", "textura", "rojez", "brillo", "firmeza", "hidratacion", "poros", "ojeras", "acne", "tono"];
 const SEBORREGULADORA = /cloud clear|water cream|day light|oil control|seborregul|matific|\bmate\b|anti.?brillo|purif/;
-const LIGERA = /plump.?tide|day light|hydration station|water gel|water cream|watery|aqua gel|\bgel\b/;
+const LIGERA = /plump.?tide|day light|hydration station|water gel|water cream|watery|aqua.?gel|\bgel\b/;
 const DE_DIA = /morning|\bday\b|\bdia\b|de jour/;
 const NO_HIDRATANTE = /vaselina pura|petrolatum puro|\bserum\b|\bsarum\b|tonico|toner|essence|esencia|ampoule|ampolla|callosidades|mascarilla|\bmask\b/;
 const PIEL_OK = {seca: ["seca", "normal a seca", "todas"], normal: ["normal a seca", "normal a grasa", "todas"], mixta: ["normal a grasa", "grasa o mixta", "todas"], grasa: ["grasa o mixta", "normal a grasa", "todas"]};
@@ -901,7 +901,7 @@ function candidatos(h, ctx){
       // R32 con piel grasa (Hugo, 24/11; revisión clínica C17-01): rojez <55 y brillo: ni gel ni crema densa, una emulsión o fluido ligero
       // Hugo, 25/11 (pregunta 12): R26 gana a R9. Con rojez y brillo, fuera los geles puros y las cremas ricas; emulsión ligera, fluido o gel-crema con calmantes
       // laboratorio (27/11, C061): R26/R32 también sin brillo. Con rojez <55, fuera los geles; el gel-crema, solo con brillo (≤60)
-      if(["H", "H2"].includes(h.slot) && rojezB && !brillo && (/gel/.test(p.textura || "") || /water gel|gel.?cream|gel-crema/.test(nom)) && !((nf.brillo ?? 100) <= 60 && (p.textura === "gel-crema" || /gel.?cr[eè]m|gel.?cream/.test(nom)))) continue;
+      if(["H", "H2"].includes(h.slot) && rojezB && !brillo && (/gel/.test(p.textura || "") || /water gel|aqua.?gel|gel.?cream|gel-crema/.test(nom)) && !((nf.brillo ?? 100) <= 60 && (p.textura === "gel-crema" || /gel.?cr[eè]m|gel.?cream/.test(nom)))) continue;
       if(["H", "H2"].includes(h.slot) && rojezB && brillo){
         const gelCrema = p.textura === "gel-crema" || /gel.?cr[eè]m|gel.?cream/.test(nom);
         if(!gelCrema && (p.textura === "gel" || /\bgel\b/.test(nom))) continue;
@@ -939,7 +939,8 @@ function candidatos(h, ctx){
       if(h.deseo && h.deseo.turno === "AM" && hayRetinoide && ["glicolico", "lactico"].some(k => aDosis(p, k))) continue; }
     // tipo de piel: un producto pensado para un tipo no sale en el contrario
     // propuesta 8: tras un tratamiento en consulta, la crema reparadora puede ser de cualquier tipo de piel (manda la recuperación)
-    if(["L", "H", "H2", "S"].includes(h.slot)){ if(!PIEL_OK[c.piel].includes(v2.piel) && !(c.procedimiento && ["H", "H2"].includes(h.slot))) continue; if(v2.piel !== "todas") base += .15; }
+    if(["L", "H", "H2", "S"].includes(h.slot)){ const nfP = r.notas_foto || {}, delicada = ["H", "H2"].includes(h.slot) && ((nfP.rojez ?? 100) < 55 || (nfP.hidratacion ?? 100) < 45 || r.reactiva === "siempre" || c.reactiva);   // laboratorio (27/11, patrón G, C102): mixta o grasa con rojez, muy seca o reactiva: también cremas para piel normal a seca
+      if(!PIEL_OK[c.piel].includes(v2.piel) && !(c.procedimiento && ["H", "H2"].includes(h.slot)) && !(delicada && v2.piel === "normal a seca")) continue; if(v2.piel !== "todas") base += .15; }
     else if((c.piel === "seca" && v2.piel === "grasa o mixta") || (c.piel === "grasa" && v2.piel === "seca")) continue;
     if(p.pvp_eur == null || p.pvp_eur > 400) continue;   // sin precio, o con un precio que solo puede ser un error de ficha
     base += p._preferencia || 0;   // SkinRead: lo que la farmacia tiene en stock va antes que lo que tendría que pedir
@@ -976,7 +977,7 @@ const FUERTES_DUP = ["retinal", "retinol", "esteres_retinilo", "hpr", "glicolico
 const EMPATE = .15;   // Hugo, 25/11 (pregunta 14): margen de empate hasta 0,15, con 3 opciones como mucho. Antes, 0,05   // diferencia de puntos por debajo de la cual dos productos se consideran empatados (Hugo, 24/11: hasta 3 opciones)
 function elegir(pa, ctx){
   const tope = TOPE[ctx.r.presupuesto] || 60;
-  const cand = {}, sel = {}, usados = new Set(), sinProducto = [];
+  const cand = {}, sel = {}, usados = new Set(), sinProducto = [], repetidos = new Set();
   for(const h of pa.huecos){ cand[h.slot] = candidatos(h, ctx); }
   for(const h of pa.huecos){
     let l = cand[h.slot].principales.filter(x => !usados.has(x.p.id));
@@ -985,7 +986,11 @@ function elegir(pa, ctx){
       const otros = l.filter(x => !ya.includes(x.activo) && !(x.activo && prev.some(e => aDosis(e.p, x.activo))));
       // …salvo que quitar la repetición deje solo activos que una regla de la foto pide evitar (C01-08: vitamina C pura con rojez)
       const bon = ctx.r.bonus_activos || {}, valeFoto = a => a.some(x => !(x.activo && (bon[x.activo] || 0) < 0));
-      if(otros.length && (valeFoto(otros) || !valeFoto(l))) l = otros; }
+      if(otros.length && (valeFoto(otros) || !valeFoto(l))) l = otros;
+      // laboratorio (27/11, C104): si todos los candidatos repiten el activo de otro sérum (dos sérums de niacinamida), el hueco sobra: la función ya está cubierta
+      else if(!otros.length && prev.length && l.every(x => x.activo && (ya.includes(x.activo) || prev.some(e => aDosis(e.p, x.activo))))){ repetidos.add(h.deseo.k); l = []; } }
+    // laboratorio (27/11, C103): para calmar la rojez con granos por debajo de 60, el azelaico antes que la niacinamida (trata las dos cosas; Hito 1, propuesta 6)
+    if(h.deseo && h.deseo.k === "calma" && l.length && (ctx.r.notas_foto || {}).acne < 60){ const az = l.filter(x => x.activo === "azelaico"); if(az.length) l = az.concat(l.filter(x => !az.includes(x))); }
     // la hidratante y el solar no repiten a dosis el activo que ya lleva un sérum (R12: el solar cuenta para los duplicados)
     if(["H", "H2", "S"].includes(h.slot) && l.length){ const act = Object.entries(sel).filter(([s]) => /^serum/.test(s)).map(([, e]) => e.activo).filter(Boolean);
       const otros = l.filter(x => !act.some(a => aDosis(x.p, a))); if(otros.length) l = otros; }
@@ -1054,7 +1059,7 @@ function elegir(pa, ctx){
     if(!opc) break;
     quitados.push(pa.huecos.find(h => h.slot === opc)); usados.delete(sel[opc].p.id); delete sel[opc];
   }
-  return {sel, cand, sinProducto, quitados, total: Math.round(total() * 100) / 100, tope, dentro: total() <= tope};
+  return {sel, cand, sinProducto, quitados, repetidos, total: Math.round(total() * 100) / 100, tope, dentro: total() <= tope};
 }
 
 /* ------------------------------------------------------------------ 6 · Resultado */
@@ -1082,7 +1087,7 @@ function calcular(r){
     const excl = (r._excluir || []).concat(vacio.deseo.k);
     const pa2 = pauta(Object.assign({}, r, {_excluir: excl}), P, c, veto, modo);
     if(!pa2.serums.length && pa.serums.length > 1) break;
-    sinProd.push({k: vacio.deseo.k, que: nombreDeseo(vacio.deseo.k), por: "Ahora mismo no lo tenemos en la farmacia en una versión adecuada para tu piel. Pregunta en el mostrador: pueden pedírtelo."});
+    sinProd.push({k: vacio.deseo.k, que: nombreDeseo(vacio.deseo.k), por: el0.repetidos && el0.repetidos.has(vacio.deseo.k) ? "Su activo ya va en otro sérum de tu rutina: no hace falta repetirlo." : "Ahora mismo no lo tenemos en la farmacia en una versión adecuada para tu piel. Pregunta en el mostrador: pueden pedírtelo."});
     pa2.fuera = sinProd.concat(pa2.fuera.filter(f => !sinProd.some(x => x.que === f.que)));
     pa = pa2; r = Object.assign({}, r, {_excluir: excl});
   }
@@ -1139,7 +1144,9 @@ function calcular(r){
     }
     pr.noches = noches.slice();
     const unidad = sr.turno === "AM" ? ["Una mañana", "mañanas"] : ["Una noche", "noches"];
-    pr.frecuencia = noches.length === 1 ? `${unidad[0]} a la semana (${FREC[noches[0]]})` : `${noches.length} ${unidad[1]} a la semana (${noches.map(d => FREC[d]).join(", ")})`; });
+    // laboratorio (patrón F, C101): si el escalado sube de noches más adelante, la tarjeta dice que es para empezar, sin contradecir el aviso
+    const empezar = sr.k === "retinoide" && pa.escalado && /Semanas 5-12: 3 noches|Techo: 3 noches/.test(pa.escalado) && noches.length < 3 ? " para empezar" : "";
+    pr.frecuencia = noches.length === 1 ? `${unidad[0]} a la semana${empezar} (${FREC[noches[0]]})` : `${noches.length} ${unidad[1]} a la semana${empezar} (${noches.map(d => FREC[d]).join(", ")})`; });
   // en la semana, el sérum de cada noche se nombra por el activo que lleva el producto elegido
   pa.serums.forEach((sr, i) => { const pr = productos.find(x => x.slot === "serum" + (i + 1)); if(!pr || !pr.activo || !sr.flexible) return;
     const de = etiquetaDeseo(sr.k), a = pr.activo.charAt(0).toUpperCase() + pr.activo.slice(1);
