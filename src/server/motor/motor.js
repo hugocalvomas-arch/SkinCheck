@@ -1101,16 +1101,21 @@ function calcular(r){
   // orden de aplicación (Hugo, 25/11): el contorno va antes de los sérums, para que el activo no migre al ojo
   { const i = productos.findIndex(x => x.slot === "contorno"), j = productos.findIndex(x => /^serum/.test(x.slot)); if(i > j && j >= 0) productos.splice(j, 0, productos.splice(i, 1)[0]); }
   const manana = productos.filter(x => ["AM", "AMPM"].includes(x.turno)).map(x => x.paso), noche = productos.filter(x => ["PM", "AMPM"].includes(x.turno) && x.slot !== "contorno" || x.slot === "contorno").filter(x => x.turno !== "AM").map(x => x.paso);
-  const avisos = pa.notas.slice();
+  // laboratorio (27/11, L07 y L18): el recuento cuenta los productos que salen de verdad, solar incluido
+  const avisos = pa.notas.map(t => { const m = /^Te pongo \d+ productos y no (\d+):/.exec(t); if(!m) return t;
+    const real = productos.filter(x => x.id).length; return real >= +m[1] ? null : t.replace(/^Te pongo \d+/, `Te pongo ${real}`); }).filter(Boolean);
   // Retinoide propio (Hugo, 25/11, pregunta 15): si ya usa uno y la rutina no lo trae, se le dice qué hacer con él en lugar de ignorarlo
   if(["reciente", "tolera"].includes(r.retinoide_exp) && !c.menor18 && !c.receta && !Object.values(el.sel || {}).some(e => e && e.p && RETINOIDES.some(k => aDosis(e.p, k)))){
     const nfR = r.notas_foto || {};
-    if(c.embarazo || c.barrera || (nfR.rojez ?? 100) < 45) avisos.push(c.embarazo ? `Suspende tu retinoide actual durante ${c.lactancia ? "la lactancia" : "el embarazo"}. Lo retomas después.` : "Suspende tu retinoide actual hasta que tu piel recupere la calma. Lo retomas después.");
+    if(c.procedimiento) avisos.push("Deja tu retinoide actual hasta que quien te hizo el tratamiento te diga que puedes retomarlo.");
+    else if(c.embarazo || c.barrera || (nfR.rojez ?? 100) < 45) avisos.push(c.embarazo ? `Suspende tu retinoide actual durante ${c.lactancia ? "la lactancia" : "el embarazo"}. Lo retomas después.` : "Suspende tu retinoide actual hasta que tu piel recupere la calma. Lo retomas después.");
     else if((nfR.hidratacion ?? 100) < 55 + B3 || c.sequedad_activa || r.reactiva === "siempre") avisos.push("Mantén tu retinoide actual 2 o 3 noches por semana, o aplícalo en sándwich sobre la hidratante, mientras recuperamos la hidratación de tu piel.");
     else { const act = productos.filter(x => /^serum/.test(x.slot) && x.producto && ["PM", "AMPM"].includes(x.turno) && x.activo && (x.frecuencia || ["ácido", "salicílico", "glicólico", "láctico", "azelaico"].some(w => x.activo.includes(w)))).map(x => x.activo);
       avisos.push(act.length ? `Puedes seguir con tu retinoide actual las noches que no uses ${act.join(" ni ")}, con al menos 1 o 2 noches de descanso a la semana.` : "Puedes seguir con tu retinoide actual por la noche, como hasta ahora."); }
   }
-  for(const t of r.avisos_extra || []) if(t && !avisos.includes(t)) avisos.push(t);   // SkinRead: avisos de las reglas de la foto
+  // laboratorio (27/11, L05 y L06): un aviso «si tu rutina lleva retinoide» solo sale si la rutina lo lleva
+  const llevaRet = productos.some(x => x.id && el.sel[x.slot] && el.sel[x.slot].p && RETINOIDES.some(k => aDosis(el.sel[x.slot].p, k)));
+  for(const t of r.avisos_extra || []) if(t && !avisos.includes(t) && !(/^Si tu rutina lleva retinoide/.test(t) && !llevaRet)) avisos.push(t);   // SkinRead: avisos de las reglas de la foto
   { const fp = x => (LISTA || CATALOGO).find(q => q.id === x.id), perf = productos.filter(x => /^serum/.test(x.slot) && x.id && fp(x) && (fp(x).fragancia === true || lleva(fp(x), "perfume")));
     if(c.reactiva_a_veces && perf.length) avisos.push(`${perf.map(x => x.marca + " " + x.producto).join(" y ")} lleva perfume o alérgenos de fragancia (como la cumarina). Pruébalo antes en una zona pequeña, detrás de la oreja, 2 o 3 días. Empieza 2 noches por semana y déjalo mientras la piel esté irritada.`);
     // propuesta 11: aceites esenciales sin «parfum», con piel que reacciona a veces. Se nombra cuál lleva: no todos tienen la misma composición
@@ -1126,7 +1131,8 @@ function calcular(r){
   if(P.includes("P13")) avisos.push("El solar con color no es estético: frena la luz visible, que también oscurece estas manchas. Reaplícalo cada 2 horas al aire libre.");
   if(P.includes("P15")) avisos.push("Para las ojeras no hay un activo con respaldo sólido. Solar y no frotar es lo que más ayuda.");
   if(CFG.verano === "aviso" && pa.serums.some(s => s.k === "retinoide")) avisos.push("El retinoide va siempre de noche, con solar a la mañana siguiente.");
-  if(CFG.peroxido_benzoilo === "mencionar" && ["P01", "P02"].some(x => P.includes(x)) && modo === "normal") avisos.push("Si a las 6-8 semanas la rutina no basta, en la farmacia hay peróxido de benzoílo al 2,5 % sin receta: de mañana, con el retinoide de noche. Es un medicamento, no forma parte de esta rutina.");
+  if(CFG.peroxido_benzoilo === "mencionar" && ["P01", "P02"].some(x => P.includes(x)) && modo === "normal") { const conRet = !c.embarazo && !c.menor18 && productos.some(x => /^serum/.test(x.slot) && x.id && el.sel[x.slot] && RETINOIDES.some(k => aDosis(el.sel[x.slot].p, k)));
+    avisos.push(`Si a las 6-8 semanas la rutina no basta, en la farmacia hay peróxido de benzoílo al 2,5 % sin receta: de mañana${conRet ? ", con el retinoide de noche" : ""}. Es un medicamento, no forma parte de esta rutina.`); }
   if(!el.dentro) avisos.push(`Con los productos que cumplen lo que necesitas, la rutina sale por ${fmt(el.total)} €, por encima de tu tope. No he encontrado una combinación más barata que siga cumpliendo.`);
   const op = opciones(P, pa, el, productos, veto, c, r);
   // Orden de aplicación por la mañana: la vitamina C va antes que el otro tratamiento. No cambia la prioridad.

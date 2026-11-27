@@ -40,6 +40,11 @@ for(const proc of ["peeling", "laser", "microagujas", "otro"]){
 { const o = correr({});
   ok(!o.media.derivacion.some(d => /tratamiento en consulta|limpieza facial/.test(d.texto)), "P8 sin tratamiento: nada cambia"); }
 
+{ const o = correr({ procedimiento: "laser", procedimiento_cuando: "semana", retinoide: "tolera", notas: { hidratacion: 45 } });
+  for(const [k, x] of Object.entries(o)) ok(!x.avisos.some(t => /Mantén tu retinoide|Puedes seguir con tu retinoide/.test(t)), `P8 láser con retinoide propio ${k}: no se le dice que siga con el retinoide`); }
+{ const o = correr({ embarazo: "embarazo", notas: { acne: 40 } });
+  for(const [k, x] of Object.entries(o)) ok(!x.avisos.some(t => /con el retinoide de noche/.test(t)), `Laboratorio L14 embarazo con granos ${k}: el aviso del peróxido no menciona retinoide`); }
+
 // Propuesta 11 · aceites esenciales
 { const o = correr({ reactiva: "a_veces" });
   for(const [k, x] of Object.entries(o)) ok(!prods(x).some(p => ["L", "H", "H2"].includes(p.slot) && fragante(p.f)), `P11 reactiva a veces ${k}: limpiador e hidratante sin perfume ni aceites esenciales`); }
