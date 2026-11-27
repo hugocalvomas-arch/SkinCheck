@@ -551,7 +551,7 @@ function pauta(r, P, c, veto, modo){
     else if(acne){ nochesRet = ["L", "X", "V", "D"]; escalado = "Con granos, noches alternas y, si lo toleras, cada noche. Espaciarlo le quita eficacia."; }
     // Acné del adulto (P03): la piel adulta se irrita antes (Dréno 2013, doi:10.1111/jdv.12061; Bagatin 2021, doi:10.1080/17512433.2021.1917376). Empieza más despacio que P01/P02 y llega a alternas, como dice el catálogo v2.
     else if(ret.por === "P03"){ nochesRet = ["L", "J"]; escalado = "Semanas 1-4: 2 noches no seguidas, entre dos capas de hidratante. Después, noches alternas si no irrita. Si la piel tira o escuece, vuelve a 2 noches."; }
-    else if(r.retinoide_exp === "nunca" || !r.retinoide_exp){ nochesRet = ["L", "J"]; escalado = "Semanas 1-4: 2 noches no seguidas. Semanas 5-12: 3 noches. Desde la 13: 3 noches, que es el mantenimiento. Si lo toleras y quieres más, noches alternas."; }
+    else if(r.retinoide_exp === "nunca" || !r.retinoide_exp){ nochesRet = ["L", "J"]; escalado = "Semanas 1-4: 2 noches no seguidas. Desde la semana 5: 3 noches, que es el mantenimiento. Si lo toleras y quieres más, noches alternas."; }
     else { nochesRet = ["L", "X", "V"]; escalado = r.retinoide_exp === "reciente" ? "Ya lo usas desde hace poco: 3 noches por semana hasta la semana 12." : "Ya lo toleras: 3 noches por semana. Si quieres más, noches alternas."; }
     if(c.fototipo_oscuro && !acne && nochesRet.length > 2) nochesRet = ["L", "J"];
     if(c.mayor50 && nochesRet.length > 3) nochesRet = ["L", "X", "V"];
@@ -1151,7 +1151,7 @@ function calcular(r){
     pr.noches = noches.slice();
     const unidad = sr.turno === "AM" ? ["Una mañana", "mañanas"] : ["Una noche", "noches"];
     // laboratorio (patrón F, C101): si el escalado sube de noches más adelante, la tarjeta dice que es para empezar, sin contradecir el aviso
-    const empezar = sr.k === "retinoide" && pa.escalado && /Semanas 5-12: 3 noches|Techo: 3 noches/.test(pa.escalado) && noches.length < 3 ? " para empezar" : "";
+    const empezar = sr.k === "retinoide" && pa.escalado && /Desde la semana 5: 3 noches|Techo: 3 noches/.test(pa.escalado) && noches.length < 3 ? " para empezar" : "";
     pr.frecuencia = noches.length === 1 ? `${unidad[0]} a la semana${empezar} (${FREC[noches[0]]})` : `${noches.length} ${unidad[1]} a la semana${empezar} (${noches.map(d => FREC[d]).join(", ")})`; });
   // en la semana, el sérum de cada noche se nombra por el activo que lleva el producto elegido
   pa.serums.forEach((sr, i) => { const pr = productos.find(x => x.slot === "serum" + (i + 1)); if(!pr || !pr.activo || !sr.flexible) return;
@@ -1178,6 +1178,7 @@ function calcular(r){
     if(!llevaRet){ if(/^Si tu rutina lleva retinoide/.test(t)) continue; t = t.replace(/\s*El retinoide, mejor entre dos capas de crema al principio\./, ""); }   // laboratorio (T1-22, T1-30)
     // laboratorio (R18): el consejo de las dos capas de crema, una sola vez
     else if(/El retinoide, mejor entre dos capas/.test(t) && (r.avisos_extra || []).some(o => /^Si tu rutina lleva retinoide/.test(o || ""))) t = t.replace(/\s*El retinoide, mejor entre dos capas de crema al principio\./, "");
+    if(llevaRet) t = t.replace(/^Si tu rutina lleva retinoide, las primeras semanas aplícalo entre dos capas de crema\./, "Las primeras semanas, aplica el retinoide entre dos capas de crema.");   // laboratorio (R27): sin condicional si la rutina lo lleva
     if(!avisos.includes(t)) avisos.push(t); }   // SkinRead: avisos de las reglas de la foto
   { const fp = x => (LISTA || CATALOGO).find(q => q.id === x.id), perf = productos.filter(x => /^serum/.test(x.slot) && x.id && fp(x) && (fp(x).fragancia === true || lleva(fp(x), "perfume")));
     if(c.reactiva_a_veces && perf.length) avisos.push(`${perf.map(x => x.marca + " " + x.producto).join(" y ")} lleva perfume o alérgenos de fragancia (como la cumarina). Pruébalo antes en una zona pequeña, detrás de la oreja, 2 o 3 días. ${perf.some(x => x.frecuencia) ? "Sigue la pauta de noches que te indico" : "Empieza 2 o 3 días por semana"} y déjalo mientras la piel esté irritada.`);
@@ -1203,7 +1204,7 @@ function calcular(r){
     if(iC > iO && iO >= 0){ const [v] = productos.splice(iC, 1); productos.splice(iO, 0, v); } }
   if(r.reactiva === "siempre" && modo === "normal") avisos.unshift("Como tu piel reacciona a casi todo, estrena los productos de uno en uno, con una o dos semanas entre cada uno. Antes, prueba cada uno 2 o 3 días en una zona pequeña, detrás de la oreja o en el cuello. Si pica o enrojece, no lo uses.");
   // laboratorio (R19, R25): si la pauta del retinoide ya dice «en sándwich», o ya lo tolera, no sale el consejo de las dos capas de las primeras semanas
-  if(avisos.some(t => /en sándwich|^Ya lo toleras/.test(t))){ const i = avisos.findIndex(t => /^Si tu rutina lleva retinoide, las primeras semanas/.test(t)); if(i >= 0) avisos.splice(i, 1); }
+  if(avisos.some(t => /en sándwich|^Ya lo toleras/.test(t))){ const i = avisos.findIndex(t => /^(Si tu rutina lleva retinoide, las primeras semanas|Las primeras semanas, aplica el retinoide)/.test(t)); if(i >= 0) avisos.splice(i, 1); }
   if(pa.serums.length > 1) avisos.unshift("No empieces todo a la vez. Primero la base y el activo principal; cada activo nuevo, con dos semanas de separación como mínimo. Si algo irrita, sabrás cuál ha sido.");
   if(modo === "suave") avisos.unshift(P.includes("P26") ? "Rutina suave mientras lo consultas. Con granitos alrededor de la boca, a menudo lo que más ayuda es usar pocas cosas: si algún producto lo empeora, retíralo."
     : c.receta ? "Rutina suave para acompañar tu tratamiento: no sustituye lo que te han recetado."
