@@ -78,7 +78,7 @@ module.exports = {
     laser: {recuperacion: true, texto: "Te hiciste un láser o luz pulsada {cuando}. Por ahora, solo limpiador suave, crema reparadora y protector solar 50+, y evita el sol directo."},
     microagujas: {recuperacion: true, texto: "Te hiciste un tratamiento con microagujas o radiofrecuencia con agujas {cuando}. La piel tiene microheridas: por ahora, solo limpiador suave, crema reparadora y protector solar 50+."},
     otro: {recuperacion: true, texto: "Te hiciste un tratamiento en consulta {cuando}. Como no sabemos cuál fue, lo prudente es usar solo limpiador suave, crema reparadora y protector solar 50+."},
-    limpieza: {recuperacion: false, texto: "Te hiciste una limpieza facial {cuando}. Si incluyó extracción o un peeling, espera a que la piel esté tranquila antes de empezar los activos."},
+    limpieza: {recuperacion: false, texto: "Te hiciste una limpieza facial {cuando}. Si incluyó extracción o un peeling, o la piel sigue roja o sensible, empieza solo con el limpiador, la crema y el solar, y añade el resto de la rutina (y tu retinoide, si usas uno) cuando la piel esté tranquila."},
     _cierre: "Sigue las indicaciones de quien te hizo el tratamiento: el plazo depende de cada tratamiento. Cuando te diga que puedes, vuelve y añadimos los activos."
   }
 };

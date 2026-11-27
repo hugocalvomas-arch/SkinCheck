@@ -45,6 +45,12 @@ for(const proc of ["peeling", "laser", "microagujas", "otro"]){
 { const o = correr({ embarazo: "embarazo", notas: { acne: 40 } });
   for(const [k, x] of Object.entries(o)) ok(!x.avisos.some(t => /con el retinoide de noche/.test(t)), `Laboratorio L14 embarazo con granos ${k}: el aviso del peróxido no menciona retinoide`); }
 
+// Laboratorio, tanda 1 (27/11)
+{ const o = correr({ reactiva: "siempre", notas: { hidratacion: 42, acne: 64, brillo: 61, rojez: 46 } });
+  for(const [k, x] of Object.entries(o)){ const h = prods(x).find(p => p.slot === "H"); ok(!!h && !/acnestil|imperfec|effaclar|cleanance|oil control|matif/i.test(h.f.producto), `Lab T1-12 reactiva siempre y seca ${k}: hidratante sin gama antiimperfecciones (${h ? h.id : "ninguna"})`); } }
+{ const o = correr({ retinoide: "tolera", notas: { arrugas: 45 } });
+  for(const [k, x] of Object.entries(o)) ok(!x.avisos.some(t => /concentración media/.test(t)), `Lab T1-46 ya tolera retinoide ${k}: no promete una concentración`); }
+
 // Propuesta 11 · aceites esenciales
 { const o = correr({ reactiva: "a_veces" });
   for(const [k, x] of Object.entries(o)) ok(!prods(x).some(p => ["L", "H", "H2"].includes(p.slot) && fragante(p.f)), `P11 reactiva a veces ${k}: limpiador e hidratante sin perfume ni aceites esenciales`); }

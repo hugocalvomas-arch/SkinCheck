@@ -545,7 +545,7 @@ function pauta(r, P, c, veto, modo){
     if(c.mayor50 && nochesRet.length > 3) nochesRet = ["L", "X", "V"];
     const L = LIM(r).retinoide;
     // concentración según la experiencia (Hugo, 24/11)
-    escalado = (r.retinoide_exp === "nunca" || !r.retinoide_exp ? "Es tu primer retinoide: empiezas con una concentración baja y subes cuando la piel lo tolere, a partir de unos 3 meses. " : r.retinoide_exp === "tolera" ? "Como ya lo toleras, sigues con una concentración media o alta. " : "Como ya lo usas, sigues con una concentración media. ") + escalado;
+    escalado = (r.retinoide_exp === "nunca" || !r.retinoide_exp ? "Es tu primer retinoide: empiezas con una concentración baja y subes cuando la piel lo tolere, a partir de unos 3 meses. " : "") + escalado;   // laboratorio (27/11, T1-46, L02): sin prometer una concentración que el producto elegido puede no tener
     if(L){ nochesRet = ["L", "J"].slice(0, L.noches || 2); escalado = `Retinal suave (hasta ${fmt(L.max_pct)} %) ${nochesRet.length} noches por semana, no seguidas, en sándwich: hidratante, retinal, hidratante. Mientras haya rojez no se sube de ${nochesRet.length} noches.`; }
   }
   // salicílico: 3 días por semana (2 si la nota es leve), sin coincidir con el retinoide ni con el ácido
@@ -898,7 +898,9 @@ function candidatos(h, ctx){
       // piel que reacciona a veces: sin alcohol secante entre los tres primeros ingredientes de un producto sin aclarado (revisión clínica, C11-07)
       if(h.slot !== "L" && r.reactiva === "a_veces" && (p.inci_completo || []).slice(0, 3).some(i => /^(alcohol denat|alcohol|sd alcohol|isopropyl alcohol|ethanol)\b/.test(n(i)))) base -= .5;
       // sin granos ni brillo, nada de gamas antiimperfecciones en los pasos de tratamiento (revisión clínica, C13-03)
-      if(h.slot !== "L" && h.slot !== "S" && (nf.acne ?? 0) >= 70 && (nf.brillo ?? 0) >= 70 && /imperfec|blemish|cleanance|effaclar|sebium|hyseac|keracnyl|comedomed|normaderm|sebiaclear|acniben|acnestil/.test(nom)) base -= .5;
+      // laboratorio (27/11, T1-01, T1-12): en la hidratante también con granos ≥60 y poco brillo; con piel seca (<45) o que reacciona siempre, fuera
+      if(["H", "H2"].includes(h.slot) && (nf.acne ?? 0) >= 60 && ((nf.hidratacion ?? 100) < 45 || r.reactiva === "siempre") && /imperfec|blemish|cleanance|effaclar|sebium|hyseac|keracnyl|comedomed|normaderm|sebiaclear|acniben|acnestil|oil control|matif/.test(nom)) continue;
+      if(h.slot !== "L" && h.slot !== "S" && ((nf.acne ?? 0) >= 70 && (nf.brillo ?? 0) >= 70 || ["H", "H2"].includes(h.slot) && (nf.acne ?? 0) >= 60 && ((nf.brillo ?? 0) >= 60 || (nf.hidratacion ?? 100) < 45 || r.reactiva === "siempre")) && /imperfec|blemish|cleanance|effaclar|sebium|hyseac|keracnyl|comedomed|normaderm|sebiaclear|acniben|acnestil/.test(nom)) base -= .5;
       // piel que reacciona casi siempre: sin mucina de caracol. Hito 1, propuesta 1 (Hugo, 27/11): el solar mineral ya no resta en esta piel; la AEDV y la AAD lo prefieren.
       // Lo que cuenta es SPF 50+, sin perfume y bien tolerado; minerales y mixtos, con o sin color, compiten igual.
       if(r.reactiva === "siempre" && (p.inci_completo || []).some(i => /snail/.test(n(i)))) base -= 1;
@@ -1105,7 +1107,7 @@ function calcular(r){
   const avisos = pa.notas.map(t => { const m = /^Te pongo \d+ productos y no (\d+):/.exec(t); if(!m) return t;
     const real = productos.filter(x => x.id).length; return real >= +m[1] ? null : t.replace(/^Te pongo \d+/, `Te pongo ${real}`); }).filter(Boolean);
   // Retinoide propio (Hugo, 25/11, pregunta 15): si ya usa uno y la rutina no lo trae, se le dice qué hacer con él en lugar de ignorarlo
-  if(["reciente", "tolera"].includes(r.retinoide_exp) && !c.menor18 && !c.receta && !Object.values(el.sel || {}).some(e => e && e.p && RETINOIDES.some(k => aDosis(e.p, k)))){
+  if(["reciente", "tolera"].includes(r.retinoide_exp) && !c.menor18 && !c.receta && !Object.entries(el.sel || {}).some(([sl, e]) => sl !== "contorno" && e && e.p && RETINOIDES.some(k => aDosis(e.p, k)))){   // laboratorio (T1-34): el retinal del contorno no sustituye al retinoide de la cara
     const nfR = r.notas_foto || {};
     if(c.procedimiento) avisos.push("Deja tu retinoide actual hasta que quien te hizo el tratamiento te diga que puedes retomarlo.");
     else if(c.embarazo || c.barrera || (nfR.rojez ?? 100) < 45) avisos.push(c.embarazo ? `Suspende tu retinoide actual durante ${c.lactancia ? "la lactancia" : "el embarazo"}. Lo retomas después.` : "Suspende tu retinoide actual hasta que tu piel recupere la calma. Lo retomas después.");
@@ -1114,8 +1116,10 @@ function calcular(r){
       avisos.push(act.length ? `Puedes seguir con tu retinoide actual las noches que no uses ${act.join(" ni ")}, con al menos 1 o 2 noches de descanso a la semana.` : "Puedes seguir con tu retinoide actual por la noche, como hasta ahora."); }
   }
   // laboratorio (27/11, L05 y L06): un aviso «si tu rutina lleva retinoide» solo sale si la rutina lo lleva
-  const llevaRet = productos.some(x => x.id && el.sel[x.slot] && el.sel[x.slot].p && RETINOIDES.some(k => aDosis(el.sel[x.slot].p, k)));
-  for(const t of r.avisos_extra || []) if(t && !avisos.includes(t) && !(/^Si tu rutina lleva retinoide/.test(t) && !llevaRet)) avisos.push(t);   // SkinRead: avisos de las reglas de la foto
+  const llevaRet = productos.some(x => x.id && x.slot !== "contorno" && el.sel[x.slot] && el.sel[x.slot].p && RETINOIDES.some(k => aDosis(el.sel[x.slot].p, k)));
+  for(let t of r.avisos_extra || []){ if(!t) continue;
+    if(!llevaRet){ if(/^Si tu rutina lleva retinoide/.test(t)) continue; t = t.replace(/\s*El retinoide, mejor entre dos capas de crema al principio\./, ""); }   // laboratorio (T1-22, T1-30)
+    if(!avisos.includes(t)) avisos.push(t); }   // SkinRead: avisos de las reglas de la foto
   { const fp = x => (LISTA || CATALOGO).find(q => q.id === x.id), perf = productos.filter(x => /^serum/.test(x.slot) && x.id && fp(x) && (fp(x).fragancia === true || lleva(fp(x), "perfume")));
     if(c.reactiva_a_veces && perf.length) avisos.push(`${perf.map(x => x.marca + " " + x.producto).join(" y ")} lleva perfume o alérgenos de fragancia (como la cumarina). Pruébalo antes en una zona pequeña, detrás de la oreja, 2 o 3 días. Empieza 2 noches por semana y déjalo mientras la piel esté irritada.`);
     // propuesta 11: aceites esenciales sin «parfum», con piel que reacciona a veces. Se nombra cuál lleva: no todos tienen la misma composición
