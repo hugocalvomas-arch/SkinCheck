@@ -1151,7 +1151,7 @@ function calcular(r){
     pr.noches = noches.slice();
     const unidad = sr.turno === "AM" ? ["Una mañana", "mañanas"] : ["Una noche", "noches"];
     // laboratorio (patrón F, C101): si el escalado sube de noches más adelante, la tarjeta dice que es para empezar, sin contradecir el aviso
-    const empezar = sr.k === "retinoide" && pa.escalado && /Desde la semana 5: 3 noches|Techo: 3 noches/.test(pa.escalado) && noches.length < 3 ? " para empezar" : "";
+    const empezar = sr.k === "retinoide" && pa.escalado && /Desde la semana 5: 3 noches|Techo: 3 noches|Después, noches alternas/.test(pa.escalado) && noches.length < 3 ? " para empezar" : "";
     pr.frecuencia = noches.length === 1 ? `${unidad[0]} a la semana${empezar} (${FREC[noches[0]]})` : `${noches.length} ${unidad[1]} a la semana${empezar} (${noches.map(d => FREC[d]).join(", ")})`; });
   // en la semana, el sérum de cada noche se nombra por el activo que lleva el producto elegido
   pa.serums.forEach((sr, i) => { const pr = productos.find(x => x.slot === "serum" + (i + 1)); if(!pr || !pr.activo || !sr.flexible) return;
