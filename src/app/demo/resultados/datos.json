@@ -1,0 +1,265 @@
+{
+ "id": "demo",
+ "codigo": "K7P-4QX",
+ "rutinas": {
+  "rutinas": {
+   "basica": {
+    "nombre": "Básica",
+    "total": 29.5,
+    "productos": [
+     {
+      "paso": "Limpiador",
+      "turno": "AMPM",
+      "marca": "Eucerin",
+      "producto": "Dermato Clean Hyaluron",
+      "precio": 4.5,
+      "activo": null,
+      "para": "Limpia sin resecar."
+     },
+     {
+      "paso": "Sérum de mañana",
+      "turno": "AM",
+      "marca": "MartiDerm",
+      "producto": "The Originals Proteos Hydra Plus SP (ampollas)",
+      "precio": 15.48,
+      "activo": "vitamina C pura",
+      "para": "Para proteger de día como antioxidante, con vitamina C pura."
+     },
+     {
+      "paso": "Hidratante",
+      "turno": "AMPM",
+      "marca": "Uriage",
+      "producto": "Bariederm-Cica Crema con Cu-Zn",
+      "precio": 9.52,
+      "activo": null,
+      "para": "Hidrata y cuida la barrera de la piel."
+     },
+     {
+      "paso": "Protector solar",
+      "turno": "AM",
+      "marca": "La Roche-Posay",
+      "producto": "Anthelios UVMune 400 Fluido Invisible SPF50+ (sin perfume)",
+      "precio": 18.69,
+      "activo": null,
+      "para": "Protege del sol. Es el paso que más cuida tu piel a largo plazo."
+     }
+    ]
+   },
+   "media": {
+    "nombre": "Media",
+    "total": 28.97,
+    "productos": [
+     {
+      "paso": "Limpiador",
+      "turno": "AMPM",
+      "marca": "Eucerin",
+      "producto": "Dermato Clean Hyaluron",
+      "precio": 4.5,
+      "activo": null,
+      "para": "Limpia sin resecar."
+     },
+     {
+      "paso": "Sérum de mañana",
+      "turno": "AM",
+      "marca": "MartiDerm",
+      "producto": "The Originals Proteos Hydra Plus SP (ampollas)",
+      "precio": 15.48,
+      "activo": "vitamina C pura",
+      "para": "Para proteger de día como antioxidante, con vitamina C pura."
+     },
+     {
+      "paso": "Hidratante",
+      "turno": "AMPM",
+      "marca": "Avène",
+      "producto": "Cold Cream",
+      "precio": 8.99,
+      "activo": null,
+      "para": "Hidrata y cuida la barrera de la piel."
+     },
+     {
+      "paso": "Protector solar",
+      "turno": "AM",
+      "marca": "Uriage",
+      "producto": "Bariesun Fluido Antimanchas SPF50+",
+      "precio": 23.49,
+      "activo": null,
+      "para": "Protege del sol. Es el paso que más cuida tu piel a largo plazo."
+     }
+    ]
+   },
+   "completa": {
+    "nombre": "Completa",
+    "total": 127.65,
+    "productos": [
+     {
+      "paso": "Limpiador",
+      "turno": "AMPM",
+      "marca": "Uriage",
+      "producto": "Tolederm Control Gel-Leche Desmaquillante",
+      "precio": 11.89,
+      "activo": null,
+      "para": "Limpia sin resecar."
+     },
+     {
+      "paso": "Sérum de mañana",
+      "turno": "AM",
+      "marca": "Vichy",
+      "producto": "Liftactiv Supreme Sérum 15% Vitamina C Pura",
+      "precio": 33.03,
+      "activo": "vitamina C pura",
+      "para": "Para proteger de día como antioxidante, con vitamina C pura."
+     },
+     {
+      "paso": "Sérum de noche",
+      "turno": "PM",
+      "marca": "SVR",
+      "producto": "[A] Ampoule A Lift Serum Retinol 0,3%",
+      "precio": 35.15,
+      "activo": "retinol",
+      "para": "Para renovar la piel, con retinol."
+     },
+     {
+      "paso": "Hidratante",
+      "turno": "AMPM",
+      "marca": "Bioderma",
+      "producto": "Sensibio Defensive",
+      "precio": 16.53,
+      "activo": null,
+      "para": "Hidrata y cuida la barrera de la piel."
+     },
+     {
+      "paso": "Contorno de ojos",
+      "turno": "AMPM",
+      "marca": "Eucerin",
+      "producto": "Hyaluron-Filler Contorno de Ojos SPF 15",
+      "precio": 31.05,
+      "activo": null,
+      "para": "Formulado para la piel del contorno de los ojos."
+     },
+     {
+      "paso": "Protector solar",
+      "turno": "AM",
+      "marca": "La Roche-Posay",
+      "producto": "Anthelios UVMune 400 Fluido Invisible SPF50+ (sin perfume)",
+      "precio": 18.69,
+      "activo": null,
+      "para": "Protege del sol. Es el paso que más cuida tu piel a largo plazo."
+     }
+    ]
+   }
+  }
+ },
+ "foto": {
+  "ui": {
+   "arrugas": 61,
+   "manchas": 66,
+   "textura": 64,
+   "rojez": 73,
+   "brillo": 69,
+   "firmeza": 57,
+   "hidratacion": 61,
+   "poros": 67,
+   "ojeras": 77,
+   "acne": 88,
+   "tono": 60
+  },
+  "imagenes": {
+   "marcas": [],
+   "zonas": {
+    "arrugas": "/ejemplos/mapas/arrugas.webp",
+    "brillo": "/ejemplos/mapas/brillo.webp",
+    "firmeza": "/ejemplos/mapas/firmeza.webp",
+    "hidratacion": "/ejemplos/mapas/hidratacion.webp",
+    "manchas": "/ejemplos/mapas/manchas.webp",
+    "rojez": "/ejemplos/mapas/rojez.webp",
+    "textura": "/ejemplos/mapas/textura.webp"
+   }
+  }
+ },
+ "lectura": {
+  "objetivos": [
+   {
+    "aspecto": "firmeza",
+    "nombre": "Firmeza",
+    "nota": 57,
+    "que_es": "La piel ha perdido algo de tensión, sobre todo en el óvalo de la cara.",
+    "alcance": "La cosmética ayuda poco: mejor tener expectativas realistas.",
+    "plazo": "Resultados sutiles en el mejor de los casos.",
+    "ingredientes": [
+     "Vitamina C pura",
+     "Retinol"
+    ]
+   },
+   {
+    "aspecto": "tono",
+    "nombre": "Luminosidad",
+    "nota": 60,
+    "que_es": "Piel apagada o con el tono poco uniforme.",
+    "alcance": "La cosmética lo trata bien.",
+    "plazo": "Unas 12 semanas.",
+    "ingredientes": [
+     "Vitamina C pura",
+     "Retinol",
+     "Exfoliante con ácido"
+    ]
+   },
+   {
+    "aspecto": "arrugas",
+    "nombre": "Arrugas",
+    "nota": 61,
+    "que_es": "Líneas finas y arrugas, sobre todo en la frente y alrededor de los ojos.",
+    "alcance": "La cosmética mejora la arruga fina; la profunda, poco.",
+    "plazo": "Mínimo 6 semanas, a veces 3 meses. El efecto completo llega hacia las 24 semanas.",
+    "ingredientes": [
+     "Vitamina C pura",
+     "Retinol",
+     "Exfoliante con ácido"
+    ]
+   }
+  ],
+  "ingredientes": [
+   {
+    "nombre": "Vitamina C pura",
+    "turno": "AM",
+    "para": [
+     "Firmeza",
+     "Luminosidad",
+     "Arrugas"
+    ],
+    "ahora": true,
+    "por_que": "Para proteger de día como antioxidante. Encaja con 3 de tus objetivos.",
+    "motivo": null,
+    "frase": "La vitamina C es la de la comida, puesta en la piel: puede suavizar arrugas finas tras meses de uso.",
+    "cuando": "De día, debajo del protector · primeros cambios en unos 3 meses"
+   },
+   {
+    "nombre": "Retinol",
+    "turno": "PM",
+    "para": [
+     "Firmeza",
+     "Luminosidad",
+     "Arrugas"
+    ],
+    "ahora": true,
+    "por_que": "Para renovar la piel. Encaja con 3 de tus objetivos.",
+    "motivo": "Entra cuando lleves al menos dos semanas con el anterior y lo toleres.",
+    "frase": "El retinol es vitamina A en crema: mejora arrugas finas y aspereza, aunque puede irritar las primeras semanas.",
+    "cuando": "Noche · primeros cambios en 1–2 meses"
+   },
+   {
+    "nombre": "Exfoliante con ácido",
+    "turno": "PM",
+    "para": [
+     "Luminosidad",
+     "Arrugas"
+    ],
+    "ahora": false,
+    "por_que": "Para exfoliar y alisar la textura.",
+    "motivo": "Entraría en una rutina con más pasos.",
+    "frase": "El ácido glicólico es un exfoliante que afloja las células muertas de la superficie para que se suelten antes.",
+    "cuando": "Día o noche, con protector solar · cambios medidos en 6–22 semanas"
+   }
+  ]
+ },
+ "anterior": null
+}

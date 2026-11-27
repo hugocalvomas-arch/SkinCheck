@@ -1,13 +1,12 @@
 'use client'
 /* eslint-disable @next/next/no-img-element, @typescript-eslint/no-explicit-any */
 import { MallaFacial, type EstadoCara } from './MallaFacial'
-import { aTrabajar, nivelPiel, notaPiel } from '@/lib/escalaPiel'
 import { useCallback, useEffect, useRef, useState, useTransition } from 'react'
-import QRCode from 'qrcode'
-import { ArrowLeft, ArrowRight, ArrowsLeftRight, CalendarCheck, Camera, Check, Drop, EnvelopeSimple, Moon, ScanSmiley, ShieldCheck, Sparkle, Sun, Trash, X } from '@phosphor-icons/react'
-import { analizarKiosko, borrarSeguimiento, buscarSeguimiento, enviarInformeEmail, type Seguridad } from './actions'
+import { ArrowLeft, ArrowRight, CalendarCheck, Camera, Check, Drop, ScanSmiley, ShieldCheck, Sparkle, Trash, X } from '@phosphor-icons/react'
+import { Esquinas, Informe } from './Resultados'
+import { analizarKiosko, borrarSeguimiento, buscarSeguimiento, type Seguridad } from './actions'
 import { Logo } from '@/components/Logo'
-import { AVISO_DETALLE, AVISO_EMAIL, AVISO_FOTO, AVISO_GUARDAR_FOTO, AVISO_INICIO } from '@/lib/privacidad'
+import { AVISO_DETALLE, AVISO_FOTO, AVISO_GUARDAR_FOTO, AVISO_INICIO } from '@/lib/privacidad'
 
 // Recorrido de la clienta en el iPad del mostrador. Dirección visual: clínica, fondo claro,
 // un único acento verde farmacia, Geist + números tabulares, iconos Phosphor.
@@ -30,14 +29,7 @@ const MEJORAR: [string, string][] = [
   ['acne', 'Granitos'], ['poros', 'Poros'], ['brillo', 'Brillo'], ['manchas', 'Manchas'], ['tono', 'Tono apagado'], ['arrugas', 'Arrugas'],
   ['firmeza', 'Firmeza'], ['textura', 'Textura'], ['rojez', 'Rojeces'], ['hidratacion', 'Sequedad'], ['ojeras', 'Ojeras'],
 ]
-const NOMBRE: Record<string, string> = Object.fromEntries(MEJORAR)
-// En el resultado, los mismos nombres que la web y el vídeo
-const NOMBRE_RESULTADO: Record<string, string> = { ...NOMBRE, tono: 'Luminosidad', hidratacion: 'Hidratación' }
 const PASOS_ANALISIS = ['Detectar el rostro', 'Medir poros, textura y brillo', 'Medir manchas, rojeces y ojeras', 'Medir arrugas y firmeza', 'Elegir ingredientes', 'Preparar tu rutina', 'Generar la simulación']
-// "Vitamina C pura" y "vitamina C estable" cuentan como el mismo ingrediente al buscarlo en la rutina
-const raiz = (t: string) => t.toLowerCase().replace(/\s+(pura|estable)$/, '')
-const lista = (l: string[]) => (l.length > 1 ? `${l.slice(0, -1).join(', ')} y ${l[l.length - 1]}` : l[0] ?? '')
-const eur = (n: number | null | undefined) => (n == null ? '' : n.toLocaleString('es-ES', { style: 'currency', currency: 'EUR' }))
 const INACTIVIDAD_MS = 150_000
 
 export function Kiosko({ farmaciaId, farmacia, precio, emailActivo }: Props) {
@@ -101,7 +93,7 @@ export function Kiosko({ farmaciaId, farmacia, precio, emailActivo }: Props) {
           </button>
         )}
       </header>
-      <main key={paso + i} className="flex-1 flex entrar">
+      <main key={paso + i} className={`flex-1 flex ${paso === 'resultado' ? '' : 'entrar'}`}>
         {paso === 'reclamo' && <Reclamo precio={precio} onEmpezar={() => setPaso('aviso')} onRevision={() => setPaso('codigo')} />}
         {paso === 'codigo' && <Codigo farmaciaId={farmaciaId} onSeguir={(r) => { setRevision(r); setPaso('aviso') }} onFin={reiniciar} />}
         {paso === 'aviso' && <Aviso farmacia={farmacia} onAcepta={() => setPaso('preguntas')} onRechaza={() => setPaso('no_acepta')} />}
@@ -430,291 +422,6 @@ export function Analizando({ foto }: { foto: string | null }) {
         <p className="text-[var(--k-muted)]">Tarda hasta un minuto.</p>
       </div>
     </div>
-  )
-}
-
-export function Informe({ res, foto, farmacia, emailActivo = true, onFin }: { res: any; foto: string | null; farmacia: string; emailActivo?: boolean; onFin: () => void }) {
-  // Resumen para leer en menos de un minuto en el iPad. El detalle completo va en el PDF que se envía por email.
-  const R = res.rutinas
-  const F = res.foto
-  const [nivel, setNivel] = useState<'basica' | 'media' | 'completa'>('media')
-  const [qr, setQr] = useState('')
-  if (R?.sin_rutina) return <Bloque><h2 className="titulo max-w-2xl">{R.sin_rutina}</h2><button onClick={onFin} className="boton">Terminar</button></Bloque>
-
-  const rut = R.rutinas[nivel]
-  const objetivos: any[] = res.lectura?.objetivos ?? []
-  const productos = (rut.productos ?? []).filter((p: any) => p.producto)
-  const conProducto = (g: any) => productos.find((p: any) => p.activo && raiz(p.activo) === raiz(g.nombre))
-  // Los 3 ingredientes clave: primero los que ya van en la rutina de este nivel
-  const clave: any[] = [...(res.lectura?.ingredientes ?? [])].sort((a, b) => Number(!!conProducto(b)) - Number(!!conProducto(a))).slice(0, 3)
-  const marcas: string | undefined = F?.imagenes?.marcas?.find((u: string) => u !== F.imagenes.despues)
-  const manana = productos.filter((p: any) => p.turno === 'AM' || p.turno === 'AMPM')
-  const noche = productos.filter((p: any) => p.turno === 'PM' || p.turno === 'AMPM')
-
-  async function generarQr() {
-    const lineas = [`Mi rutina SkinRead (${farmacia})`, '']
-    if (manana.length) lineas.push('Mañana:', ...manana.map((p: any) => `- ${p.marca} ${p.producto}`), '')
-    if (noche.length) lineas.push('Noche:', ...noche.map((p: any) => `- ${p.marca} ${p.producto}`), '')
-    lineas.push(`Total: ${eur(rut.total)}`, res.codigo ? `Código de revisión: ${res.codigo}. Vuelve en 4 semanas para comparar.` : 'Repite el análisis en 4 semanas para comparar.')
-    setQr(await QRCode.toDataURL(`https://wa.me/?text=${encodeURIComponent(lineas.join('\n'))}`, { margin: 1, width: 400, errorCorrectionLevel: 'L', color: { dark: '#0f1b1d', light: '#ffffff' } }))
-  }
-
-  return (
-    <div className="w-full max-w-6xl mx-auto px-6 md:px-10 py-8 space-y-12">
-      {/* 0. Revisión: el antes y el ahora */}
-      {res.anterior && F && <Evolucion anterior={res.anterior} F={F} foto={foto} />}
-
-      {/* 1. El resultado de un vistazo */}
-      <section className="grid md:grid-cols-[minmax(0,5fr)_minmax(0,7fr)] gap-8 md:gap-12 items-center">
-        <div className="max-w-md w-full mx-auto">
-          {foto && F?.imagenes?.despues ? <AntesDespues antes={foto} despues={F.imagenes.despues} />
-            : marcas ? <img src={marcas} alt="Zonas analizadas" className="w-full rounded-[var(--radius-card)] border border-[var(--k-line)]" />
-            : foto ? <img src={foto} alt="Tu foto" className="w-full rounded-[var(--radius-card)] -scale-x-100" /> : null}
-        </div>
-        <div className="space-y-8">
-          <p className="text-[var(--k-muted)]">Tu resultado</p>
-          {F?.puntuacion_global != null ? (
-            <div className="flex flex-wrap items-end gap-x-10 gap-y-4 -mt-4">
-              <p className="m-0 leading-none"><span className="cifra text-[clamp(5rem,10vw,7.5rem)] tracking-[-0.05em]">{Math.round(F.puntuacion_global)}</span><span className="text-2xl text-[var(--k-muted)]">/100</span></p>
-              {F.edad_piel != null && <p className="m-0 pb-3"><span className="block text-sm text-[var(--k-muted)]">Edad de tu piel</span><span className="cifra text-3xl">{Math.round(F.edad_piel)}</span> <span className="text-[var(--k-muted)]">años</span></p>}
-            </div>
-          ) : <h2 className="titulo">Tu rutina</h2>}
-          {objetivos.length > 0 && (
-            <div className="space-y-3">
-              <p className="text-xl font-medium">Lo primero que conviene trabajar</p>
-              <ul className="grid gap-2.5 list-none p-0 m-0">
-                {objetivos.map((o: any, k: number) => (
-                  <li key={o.aspecto} className="grid grid-cols-[1.5rem_8.5rem_1fr_2.5rem] items-center gap-3">
-                    <span className="cifra text-[var(--k-accent)]">{k + 1}</span>
-                    <span className="text-lg">{o.nombre}</span>
-                    {o.nota != null ? <span className="escala"><i /><b data-alto={aTrabajar(o.nota) ? '' : undefined} style={{ width: `${Math.max(4, o.nota)}%` }} /></span> : <span />}
-                    <span className="cifra text-lg text-right">{o.nota ?? ''}</span>
-                  </li>
-                ))}
-              </ul>
-            </div>
-          )}
-        </div>
-      </section>
-
-      {/* 2. Ingredientes clave, por qué y con qué producto */}
-      {clave.length > 0 && (
-        <section className="space-y-5">
-          <h3 className="text-[2rem] leading-[1.05] tracking-[-0.03em]">Tus ingredientes clave</h3>
-          <ol className="grid md:grid-cols-3 gap-4 list-none p-0 m-0">
-            {clave.map((g: any) => {
-              const pr = conProducto(g)
-              return (
-                <li key={g.nombre} className="rounded-[var(--radius-card)] border border-[var(--k-line)] bg-[var(--k-bg)] p-5 grid grid-rows-[auto_auto_1fr_auto] gap-2">
-                  <span className="inline-flex items-center gap-1.5 text-sm text-[var(--k-muted)]">{g.turno === 'PM' ? <Moon size={16} /> : <Sun size={16} />}{g.turno === 'PM' ? 'Noche' : 'Mañana'}</span>
-                  <span className="text-2xl font-medium tracking-[-0.02em]">{g.nombre}</span>
-                  <span className="text-[var(--k-muted)] leading-snug"><span className="text-[var(--k-accent)] font-medium">Para {lista(g.para.map((n: string) => n.toLowerCase()))}.</span> {g.frase ?? g.por_que}</span>
-                  <span className="mt-2 pt-3 border-t border-[var(--k-line)] flex items-baseline justify-between gap-3">
-                    {pr ? <><span className="leading-snug"><span className="block text-sm text-[var(--k-muted)]">{pr.marca}</span>{pr.producto}</span><span className="cifra text-lg whitespace-nowrap">{eur(pr.precio)}</span></>
-                      : <span className="text-sm text-[var(--k-muted)]">{g.ahora ? 'Pide en el mostrador un producto con este ingrediente.' : g.motivo ?? 'Entra más adelante.'}</span>}
-                  </span>
-                </li>
-              )
-            })}
-          </ol>
-        </section>
-      )}
-
-      {/* 3. La rutina completa, compacta */}
-      <section className="space-y-5">
-        <div className="flex flex-wrap items-center gap-4">
-          <h3 className="text-[2rem] leading-[1.05] tracking-[-0.03em]">Tu rutina</h3>
-          <div role="tablist" aria-label="Nivel de la rutina" className="md:ml-auto inline-flex rounded-[var(--radius-card)] border border-[var(--k-line)] bg-[var(--k-bg)] p-1">
-            {(['basica', 'media', 'completa'] as const).map((k) => (
-              <button key={k} role="tab" aria-selected={nivel === k} onClick={() => { setNivel(k); setQr('') }}
-                className={`h-11 px-4 rounded-lg text-sm ${nivel === k ? 'bg-[var(--k-accent)] text-sobre-marca' : 'text-[var(--k-muted)] hover:text-[var(--k-text)]'}`}>
-                {R.rutinas[k].nombre} <span className="num">{eur(R.rutinas[k].total)}</span>
-              </button>
-            ))}
-          </div>
-        </div>
-        {productos.length ? (
-          <div className="grid md:grid-cols-2 gap-6">
-            <Turno icono={<Sun size={20} />} titulo="Mañana" productos={manana} />
-            <Turno icono={<Moon size={20} />} titulo="Noche" productos={noche} />
-          </div>
-        ) : <p className="texto">Pide al farmacéutico que te enseñe los productos de tu rutina.</p>}
-      </section>
-
-      {/* 4. Llevársela: informe completo por email y rutina en el móvil */}
-      <section className={`grid gap-4 ${emailActivo ? 'md:grid-cols-2' : ''}`}>
-        {emailActivo && <InformeEmail consejo={res.id} foto={foto} nivel={nivel} />}
-        <div className="rounded-[var(--radius-card)] bg-[var(--k-accent-soft)] p-6 grid grid-cols-[1fr_auto] gap-6 items-center">
-          <div className="space-y-2">
-            <p className="text-xl font-medium flex items-center gap-2"><CalendarCheck size={22} className="text-[var(--k-accent)]" /> Llévatela en el móvil</p>
-            <p className="text-[var(--k-muted)] leading-relaxed">Guarda la rutina en WhatsApp y repite el análisis en 4 semanas. Enseña esta pantalla en el mostrador para que te preparen los productos.</p>
-          </div>
-          {qr ? <img src={qr} alt="Código QR con tu rutina" className="w-36 h-36 rounded-[var(--radius-input)] border border-[var(--k-line)]" /> : <button onClick={generarQr} className="boton-sec">Ver código</button>}
-        </div>
-      </section>
-
-      {res.codigo && (
-        <section className="rounded-[var(--radius-card)] border-2 border-[var(--k-accent)] p-6 grid md:grid-cols-[auto_1fr] gap-x-8 gap-y-2 items-center">
-          <p className="cifra text-[3rem] leading-none tracking-[0.12em] text-[var(--k-accent)] m-0">{res.codigo}</p>
-          <div>
-            <p className="text-xl font-medium m-0">Tu código de revisión</p>
-            <p className="text-[var(--k-muted)] leading-relaxed m-0">Vuelve en unas 4 semanas y toca «Vengo a mi revisión». Haz una foto a esta pantalla: también va en WhatsApp y en el informe por email.</p>
-          </div>
-        </section>
-      )}
-
-      <div className="flex justify-center pb-2">
-        <button onClick={onFin} className="boton-sec">Terminar y salir</button>
-      </div>
-      <p className="text-sm text-[var(--k-muted)] text-center pb-6">Análisis cosmético orientativo, no un diagnóstico médico. La simulación está generada con IA y no es una promesa de resultado.</p>
-    </div>
-  )
-}
-
-function InformeEmail({ consejo, foto, nivel }: { consejo: string; foto: string | null; nivel: string }) {
-  const [email, setEmail] = useState('')
-  const [acepta, setAcepta] = useState(false)
-  const [estado, setEstado] = useState<'' | 'enviando' | 'ok' | string>('')
-  const valido = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(email.trim())
-  async function enviar() {
-    setEstado('enviando')
-    const r = await enviarInformeEmail(consejo, email.trim(), foto, nivel)
-    setEstado('error' in r ? (r.error ?? 'error') : 'ok')
-  }
-  return (
-    <div className="rounded-[var(--radius-card)] border border-[var(--k-line)] bg-[var(--k-bg)] p-6 space-y-3">
-      <p className="text-xl font-medium flex items-center gap-2"><EnvelopeSimple size={22} className="text-[var(--k-accent)]" /> Informe completo por email</p>
-      {estado === 'ok' ? <p className="text-[var(--k-muted)] leading-relaxed">Enviado a {email.trim()}. Revisa también la carpeta de spam.</p> : (
-        <>
-          <p className="text-[var(--k-muted)] leading-relaxed">{foto ? 'Un PDF con tus fotos por zona, cada medida explicada, los ingredientes y la rutina paso a paso.' : 'Un PDF con los ingredientes y la rutina paso a paso.'}</p>
-          <div className="flex gap-2">
-            <input type="email" inputMode="email" autoComplete="off" value={email} onChange={(e) => setEmail(e.target.value)} placeholder="tu@email.com"
-              className="flex-1 min-w-0 h-12 px-4 rounded-[var(--radius-input)] border border-[var(--k-line)] bg-[var(--k-bg)] text-lg" />
-            <button onClick={enviar} disabled={!valido || !acepta || estado === 'enviando'} className="boton !h-12">{estado === 'enviando' ? 'Enviando…' : 'Enviar'}</button>
-          </div>
-          <label className="flex items-start gap-2 text-sm text-[var(--k-muted)]">
-            <input type="checkbox" checked={acepta} onChange={(e) => setAcepta(e.target.checked)} className="mt-0.5 w-5 h-5 accent-[var(--k-accent)]" />
-            {AVISO_EMAIL(!!foto)}
-          </label>
-          {estado && estado !== 'enviando' && <p className="text-sm text-[var(--k-warn)]">{estado}</p>}
-        </>
-      )}
-    </div>
-  )
-}
-
-/* ---------- Piezas ---------- */
-
-function Evolucion({ anterior: A, F, foto }: { anterior: any; F: any; foto: string | null }) {
-  const filas = Object.keys(NOMBRE_RESULTADO).filter((a) => A.ui?.[a] != null && F.ui?.[a] != null)
-    .map((a) => ({ a, antes: Math.round(A.ui[a]), ahora: Math.round(F.ui[a]) })).sort((x, y) => (y.ahora - y.antes) - (x.ahora - x.antes))
-  const fecha = new Date(A.fecha).toLocaleDateString('es-ES', { day: 'numeric', month: 'long', timeZone: 'Europe/Madrid' })
-  return (
-    <section className="grid md:grid-cols-[minmax(0,5fr)_minmax(0,7fr)] gap-8 md:gap-12 items-start">
-      <div className="max-w-md w-full mx-auto">
-        {A.foto && foto ? <AntesDespues antes={A.foto} despues={foto} etiquetaAntes={fecha} etiquetaDespues="Hoy" />
-          : foto ? <img src={foto} alt="Tu foto de hoy" className="w-full rounded-[var(--radius-card)] -scale-x-100" /> : null}
-      </div>
-      <div className="space-y-6">
-        <p className="text-[var(--k-muted)] m-0">Tu evolución desde el {fecha} · {A.dias} días</p>
-        {A.global != null && F.puntuacion_global != null && (
-          <p className="m-0 leading-none"><span className="cifra text-[2.5rem] text-[var(--k-muted)]">{Math.round(A.global)}</span><span className="text-2xl text-[var(--k-muted)] px-3">→</span><span className="cifra text-[clamp(4rem,8vw,6rem)] tracking-[-0.05em]">{Math.round(F.puntuacion_global)}</span><span className="text-2xl text-[var(--k-muted)]">/100</span></p>
-        )}
-        <ul className="grid gap-2 list-none p-0 m-0">
-          {filas.map((f) => {
-            const d = f.ahora - f.antes
-            return (
-              <li key={f.a} className="grid grid-cols-[8.5rem_5.5rem_3rem] items-baseline gap-3 py-1.5 border-b border-[var(--k-line)]">
-                <span className="text-lg">{NOMBRE_RESULTADO[f.a]}</span>
-                <span className="cifra text-[var(--k-muted)]">{f.antes} → <span className="text-[var(--k-text)]">{f.ahora}</span></span>
-                <span className={`cifra text-right font-medium ${d >= 3 ? 'text-[var(--k-accent)]' : 'text-[var(--k-muted)]'}`}>{d > 0 ? '+' : ''}{d}</span>
-              </li>
-            )
-          })}
-        </ul>
-        <p className="text-sm text-[var(--k-muted)] m-0">Más alto, piel en mejor estado. Cambios de 1 o 2 puntos pueden deberse a la luz o a la postura.</p>
-      </div>
-    </section>
-  )
-}
-
-function Turno({ icono, titulo, productos }: { icono: React.ReactNode; titulo: string; productos: any[] }) {
-  return (
-    <div className="border-t border-[var(--k-text)] pt-5 space-y-4">
-      <p className="flex items-center gap-2 font-medium text-[var(--k-accent)]">{icono} {titulo}</p>
-      <ol className="space-y-4">
-        {productos.map((p: any, k: number) => (
-          <li key={k} className="grid grid-cols-[1fr_auto] gap-x-4 gap-y-0.5 pb-4 border-b border-[var(--k-line)]">
-            <span className="text-sm text-[var(--k-muted)]">{k + 1}. {p.paso}</span>
-            <span className="row-span-2 self-center cifra text-lg">{eur(p.precio)}</span>
-            <span className="text-lg leading-snug">{p.marca} {p.producto}</span>
-          </li>
-        ))}
-        {!productos.length && <li className="text-[var(--k-muted)]">Sin productos en este turno.</li>}
-      </ol>
-    </div>
-  )
-}
-
-function Dato({ etiqueta, valor, unidad }: { etiqueta: string; valor: string; unidad: string }) {
-  return (
-    <div className="py-5 pr-5 [&+&]:pl-5 [&+&]:border-l border-[var(--k-line)]">
-      <dt className="text-sm text-[var(--k-muted)]">{etiqueta}</dt>
-      <dd className="mt-2 m-0"><span className="cifra text-[3rem] leading-none">{valor}</span> <span className="text-[var(--k-muted)]">{unidad}</span></dd>
-    </div>
-  )
-}
-
-function AntesDespues({ antes, despues, etiquetaAntes = 'Hoy', etiquetaDespues = 'Con tu rutina (simulación IA)' }: { antes: string; despues: string; etiquetaAntes?: string; etiquetaDespues?: string }) {
-  const [x, setX] = useState(50)
-  const [tocado, setTocado] = useState(false)
-  // Al aparecer, el deslizador se mueve solo una vez para que se vea que se puede arrastrar
-  useEffect(() => {
-    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return
-    const pasos = [50, 78, 22, 50]
-    const ini = performance.now() + 700, dur = 2200
-    let id = 0
-    const f = (t: number) => {
-      const k = Math.min(1, Math.max(0, (t - ini) / dur)) * (pasos.length - 1)
-      const i = Math.min(pasos.length - 2, Math.floor(k)), u = k - i, e = u * u * (3 - 2 * u)
-      setX(pasos[i] + (pasos[i + 1] - pasos[i]) * e)
-      if (k < pasos.length - 1) id = requestAnimationFrame(f)
-    }
-    id = requestAnimationFrame(f)
-    const parar = () => cancelAnimationFrame(id)
-    window.addEventListener('pointerdown', parar, { once: true })
-    return () => { parar(); window.removeEventListener('pointerdown', parar) }
-  }, [])
-  const mover = (e: React.PointerEvent<HTMLDivElement>) => {
-    const r = e.currentTarget.getBoundingClientRect()
-    setX(Math.max(0, Math.min(100, ((e.clientX - r.left) / r.width) * 100)))
-  }
-  return (
-    <figure className="space-y-3">
-      <div className="relative w-full aspect-[3/4] rounded-[var(--radius-card)] overflow-hidden bg-[var(--k-soft)] touch-none cursor-ew-resize"
-        onPointerDown={(e) => { e.currentTarget.setPointerCapture(e.pointerId); setTocado(true); mover(e) }}
-        onPointerMove={(e) => { if (e.buttons) mover(e) }}>
-        {/* Las dos en espejo, como la ve la clienta en la cámara; si solo se gira una, no coinciden */}
-        <img src={despues} alt={etiquetaDespues} className="absolute inset-0 w-full h-full object-cover -scale-x-100" />
-        <img src={antes} alt={etiquetaAntes} className="absolute inset-0 w-full h-full object-cover -scale-x-100" style={{ clipPath: `inset(0 ${100 - x}% 0 0)` }} />
-        <div className="absolute top-0 bottom-0 w-px bg-sobre-marca" style={{ left: `${x}%` }}>
-          <span className="absolute top-1/2 -translate-y-1/2 -translate-x-1/2 w-11 h-11 rounded-full bg-papel text-[var(--k-text)] grid place-items-center shadow-pomo"><ArrowsLeftRight size={20} /></span>
-        </div>
-      </div>
-      <figcaption className="flex justify-between text-sm text-[var(--k-muted)]"><span>{etiquetaAntes}</span><span className={`transition-opacity ${tocado ? 'opacity-0' : ''}`}>Desliza para comparar</span><span>{etiquetaDespues}</span></figcaption>
-    </figure>
-  )
-}
-
-function Esquinas() {
-  const c = 'absolute w-8 h-8 border-[var(--k-accent)] pointer-events-none'
-  return (
-    <>
-      <span className={`${c} top-4 left-4 border-t-2 border-l-2 rounded-tl-lg`} />
-      <span className={`${c} top-4 right-4 border-t-2 border-r-2 rounded-tr-lg`} />
-      <span className={`${c} bottom-4 left-4 border-b-2 border-l-2 rounded-bl-lg`} />
-      <span className={`${c} bottom-4 right-4 border-b-2 border-r-2 rounded-br-lg`} />
-    </>
   )
 }
 
