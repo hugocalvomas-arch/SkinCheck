@@ -222,6 +222,8 @@ const PLAZOS = {
 /* ------------------------------------------------------------------ 4 · Pauta: huecos y semana */
 const DIAS = ["L", "M", "X", "J", "V", "S", "D"];
 const AGUA_MICELAR = /micel|micellar|\bh2o\b/;
+const H_CUBRE = ["niacinamida", "azelaico"];   // activos que una hidratante puede llevar a dosis para cubrir una función sin sérum (escalado, 27/11). La vitamina C no: en crema no sustituye al sérum de mañana (R35)
+const SOLO_SITIO = /ya no cabe|No cabe sin pasar de 6|Un sérum por momento|la mañana es para la vitamina C|No cabe sin sumar/;   // motivos de «queda fuera» que son solo de sitio, no de tolerancia ni de seguridad
 const CON_FRECUENCIA = ["retinoide", "bakuchiol", "aha", "pha", "salicilico", "glicolico_afeitado"];
 function pauta(r, P, c, veto, modo){
   // SkinRead: con foto, barrera y rojez siguen primero (seguridad) y el resto va por gravedad (prioridad_foto); sin foto, por grupo
@@ -433,18 +435,28 @@ function pauta(r, P, c, veto, modo){
     if(d.fuerte && usados.some(u => u.fuerte && u.turno === d.turno && !(u.k === "retinoide" && ["aha", "pha"].includes(d.k)) && !(d.k === "retinoide" && ["aha", "pha"].includes(u.k)))) return false;
     return true;
   };
+  // Escalado (Hugo, 27/11): el nivel superior parte del anterior. Sus sérums van primero, en el mismo orden; lo nuevo se suma detrás
+  if(r._previo && r._previo.deseos) for(const d of r._previo.deseos){ if(lista.some(x => x.k === d.k) || (r._excluir || []).includes(d.k) || (d.activos && d.activos.length && d.activos.every(a => veto[a])) || fuera.some(f => f.k === d.k && /la mañana es para la vitamina C/.test(f.por))) continue;
+    const y = Object.assign({}, d); if(y.activos) y.activos = y.activos.filter(a => !veto[a]); lista.push(y); const i = fuera.findIndex(f => f.k === d.k); if(i >= 0) fuera.splice(i, 1); }
+  if(r._previo && r._previo.serums){ const pos = k => { const i = r._previo.serums.indexOf(k); return i < 0 ? 99 : i; }; const l2 = lista.map((x, i) => [x, i]).sort((a, b) => pos(a[0].k) - pos(b[0].k) || a[1] - b[1]).map(z => z[0]); lista.length = 0; lista.push(...l2); }
   const ojos = ["P15", "P17", "P18", "P19"].some(x => P.includes(x));
-  const tercero = N === 5 && !suave && !ojos && !c.reactiva && !c.rojez && lista.length > 2;   // quinto producto: otro tratamiento antes que un contorno que nadie ha pedido
+  // quinto producto: otro tratamiento antes que un contorno que nadie ha pedido. Escalado (Hugo, 27/11): en la completa, un ingrediente principal que
+  // no cabe gana al contorno de relleno; el contorno solo se queda el hueco con ojeras por debajo de 60 (R31). Antes bastaba con arrugas o firmeza para quitarle el sitio
+  const tercero = N === 5 && !suave && (r._escalado ? nb("ojeras") >= 60 : !ojos) && !c.reactiva && !c.rojez && lista.length > 2;
   // ojeras por debajo de 60 (Hugo, 24/11, R31): contorno también en la básica y la media. En la básica, solo si no hay algo peor que tratar con el sérum
   const peorQueOjeras = A_FOTO.some(k => k !== "ojeras" && nb(k) < nb("ojeras"));
   const reservaOjos = nb("ojeras") < 60 && N < 5 && !suave && !c.menor18 && !c.barrera && !c.receta && (N >= 4 || !peorQueOjeras) ? 1 : 0;
   // R35 frente al contorno (Hugo, 25/11, pregunta 2): con manchas <60, desde la media el contorno no le quita el hueco a la vitamina C o el azelaico de mañana (máximo 6 productos con el solar)
   const r35 = N >= 4 && nb("manchas") < 60 && !r.mantenimiento && lista.some(x => ["vitc", "despigmentante", "azelaico_mixto"].includes(x.k));
   const maxSerums = c.barrera || c.receta || c.procedimiento ? 0 : leve && N < 4 ? (reservaOjos ? 0 : 1) : Math.max(0, (N >= 6 || tercero ? 3 : N >= 4 ? 2 : 1) - (r35 ? 0 : reservaOjos));
+  // …y una función nueva que solo es niacinamida no ocupa un sérum si la hidratante del nivel anterior ya la lleva a dosis: ya está cubierta
+  const hPrev = r._previo && r._previo.fijar && r._previo.fijar["s:H"] ? (LISTA || CATALOGO).find(q => q.id === r._previo.fijar["s:H"]) : null, enHidratante = [];
   for(const x of lista){
     if((r._excluir || []).includes(x.k)) continue;
+    if((r._esperan || []).includes(x.k)){ if(!fuera.some(f => f.k === x.k)) fuera.push({k: x.k, que: nombreDeseo(x.k), por: "Un sérum por momento del día: no cabe sin quitarte algo que ya llevas. Es el siguiente paso."}); continue; }
+    if(hPrev && !r._previo.serums.includes(x.k) && aDosis(hPrev, "niacinamida") && (x.activos || (deseoDe(x.k) || {}).activos || []).every(a => a === "niacinamida") && ((deseoDe(x.k) || {}).activos || []).length){ enHidratante.push({k: x.k, que: nombreDeseo(x.k), por: "Va en la hidratante.", acts: ["niacinamida"]}); continue; }
     if(c.barrera || c.receta){ if(!fuera.some(f => f.k === x.k)) fuera.push({k: x.k, que: nombreDeseo(x.k), por: c.receta ? "Con un tratamiento con receta, limpiador, hidratante y solar. Los tratamientos se eligen después de revisar contigo lo que usas." : "Mientras la piel se recupera, nada más que limpiador, hidratante y solar. Entrará después, de uno en uno."}); continue; }
-    if(serums.length >= maxSerums){ if(!fuera.some(f => f.k === x.k)) fuera.push({k: x.k, que: nombreDeseo(x.k), por: N0 < 6 ? "En esta rutina ya no cabe. Entraría en una con más pasos." : "No cabe sin sumar demasiados activos."}); continue; }
+    if(serums.length >= maxSerums){ if(!fuera.some(f => f.k === x.k)) fuera.push({k: x.k, que: nombreDeseo(x.k), por: N0 < 5 || !r._escalado ? (N0 < 6 ? "En esta rutina ya no cabe. Entraría en una con más pasos." : "No cabe sin sumar demasiados activos.") : c.reactiva || c.rojez || r.reactiva === "siempre" ? "Con piel que reacciona o con rojez, no más activos a la vez. Entra cuando toleres los anteriores." : "No cabe sin pasar de 6 productos: es el siguiente paso, cuando toleres bien esta rutina."}); continue; }
     const d = Object.assign({k: x.k, por: x.por}, deseo(x.k));
     if(x.activos){ d.activos = x.activos.filter(a => !veto[a]); d.restringido = !x.leve; }
     if(x.leve) d.leve = true;
@@ -462,7 +474,7 @@ function pauta(r, P, c, veto, modo){
     // el segundo sérum va al turno contrario
     if(serums.length >= 1 && d.flexible){ const am = serums.filter(s => s.turno === "AM").length, pm = serums.length - am; d.turno = am > pm ? "PM" : am < pm ? "AM" : d.k === "despigmentante" ? "PM" : (serums[serums.length - 1].turno === "AM" ? "PM" : "AM");
       // misma noche que el retinoide: despigmentante suave, no azelaico (el azelaico iría de mañana)
-      if(d.turno === "PM" && serums.some(s => s.k === "retinoide")) d.activos = d.activos.filter(a => a !== "azelaico"); }
+      if(d.turno === "PM" && serums.some(s => s.k === "retinoide") && d.activos) d.activos = d.activos.filter(a => a !== "azelaico"); }
     if(serums.length >= 1 && !d.flexible && serums.some(s => s.turno === d.turno) && !(["aha", "pha"].includes(d.k) && serums.some(s => s.k === "retinoide")) && !(d.k === "retinoide" && serums.some(s => ["aha", "pha"].includes(s.k)))){
       // mismo turno y no se puede mover: solo si el que estaba es flexible
       // el salicílico sin retinoide va de noche (regla de abajo): se puede mover ya, para no dejar fuera la vitamina C de la mañana (ciclo 20, C20-10)
@@ -569,7 +581,11 @@ function pauta(r, P, c, veto, modo){
     return {dia, noche: paso};
   });
   const vistos = new Set(), fuera1 = fuera.filter(x => !vistos.has(x.que) && vistos.add(x.que));
-  return {orden, N, N0, huecos, serums, semana, escalado, fuera: fuera1, notas, nochesRet, nochesAha, nochesSal, lista, leve};
+  // Escalado (Hugo, 27/11: «no puede ser que te quedes sin dirigir un ingrediente»): lo que se queda sin sérum solo por sitio o por el sérum único de cada turno
+  // lo cubre la hidratante si hay una crema que lleve a dosis su niacinamida o su azelaico. Lo que espera por tolerancia o seguridad no entra aquí
+  const bonH = r.bonus_activos || {}, actsH = k => ((deseoDe(k) || {}).activos || []).filter(a => H_CUBRE.includes(a) && !veto[a] && !((bonH[a] || 0) < 0));
+  const cubrirH = r._escalado && r._top && !suave ? fuera1.filter(f => f.k && SOLO_SITIO.test(f.por) && actsH(f.k).length).map(f => Object.assign({}, f, {acts: actsH(f.k)})) : [];
+  return {orden, N, N0, huecos, serums, semana, escalado, fuera: fuera1, notas, nochesRet, nochesAha, nochesSal, lista, leve, cubrirH: cubrirH.concat(enHidratante), enHidratante};
 }
 const NOMBRE_DESEO = {niacinamida: "Niacinamida", retinoide: "Retinoide", bakuchiol: "Bakuchiol", aha: "Exfoliante con ácido", salicilico: "Loción de salicílico", antiacne: "Azelaico o niacinamida",
   despigmentante: "Despigmentante", pha: "Exfoliante suave (PHA)", barrera: "Niacinamida", vitc: "Vitamina C", calma: "Niacinamida o azelaico", sebo: "Niacinamida", humectante: "Sérum hidratante", glicolico_afeitado: "Loción con glicólico", azelaico_noche: "Ácido azelaico", azelaico_mixto: "Ácido azelaico"};
@@ -985,6 +1001,23 @@ function elegir(pa, ctx){
     // un activo que una regla de la foto pide evitar solo entra si no hay otro producto válido para el hueco (ciclo 3)
     if(l.length){ const bon = ctx.r.bonus_activos || {}; const otros = l.filter(x => !(x.activo && (bon[x.activo] || 0) < 0) && x.score >= .5); if(otros.length && otros.length < l.length) l = otros; }
     if(!l.length){ sinProducto.push(h); continue; }
+    // Escalado (Hugo, 27/11): la hidratante cubre con niacinamida la función que se quedó sin sérum, si hay una crema que la lleve a dosis y puntúe casi igual
+    // escalado: un sérum nuevo no repite la niacinamida que ya lleva la hidratante del nivel anterior, si hay otro producto con un activo propio
+    if(h.deseo && l.length && ctx.r._previo && ctx.r._previo.serums && !ctx.r._previo.serums.includes(h.deseo.k)){ const hp = ctx.r._previo.fijar && ctx.r._previo.fijar["s:H"] && (LISTA || CATALOGO).find(q => q.id === ctx.r._previo.fijar["s:H"]);
+      if(hp && aDosis(hp, "niacinamida")){ const otros = l.filter(x => x.activo !== "niacinamida"); if(otros.length) l = otros; } }
+    const cubreDe = x => (pa.cubrirH || []).filter(f => f.acts.some(a => aDosis(x.p, a)));
+    if(h.slot === "H" && (pa.cubrirH || []).length){ const cn = l.filter(x => cubreDe(x).length && x.score >= l[0].score - 1).sort((a, b) => cubreDe(b).length - cubreDe(a).length || b.score - a.score || a.p.id.localeCompare(b.p.id)); if(cn.length) l = cn.concat(l.filter(x => !cn.includes(x))); }
+    // …y el mismo producto para la misma función que en el nivel anterior, si aquí sigue siendo válido (el superior contiene al inferior)
+    { const fj = ctx.r._previo && ctx.r._previo.fijar, id = fj && (h.deseo ? fj["d:" + h.deseo.k] : fj["s:" + h.slot]);
+      const cubreH = h.slot === "H" && cubreDe(l[0]).length;
+      const i = id ? l.findIndex(x => x.p.id === id) : -1;
+      // sin ningún sérum en este nivel, la hidratante con activo propio no se cambia por la de otro nivel que no lo lleva (si no, el nivel se queda sin tratamiento)
+      const unico = h.slot === "H" && !pa.serums.length && l[0].activo && !l[i < 0 ? 0 : i].activo;
+      // de arriba abajo, el producto de la completa no sustituye al del nivel si el del nivel cubre además una función que aquí se queda sin sérum
+      // (T06: en la básica, un sérum con niacinamida y vitamina C vale más que el de solo niacinamida que usa la completa, donde la vitamina C va aparte)
+      const extraFuera = x => pa.fuera.filter(f => f.k && SOLO_SITIO.test(f.por) && ((F[f.k] || {}).activos || []).some(a => aDosis(x.p, a))).length;
+      const masAmplio = !!(ctx.r._previo && ctx.r._previo.desdeArriba) && i > 0 && (h.deseo || h.slot === "H") && extraFuera(l[0]) > extraFuera(l[i]);
+      if(i > 0 && !(cubreH && cubreDe(l[i]).length < cubreDe(l[0]).length) && !unico && !masAmplio) l = [l[i]].concat(l.filter((x, j) => j !== i)); }
     const e = l[0];
     sel[h.slot] = e; usados.add(e.p.id);
   }
@@ -1061,6 +1094,10 @@ function calcular(r){
   const no_recomiendo = agrupaVetos(veto);
   const ctx = {c, veto, P, r, serums: pa.serums, modo, ing: ING};
   const el = el0 && el0.sel ? el0 : elegir(pa, ctx);
+  // Escalado (Hugo, 27/11): lo que cubre la hidratante con niacinamida deja de estar «fuera»
+  pa.cubiertoH = el.sel.H ? (pa.cubrirH || []).filter(f => f.acts.some(a => aDosis(el.sel.H.p, a))) : [];
+  { const sin = (pa.enHidratante || []).filter(f => !pa.cubiertoH.includes(f)); if(sin.length) pa.fuera = pa.fuera.concat(sin.map(f => Object.assign({}, f, {por: "No he encontrado una hidratante con niacinamida que te vaya bien para cubrirlo."}))); }
+  if(pa.cubiertoH.length) pa.fuera = pa.fuera.filter(f => !pa.cubiertoH.some(x => x.k === f.k));
   const productos = [], queda_fuera = pa.fuera.map(f => ({que: f.que, por: f.por}));
   for(const h of pa.huecos){
     const e = el.sel[h.slot];
@@ -1082,7 +1119,10 @@ function calcular(r){
     // opción económica (Hugo, 24/11): si el elegido es muy caro, uno con el mismo activo que cumpla casi igual y cueste mucho menos
     const economica = e.p.pvp_eur >= CARO ? libres.filter(a => a.activo === e.activo && a.score >= e.score - CASI_IGUAL && a.p.pvp_eur <= e.p.pvp_eur * .6 && !empate.includes(a))
       .sort((a, b) => b.score - a.score || a.p.pvp_eur - b.p.pvp_eur || a.p.id.localeCompare(b.p.id))[0] || null : null;
-    productos.push(Object.assign(ficha(e, h), {slot: h.slot, paso: h.etiqueta, turno: h.turno, aparte: !!h.aparte, para: paraQue(h, e, pa),
+    const fc = ficha(e, h);
+    const actH = h.slot === "H" && pa.cubiertoH.length ? pa.cubiertoH[0].acts.find(a => aDosis(e.p, a)) : null;
+    if(actH){ fc.activo = fc.activo || nombre(actH); fc.activo_clave = fc.activo_clave || actH; }
+    productos.push(Object.assign(fc, {slot: h.slot, paso: h.etiqueta, turno: h.turno, aparte: !!h.aparte, para: actH ? `Hidrata y, con su ${nombre(actH)}, ayuda a ${pa.cubiertoH.map(f => (F[f.k] || {}).para || f.que.toLowerCase()).filter((x, i, a) => a.indexOf(x) === i).join(" y ")}.` : paraQue(h, e, pa),
       alternativas: alts.map(a => ficha(a, h)).concat(el.cand[h.slot].sin_dosis.slice(0, 1).map(a => Object.assign(ficha(a, h), {sin_dosis: true}))),
       empate: empate.map(a => ficha(a, h)), economica: economica ? ficha(economica, h) : null}));
   }
@@ -1204,6 +1244,10 @@ function opciones(P, pa, el, productos, veto, c, r){
       }
     }
   });
+  // Escalado (Hugo, 27/11): la función que cubre la hidratante sale como ingrediente de la rutina, no como «para más adelante»
+  for(const f of pa.cubiertoH || []){ if(vistos.has(f.k)) continue; vistos.add(f.k);
+    const a = f.acts.find(x => el.sel.H && aDosis(el.sel.H.p, x)) || f.acts[0];
+    out.push({papel: "siguiente", nombre: may(nombre(a)), clave: a, ficha: FICHA_ING[a] || null, turno: "AMPM", objetivos: objetivos(f.k), por_que: `Para ${(F[f.k] || {}).para || f.que.toLowerCase()}. Va en la hidratante.`, limite: LIMITE[a] || null, motivo: null}); }
   // lo que queda para más adelante: funciones que tu piel pide y que ahora no entran (no caben, o hay que esperar). Lo vetado va aparte.
   const motivosVeto = new Set(Object.values(veto));
   for(const f of pa.fuera){
@@ -1287,4 +1331,39 @@ function calcularCon(r, lista){
   LISTA = lista;
   try { return calcular(r); } finally { LISTA = null; }
 }
-module.exports = {calcular, calcularCon, provisional, detectar, condiciones, pauta, PROBLEMAS, CORTO, candidatos};
+/* Escalado entre niveles (Hugo, 27/11): «si hay un producto que es este o ninguno, repártelo en las tres; lo que no puede ser es que te quedes sin dirigir
+   un ingrediente». Los niveles se calculan en orden: cada uno parte del anterior (mismos sérums primero y el mismo producto para la misma función,
+   si sigue siendo válido) y solo suma. En la completa, lo que no cabe solo por sitio lo cubre la hidratante cuando se puede; si no, se dice por qué espera.
+   niveles: [{productos, presupuesto}, …] de menor a mayor. Devuelve un resultado por nivel, en el mismo orden. */
+function calcularNiveles(r, lista, niveles){
+  const corre = (nv, previo) => calcularCon(Object.assign({}, r, {productos: nv.productos, presupuesto: nv.presupuesto, _escalado: true, _previo: previo, _top: nv === niveles[niveles.length - 1]}), lista);
+  const deseosDe = o => o._pauta.serums.map(s => ({k: s.k, por: s.por, activos: s.activos ? s.activos.slice() : undefined, leve: s.leve}));
+  const fijarDe = o => { const f = {}; for(const x of o.productos){ if(!x.id) continue; const m = /^serum(\d)$/.exec(x.slot);
+    if(m){ const s = o._pauta.serums[+m[1] - 1]; if(s) f["d:" + s.k] = x.id; } else f["s:" + x.slot] = x.id; } return f; };
+  // 1.ª pasada, de abajo arriba: qué funciones entran en cada nivel (cada uno parte del anterior)
+  const outs = []; let previo = null;
+  for(const nv of niveles){
+    let o = corre(nv, previo);
+    // un ingrediente nuevo no puede echar a uno del nivel anterior (p. ej. el retinal de la completa no puede quitar el azelaico de la media): si pasa, el nuevo espera
+    const perdidos = () => previo ? previo.serums.filter(k => !o._pauta.serums.some(s => s.k === k) && !(o._pauta.cubiertoH || []).some(f => f.k === k)) : [];
+    const nuevos = previo ? o._pauta.serums.map(s => s.k).filter(k => !previo.serums.includes(k)) : [], fuera = [];
+    while(perdidos().length && nuevos.length){ const k = nuevos.pop(); fuera.push(k);
+      o = calcularCon(Object.assign({}, r, {productos: nv.productos, presupuesto: nv.presupuesto, _escalado: true, _previo: previo, _top: nv === niveles[niveles.length - 1], _esperan: fuera.slice()}), lista); }
+    // en la completa, si un sérum salió por «un sérum por momento del día» después de ocupar sitio, ese sitio es para lo siguiente de la lista (C060: el AHA antes que un contorno de relleno)
+    if(nv === niveles[niveles.length - 1]){ const turno = o._pauta.fuera.concat(o._pauta.cubiertoH || []).filter(f => f.k && /^Un sérum por momento del día: (más capas|por la mañana)/.test(f.por)).map(f => f.k);
+      if(turno.length && o._pauta.fuera.some(f => /No cabe sin pasar de 6/.test(f.por))){ const esp = fuera.concat(turno.filter(k => !fuera.includes(k)));
+        const o2 = calcularCon(Object.assign({}, r, {productos: nv.productos, presupuesto: nv.presupuesto, _escalado: true, _previo: previo, _top: true, _esperan: esp}), lista);
+        const pierde = previo && previo.serums.some(k => !o2._pauta.serums.some(s => s.k === k) && !(o2._pauta.cubiertoH || []).some(f => f.k === k) && o._pauta.serums.some(s => s.k === k));
+        if(!pierde && o2._pauta.serums.length >= o._pauta.serums.length){ o = o2; fuera.splice(0, fuera.length, ...esp); } } }
+    if(fuera.length) o._esperan = fuera;
+    outs.push(o); previo = {serums: o._pauta.serums.map(s => s.k), deseos: deseosDe(o), fijar: fijarDe(o), esperan: fuera}; }
+  // 2.ª pasada, de arriba abajo: los niveles de abajo usan, para cada función, el producto de la completa si en su nivel también vale.
+  // Así un producto que se elige porque encaja con todo lo demás de la completa es el mismo en los tres niveles, y subir de nivel solo suma
+  const top = outs[outs.length - 1], fTop = fijarDe(top);
+  for(let i = outs.length - 2; i >= 0; i--){
+    const ant = i > 0 ? outs[i - 1] : outs[i];
+    outs[i] = corre(niveles[i], {serums: ant._pauta.serums.map(s => s.k), deseos: i > 0 ? deseosDe(ant) : null, fijar: fTop, desdeArriba: true});
+  }
+  return outs;
+}
+module.exports = {calcular, calcularCon, calcularNiveles, provisional, detectar, condiciones, pauta, PROBLEMAS, CORTO, candidatos};

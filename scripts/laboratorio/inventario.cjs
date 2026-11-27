@@ -12,7 +12,8 @@ for(const [nom, e] of Object.entries(ESC)){
   let rut = 0, vacios = 0, euros = 0, fuera = 0, seg = 0;
   for(const c of casos){
     const { r } = L.respuestas(c, M);
-    for(const [k, n] of L.NIVELES){ const o = M.motor.calcularCon({ ...JSON.parse(JSON.stringify(r)), productos: n, presupuesto: e.pres }, e.lista); rut++;
+    const outs = M.motor.calcularNiveles(JSON.parse(JSON.stringify(r)), e.lista, L.NIVELES.map(([, n]) => ({ productos: n, presupuesto: e.pres })));   // como en el iPad (27/11)
+    for(const o of outs){ rut++;
       vacios += o.productos.filter(p => !p.id && p.slot !== "S").length + (o.productos.some(p => p.slot === "S" && p.id) ? 0 : 100);
       euros += o.productos.filter(p => p.id && p.slot !== "S").reduce((s, p) => s + (M.POR.get(p.id).pvp_eur || 0), 0);
       if(o.dentro_presupuesto === false) fuera++;

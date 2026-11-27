@@ -18,8 +18,9 @@ for(const c of CASOS){
   const rf = aplicarAlMotor(r, c.notas);
   const embOLac = r.embarazo === "si" || r.lactancia === "si";
   const todoBien = Object.values(c.notas).every(v => v >= 75);
-  for(const [n, pres] of NIVELES){
-    const out = motor.calcularCon({ ...r, productos: n, presupuesto: pres }, LISTA);
+  const outs = motor.calcularNiveles(r, LISTA, NIVELES.map(([n, pres]) => ({ productos: n, presupuesto: pres })));   // como en el iPad: niveles encadenados (escalado, 27/11)
+  for(const [i, [n]] of NIVELES.entries()){
+    const out = outs[i];
     rutinas++;
     const prods = out.productos.filter(p => p.id).map(p => POR_ID.get(p.id)).filter(Boolean);
     const tiene = k => prods.some(p => lleva(p, k));

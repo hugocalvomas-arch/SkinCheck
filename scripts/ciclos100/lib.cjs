@@ -173,10 +173,9 @@ function respuestas(c, M){
 function correr(c, M){
   const { r, rf } = respuestas(c, M);
   const res = { reglas: rf.reglas_aplicadas.map(x => x.id), prioridad: rf.prioridad_foto, piel: r.piel, vetos_foto: Object.keys(rf.veto_extra), bonus: rf.bonus_activos };
-  for(const [k, n, pres] of NIVELES){
-    const out = M.motor.calcularCon({ ...JSON.parse(JSON.stringify(r)), productos: n, presupuesto: pres }, M.LISTA);
-    res[k] = out;
-  }
+  // como en el iPad (src/server/rutinas.ts): los tres niveles encadenados (escalado, Hugo 27/11)
+  const outs = M.motor.calcularNiveles(JSON.parse(JSON.stringify(r)), M.LISTA, NIVELES.map(([, n, pres]) => ({ productos: n, presupuesto: pres })));
+  NIVELES.forEach(([k], i) => { res[k] = outs[i]; });
   return res;
 }
 function estructura(o){

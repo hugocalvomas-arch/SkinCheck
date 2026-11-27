@@ -11,7 +11,8 @@ const caso = ov => { const c = JSON.parse(JSON.stringify(BASE)); Object.assign(c
 function correr(ov, extraR){
   const c = caso(ov), { r } = L.respuestas(c, M); Object.assign(r, extraR || {});
   const out = {};
-  for(const [k, n, pres] of L.NIVELES) out[k] = M.motor.calcularCon({ ...JSON.parse(JSON.stringify(r)), productos: n, presupuesto: pres }, M.LISTA);
+  const outs = M.motor.calcularNiveles(JSON.parse(JSON.stringify(r)), M.LISTA, L.NIVELES.map(([, n, pres]) => ({ productos: n, presupuesto: pres })));   // como en el iPad (27/11)
+  L.NIVELES.forEach(([k], i) => { out[k] = outs[i]; });
   return out;
 }
 const prods = o => o.productos.filter(p => p.id).map(p => ({ ...p, f: M.POR.get(p.id) }));
