@@ -85,7 +85,61 @@
       "bajo_pedido": false,
       "empate": []
      }
-    ]
+    ],
+    "semana": [
+     {
+      "dia": "L",
+      "noche": [
+       "Limpiador",
+       "Retinoide",
+       "Hidratante"
+      ]
+     },
+     {
+      "dia": "M",
+      "noche": [
+       "Limpiador",
+       "Hidratante"
+      ]
+     },
+     {
+      "dia": "X",
+      "noche": [
+       "Limpiador",
+       "Hidratante"
+      ]
+     },
+     {
+      "dia": "J",
+      "noche": [
+       "Limpiador",
+       "Retinoide",
+       "Hidratante"
+      ]
+     },
+     {
+      "dia": "V",
+      "noche": [
+       "Limpiador",
+       "Hidratante"
+      ]
+     },
+     {
+      "dia": "S",
+      "noche": [
+       "Limpiador",
+       "Hidratante"
+      ]
+     },
+     {
+      "dia": "D",
+      "noche": [
+       "Limpiador",
+       "Hidratante"
+      ]
+     }
+    ],
+    "escalado": "Es tu primer retinoide: empiezas con una concentración baja y subes cuando la piel lo tolere, a partir de unos 3 meses. Piel sensible: 1-2 noches por semana, en sándwich (hidratante, retinoide, hidratante), durante 8 semanas. Techo: 3 noches."
    },
    "media": {
     "nombre": "Media",
@@ -179,7 +233,61 @@
       "bajo_pedido": false,
       "empate": []
      }
-    ]
+    ],
+    "semana": [
+     {
+      "dia": "L",
+      "noche": [
+       "Limpiador",
+       "Retinoide",
+       "Hidratante"
+      ]
+     },
+     {
+      "dia": "M",
+      "noche": [
+       "Limpiador",
+       "Hidratante"
+      ]
+     },
+     {
+      "dia": "X",
+      "noche": [
+       "Limpiador",
+       "Hidratante"
+      ]
+     },
+     {
+      "dia": "J",
+      "noche": [
+       "Limpiador",
+       "Retinoide",
+       "Hidratante"
+      ]
+     },
+     {
+      "dia": "V",
+      "noche": [
+       "Limpiador",
+       "Hidratante"
+      ]
+     },
+     {
+      "dia": "S",
+      "noche": [
+       "Limpiador",
+       "Hidratante"
+      ]
+     },
+     {
+      "dia": "D",
+      "noche": [
+       "Limpiador",
+       "Hidratante"
+      ]
+     }
+    ],
+    "escalado": "Es tu primer retinoide: empiezas con una concentración baja y subes cuando la piel lo tolere, a partir de unos 3 meses. Piel sensible: 1-2 noches por semana, en sándwich (hidratante, retinoide, hidratante), durante 8 semanas. Techo: 3 noches."
    },
    "completa": {
     "nombre": "Completa",
@@ -273,7 +381,61 @@
       "bajo_pedido": false,
       "empate": []
      }
-    ]
+    ],
+    "semana": [
+     {
+      "dia": "L",
+      "noche": [
+       "Limpiador",
+       "Retinoide",
+       "Hidratante"
+      ]
+     },
+     {
+      "dia": "M",
+      "noche": [
+       "Limpiador",
+       "Hidratante"
+      ]
+     },
+     {
+      "dia": "X",
+      "noche": [
+       "Limpiador",
+       "Hidratante"
+      ]
+     },
+     {
+      "dia": "J",
+      "noche": [
+       "Limpiador",
+       "Retinoide",
+       "Hidratante"
+      ]
+     },
+     {
+      "dia": "V",
+      "noche": [
+       "Limpiador",
+       "Hidratante"
+      ]
+     },
+     {
+      "dia": "S",
+      "noche": [
+       "Limpiador",
+       "Hidratante"
+      ]
+     },
+     {
+      "dia": "D",
+      "noche": [
+       "Limpiador",
+       "Hidratante"
+      ]
+     }
+    ],
+    "escalado": "Es tu primer retinoide: empiezas con una concentración baja y subes cuando la piel lo tolere, a partir de unos 3 meses. Piel sensible: 1-2 noches por semana, en sándwich (hidratante, retinoide, hidratante), durante 8 semanas. Techo: 3 noches."
    }
   }
  },

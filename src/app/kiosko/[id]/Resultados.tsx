@@ -23,9 +23,9 @@ const eur = (n: number | null | undefined) => (n == null ? '' : n.toLocaleString
 const primeraFrase = (t?: string | null) => { const f = (t ?? '').split(/(?<=\.)\s/)[0]?.trim() ?? ''; return f && !f.endsWith('.') ? `${f}.` : f }
 const sinMovimiento = () => typeof window !== 'undefined' && window.matchMedia('(prefers-reduced-motion: reduce)').matches
 
-type Clave = 'evolucion' | 'piel' | 'ingredientes' | 'productos' | 'llevar'
-const ETIQUETA: Record<Clave, string> = { evolucion: 'Tu evolución', piel: 'Tu piel', ingredientes: 'Ingredientes', productos: 'Tu rutina', llevar: 'Llévatela' }
-const SIGUIENTE: Record<Clave, string> = { evolucion: 'Ver tu piel hoy', piel: 'Ver tus ingredientes', ingredientes: 'Ver tus productos', productos: 'Llévatela', llevar: 'Terminar' }
+type Clave = 'evolucion' | 'piel' | 'ingredientes' | 'productos' | 'semana' | 'llevar'
+const ETIQUETA: Record<Clave, string> = { evolucion: 'Tu evolución', piel: 'Tu piel', ingredientes: 'Ingredientes', productos: 'Tu rutina', semana: 'Tu semana', llevar: 'Llévatela' }
+const SIGUIENTE: Record<Clave, string> = { evolucion: 'Ver tu piel hoy', piel: 'Ver tus ingredientes', ingredientes: 'Ver tus productos', productos: 'Ver tu semana', semana: 'Llévatela', llevar: 'Terminar' }
 type Nivel = 'basica' | 'media' | 'completa'
 
 export function Informe({ res, foto, farmacia, emailActivo = true, onFin }: { res: any; foto: string | null; farmacia: string; emailActivo?: boolean; onFin: () => void }) {
@@ -44,7 +44,7 @@ export function Informe({ res, foto, farmacia, emailActivo = true, onFin }: { re
       </div>
     )
 
-  const pasos: Clave[] = [...(res.anterior && F ? ['evolucion' as const] : []), 'piel', 'ingredientes', 'productos', 'llevar']
+  const pasos: Clave[] = [...(res.anterior && F ? ['evolucion' as const] : []), 'piel', 'ingredientes', 'productos', 'semana', 'llevar']
   const actual = pasos[k]
   const ir = (n: number) => {
     if (n < 0) return
@@ -67,6 +67,7 @@ export function Informe({ res, foto, farmacia, emailActivo = true, onFin }: { re
         {actual === 'piel' && <PasoPiel F={F} foto={foto} objetivos={res.lectura?.objetivos ?? []} />}
         {actual === 'ingredientes' && <PasoIngredientes R={R} lectura={res.lectura} nivel={nivel} conProducto={conProducto} />}
         {actual === 'productos' && <PasoProductos R={R} nivel={nivel} onNivel={setNivel} ingredientes={res.lectura?.ingredientes ?? []} />}
+        {actual === 'semana' && <PasoSemana rut={rut} />}
         {actual === 'llevar' && <PasoLlevar res={res} rut={rut} foto={foto} farmacia={farmacia} nivel={nivel} emailActivo={emailActivo} />}
       </div>
       <footer className="sticky bottom-0 z-10 border-t border-[var(--k-line)] bg-papel/95 backdrop-blur-sm">
@@ -391,13 +392,13 @@ function Columna({ icono, titulo, productos, desde, nombreActivo }: { icono: Rea
           const d = 700 + (desde + n) * 420
           const empate: any[] = p.empate ?? []
           return (
-            <li key={`${p.paso}-${n}`} className="r-producto rounded-[var(--radius-card)] border border-[var(--k-line)] bg-[var(--k-bg)] p-3 grid grid-cols-[4rem_minmax(0,1fr)_auto] gap-x-4 gap-y-1 items-center" style={{ ['--d' as any]: `${d}ms` }}>
-              <span className="row-span-2 r-chip" style={{ ['--d' as any]: `${d + 150}ms` }}><FotoProducto id={p.id} paso={p.paso} alt={`${p.marca} ${p.producto}`} /></span>
+            <li key={`${p.paso}-${n}`} className="r-producto rounded-[var(--radius-card)] border border-[var(--k-line)] bg-[var(--k-bg)] p-3 grid grid-cols-[7rem_minmax(0,1fr)_auto] gap-x-4 gap-y-1 items-center" style={{ ['--d' as any]: `${d}ms` }}>
+              <span className="row-span-2 r-chip" style={{ ['--d' as any]: `${d + 150}ms` }}><FotoProducto id={p.id} paso={p.paso} alt={`${p.marca} ${p.producto}`} className="w-28 h-28" /></span>
               <span className="text-sm text-[var(--k-muted)] flex items-center gap-2 flex-wrap">
                 {n + 1}. {p.paso}
                 {act && <span className="rounded-full bg-[var(--k-accent)] text-sobre-marca px-2 py-0.5 text-xs font-medium">{act}</span>}
               </span>
-              <span className="row-span-2 cifra text-lg whitespace-nowrap self-start pt-5">{eur(p.precio)}</span>
+              <span className="row-span-2 cifra text-lg whitespace-nowrap self-start pt-1">{eur(p.precio)}</span>
               <span className="leading-snug">
                 <span className="text-lg"><span className="text-[var(--k-muted)]">{p.marca}</span> {p.producto}</span>
                 {p.frecuencia && <span className="block text-sm text-[var(--k-accent)]">{p.frecuencia}</span>}
@@ -408,7 +409,7 @@ function Columna({ icono, titulo, productos, desde, nombreActivo }: { icono: Rea
                   <span className="text-sm text-[var(--k-muted)]">Igual de bueno para ti:</span>
                   {empate.map((e: any) => (
                     <span key={e.id ?? e.producto} className="flex items-center gap-3 text-sm">
-                      <FotoProducto id={e.id} paso={p.paso} alt={`${e.marca} ${e.producto}`} className="w-10 h-10" />
+                      <FotoProducto id={e.id} paso={p.paso} alt={`${e.marca} ${e.producto}`} className="w-14 h-14" />
                       <span className="flex-1 min-w-0 leading-snug"><span className="text-[var(--k-muted)]">{e.marca}</span> {e.producto}</span>
                       <span className="cifra whitespace-nowrap">{eur(e.precio)}</span>
                     </span>
@@ -424,7 +425,112 @@ function Columna({ icono, titulo, productos, desde, nombreActivo }: { icono: Rea
   )
 }
 
-/* ---------- 4. Llévatela ---------- */
+/* ---------- 4. Tu semana: mini calendario ---------- */
+
+const DIAS: [string, string][] = [['L', 'Lun'], ['M', 'Mar'], ['X', 'Mié'], ['J', 'Jue'], ['V', 'Vie'], ['S', 'Sáb'], ['D', 'Dom']]
+const DIA_LARGO: Record<string, string> = { lunes: 'L', martes: 'M', miércoles: 'X', jueves: 'J', viernes: 'V', sábado: 'S', domingo: 'D' }
+const esSerum = (p: any) => /s[ée]rum/i.test(p.paso ?? '')
+
+/**
+ * Qué días va cada producto de noche, leído de la semana que da el motor (rutina.semana).
+ * Si no hay semana, de la frecuencia escrita («2 noches a la semana (lunes, jueves)»); si tampoco, todos los días.
+ */
+function diasDeNoche(p: any, noche: any[], semana: any[] | undefined): Record<string, string | true> {
+  const todos = Object.fromEntries(DIAS.map(([d]) => [d, true as const])) as Record<string, string | true>
+  if (!esSerum(p)) {
+    // La hidratante va doble («antes y después») las noches del retinoide en sándwich
+    if (/hidratante/i.test(p.paso ?? '') && semana?.length)
+      return Object.fromEntries(DIAS.map(([d]) => [d, (semana.find((x: any) => x.dia === d)?.noche ?? []).some((t: string) => /antes y despu/i.test(t)) ? '×2' : true]))
+    return todos
+  }
+  if (semana?.length) {
+    const serums = noche.filter(esSerum)
+    const base = /^(limpiador|hidratante)/i
+    const encaja = (t: string) => base.test(t) ? false
+      : serums.length === 1 ? true
+      : !!p.activo && (raiz(t).includes(raiz(p.activo)) || raiz(p.activo).includes(raiz(t)))
+    const dias = DIAS.filter(([d]) => (semana.find((x: any) => x.dia === d)?.noche ?? []).some(encaja)).map(([d]) => d)
+    if (dias.length) return Object.fromEntries(dias.map((d) => [d, true as const]))
+  }
+  const m = /\(([^)]+)\)/.exec(p.frecuencia ?? '')
+  if (m) {
+    const dias = m[1].split(/,\s*|\s+y\s+/).map((x) => DIA_LARGO[x.trim().toLowerCase()]).filter(Boolean)
+    if (dias.length) return Object.fromEntries(dias.map((d) => [d, true as const]))
+  }
+  return todos
+}
+
+function PasoSemana({ rut }: { rut: any }) {
+  const productos: any[] = (rut.productos ?? []).filter((p: any) => p.producto)
+  const manana = productos.filter((p: any) => p.turno === 'AM' || p.turno === 'AMPM')
+  const noche = productos.filter((p: any) => p.turno === 'PM' || p.turno === 'AMPM')
+  const filas = [
+    ...manana.map((p) => ({ p, turno: 'AM' as const, dias: Object.fromEntries(DIAS.map(([d]) => [d, true as const])) as Record<string, string | true> })),
+    ...noche.map((p) => ({ p, turno: 'PM' as const, dias: diasDeNoche(p, noche, rut.semana) })),
+  ]
+  const alternos = filas.filter((f) => f.turno === 'PM' && Object.keys(f.dias).length < 7)
+  let k = 0
+  return (
+    <div className="grid gap-6">
+      <div className="grid gap-3 max-w-3xl">
+        <Titulo texto="Tu semana" />
+        <p className="texto m-0 r-sube" style={{ ['--d' as any]: '400ms' }}>{alternos.length ? `Por la mañana, lo mismo cada día. Por la noche, ${alternos.map((f) => f.p.producto).join(' y ')} solo los días marcados.` : 'Lo mismo cada día, por la mañana y por la noche.'}</p>
+      </div>
+      <div className="r-sube rounded-[var(--radius-card)] border border-[var(--k-line)] bg-[var(--k-bg)] overflow-hidden" style={{ ['--d' as any]: '550ms' }}>
+        <table className="w-full border-collapse">
+          <thead>
+            <tr className="bg-[var(--k-soft)]">
+              <th className="text-left font-normal text-sm text-[var(--k-muted)] px-4 py-3">Producto</th>
+              {DIAS.map(([d, t]) => <th key={d} className="w-[9%] font-medium text-sm px-1 py-3">{t}</th>)}
+            </tr>
+          </thead>
+          {(['AM', 'PM'] as const).map((tu) => (
+            <tbody key={tu}>
+              <tr>
+                <td colSpan={8} className="px-4 pt-3 pb-1">
+                  <span className="inline-flex items-center gap-2 font-medium text-[var(--k-accent)]">{tu === 'AM' ? <Sun size={18} /> : <Moon size={18} />}{tu === 'AM' ? 'Mañana' : 'Noche'}</span>
+                </td>
+              </tr>
+              {filas.filter((f) => f.turno === tu).map((f, n) => {
+                const fila = k++
+                return (
+                  <tr key={`${tu}-${n}`} className="border-t border-[var(--k-line)]">
+                    <td className="px-4 py-1.5">
+                      <span className="flex items-center gap-3 r-sube" style={{ ['--d' as any]: `${750 + fila * 260}ms` }}>
+                        <FotoProducto id={f.p.id} paso={f.p.paso} alt={`${f.p.marca} ${f.p.producto}`} className="w-10 h-10" />
+                        <span className="min-w-0 leading-tight"><span className="block text-xs text-[var(--k-muted)]">{f.p.paso}</span><span className="text-[0.95rem]">{f.p.marca} {f.p.producto}</span></span>
+                      </span>
+                    </td>
+                    {DIAS.map(([d], m) => {
+                      const v = f.dias[d]
+                      return (
+                        <td key={d} className="text-center px-1 py-1.5">
+                          {v ? (
+                            <span className={`r-chip inline-grid place-items-center w-8 h-8 rounded-full text-xs font-medium ${tu === 'AM' ? 'bg-[var(--k-accent-soft)] text-[var(--k-accent)]' : 'bg-[var(--k-accent)] text-sobre-marca'}`} style={{ ['--d' as any]: `${900 + fila * 260 + m * 55}ms` }}>
+                              {v === true ? (tu === 'AM' ? <Sun size={16} weight="bold" /> : <Moon size={16} weight="fill" />) : v}
+                            </span>
+                          ) : <span className="inline-block w-2 h-2 rounded-full bg-[var(--k-line)]" aria-label="Descansa" />}
+                        </td>
+                      )
+                    })}
+                  </tr>
+                )
+              })}
+            </tbody>
+          ))}
+        </table>
+      </div>
+      {(rut.escalado || filas.some((f) => Object.values(f.dias).includes('×2'))) && (
+        <ul className="r-sube grid gap-2 list-none p-0 m-0 text-[var(--k-muted)] leading-relaxed" style={{ ['--d' as any]: `${1100 + filas.length * 260}ms` }}>
+          {filas.some((f) => Object.values(f.dias).includes('×2')) && <li className="flex gap-2"><span className="cifra font-medium text-[var(--k-text)]">×2</span> Esas noches, la hidratante antes y después del sérum, para que no irrite.</li>}
+          {rut.escalado && <li className="flex gap-2"><Clock size={18} className="shrink-0 mt-1" />{rut.escalado}</li>}
+        </ul>
+      )}
+    </div>
+  )
+}
+
+/* ---------- 5. Llévatela ---------- */
 
 function PasoLlevar({ res, rut, foto, farmacia, nivel, emailActivo }: { res: any; rut: any; foto: string | null; farmacia: string; nivel: Nivel; emailActivo: boolean }) {
   const [qr, setQr] = useState('')
