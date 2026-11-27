@@ -884,6 +884,8 @@ function candidatos(h, ctx){
         if(SEBORREGULADORA.test(nom) || /gel/.test(p.textura || "")) base -= 1; }
       // R32 con piel grasa (Hugo, 24/11; revisión clínica C17-01): rojez <55 y brillo: ni gel ni crema densa, una emulsión o fluido ligero
       // Hugo, 25/11 (pregunta 12): R26 gana a R9. Con rojez y brillo, fuera los geles puros y las cremas ricas; emulsión ligera, fluido o gel-crema con calmantes
+      // laboratorio (27/11, C061): R26/R32 también sin brillo. Con rojez <55, fuera los geles; el gel-crema, solo con brillo (≤60)
+      if(["H", "H2"].includes(h.slot) && rojezB && !brillo && (/gel/.test(p.textura || "") || /water gel|gel.?cream|gel-crema/.test(nom)) && !((nf.brillo ?? 100) <= 60 && (p.textura === "gel-crema" || /gel.?cr[eè]m|gel.?cream/.test(nom)))) continue;
       if(["H", "H2"].includes(h.slot) && rojezB && brillo){
         const gelCrema = p.textura === "gel-crema" || /gel.?cr[eè]m|gel.?cream/.test(nom);
         if(!gelCrema && (p.textura === "gel" || /\bgel\b/.test(nom))) continue;
