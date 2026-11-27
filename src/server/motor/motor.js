@@ -1172,6 +1172,8 @@ function calcular(r){
   const llevaRet = productos.some(x => x.id && x.slot !== "contorno" && el.sel[x.slot] && el.sel[x.slot].p && RETINOIDES.some(k => aDosis(el.sel[x.slot].p, k)));
   for(let t of r.avisos_extra || []){ if(!t) continue;
     if(!llevaRet){ if(/^Si tu rutina lleva retinoide/.test(t)) continue; t = t.replace(/\s*El retinoide, mejor entre dos capas de crema al principio\./, ""); }   // laboratorio (T1-22, T1-30)
+    // laboratorio (R18): el consejo de las dos capas de crema, una sola vez
+    else if(/El retinoide, mejor entre dos capas/.test(t) && (r.avisos_extra || []).some(o => /^Si tu rutina lleva retinoide/.test(o || ""))) t = t.replace(/\s*El retinoide, mejor entre dos capas de crema al principio\./, "");
     if(!avisos.includes(t)) avisos.push(t); }   // SkinRead: avisos de las reglas de la foto
   { const fp = x => (LISTA || CATALOGO).find(q => q.id === x.id), perf = productos.filter(x => /^serum/.test(x.slot) && x.id && fp(x) && (fp(x).fragancia === true || lleva(fp(x), "perfume")));
     if(c.reactiva_a_veces && perf.length) avisos.push(`${perf.map(x => x.marca + " " + x.producto).join(" y ")} lleva perfume o alérgenos de fragancia (como la cumarina). Pruébalo antes en una zona pequeña, detrás de la oreja, 2 o 3 días. Empieza 2 o 3 días por semana y déjalo mientras la piel esté irritada.`);
@@ -1199,7 +1201,7 @@ function calcular(r){
   if(pa.serums.length > 1) avisos.unshift("No empieces todo a la vez. Primero la base y el activo principal; cada activo nuevo, con dos semanas de separación como mínimo. Si algo irrita, sabrás cuál ha sido.");
   if(modo === "suave") avisos.unshift(P.includes("P26") ? "Rutina suave mientras lo consultas. Con granitos alrededor de la boca, a menudo lo que más ayuda es usar pocas cosas: si algún producto lo empeora, retíralo."
     : c.receta ? "Rutina suave para acompañar tu tratamiento: no sustituye lo que te han recetado."
-    : c.procedimiento ? "Rutina de recuperación tras tu tratamiento en consulta: limpiador suave, crema reparadora y protector solar 50+, sin activos ni perfume."
+    : c.procedimiento ? "Rutina de recuperación tras tu tratamiento en consulta: limpiador suave, crema reparadora y protector solar 50+, sin activos de tratamiento ni perfume."
     : P.includes("P24") ? "Rutina suave hasta que la piel se recupere: dos semanas como mínimo. Después, un producto nuevo cada 1-2 semanas, empezando por el más suave."
     : "Rutina suave mientras lo consultas: pocos productos, sin perfume y con un solo activo nuevo cada vez. Si algo escuece, déjalo.");
   return {modo, perfil, derivacion, opciones: op.opciones, prioridad: op.prioridad, rutina: {manana, noche}, semana: pa.semana, escalado: pa.escalado || null, noches: {retinoide: pa.nochesRet, acido: pa.nochesAha}, productos, no_recomiendo, queda_fuera, avisos,
