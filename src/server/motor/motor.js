@@ -1192,7 +1192,7 @@ function calcular(r){
   if(P.includes("P13")) avisos.push("El solar con color no es estético: frena la luz visible, que también oscurece estas manchas. Reaplícalo cada 2 horas al aire libre.");
   if(P.includes("P15")) avisos.push("Para las ojeras no hay un activo con respaldo sólido. Solar y no frotar es lo que más ayuda.");
   if(CFG.verano === "aviso" && pa.serums.some(s => s.k === "retinoide")) avisos.push("El retinoide va siempre de noche, con solar a la mañana siguiente.");
-  if(CFG.peroxido_benzoilo === "mencionar" && ["P01", "P02"].some(x => P.includes(x)) && modo === "normal") { const conRet = !c.embarazo && !c.menor18 && productos.some(x => /^serum/.test(x.slot) && x.id && el.sel[x.slot] && RETINOIDES.some(k => aDosis(el.sel[x.slot].p, k)));
+  if(CFG.peroxido_benzoilo === "mencionar" && ["P01", "P02"].some(x => P.includes(x)) && modo === "normal" && !c.rojez && !c.reactiva && r.reactiva !== "siempre") { const conRet = !c.embarazo && !c.menor18 && productos.some(x => /^serum/.test(x.slot) && x.id && el.sel[x.slot] && RETINOIDES.some(k => aDosis(el.sel[x.slot].p, k)));
     avisos.push(`Si a las 6-8 semanas la rutina no basta, en la farmacia hay peróxido de benzoílo al 2,5 % sin receta: de mañana${conRet ? ", con el retinoide de noche" : ""}. Es un medicamento, no forma parte de esta rutina.`); }
   if(!el.dentro) avisos.push(`Con los productos que cumplen lo que necesitas, la rutina sale por ${fmt(el.total)} €, por encima de tu tope. No he encontrado una combinación más barata que siga cumpliendo.`);
   const op = opciones(P, pa, el, productos, veto, c, r);
