@@ -1176,7 +1176,7 @@ function calcular(r){
     else if(/El retinoide, mejor entre dos capas/.test(t) && (r.avisos_extra || []).some(o => /^Si tu rutina lleva retinoide/.test(o || ""))) t = t.replace(/\s*El retinoide, mejor entre dos capas de crema al principio\./, "");
     if(!avisos.includes(t)) avisos.push(t); }   // SkinRead: avisos de las reglas de la foto
   { const fp = x => (LISTA || CATALOGO).find(q => q.id === x.id), perf = productos.filter(x => /^serum/.test(x.slot) && x.id && fp(x) && (fp(x).fragancia === true || lleva(fp(x), "perfume")));
-    if(c.reactiva_a_veces && perf.length) avisos.push(`${perf.map(x => x.marca + " " + x.producto).join(" y ")} lleva perfume o alérgenos de fragancia (como la cumarina). Pruébalo antes en una zona pequeña, detrás de la oreja, 2 o 3 días. Empieza 2 o 3 días por semana y déjalo mientras la piel esté irritada.`);
+    if(c.reactiva_a_veces && perf.length) avisos.push(`${perf.map(x => x.marca + " " + x.producto).join(" y ")} lleva perfume o alérgenos de fragancia (como la cumarina). Pruébalo antes en una zona pequeña, detrás de la oreja, 2 o 3 días. ${perf.some(x => x.frecuencia) ? "Sigue la pauta de noches que te indico" : "Empieza 2 o 3 días por semana"} y déjalo mientras la piel esté irritada.`);
     // propuesta 11: aceites esenciales sin «parfum», con piel que reacciona a veces. Se nombra cuál lleva: no todos tienen la misma composición
     const ae = productos.filter(x => x.id && fp(x) && !perf.includes(x) && !perfumado(fp(x)) && lleva(fp(x), "aceite_esencial"));
     if(c.reactiva_a_veces && ae.length) avisos.push(`${ae.map(x => x.marca + " " + x.producto + " (" + aceitesEsenciales(fp(x)).slice(0, 2).join(", ") + ")").join(" y ")} lleva aceites esenciales, que perfuman y pueden llevar alérgenos de fragancia. Pruébalo antes en una zona pequeña 2 o 3 días y déjalo si te pica o enrojece.`); }
@@ -1198,6 +1198,8 @@ function calcular(r){
   { const iC = productos.findIndex(x => /^serum/.test(x.slot) && x.activo_clave && x.activo_clave.startsWith("vitc")), iO = productos.findIndex(x => /^serum/.test(x.slot) && x.turno === "AM");
     if(iC > iO && iO >= 0){ const [v] = productos.splice(iC, 1); productos.splice(iO, 0, v); } }
   if(r.reactiva === "siempre" && modo === "normal") avisos.unshift("Como tu piel reacciona a casi todo, estrena los productos de uno en uno, con una o dos semanas entre cada uno. Antes, prueba cada uno 2 o 3 días en una zona pequeña, detrás de la oreja o en el cuello. Si pica o enrojece, no lo uses.");
+  // laboratorio (R19): si la pauta del retinoide ya dice «en sándwich», no se repite el consejo de las dos capas
+  if(avisos.some(t => /en sándwich/.test(t))){ const i = avisos.findIndex(t => /^Si tu rutina lleva retinoide, las primeras semanas/.test(t)); if(i >= 0) avisos.splice(i, 1); }
   if(pa.serums.length > 1) avisos.unshift("No empieces todo a la vez. Primero la base y el activo principal; cada activo nuevo, con dos semanas de separación como mínimo. Si algo irrita, sabrás cuál ha sido.");
   if(modo === "suave") avisos.unshift(P.includes("P26") ? "Rutina suave mientras lo consultas. Con granitos alrededor de la boca, a menudo lo que más ayuda es usar pocas cosas: si algún producto lo empeora, retíralo."
     : c.receta ? "Rutina suave para acompañar tu tratamiento: no sustituye lo que te han recetado."
