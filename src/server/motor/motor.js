@@ -893,6 +893,8 @@ function candidatos(h, ctx){
         const e = estado(p); if(["centella", "pantenol", "niacinamida", "ectoina", "bisabolol", "madecasosido"].some(k => e[k])) base += .3; }
       // R36: con poco brillo (≥75), sin hidratantes matificantes; la crema de tarro de CeraVe, solo en piel muy seca
       if(["H", "H2"].includes(h.slot) && (nf.brillo ?? 0) >= 75 && (SEBORREGULADORA.test(nom) || /shine control/.test(nom))) base -= 1.5;
+      // laboratorio (27/11, C062): R36 también en el solar. Con poco brillo (≥75), sin solares matificantes, «blur» ni de toque seco
+      if(h.slot === "S" && (nf.brillo ?? 0) >= 75 && (SEBORREGULADORA.test(nom) || /blur|dry touch|toque seco|oil.?free|shine control/.test(nom))) base -= 1;
       if(["H", "H2"].includes(h.slot) && p.id === "cerave-crema-hidratante" && !((nf.hidratacion ?? 100) < 50)) base -= 1.5;
       // R33: con manchas bien y rojez por debajo de 55, nada de arbutina ni kójico; un sérum calmante (centella, ectoína, pantenol, niacinamida hasta 5 %)
       if((rojezB || h.slot !== "L") && (nf.manchas ?? 0) >= 70 - B3 && ["arbutina", "kojico"].some(k => lleva(p, k))) continue;   // R28: sin manchas, ningún producto sin aclarado con arbutina o kójico
