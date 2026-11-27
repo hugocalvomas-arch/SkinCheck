@@ -12,7 +12,11 @@ import type { Respuestas } from '@/lib/cuestionario'
 import { randomInt } from 'node:crypto'
 import { registroConsentimiento } from '@/lib/privacidad'
 
-export type Seguridad = { edad: string; sexo: 'mujer' | 'hombre' | 'nd'; embarazo: 'embarazo' | 'lactancia' | 'no'; receta: 'si' | 'no'; reactiva: 'nunca' | 'a_veces' | 'siempre'; retinoide?: 'nunca' | 'reciente' | 'tolera' }
+export type Seguridad = { edad: string; sexo: 'mujer' | 'hombre' | 'nd'; embarazo: 'embarazo' | 'lactancia' | 'no'; receta: 'si' | 'no'; reactiva: 'nunca' | 'a_veces' | 'siempre'; retinoide?: 'nunca' | 'reciente' | 'tolera'
+  // Hito 1 (Hugo, 27/11): fototipo declarado (nunca deducido de la foto) y tratamiento en consulta en las últimas 2 semanas
+  fototipo?: 'I' | 'II' | 'III' | 'IV' | 'V' | 'VI' | 'nd'
+  procedimiento?: 'no' | 'peeling' | 'laser' | 'microagujas' | 'limpieza' | 'otro'
+  procedimiento_cuando?: 'semana' | 'dos_semanas' }
 
 async function esDeLaFarmacia(sb: Awaited<ReturnType<typeof supabaseServer>>, farmaciaId: string) {
   const { data: u } = await sb.auth.getUser()
@@ -64,7 +68,10 @@ export async function analizarKiosko(farmaciaId: string, s: Seguridad, foto: str
     reactiva: s.reactiva,
     sienta: ['nada'],
     retinoide_exp: s.retinoide === 'reciente' || s.retinoide === 'tolera' ? s.retinoide : 'nunca',   // sin respuesta, lo prudente: empezar por abajo
-    fototipo: 'III',
+    // Hito 1 (Hugo, 27/11): solo el fototipo que declara la clienta; antes iba siempre «III». «No lo sé» = sin fototipo
+    fototipo: s.fototipo && s.fototipo !== 'nd' ? s.fototipo : undefined,
+    procedimiento: s.procedimiento && s.procedimiento !== 'no' ? s.procedimiento : undefined,
+    procedimiento_cuando: s.procedimiento && s.procedimiento !== 'no' ? s.procedimiento_cuando : undefined,
     textura: 'igual',
     preocupa: ['nada'],
     piel: 'normal',

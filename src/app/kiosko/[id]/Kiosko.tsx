@@ -27,6 +27,10 @@ const PREGUNTAS: { id: keyof Seguridad; t: string; nota: string; ops: [string, s
   { id: 'reactiva', t: '¿Tu piel reacciona cuando pruebas un producto nuevo?', nota: 'Picor, rojez o escozor. Así sabemos si empezar por lo más suave.', ops: [['nunca', 'Casi nunca'], ['a_veces', 'A veces'], ['siempre', 'Casi siempre']] },
   // Hugo, 24/11: quien empieza con un retinoide va a la concentración baja; quien ya lo tolera sigue con la suya
   { id: 'retinoide', si: (s) => s.edad !== '14-17' && s.embarazo !== 'embarazo' && s.embarazo !== 'lactancia' && s.receta !== 'si', t: '¿Usas ya retinol o retinal?', nota: 'De esto depende la concentración con la que empiezas y cuántas noches a la semana.', ops: [['nunca', 'No, nunca'], ['reciente', 'Sí, desde hace menos de 3 meses'], ['tolera', 'Sí, y lo tolero bien']] },
+  // Hito 1 (Hugo, 27/11): tratamiento en consulta (cuál y cuándo) y fototipo declarado
+  { id: 'procedimiento', t: '¿Te has hecho algún tratamiento en consulta en las últimas 2 semanas?', nota: 'Después de un peeling, un láser o microagujas, la piel necesita una rutina distinta durante un tiempo.', ops: [['no', 'No'], ['peeling', 'Un peeling'], ['laser', 'Láser o luz pulsada'], ['microagujas', 'Microagujas o radiofrecuencia con agujas'], ['limpieza', 'Una limpieza facial'], ['otro', 'Otro, o no sé cuál']] },
+  { id: 'procedimiento_cuando', si: (s) => !!s.procedimiento && s.procedimiento !== 'no', t: '¿Cuándo te lo hiciste?', nota: 'Lo que puedes usar después depende del tiempo que ha pasado y de lo que te indicaron.', ops: [['semana', 'Hace menos de una semana'], ['dos_semanas', 'Hace una o dos semanas']] },
+  { id: 'fototipo', t: 'El primer día de sol fuerte, sin protección, tu piel…', nota: 'Así sé cuánto te conviene un protector solar con color. El protector 50+ va siempre.', ops: [['I', 'Se quema siempre y nunca se broncea'], ['II', 'Se quema con facilidad y coge poco color'], ['III', 'A veces se quema y se broncea poco a poco'], ['IV', 'Casi nunca se quema y se broncea bien'], ['V', 'Se pone muy morena y rara vez se quema'], ['VI', 'No se quema nunca'], ['nd', 'No lo sé']] },
 ]
 
 const MEJORAR: [string, string][] = [

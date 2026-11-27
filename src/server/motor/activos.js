@@ -45,8 +45,18 @@ const A = {
   zinc: [["zinc pca", "zinc gluconate"], "media", "zinc"],
   perfume: [["parfum", "fragrance"], "-", "perfume"],
   alcohol: [["alcohol denat", "sd alcohol"], "-", "alcohol"],
-  mentol: [["menthol", "camphor"], "-", "mentol o alcanfor"]
+  mentol: [["menthol", "camphor"], "-", "mentol o alcanfor"],
+  // Hito 1, propuesta 11 (Hugo, 27/11): aceites esenciales, dentro del sistema de fragancias. Se detectan por la planta + «oil» (ver AE_PLANTAS);
+  // no se tratan como un «parfum» en todo: solo cuentan con piel que reacciona, rojez fija o intolerancia al perfume declarada, y se nombra cuál lleva
+  aceite_esencial: [[], "-", "aceites esenciales"]
 };
+// Plantas de aceite esencial (Diccionario de Ingredientes Cosméticos, Carrasco 2009; alérgenos del Reglamento (UE) 2023/1545). Los aceites vegetales
+// fijos (semilla, hueso, fruto, nuez, germen) no son aceite esencial y no cuentan.
+const AE_PLANTAS = ["lavandula", "citrus", "mentha", "melaleuca", "eucalyptus", "rosmarinus", "pelargonium", "cymbopogon", "salvia", "thymus", "origanum", "cananga",
+  "jasminum", "santalum", "boswellia", "cupressus", "juniperus", "pogostemon", "anthemis", "chamomilla", "rosa damascena", "rosa centifolia", "litsea", "abies", "pinus",
+  "foeniculum", "illicium", "cinnamomum", "syzygium", "eugenia caryophyllus", "myrtus", "vetiveria", "cedrus", "ocimum", "coriandrum", "elettaria", "zingiber", "laurus",
+  "pimpinella", "michelia", "osmanthus"];
+const esAceiteEsencial = x => /\boil\b/.test(x) && AE_PLANTAS.some(g => x.includes(g)) && !/seed oil|kernel oil|fruit oil|nut oil|germ oil|hydrogenated|sulfonated/.test(x);
 const EXCL = {
   salicilico: ["capryloyl", "ethylhexyl salicylate", "homosalate", "butyloctyl", "tridecyl"], retinol: ["retinyl"], retinal: ["retinaldehyde dimethyl"],
   urea: ["hydroxyethyl urea", "imidazolidinyl", "diazolidinyl", "polyurea"], vitc_pura: ["ethyl ascorbic", "ascorbyl"], glicerina: ["glyceryl"],
@@ -64,7 +74,7 @@ function estado(p){
   const linea = (() => { const i = inci.findIndex(x => CFG.linea_1pct.some(l => x.includes(l))); return i < 0 ? null : i; })();
   const o = {};
   for(const k of Object.keys(A)){
-    const es = x => A[k][0].some(f => x.includes(f)) && !(EXCL[k] || []).some(e => x.includes(e));
+    const es = k === "aceite_esencial" ? esAceiteEsencial : x => A[k][0].some(f => x.includes(f)) && !(EXCL[k] || []).some(e => x.includes(e));
     const pos = inci.findIndex(es);
     const ficha = (p.activos || []).find(a => es(n(a.inci)));
     if(pos < 0 && !ficha) continue;
@@ -84,4 +94,7 @@ const lleva = (p, k) => !!estado(p)[k];
 /* Está a dosis útil: declarada, probable, o de dosis media/muy baja (donde la posición no descarta). */
 const aDosis = (p, k) => { const e = estado(p)[k]; return !!e && e.estado !== "tras_linea"; };
 
-module.exports = {A, RETINOIDES, ACIDOS, nombre, estado, lleva, aDosis, n};
+/* Aceites esenciales que lleva, por su nombre INCI (para nombrarlos en el motivo y en el aviso). */
+const aceitesEsenciales = p => (p.inci_completo || []).filter(i => esAceiteEsencial(n(i)));
+
+module.exports = {A, RETINOIDES, ACIDOS, nombre, estado, lleva, aDosis, n, aceitesEsenciales};
