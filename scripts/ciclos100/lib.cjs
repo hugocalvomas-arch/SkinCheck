@@ -159,7 +159,10 @@ function respuestas(c, M){
     lactancia: c.sexo !== "hombre" && c.embarazo === "lactancia" ? "si" : "no",
     receta: c.receta, reactiva: c.reactiva, sienta: ["nada"],
     retinoide_exp: puedeRet && (c.retinoide === "reciente" || c.retinoide === "tolera") ? c.retinoide : "nunca",
-    fototipo: "III", textura: "igual", preocupa: ["nada"], piel: "normal", kiosko: true,
+    // igual que el iPad (Hito 1, 27/11): el fototipo y el tratamiento en consulta solo van si la clienta los declara; antes el iPad mandaba siempre «III»
+    fototipo: c.fototipo && c.fototipo !== "nd" ? c.fototipo : undefined, procedimiento: c.procedimiento && c.procedimiento !== "no" ? c.procedimiento : undefined,
+    procedimiento_cuando: c.procedimiento && c.procedimiento !== "no" ? c.procedimiento_cuando : undefined,
+    textura: "igual", preocupa: ["nada"], piel: "normal", kiosko: true,
     consentimiento: { version: "sim", salud: true, foto: true, guardar_foto: false, fecha: c.fecha || "2026-11-24T10:00:00.000Z", via: "kiosko" },
   };
   const p = Object.fromEntries(ASP.map(a => [a, 100 - c.notas[a]]));

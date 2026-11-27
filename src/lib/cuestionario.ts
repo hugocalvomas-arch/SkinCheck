@@ -107,6 +107,12 @@ export const PREGUNTAS: Pregunta[] = [
   {id:"receta", bloque:"Tu piel y tus condiciones", t:"¿Usas ahora algo para la piel que te haya mandado un médico?",
    nota:"Si es así, no pongo activos encima de tu tratamiento.",
    ops:[["no","No"],["si","Sí"]]},
+  // Hito 1 (Hugo, 27/11): tratamiento en consulta en las últimas 2 semanas, cuál y cuándo
+  {id:"procedimiento", bloque:"Tu piel y tus condiciones", t:"¿Te has hecho algún tratamiento en consulta en las últimas 2 semanas?",
+   nota:"Después de un peeling, un láser o microagujas, la piel necesita una rutina distinta durante un tiempo.",
+   ops:[["no","No"],["peeling","Un peeling"],["laser","Láser o luz pulsada"],["microagujas","Microagujas o radiofrecuencia con agujas"],["limpieza","Una limpieza facial"],["otro","Otro, o no sé cuál"]]},
+  {id:"procedimiento_cuando", bloque:"Tu piel y tus condiciones", cond:(r: Respuestas)=>!!r.procedimiento && r.procedimiento!=="no", t:"¿Cuándo te lo hiciste?",
+   ops:[["semana","Hace menos de una semana"],["dos_semanas","Hace una o dos semanas"]]},
   {id:"retinoide_exp", bloque:"Tu piel y tus condiciones", cond:PUEDE_RETINOIDE, t:"¿Usas ya un retinoide?",
    nota:"El retinol y el retinal son retinoides. De esto depende por cuántas noches a la semana empiezas.",
    ops:[["nunca","No, nunca"],["reciente","Sí, desde hace menos de 3 meses"],["tolera","Sí, y lo tolero bien"]]},

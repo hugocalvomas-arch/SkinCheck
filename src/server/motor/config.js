@@ -70,5 +70,15 @@ module.exports = {
   topes: {barrera: 3, rojez_sensible: 5},
   solares_excluidos: ["garnier"],         // solares de gran consumo que Hugo no quiere recomendar
   peso_precio: 0.002,                       // cuánto resta cada euro al puntuar un producto (desempate calidad/precio)
-  presupuesto: {bajo: 30, medio: 60, alto: null}                  // hay que fichar productos: hoy el catálogo tiene uno
+  presupuesto: {bajo: 30, medio: 60, alto: null},                 // hay que fichar productos: hoy el catálogo tiene uno
+  // Hito 1, propuesta 8 (Hugo, 27/11): tratamientos en consulta en las últimas 2 semanas. Sin plazos: los fija quien hizo el tratamiento.
+  // La duración de cada caso está pendiente de revisión dermatológica.
+  procedimientos: {
+    peeling: {recuperacion: true, texto: "Te hiciste un peeling {cuando}. La piel se está renovando y está más sensible: por ahora, solo limpiador suave, crema reparadora y protector solar 50+."},
+    laser: {recuperacion: true, texto: "Te hiciste un láser o luz pulsada {cuando}. Por ahora, solo limpiador suave, crema reparadora y protector solar 50+, y evita el sol directo."},
+    microagujas: {recuperacion: true, texto: "Te hiciste un tratamiento con microagujas o radiofrecuencia con agujas {cuando}. La piel tiene microheridas: por ahora, solo limpiador suave, crema reparadora y protector solar 50+."},
+    otro: {recuperacion: true, texto: "Te hiciste un tratamiento en consulta {cuando}. Como no sabemos cuál fue, lo prudente es usar solo limpiador suave, crema reparadora y protector solar 50+."},
+    limpieza: {recuperacion: false, texto: "Te hiciste una limpieza facial {cuando}. Si incluyó extracción o un peeling, espera a que la piel esté tranquila antes de empezar los activos."},
+    _cierre: "Sigue las indicaciones de quien te hizo el tratamiento: el plazo depende de cada tratamiento. Cuando te diga que puedes, vuelve y añadimos los activos."
+  }
 };
