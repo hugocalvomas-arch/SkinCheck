@@ -342,10 +342,13 @@ function pauta(r, P, c, veto, modo){
   // embarazo: azelaico ocupa el hueco del retinoide, de noche
   for(const x of lista) if(x.k === "antiacne_o_azelaico"){ x.k = "azelaico_noche"; }
   // Hito 1, propuestas 6 y 21 (Hugo, 27/11): la niacinamida no es el tratamiento principal de los granos (Cochrane CD011368: sin datos de eficacia).
-  // El sérum para los granos es el ácido azelaico; la niacinamida solo ocupa ese hueco si el azelaico no se puede usar, y entonces se presenta como apoyo.
+  // El sérum para los granos es el ácido azelaico; la niacinamida solo ocupa ese hueco si el azelaico no se puede usar o ya va como azelaico mixto
+  // (granos y marcas a la vez), y entonces se presenta como apoyo.
   // Sus otras funciones (brillo, poro, rojez, manchas, barrera) no cambian.
-  const antiacne = veto.azelaico ? {...F.antiacne, activos: ["niacinamida"], para: "apoyar la piel con granos (la niacinamida es un apoyo, no el tratamiento principal)"} : {...F.antiacne, activos: ["azelaico"]};
-  const deseoDe = k => k === "antiacne" ? antiacne : k === "azelaico_mixto" ? {f: "F10", turno: "AM", activos: ["azelaico"], para: "tratar los granitos y aclarar las marcas a la vez", flexible: true} : k === "azelaico_noche" ? {f: "F10", turno: "PM", activos: ["azelaico"], para: "ocupar el lugar del retinoide durante el embarazo o la lactancia"} : F[k];
+  const antiacne = veto.azelaico || lista.some(x => x.k === "azelaico_mixto") ? {...F.antiacne, activos: ["niacinamida"], para: "apoyar la piel con granos (la niacinamida es un apoyo, no el tratamiento principal)"} : {...F.antiacne, activos: ["azelaico"]};
+  // si el azelaico ya trata los granos, el sérum de manchas usa otro despigmentante (sin dos azelaicos en la rutina; regresión del PR #17, T15 y C12-08)
+  const despig = lista.some(x => x.k === "antiacne") && !veto.azelaico ? {...F.despigmentante, activos: F.despigmentante.activos.filter(a => a !== "azelaico")} : F.despigmentante;
+  const deseoDe = k => k === "antiacne" ? antiacne : k === "despigmentante" ? despig : k === "azelaico_mixto" ? {f: "F10", turno: "AM", activos: ["azelaico"], para: "tratar los granitos y aclarar las marcas a la vez", flexible: true} : k === "azelaico_noche" ? {f: "F10", turno: "PM", activos: ["azelaico"], para: "ocupar el lugar del retinoide durante el embarazo o la lactancia"} : F[k];
   const deseo = deseoDe;
   // Vía Leve (Hugo, 24/11): sin ninguna nota en Moderado, se mantiene y se trata con UN solo activo suave dirigido a la nota más baja.
   // El activo sale de la tabla ingrediente × aspecto (suma de todas las notas); los ácidos exfoliantes sin aclarado no son «suaves».
