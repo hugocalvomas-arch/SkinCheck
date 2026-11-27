@@ -1195,6 +1195,7 @@ function calcular(r){
   // Orden de aplicación por la mañana: la vitamina C va antes que el otro tratamiento. No cambia la prioridad.
   { const iC = productos.findIndex(x => /^serum/.test(x.slot) && x.activo_clave && x.activo_clave.startsWith("vitc")), iO = productos.findIndex(x => /^serum/.test(x.slot) && x.turno === "AM");
     if(iC > iO && iO >= 0){ const [v] = productos.splice(iC, 1); productos.splice(iO, 0, v); } }
+  if(r.reactiva === "siempre" && modo === "normal") avisos.unshift("Como tu piel reacciona a casi todo, estrena los productos de uno en uno, con una o dos semanas entre cada uno. Antes, prueba cada uno 2 o 3 días en una zona pequeña, detrás de la oreja o en el cuello. Si pica o enrojece, no lo uses.");
   if(pa.serums.length > 1) avisos.unshift("No empieces todo a la vez. Primero la base y el activo principal; cada activo nuevo, con dos semanas de separación como mínimo. Si algo irrita, sabrás cuál ha sido.");
   if(modo === "suave") avisos.unshift(P.includes("P26") ? "Rutina suave mientras lo consultas. Con granitos alrededor de la boca, a menudo lo que más ayuda es usar pocas cosas: si algún producto lo empeora, retíralo."
     : c.receta ? "Rutina suave para acompañar tu tratamiento: no sustituye lo que te han recetado."
