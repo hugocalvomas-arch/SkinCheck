@@ -56,6 +56,8 @@ const AE_PLANTAS = ["lavandula", "citrus", "mentha", "melaleuca", "eucalyptus", 
   "jasminum", "santalum", "boswellia", "cupressus", "juniperus", "pogostemon", "anthemis", "chamomilla", "rosa damascena", "rosa centifolia", "litsea", "abies", "pinus",
   "foeniculum", "illicium", "cinnamomum", "syzygium", "eugenia caryophyllus", "myrtus", "vetiveria", "cedrus", "ocimum", "coriandrum", "elettaria", "zingiber", "laurus",
   "pimpinella", "michelia", "osmanthus"];
+// laboratorio (27/11, C081): algunos INCI parten el nombre por una coma («Melaleuca», «Alternifolia Leaf Oil»); se une con el siguiente si este termina el nombre
+const unirPartidos = l => l.map((x, i) => !/\boil\b/.test(x) && l[i + 1] && /^[a-z]+( [a-z]+)? oil\b/.test(l[i + 1]) && !/\(|\)/.test(l[i + 1]) ? x + " " + l[i + 1] : x);
 const esAceiteEsencial = x => /\boil\b/.test(x) && AE_PLANTAS.some(g => x.includes(g)) && !/seed oil|kernel oil|fruit oil|nut oil|germ oil|hydrogenated|sulfonated/.test(x);
 const EXCL = {
   salicilico: ["capryloyl", "ethylhexyl salicylate", "homosalate", "butyloctyl", "tridecyl"], retinol: ["retinyl"], retinal: ["retinaldehyde dimethyl"],
@@ -75,7 +77,7 @@ function estado(p){
   const o = {};
   for(const k of Object.keys(A)){
     const es = k === "aceite_esencial" ? esAceiteEsencial : x => A[k][0].some(f => x.includes(f)) && !(EXCL[k] || []).some(e => x.includes(e));
-    const pos = inci.findIndex(es);
+    const pos = (k === "aceite_esencial" ? unirPartidos(inci) : inci).findIndex(es);
     const ficha = (p.activos || []).find(a => es(n(a.inci)));
     if(pos < 0 && !ficha) continue;
     const pct = ficha && ficha.pct_declarado != null ? +ficha.pct_declarado : null;
@@ -95,6 +97,6 @@ const lleva = (p, k) => !!estado(p)[k];
 const aDosis = (p, k) => { const e = estado(p)[k]; return !!e && e.estado !== "tras_linea"; };
 
 /* Aceites esenciales que lleva, por su nombre INCI (para nombrarlos en el motivo y en el aviso). */
-const aceitesEsenciales = p => (p.inci_completo || []).filter(i => esAceiteEsencial(n(i)));
+const aceitesEsenciales = p => { const l = p.inci_completo || [], u = unirPartidos(l.map(n)); return l.map((x, i) => u[i] !== n(x) ? x + " " + l[i + 1] : x).filter((x, i) => esAceiteEsencial(u[i])); };
 
 module.exports = {A, RETINOIDES, ACIDOS, nombre, estado, lleva, aDosis, n, aceitesEsenciales};
