@@ -483,6 +483,8 @@ function pauta(r, P, c, veto, modo){
       const otro = serums.find(s => s.turno === d.turno && (s.flexible || (s.k === "salicilico" && d.turno === "AM" && !serums.some(q => q.k === "retinoide"))));
       // la vitamina C comparte la mañana con un tratamiento suave antes que mandarlo a la noche del retinoide
       if(otro && d.k === "vitc" && serums.some(s => s.k === "retinoide")){ /* los dos de mañana */ }
+      // R35: el exfoliante no empuja un paso de manchas (<60) a un turno que ya tiene sérum; el exfoliante es el último en entrar (T1-27, catálogo del PR #17)
+      else if(otro && ["aha", "pha", "salicilico"].includes(d.k) && nb("manchas") < 60 && otro.k === "despigmentante" && serums.some(s => s.k === "azelaico_mixto" && s.turno === (d.turno === "AM" ? "PM" : "AM"))){ fuera.push({k: x.k, que: nombreDeseo(x.k), por: "Un sérum por momento del día: más capas no suman y pueden hacer bolitas."}); continue; }
       else if(otro) otro.turno = d.turno === "AM" ? "PM" : "AM";
       else { fuera.push({k: x.k, que: nombreDeseo(x.k), por: "Ocuparía el mismo turno que otro activo fuerte."}); continue; }
     }
