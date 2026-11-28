@@ -970,7 +970,8 @@ function candidatos(h, ctx){
     // R35 (Hugo): con manchas <60, el sérum de mañana que además lleva vitamina C, azelaico, tranexámico o thiamidol a dosis cubre ese paso dentro del mismo producto (fichas verificadas, 25/11)
     if(/^serum/.test(h.slot) && /AM/.test(h.turno || (h.deseo || {}).turno || "") && ((ctx.r.notas_foto || {}).manchas ?? 100) < 60
       && ["vitc_pura", "vitc_derivados", "azelaico", "tranexamico", "thiamidol"].some(k => k !== activo && !ctx.veto[k] && aDosis(p, k))){ desglose.manchas_am = .5; base += .5; }
-    if((CALIDAD[p.id] || {}).revisar && ["H", "H2"].includes(h.slot)) base -= .3;   // hidratante con ficha de confianza baja (INCI incompleto o contaminado): solo si no hay otra igual de buena (ciclo 7)
+    if((CALIDAD[p.id] || {}).revisar && ["H", "H2"].includes(h.slot)) base -= .3;
+    if(p.ficha_nueva && /^propuesta/.test((p.v2 || {}).origen || "")){ desglose.sin_revisar = -1; base -= 1; }   // producto nuevo con la clasificación aún sin revisar por Hugo (27/11): solo si no hay otro igual de bueno   // hidratante con ficha de confianza baja (INCI incompleto o contaminado): solo si no hay otra igual de buena (ciclo 7)
     { const q = (CALIDAD[p.id] || {}).calidad; if(q != null){ desglose.calidad = Math.round(PESO_PRODUCTO.calidad * q / 10 * 100) / 100; base += desglose.calidad; } }
     out.push({p, score: base + pref, cubre, dosis, activo, extra: pegas, desglose});
   }
