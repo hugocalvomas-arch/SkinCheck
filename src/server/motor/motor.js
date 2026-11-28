@@ -331,6 +331,9 @@ function pauta(r, P, c, veto, modo){
     if(iC < 0 && !veto.vitc_pura && !c.menor18 && !c.embarazo){ lista.push({k: "vitc", por: P.find(p => ["P10", "P12", "P13"].includes(p)) || "P31"}); iC = lista.length - 1; }
     const iH = lista.findIndex(x => ["humectante", "barrera"].includes(x.k));
     if(iC >= 0 && iH >= 0 && iC > iH) lista.splice(iH, 0, lista.splice(iC, 1)[0]);
+    // …y con piel que reacciona o rojez, también antes que el retinoide, que irrita más (C15-07 y L09, al cargar los productos de la base de Hugo, 28/11)
+    { const iC2 = lista.findIndex(x => ["vitc", "despigmentante", "azelaico_mixto"].includes(x.k)), iR = lista.findIndex(x => x.k === "retinoide");
+      if((c.reactiva || c.rojez) && iC2 >= 0 && iR >= 0 && iC2 > iR) lista.splice(iR, 0, lista.splice(iC2, 1)[0]); }
     // en la completa, azelaico o tranexámico en lugar de repetir la vitamina C de la media
     // R35: con manchas <60 la vitamina C de la mañana se queda también en la completa (ciclo 15, C15-07)
     if(N0 >= 5 && !veto.azelaico && nb("manchas") >= 60){ const iV = lista.findIndex(x => x.k === "vitc"), iD = lista.findIndex(x => x.k === "despigmentante");
@@ -970,7 +973,8 @@ function candidatos(h, ctx){
     // R35 (Hugo): con manchas <60, el sérum de mañana que además lleva vitamina C, azelaico, tranexámico o thiamidol a dosis cubre ese paso dentro del mismo producto (fichas verificadas, 25/11)
     if(/^serum/.test(h.slot) && /AM/.test(h.turno || (h.deseo || {}).turno || "") && ((ctx.r.notas_foto || {}).manchas ?? 100) < 60
       && ["vitc_pura", "vitc_derivados", "azelaico", "tranexamico", "thiamidol"].some(k => k !== activo && !ctx.veto[k] && aDosis(p, k))){ desglose.manchas_am = .5; base += .5; }
-    if((CALIDAD[p.id] || {}).revisar && ["H", "H2"].includes(h.slot)) base -= .3;   // hidratante con ficha de confianza baja (INCI incompleto o contaminado): solo si no hay otra igual de buena (ciclo 7)
+    if((CALIDAD[p.id] || {}).revisar && ["H", "H2"].includes(h.slot)) base -= .3;
+    if(p.ficha_nueva && /^propuesta/.test((p.v2 || {}).origen || "")){ desglose.sin_revisar = -1; base -= 1; }   // producto nuevo con la clasificación aún sin revisar por Hugo (27/11): solo si no hay otro igual de bueno   // hidratante con ficha de confianza baja (INCI incompleto o contaminado): solo si no hay otra igual de buena (ciclo 7)
     { const q = (CALIDAD[p.id] || {}).calidad; if(q != null){ desglose.calidad = Math.round(PESO_PRODUCTO.calidad * q / 10 * 100) / 100; base += desglose.calidad; } }
     out.push({p, score: base + pref, cubre, dosis, activo, extra: pegas, desglose});
   }
