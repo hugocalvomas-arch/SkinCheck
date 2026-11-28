@@ -1007,9 +1007,14 @@ function elegir(pa, ctx){
       const bon = ctx.r.bonus_activos || {}, valeFoto = a => a.some(x => !(x.activo && (bon[x.activo] || 0) < 0));
       if(otros.length && (valeFoto(otros) || !valeFoto(l))) l = otros;
       // laboratorio (27/11, C104): si todos los candidatos repiten el activo de otro sérum (dos sérums de niacinamida), el hueco sobra: la función ya está cubierta
-      else if(!otros.length && prev.length && l.every(x => x.activo && (ya.includes(x.activo) || prev.some(e => aDosis(e.p, x.activo))))){ repetidos.add(h.deseo.k); l = []; } }
+      // …salvo la vitamina C de mañana: la que lleva un sérum de noche (p. ej. un retinol con ascórbico) no protege de día (R35; S095, T17 al cargar la base de Hugo, 28/11)
+      else if(!otros.length && prev.length && !(h.deseo.k === "vitc" && Object.entries(sel).filter(([s]) => /^serum/.test(s)).every(([s]) => ((pa.huecos.find(q => q.slot === s) || {}).turno) === "PM")) && l.every(x => x.activo && (ya.includes(x.activo) || prev.some(e => aDosis(e.p, x.activo))))){ repetidos.add(h.deseo.k); l = []; } }
     // laboratorio (27/11, C103): para calmar la rojez con granos por debajo de 60, el azelaico antes que la niacinamida (trata las dos cosas; Hito 1, propuesta 6)
     if(h.deseo && h.deseo.k === "calma" && l.length && (ctx.r.notas_foto || {}).acne < 60){ const az = l.filter(x => x.activo === "azelaico"); if(az.length) l = az.concat(l.filter(x => !az.includes(x))); }
+    // sérum hidratante con arrugas por debajo de 60 (cuando el retinoide no entra): antes el que además lleva niacinamida o péptidos a dosis (R16; S096 y X02 al cargar la base de Hugo, 28/11)
+    if(h.deseo && h.deseo.k === "humectante" && l.length && ((ctx.r.notas_foto || {}).arrugas ?? 100) < 60 && !pa.serums.some(x => x.k === "retinoide")){ const tr = l.filter(x => ["niacinamida", "peptidos"].some(k => aDosis(x.p, k))); if(tr.length) l = tr.concat(l.filter(x => !tr.includes(x))); }
+    // empate (Hugo, pregunta 14): con manchas por debajo de 60, gana el sérum de mañana que además trata las manchas (R35; T1-22 y C082)
+    if(h.deseo && l.length > 1 && /AM/.test(h.turno || h.deseo.turno || "") && ((ctx.r.notas_foto || {}).manchas ?? 100) < 60 && !(l[0].desglose || {}).manchas_am){ const i = l.findIndex(x => (x.desglose || {}).manchas_am && l[0].score - x.score <= EMPATE); if(i > 0) l.unshift(l.splice(i, 1)[0]); }
     // la hidratante y el solar no repiten a dosis el activo que ya lleva un sérum (R12: el solar cuenta para los duplicados)
     if(["H", "H2", "S"].includes(h.slot) && l.length){ const act = Object.entries(sel).filter(([s]) => /^serum/.test(s)).map(([, e]) => e.activo).filter(Boolean);
       const otros = l.filter(x => !act.some(a => aDosis(x.p, a))); if(otros.length) l = otros; }
