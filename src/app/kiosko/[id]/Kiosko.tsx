@@ -3,9 +3,11 @@
 import { MallaFacial, type CajaCara, type EstadoCara } from './MallaFacial'
 import { AVISO, brilloYNitidez, recorteCara } from '@/lib/calidadFoto'
 import { useCallback, useEffect, useRef, useState, useTransition } from 'react'
-import { ArrowLeft, ArrowRight, CalendarCheck, Camera, Check, Drop, ScanSmiley, ShieldCheck, Sparkle, Trash, X } from '@phosphor-icons/react'
+import QRCode from 'qrcode'
+import { ArrowLeft, ArrowRight, CalendarCheck, Camera, Check, DeviceMobile, Drop, ScanSmiley, ShieldCheck, Sparkle, Trash, X } from '@phosphor-icons/react'
 import { Esquinas, Informe } from './Resultados'
 import { analizarKiosko, borrarSeguimiento, buscarSeguimiento, type Seguridad } from './actions'
+import { anularEnlaceMovil, crearEnlaceMovil, recogerFotoMovil } from './movil'
 import { Logo } from '@/components/Logo'
 import { AVISO_DETALLE, AVISO_FOTO, AVISO_GUARDAR_FOTO, AVISO_INICIO } from '@/lib/privacidad'
 
@@ -51,20 +53,22 @@ export function Kiosko({ farmaciaId, farmacia, precio, emailActivo }: Props) {
   // Hugo, 24/11: las preguntas van justo después de la foto. Antes solo se pregunta la edad (menores de 14, sin foto).
   const [pend, setPend] = useState<{ b64: string | null; m: string[] } | null>(null)
   const [listas, setListas] = useState(false)
+  const [conMovil, setConMovil] = useState(false)
   const [, start] = useTransition()
 
   const reiniciar = useCallback(() => {
-    setPaso('reclamo'); setI(0); setSeg({}); setFoto(null); setRes(null); setError(''); setRevision(null); setGuardarFoto(false); setPend(null); setListas(false)
+    setPaso('reclamo'); setI(0); setSeg({}); setFoto(null); setRes(null); setError(''); setRevision(null); setGuardarFoto(false); setPend(null); setListas(false); setConMovil(false)
   }, [])
 
   // Privacidad: sin interacción, vuelve al inicio y descarta todo
   useEffect(() => {
-    if (paso === 'reclamo' || paso === 'analizando') return
+    // Con la foto del móvil en marcha nadie toca esta pantalla: no se reinicia mientras espera (el código caduca a los 10 min)
+    if (paso === 'reclamo' || paso === 'analizando' || conMovil) return
     let t = setTimeout(reiniciar, INACTIVIDAD_MS)
     const tocar = () => { clearTimeout(t); t = setTimeout(reiniciar, INACTIVIDAD_MS) }
     window.addEventListener('pointerdown', tocar)
     return () => { clearTimeout(t); window.removeEventListener('pointerdown', tocar) }
-  }, [paso, reiniciar])
+  }, [paso, reiniciar, conMovil])
 
   // Siguiente pregunta que aplica (el embarazo no se pregunta a hombres ni a partir de 55 años)
   const siguiente = (desde: number, s: Partial<Seguridad>) => { let k = desde; while (k < PREGUNTAS.length && PREGUNTAS[k].si && !PREGUNTAS[k].si!(s)) k++; return k }
@@ -132,7 +136,8 @@ export function Kiosko({ farmaciaId, farmacia, precio, emailActivo }: Props) {
           </Bloque>
         )}
         {paso === 'consentimiento' && <Consentimiento revision={!!revision} guardar={guardarFoto} onGuardar={setGuardarFoto} onFoto={() => setPaso('camara')} onSinFoto={() => setPaso('mejorar')} />}
-        {paso === 'camara' && <Camara error={error} onFoto={(b64, url) => { setFoto(url); trasCaptura(b64, []) }} />}
+        {paso === 'camara' && !conMovil && <Camara error={error} onFoto={(b64, url) => { setFoto(url); trasCaptura(b64, []) }} onMovil={() => setConMovil(true)} />}
+        {paso === 'camara' && conMovil && <FotoDesdeMovil farmaciaId={farmaciaId} onFoto={(b64, url) => { setConMovil(false); setFoto(url); trasCaptura(b64, []) }} onCancelar={() => setConMovil(false)} />}
         {paso === 'mejorar' && <Mejorar error={error} onListo={(m) => trasCaptura(null, m)} />}
         {paso === 'analizando' && <Analizando foto={foto} />}
         {paso === 'resultado' && res && <Informe res={res} foto={foto} farmacia={farmacia} emailActivo={emailActivo} onFin={reiniciar} />}
@@ -330,7 +335,7 @@ function Punto({ icono, texto }: { icono: React.ReactNode; texto: string }) {
 
 // Foto automática: cuando la cara está bien colocada, cuenta atrás de 3 s vigilando que siga bien;
 // al llegar a 0 espera a un fotograma correcto, comprueba la luz y la nitidez de la foto y solo entonces la envía.
-export function Camara({ error, onFoto }: { error: string; onFoto: (b64: string, dataUrl: string) => void }) {
+export function Camara({ error, onFoto, onMovil }: { error: string; onFoto: (b64: string, dataUrl: string) => void; onMovil?: () => void }) {
   const video = useRef<HTMLVideoElement>(null)
   const [fase, setFase] = useState<'colocando' | 'cuenta' | 'revisando' | 'hecha'>('colocando')
   const [cuenta, setCuenta] = useState(3)
@@ -476,12 +481,77 @@ export function Camara({ error, onFoto }: { error: string; onFoto: (b64: string,
             <Camera size={20} /> Hacer la foto ahora
           </button>
         )}
+        {onMovil && fase === 'colocando' && (
+          <button onClick={onMovil} className="boton-sec w-full">
+            <DeviceMobile size={20} /> Hacerla con tu móvil
+          </button>
+        )}
       </div>
     </div>
   )
 }
 
 const NITIDEZ_MIN = 12
+
+// Foto con el móvil (Hugo, 28/11): QR con un enlace de un solo uso que caduca a los 10 min.
+// El móvil abre la misma cámara automática; esta pantalla espera la foto y sigue el recorrido con ella.
+function FotoDesdeMovil({ farmaciaId, onFoto, onCancelar }: { farmaciaId: string; onFoto: (b64: string, dataUrl: string) => void; onCancelar: () => void }) {
+  const [token, setToken] = useState<string | null>(null)
+  const [qr, setQr] = useState<string | null>(null)
+  const [fallo, setFallo] = useState('')
+  const [vuelta, setVuelta] = useState(0)
+  const [caducado, setCaducado] = useState(false)
+  const alFoto = useRef(onFoto)
+  useEffect(() => { alFoto.current = onFoto }, [onFoto])
+
+  useEffect(() => {
+    let vivo = true
+    crearEnlaceMovil(farmaciaId).then(async (r) => {
+      if (!vivo) return
+      if ('error' in r) { setFallo(r.error); return }
+      setToken(r.token); setCaducado(false)
+      setQr(await QRCode.toDataURL(`${location.origin}/m/${r.token}`, { margin: 1, width: 560, color: { dark: '#14201c', light: '#ffffff' } }))
+    })
+    return () => { vivo = false }
+  }, [farmaciaId, vuelta])
+
+  // Mira cada 2 s si el móvil ya la ha enviado
+  useEffect(() => {
+    if (!token || caducado) return
+    let vivo = true
+    const t = setInterval(async () => {
+      const r = await recogerFotoMovil(farmaciaId, token).catch(() => null)
+      if (!vivo || !r) return
+      if (r.foto) { clearInterval(t); alFoto.current(r.foto, `data:image/jpeg;base64,${r.foto}`) }
+      else if ('caducado' in r && r.caducado) { clearInterval(t); setCaducado(true) }
+    }, 2000)
+    return () => { vivo = false; clearInterval(t) }
+  }, [farmaciaId, token, caducado])
+
+  const cancelar = () => { if (token) anularEnlaceMovil(farmaciaId, token); onCancelar() }
+
+  return (
+    <div className="w-full max-w-5xl mx-auto px-6 md:px-10 py-8 grid md:grid-cols-[minmax(0,1fr)_minmax(0,1fr)] gap-12 items-center">
+      <div className="relative aspect-square w-full max-w-[26rem] mx-auto rounded-[var(--radius-card)] border border-[var(--k-line)] bg-white grid place-items-center p-6">
+        {qr && !caducado ? <img src={qr} alt="Código QR para hacer la foto con el móvil" className="w-full h-full" /> : <p className="texto text-center">{caducado ? 'El código ha caducado' : fallo ? '' : 'Preparando el código…'}</p>}
+        <Esquinas />
+      </div>
+      <div className="space-y-6">
+        <h2 className="text-[2.25rem] leading-[1.05]">Haz la foto con tu móvil</h2>
+        <ol className="space-y-3 text-lg text-[var(--k-muted)]">
+          {['Abre la cámara del móvil y apunta al código', 'Toca el enlace que aparece y permite la cámara', 'Colócate en el óvalo: la foto se hace sola', 'Vuelve aquí: tu análisis sigue en esta pantalla'].map((t, k) => (
+            <li key={t} className="flex gap-3"><span className="w-7 h-7 shrink-0 rounded-full grid place-items-center border border-[var(--k-accent)] text-[var(--k-accent)] text-sm cifra">{k + 1}</span>{t}</li>
+          ))}
+        </ol>
+        <p className="text-sm text-[var(--k-muted)] m-0">El código vale para una sola foto y caduca a los 10 minutos. La foto no se guarda en el móvil.</p>
+        {!fallo && !caducado && token && <p aria-live="polite" className="flex items-center gap-2 text-[var(--k-accent)]"><span className="w-2 h-2 rounded-full bg-[var(--k-accent)] latido" /> Esperando la foto del móvil</p>}
+        {fallo && <p role="alert" className="rounded-[var(--radius-input)] bg-[var(--k-warn-soft)] text-[var(--k-warn)] p-4">{fallo}</p>}
+        {caducado && <button onClick={() => { setToken(null); setQr(null); setVuelta((v) => v + 1) }} className="boton w-full">Crear otro código</button>}
+        <button onClick={cancelar} className="boton-sec w-full"><Camera size={20} /> Usar la cámara de esta pantalla</button>
+      </div>
+    </div>
+  )
+}
 
 function Mejorar({ error, onListo }: { error: string; onListo: (m: string[]) => void }) {
   const [sel, setSel] = useState<string[]>([])
