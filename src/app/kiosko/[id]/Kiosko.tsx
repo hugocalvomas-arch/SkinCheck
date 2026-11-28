@@ -1,6 +1,7 @@
 'use client'
 /* eslint-disable @next/next/no-img-element, @typescript-eslint/no-explicit-any */
 import { MallaFacial, type EstadoCara } from './MallaFacial'
+import { AVISO, brilloYNitidez } from '@/lib/calidadFoto'
 import { useCallback, useEffect, useRef, useState, useTransition } from 'react'
 import { ArrowLeft, ArrowRight, CalendarCheck, Camera, Check, Drop, ScanSmiley, ShieldCheck, Sparkle, Trash, X } from '@phosphor-icons/react'
 import { Esquinas, Informe } from './Resultados'
@@ -327,12 +328,21 @@ function Punto({ icono, texto }: { icono: React.ReactNode; texto: string }) {
   return <li className="flex items-center gap-4 py-5 border-b border-[var(--k-line)] text-xl"><span className="text-[var(--k-accent)]">{icono}</span>{texto}</li>
 }
 
-function Camara({ error, onFoto }: { error: string; onFoto: (b64: string, dataUrl: string) => void }) {
+// Foto automática: cuando la cara está bien colocada, cuenta atrás de 3 s vigilando que siga bien;
+// al llegar a 0 espera a un fotograma correcto, comprueba la luz y la nitidez de la foto y solo entonces la envía.
+export function Camara({ error, onFoto }: { error: string; onFoto: (b64: string, dataUrl: string) => void }) {
   const video = useRef<HTMLVideoElement>(null)
-  const [cuenta, setCuenta] = useState<number | null>(null)
+  const [fase, setFase] = useState<'colocando' | 'cuenta' | 'revisando' | 'hecha'>('colocando')
+  const [cuenta, setCuenta] = useState(3)
   const [fallo, setFallo] = useState('')
+  const [aviso, setAviso] = useState('')
   const [cara, setCara] = useState<EstadoCara>('buscando')
-  const hecha = useRef(false)
+  const [hecha, setHecha] = useState<string | null>(null)
+  const [manual, setManual] = useState(false)
+  const caraRef = useRef<EstadoCara>('buscando')
+  const intentos = useRef(0)
+  const enviada = useRef(false)
+  const alEstado = useCallback((e: EstadoCara) => { caraRef.current = e; setCara(e) }, [])
 
   useEffect(() => {
     let stream: MediaStream | null = null
@@ -344,60 +354,127 @@ function Camara({ error, onFoto }: { error: string; onFoto: (b64: string, dataUr
     return () => { vivo = false; stream?.getTracks().forEach((t) => t.stop()) }
   }, [])
 
+  // Si en 25 s no ha salido, el botón de siempre aparece como plan B
+  useEffect(() => { const t = setTimeout(() => setManual(true), 25000); return () => clearTimeout(t) }, [])
+
+  // 1. Bien colocada durante 0,7 s: empieza la cuenta atrás
   useEffect(() => {
-    if (cuenta == null) return
-    if (cuenta === 0) {
-      const v = video.current
-      if (!v || !v.videoWidth || hecha.current) return
-      hecha.current = true
-      // recorte vertical 3:4 centrado: la cara debe ocupar más del 60 % del ancho
-      const alto = v.videoHeight
-      const ancho = Math.min(v.videoWidth, Math.round((alto * 3) / 4))
-      const x = Math.round((v.videoWidth - ancho) / 2)
-      const escala = Math.min(1, 1280 / alto)
-      const c = document.createElement('canvas')
-      c.width = Math.round(ancho * escala)
-      c.height = Math.round(alto * escala)
-      c.getContext('2d')!.drawImage(v, x, 0, ancho, alto, 0, 0, c.width, c.height)
-      const url = c.toDataURL('image/jpeg', 0.9)
-      onFoto(url.split(',')[1], url)
-      return
-    }
-    const t = setTimeout(() => setCuenta(cuenta - 1), 1000)
+    if (fase !== 'colocando' || cara !== 'lista') return
+    const t = setTimeout(() => { setAviso(''); setCuenta(3); setFase('cuenta') }, 700)
     return () => clearTimeout(t)
-  }, [cuenta, onFoto])
+  }, [fase, cara])
+
+  // 2. Durante la cuenta, si deja de estar bien más de medio segundo, se para y vuelve a esperar
+  useEffect(() => {
+    if (fase !== 'cuenta' || cara === 'lista') return
+    const t = setTimeout(() => { setAviso('Te has movido. Vuelve a colocarte y empezamos otra vez.'); setFase('colocando') }, 500)
+    return () => clearTimeout(t)
+  }, [fase, cara])
+
+  const capturar = useCallback(() => {
+    const v = video.current
+    if (!v || !v.videoWidth) return null
+    // recorte vertical 3:4 centrado: la cara debe ocupar más del 60 % del ancho
+    const alto = v.videoHeight
+    const ancho = Math.min(v.videoWidth, Math.round((alto * 3) / 4))
+    const x = Math.round((v.videoWidth - ancho) / 2)
+    const escala = Math.min(1, 1280 / alto)
+    const c = document.createElement('canvas')
+    c.width = Math.round(ancho * escala)
+    c.height = Math.round(alto * escala)
+    c.getContext('2d')!.drawImage(v, x, 0, ancho, alto, 0, 0, c.width, c.height)
+    return c
+  }, [])
+
+  const enviar = useCallback((c: HTMLCanvasElement) => {
+    if (enviada.current) return
+    enviada.current = true
+    const url = c.toDataURL('image/jpeg', 0.9)
+    setHecha(url)
+    setFase('hecha')
+    setTimeout(() => onFoto(url.split(',')[1], url), 1100)
+  }, [onFoto])
+
+  // 3. Cuenta atrás y disparo
+  useEffect(() => {
+    if (fase !== 'cuenta') return
+    if (cuenta > 0) {
+      const t = setTimeout(() => setCuenta(cuenta - 1), 1000)
+      return () => clearTimeout(t)
+    }
+    setFase('revisando')
+    let raf = 0
+    const limite = performance.now() + 2500
+    const intentar = () => {
+      // Espera a un fotograma en el que todo esté bien (p. ej., que no esté parpadeando)
+      if (caraRef.current !== 'lista') {
+        if (performance.now() > limite) { setAviso('No ha salido bien. Colócate otra vez y la repetimos.'); setFase('colocando'); return }
+        raf = requestAnimationFrame(intentar); return
+      }
+      const c = capturar()
+      if (!c) { setFase('colocando'); return }
+      // Revisión de la foto ya hecha: luz y nitidez del centro de la cara
+      const m = document.createElement('canvas')
+      m.width = 200; m.height = 200
+      const mc = m.getContext('2d', { willReadFrequently: true })!
+      mc.drawImage(c, c.width * 0.25, c.height * 0.25, c.width * 0.5, c.height * 0.5, 0, 0, 200, 200)
+      const { brillo, nitidez } = brilloYNitidez(mc.getImageData(0, 0, 200, 200).data, 200, 200)
+      intentos.current++
+      const ultima = intentos.current >= 3 // a la tercera se envía la mejor que haya, para no dejarla esperando
+      if (!ultima && brillo < 60) { setAviso('La foto ha salido oscura. Busca más luz de frente y la repetimos.'); setFase('colocando'); return }
+      if (!ultima && nitidez < NITIDEZ_MIN) { setAviso('La foto ha salido movida. No te muevas un momento y la repetimos.'); setFase('colocando'); return }
+      enviar(c)
+    }
+    raf = requestAnimationFrame(intentar)
+    return () => cancelAnimationFrame(raf)
+  }, [fase, cuenta, capturar, enviar])
+
+  const texto = fase === 'hecha' ? 'Foto correcta' : fase === 'revisando' ? 'Comprobando la foto' : AVISO[cara]
 
   return (
     <div className="w-full max-w-6xl mx-auto px-6 md:px-10 py-8 grid md:grid-cols-[minmax(0,1fr)_320px] gap-10 items-center">
       <div className="relative h-[min(72dvh,680px)] aspect-[3/4] max-w-full mx-auto rounded-[var(--radius-card)] overflow-hidden bg-camara">
         <video ref={video} autoPlay playsInline muted className="absolute inset-0 w-full h-full object-cover -scale-x-100" />
         <div className="absolute inset-0 pointer-events-none velo-ovalo" />
-        <div className={`absolute left-[15%] right-[15%] top-[10%] bottom-[13%] rounded-[50%] border-2 pointer-events-none transition-colors duration-300 ${cara === 'lista' ? 'border-cara-lista' : 'border-sobre-marca/70'}`} />
-        <MallaFacial video={video} onEstado={setCara} />
-        {cuenta == null && (
-          <p className="absolute top-4 left-1/2 -translate-x-1/2 rounded-full bg-cristal px-4 py-2 text-sobre-marca text-sm font-medium whitespace-nowrap">
-            {{ buscando: 'Buscando tu cara', lejos: 'Acércate un poco', descentrada: 'Céntrate en el óvalo', lista: 'Perfecto, no te muevas' }[cara]}
-          </p>
+        <div className={`absolute left-[15%] right-[15%] top-[10%] bottom-[13%] rounded-[50%] border-2 pointer-events-none transition-colors duration-300 ${cara === 'lista' || fase === 'hecha' ? 'border-cara-lista' : 'border-sobre-marca/70'}`} />
+        <MallaFacial video={video} onEstado={alEstado} />
+        <p aria-live="polite" className={`absolute top-4 left-1/2 -translate-x-1/2 rounded-full px-4 py-2 text-sm font-medium whitespace-nowrap flex items-center gap-2 transition-colors ${fase === 'hecha' ? 'bg-[var(--k-accent)] text-sobre-marca' : 'bg-cristal text-sobre-marca'}`}>
+          {fase === 'hecha' && <Check size={16} weight="bold" />}{texto}
+        </p>
+        {fase === 'cuenta' && cuenta > 0 && (
+          <div className="absolute inset-0 grid place-items-center pointer-events-none">
+            <div key={cuenta} className="cuenta-atras relative w-40 h-40 grid place-items-center text-sobre-marca text-8xl cifra">
+              <svg viewBox="0 0 100 100" className="absolute inset-0 -rotate-90" aria-hidden>
+                <circle cx="50" cy="50" r="46" fill="none" stroke="currentColor" strokeOpacity=".25" strokeWidth="4" />
+                <circle cx="50" cy="50" r="46" fill="none" stroke="currentColor" strokeWidth="4" strokeLinecap="round" pathLength={100} className="cuenta-arco" />
+              </svg>
+              {cuenta}
+            </div>
+          </div>
         )}
-        {cuenta != null && cuenta > 0 && <div className="absolute inset-0 grid place-items-center text-sobre-marca text-9xl cifra">{cuenta}</div>}
+        {fase === 'revisando' && <span className="absolute inset-0 bg-papel/70 destello pointer-events-none" aria-hidden />}
+        {hecha && <img src={hecha} alt="Tu foto" className="absolute inset-0 w-full h-full object-cover -scale-x-100" />}
       </div>
       <div className="space-y-6">
         <h2 className="text-[2.25rem] leading-[1.05]">Coloca tu cara dentro del óvalo</h2>
+        <p className="texto m-0">La foto se hace sola cuando estés en posición. No hace falta tocar nada.</p>
         <ul className="space-y-3 text-lg text-[var(--k-muted)]">
           {['Cara lavada, sin maquillaje ni crema', 'Luz de frente, sin una ventana detrás', 'Acércate hasta llenar el óvalo', 'Cabeza recta, mirando a la cámara', 'Cara relajada, sin sonreír ni fruncir', 'Sin gafas y con la frente despejada'].map((t) => (
             <li key={t} className="flex gap-3"><Check size={22} className="text-[var(--k-accent)] shrink-0 mt-0.5" />{t}</li>
           ))}
         </ul>
-        {(error || fallo) && <p role="alert" className="rounded-[var(--radius-input)] bg-[var(--k-warn-soft)] text-[var(--k-warn)] p-4">{fallo || error}</p>}
-        {!fallo && (
-          <button onClick={() => setCuenta(3)} disabled={cuenta != null} className="boton w-full">
-            <Camera size={20} /> {error ? 'Repetir la foto' : 'Hacer la foto'}
+        {(aviso || error || fallo) && <p role="alert" className="rounded-[var(--radius-input)] bg-[var(--k-warn-soft)] text-[var(--k-warn)] p-4">{fallo || aviso || error}</p>}
+        {!fallo && (manual || cara === 'sin_detector') && fase === 'colocando' && (
+          <button onClick={() => { const c = capturar(); if (c) enviar(c) }} className="boton-sec w-full">
+            <Camera size={20} /> Hacer la foto ahora
           </button>
         )}
       </div>
     </div>
   )
 }
+
+const NITIDEZ_MIN = 12
 
 function Mejorar({ error, onListo }: { error: string; onListo: (m: string[]) => void }) {
   const [sel, setSel] = useState<string[]>([])
@@ -472,6 +549,13 @@ export function Estilos() {
       .linea-escaneo { position:absolute; left:0; right:0; height:2px; background: var(--k-accent); box-shadow: 0 0 0 1px var(--color-on-accent-muted); animation: escaneo 2.8s cubic-bezier(.45,0,.55,1) infinite; }
       @keyframes escaneo { 0%,100% { top: 10% } 50% { top: 88% } }
       .latido { animation: latido 1.2s ease-in-out infinite; }
+      .cuenta-atras { animation: cuenta 1s cubic-bezier(.16,1,.3,1) both; }
+      .cuenta-arco { stroke-dasharray: 100; animation: arco 1s linear both; }
+      .destello { animation: destello 500ms ease-out both; }
+      @keyframes cuenta { from { opacity: 0; transform: scale(.85) } 20% { opacity: 1; transform: none } to { opacity: 1 } }
+      @keyframes arco { from { stroke-dashoffset: 100 } to { stroke-dashoffset: 0 } }
+      @keyframes destello { from { opacity: 1 } to { opacity: 0 } }
+      @media (prefers-reduced-motion: reduce) { .cuenta-atras, .cuenta-arco, .destello { animation: none } }
       @keyframes latido { 0%,100% { opacity: .35 } 50% { opacity: 1 } }
       .entrar { animation: entrar 220ms cubic-bezier(.23,1,.32,1) both; }
       @keyframes entrar { from { opacity: 0; transform: translateY(6px) } to { opacity: 1; transform: none } }
