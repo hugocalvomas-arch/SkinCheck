@@ -1,0 +1,683 @@
+id;marca;producto;pvp_eur;hueco;protagonista;tipo;exfoliante;piel;perfume
+a-derma-biology-ac-global-cuidado-matificante-antiimperfecciones;A-Derma;Biology AC Global Cuidado Matificante Antiimperfecciones;14.96;H;lactico;;no;todas;sí
+a-derma-biology-ac-hydra-crema-compensadora-ultracalmante;A-Derma;Biology AC Hydra Crema Compensadora Ultracalmante;15.96;H;ninguno;;no;todas;sí
+a-derma-biology-ac-perfect-fluido-antiimperfecciones-antimarcas;A-Derma;Biology AC Perfect Fluido Antiimperfecciones Antimarcas;14.94;H;lactico;;no;todas;sí
+a-derma-biology-ar-cuidado-antirrojeces;A-Derma;Biology AR Cuidado Dermatológico Antirrojeces;17.48;H;ninguno;;no;todas;no
+a-derma-biology-crema-ligera-dermatologica;A-Derma;Biology Crema Ligera Dermatológica Hidratante;13.98;H;ninguno;;no;todas;no
+a-derma-biology-crema-rica-dermatologica;A-Derma;Biology Crema Rica Dermatológica Hidratante;13.93;H;ninguno;;no;todas;no
+a-derma-exomega-balsamo-palpebral-calmante;A-Derma;Exomega Bálsamo Palpebral Calmante;19.94;contorno de ojos;niacinamida;;no;todas;no
+a-derma-exomega-gel-crema-calmante;A-Derma;Exomega Gel-Crema Calmante;23.94;H;niacinamida;;no;todas;no
+a-derma-exomega-gel-limpiador-calmante;A-Derma;Exomega Gel Limpiador Calmante;17.9;L;ninguno;;no;todas;no
+a-derma-exomega-serum-ultracalmante;A-Derma;Exomega Sérum Ultracalmante;24.59;serum humectante;ninguno;humectante;no;todas;no
+a-derma-protect-ac-fluido-matificante-spf50;A-Derma;Protect AC Fluido matificante SPF50+;17.5;S;ninguno;;no;todas;sí
+a-derma-protect-crema-sin-perfume-spf50;A-Derma;Protect Crema SPF50+ sin perfume;11;S;ninguno;;no;todas;no
+a-derma-protect-fluido-invisible-spf50;A-Derma;Protect Fluido invisible SPF50+;17.5;S;ninguno;;no;todas;sí
+apivita-5-action-serum-contorno-de-ojos;Apivita;5-Action Sérum Contorno de Ojos;41.99;contorno de ojos;vitc_derivados;;no;todas;no
+apivita-agua-micelar-limpiadora-rosa-y-miel;Apivita;Agua Micelar Limpiadora Rosa y Miel;14.99;L;ninguno;;no;todas;sí
+apivita-bee-radiant-crema-signos-de-la-edad;Apivita;Bee Radiant Crema Signos de la Edad;28.99;H;vitc_derivados;;no;todas;sí
+apivita-beessential-oils-aceite-de-dia;Apivita;Beessential Oils Aceite de Día;28.99;AM/PM;ninguno;otro;no;todas;no
+apivita-express-beauty-mascarilla-contorno-de-ojos-antiarrugas-con-uva;Apivita;Express Beauty Mascarilla Contorno de Ojos Antiarrugas con Uva;6.99;contorno de ojos;ninguno;;no;todas;no
+apivita-express-beauty-mascarilla-de-tejido-reafirmante-efecto-lifting;Apivita;Express Beauty Mascarilla de Tejido Reafirmante Efecto Lifting;6.99;mascarilla;ninguno;;no;todas;sí
+apivita-express-beauty-mascarilla-hidratante-intensiva-con-pepino;Apivita;Express Beauty Mascarilla Hidratante Intensiva con Pepino;6.99;mascarilla;ninguno;;no;todas;sí
+apivita-express-beauty-mascarilla-hidratante-y-calmante;Apivita;Express Beauty Mascarilla Hidratante y Calmante;8.99;mascarilla;ninguno;;no;todas;sí
+apivita-express-beauty-mascarilla-ojos-antifatiga-con-ginkgo;Apivita;Express Beauty Mascarilla Ojos Antifatiga con Ginkgo;6.99;contorno de ojos;ninguno;;no;todas;no
+apivita-mascarilla-exfoliante-iluminadora-con-arandanos;Apivita;Mascarilla Exfoliante Iluminadora con Arándanos;13.99;mascarilla;ninguno;;no;todas;sí
+apivita-mascarilla-exfoliante-suave-con-albaricoque;Apivita;Mascarilla Exfoliante Suave con Albaricoque;12.99;mascarilla;ninguno;;no;todas;sí
+apivita-tonico-calmante-lavanda-y-miel;Apivita;Tónico Calmante Lavanda y Miel;14.99;tonico o bruma;ninguno;;no;todas;sí
+arturo-alba-bruma-fitoactiva-calmante;Arturo Alba;Bruma Fitoactiva Calmante;39;tonico o bruma;ninguno;;no;todas;no
+avene-agua-micelar-desmaquillante;Avène;Agua micelar desmaquillante;13.5;L;ninguno;;no;todas;sí
+avene-cicalfate-gel-limpiador-purificante;Avène;Cicalfate+ Gel Limpiador Purificante;10.4;L;ninguno;;no;normal a grasa;no
+avene-cicalfate-serum-reparador-intenso;Avène;Cicalfate+ Sérum Reparador Intenso;24.89;serum humectante;ninguno;calmante o barrera;no;todas;no
+avene-cleanance-agua-micelar;Avène;Cleanance Agua Micelar;15.1;L;ninguno;;no;todas;sí
+avene-cleanance-comedomed-gel-exfoliante;Avène;Cleanance Comedomed Gel Exfoliante;19.94;L;lactico;;sí;todas;no
+avene-cleanance-mascarilla-detox;Avène;Cleanance Mascarilla Detox;14.48;mascarilla;ninguno;;no;todas;sí
+avene-crema-con-color-spf50;Avène;Crema con color SPF50+;15.99;S;ninguno;;no;todas;sí
+avene-crema-mineral-spf50;Avène;Crema mineral SPF50+;16.99;S;ninguno;;no;todas;no
+avene-dermabsolu-contorno-de-ojos;Avène;DermAbsolu Contorno de ojos;30.5;contorno de ojos;bakuchiol;;no;todas;no
+avene-dermabsolu-crema-de-dia;Avène;DermAbsolu Crema de día;40.3;H;bakuchiol;;no;todas;sí
+avene-dermabsolu-serum;Avène;DermAbsolu Sérum;41.8;PM;bakuchiol;;sí;todas;sí
+avene-desmaquillante-ojos-intenso;Avène;Desmaquillante de ojos intenso;12.58;L;ninguno;;no;todas;no
+avene-desmaquillante-suave-ojos;Avène;Desmaquillante suave de ojos;13.94;L;ninguno;;no;todas;no
+avene-gel-exfoliante-suave;Avène;Gel exfoliante suave;18.95;AM;vitc_derivados;;no;todas;sí
+avene-hydrance-crema-ligera;Avène;Hydrance Light Crema hidratante;19.4;H;ninguno;;no;todas;sí
+avene-locion-tonica-calmante;Avène;Loción tónica calmante;15.8;tonico o bruma;ninguno;;no;todas;sí
+avene-tratamiento-calmante-contorno-ojos;Avène;Tratamiento calmante contorno de ojos;16.79;contorno de ojos;ninguno;;no;todas;no
+avene-ultra-fluido-mat-perfect-spf50;Avène;Ultra Fluido Mat Perfect SPF50+;23.95;S;ninguno;;no;todas;no
+bella-aurora-b7-crema-piel-mixta-grasa;Bella Aurora;B7 Crema Antimanchas Antiedad Piel Mixta-Grasa;24.42;H;ninguno;;no;todas;sí
+bella-aurora-bella-noche-crema-reparadora;Bella Aurora;Bella Noche Crema Reparadora;26.85;H;peptidos;;no;todas;sí
+bella-aurora-bio10-forte-l-ocal-noche;Bella Aurora;Bio10 Forte L-ocal Noche Sérum Manchas Localizadas;19.95;PM;retinol;;no;todas;sí
+bella-aurora-bio10-forte-l-tigo;Bella Aurora;Bio10 Forte L-tigo Sérum Despigmentante Manchas del Sol y la Edad;29.9;AM;vitc_derivados;;no;todas;sí
+bella-aurora-bio10-forte-serum-piel-normal-seca;Bella Aurora;Bio10 Forte+ Sérum Despigmentante Intensivo Piel Normal-Seca;27.16;AM/PM;tranexamico;;no;todas;sí
+bella-aurora-bio10-forte-serum-piel-sensible;Bella Aurora;Bio10 Forte+ Sérum Despigmentante Intensivo Piel Sensible;29.95;PM;tranexamico;;sí;todas;sí
+bella-aurora-despigmenta10-ultra-retinol-noche;Bella Aurora;Despigmenta10 Ultra Emulsión Antimanchas Retinol Noche;29.95;PM;tranexamico;;no;todas;sí
+bella-aurora-doble-fuerza-original;Bella Aurora;Doble Fuerza Original Crema de Belleza;12.25;H;ninguno;;no;todas;sí
+bella-aurora-eyes-contorno-de-ojos;Bella Aurora;Eyes Contorno de Ojos Multi-Corrector;16.68;contorno de ojos;ninguno;;no;todas;no
+bella-aurora-lumen10-crema-dia;Bella Aurora;Lumen10 Crema Día Antiedad Antimanchas;29.5;H;ninguno;;no;todas;sí
+bella-aurora-splendor-50-contorno-de-ojos;Bella Aurora;Splendor 50 Contorno de Ojos Antiedad;14.39;contorno de ojos;peptidos;;no;todas;no
+bella-aurora-splendor-50-crema-noche;Bella Aurora;Splendor 50 Crema Antiedad Regeneradora Noche;23.96;H;glicolico;tratamiento;no;todas;sí
+bella-aurora-splendor-50-gel-crema-piel-mixta-grasa;Bella Aurora;Splendor 50 Gel-Crema Antiedad Global Piel Mixta-Grasa;23.6;H;ninguno;;no;todas;sí
+bella-aurora-splendor-60-contorno-de-ojos;Bella Aurora;Splendor 60 Contorno de Ojos Redensificante;20.36;contorno de ojos;ninguno;;no;todas;no
+bella-aurora-splendor-rellenador-de-arrugas;Bella Aurora;Splendor Sérum Rellenador de Arrugas Intensivo;14.8;serum humectante;ninguno;humectante;no;todas;sí
+bella-aurora-splendor-sensiderm;Bella Aurora;Splendor Sensiderm Crema Antiedad Reparadora;23.96;H;ninguno;;no;todas;no
+bella-aurora-splendor-serum-elasticidad-y-firmeza;Bella Aurora;Splendor Sérum Elasticidad y Firmeza;;AM/PM;peptidos;;no;todas;sí
+bella-aurora-splendor-serum-iluminador-antioxidante;Bella Aurora;Splendor Sérum Iluminador Antioxidante;19.8;AM;vitc_derivados;;no;todas;sí
+bella-aurora-splendor-serum-iluminador-noche;Bella Aurora;Splendor Sérum Iluminador Noche;27.99;serum humectante;ninguno;humectante;no;todas;sí
+bella-aurora-sublime-60-crema-noche;Bella Aurora;Sublime 60 Noche Crema Renovadora Antiedad;32.5;H;niacinamida;;no;todas;sí
+bella-aurora-sublime-contorno-de-ojos;Bella Aurora;Sublime Contorno de Ojos Antiedad;22.95;contorno de ojos;ninguno;;no;todas;no
+bella-aurora-tonico-exfoliante-iluminador;Bella Aurora;Tónico Exfoliante Iluminador;10.66;tonico o bruma;niacinamida;;no;todas;sí
+bioderma-hydrabio-ligera;Bioderma;Hydrabio Ligera;16.4;H;niacinamida;;no;todas;sí
+bioderma-matricium;Bioderma;Matricium;48.45;PM;vitc_pura;;no;todas;no
+bioderma-photoderm-creme;Bioderma;Photoderm Crème;15.95;S;ninguno;;no;todas;no
+bioderma-photoderm-m-claro;Bioderma;Photoderm M SPF50+ tono claro;16.95;S;ninguno;;no;todas;no
+bioderma-photoderm-mineral-fluide;Bioderma;Photoderm Mineral Fluide;21.95;S;ninguno;;no;todas;no
+bioderma-photoderm-spot-age;Bioderma;Photoderm Spot-Age;16.23;S;vitc_derivados;;no;todas;sí
+bioderma-photoderm-xdefense-ultra-fluid;Bioderma;Photoderm XDefense Ultra-Fluid;16.95;S;ninguno;;no;todas;sí
+bioderma-pigmentbio-daily-care-spf50;Bioderma;Pigmentbio Daily Care SPF50+;19.47;S;vitc_derivados;;no;todas;sí
+bioderma-sebium-kerato-spf30;Bioderma;Sébium Kerato+ SPF30;20;S;salicilico;;no;todas;sí
+bioderma-sensibio-aceite-micelar;Bioderma;Sensibio Aceite Micelar Limpiador;15.27;L;ninguno;;no;todas;no
+bioderma-sensibio-ar-sos-spray;Bioderma;Sensibio AR+ SOS Spray;13.93;tonico o bruma;ninguno;;no;todas;no
+biretix-cleanser;Biretix;Cleanser;13.94;L;ninguno;;no;todas;sí
+biretix-duo;Biretix;Duo;20.5;PM;hpr;;sí;todas;no
+biretix-gel-reconfortante;Biretix;Gel Reconfortante;23.94;H;hpr;;no;todas;no
+biretix-isorepair-crema;Biretix;Isorepair Crema;21;H;ninguno;;no;todas;sí
+biretix-isorepair-limpiador-cremoso;Biretix;Isorepair Limpiador Cremoso;17.5;L;niacinamida;;no;todas;sí
+biretix-micropeel;Biretix;Micropeel;17.5;serum humectante;ninguno;humectante;no;todas;sí
+biretix-oil-control-solution;Biretix;Oil Control Solution;21;tonico o bruma;glicolico;;no;todas;no
+biretix-serum-doble-correccion;Biretix;Sérum Doble Corrección;32.94;PM;niacinamida;;sí;todas;sí
+biretix-tri-active-gel;Biretix;Tri-Active Gel;27.94;PM;glicolico;;sí;todas;no
+caudalie-aceite-tratante-desmaquillante;Caudalie;Aceite Tratante Desmaquillante;19.5;L;ninguno;;no;todas;sí
+caudalie-agua-de-belleza;Caudalie;Agua de Belleza;38.5;tonico o bruma;ninguno;;no;todas;sí
+caudalie-agua-de-uva;Caudalie;Agua de Uva;8.9;tonico o bruma;ninguno;;no;todas;no
+caudalie-crema-muy-alta-proteccion-spf50;Caudalie;Crema Muy Alta Protección SPF50+;16.3;S;ninguno;;no;todas;sí
+caudalie-fluido-muy-alta-proteccion-spf50;Caudalie;Fluido Muy Alta Protección SPF50+;14.2;S;ninguno;;no;todas;no
+caudalie-mascarilla-crema-hidratante-vinohydra;Caudalie;Mascarilla-Crema Hidratante;23.9;mascarilla;ninguno;;no;todas;sí
+caudalie-mascarilla-instant-detox;Caudalie;Mascarilla Instant Detox;24.5;mascarilla;ninguno;;no;todas;no
+caudalie-vinoclean-agua-micelar;Caudalie;Vinoclean Agua Micelar;21.9;L;ninguno;;no;todas;sí
+caudalie-vinoclean-espuma-limpiadora;Caudalie;Vinoclean Espuma Limpiadora;16.9;L;ninguno;;no;todas;sí
+caudalie-vinoclean-leche-de-almendras-desmaquillante;Caudalie;Vinoclean Leche de Almendras Desmaquillante;21.9;L;ninguno;;no;todas;sí
+caudalie-vinoclean-locion-tonica-hidratante;Caudalie;Vinoclean Loción Tónica Hidratante;21.9;tonico o bruma;ninguno;;no;todas;no
+caudalie-vinohydra-crema-sorbete;Caudalie;VinoHydra Crema Sorbete;19.9;H;ninguno;;no;todas;sí
+caudalie-vinohydra-gelcream-hidratante;Caudalie;VinoHydra Gelcream Hidratante;19.9;H;ninguno;;no;todas;sí
+caudalie-vinoperfect-mascarilla-peeling-glicolico;Caudalie;Vinoperfect Mascarilla Peeling Glicólico;25.5;mascarilla;glicolico;;sí;todas;sí
+caudalie-vinoperfect-serum-antimanchas;Caudalie;Vinoperfect Sérum Antimanchas;47.9;serum humectante;ninguno;humectante;no;todas;sí
+caudalie-vinopure-serum-salicilico;Caudalie;Vinopure Sérum Salicílico;28.5;AM/PM;salicilico;;sí;todas;no
+caudalie-vinopure-stop-granos;Caudalie;Vinopure Stop Granos;11.9;H;salicilico;;no;todas;no
+caudalie-vinopure-tonico-purificante;Caudalie;Vinopure Tónico Purificante;21.9;tonico o bruma;salicilico;;no;todas;no
+ceramol-aceite-limpiador-311;Ceramol;Aceite limpiador 311;17.9;L;ninguno;;no;todas;no
+ceramol-base-limpiadora-espumante-311;Ceramol;Base limpiadora espumante 311;17.5;L;ninguno;;no;todas;no
+cerave-agua-micelar-hidratante;CeraVe;Agua Micelar Hidratante;8.29;L;ninguno;;no;todas;no
+cerave-limpiador-arcilla-espuma-control-imperfecciones;CeraVe;Limpiador Arcilla-Espuma Control Imperfecciones;15.95;L;salicilico;;no;todas;no
+cerave-limpiador-crema-espuma-hidratante;CeraVe;Limpiador Crema-Espuma Hidratante;10.8;L;ninguno;;no;todas;no
+cerave-sa-crema-alisadora-anti-rugosidades;CeraVe;SA Crema Alisadora Anti-rugosidades;15.28;H;niacinamida;;no;todas;no
+cerave-serum-hidratante-acido-hialuronico;CeraVe;Sérum Hidratante con Ácido Hialurónico;17.44;serum humectante;ninguno;calmante o barrera;no;todas;no
+cerave-skin-renewing-contorno-de-ojos-reafirmante;CeraVe;Skin Renewing Crema Reafirmante Contorno de Ojos;17.99;contorno de ojos;niacinamida;;no;todas;no
+cerave-skin-renewing-crema-con-peptidos;CeraVe;Skin Renewing Crema con Péptidos;21.88;H;niacinamida;;no;todas;no
+cerave-sun-fluido-invisible-hidratante-spf50;CeraVe;Fluido Protector Invisible Hidratante SPF 50;19.97;S;niacinamida;;no;todas;no
+cetaphil-crema-espuma-limpiadora;Cetaphil;Crema Espuma Limpiadora;16.95;L;niacinamida;;no;todas;no
+cetaphil-hidratante-facial-de-dia;Cetaphil;Hidratante Facial de Día;16.13;H;ninguno;;no;todas;no
+cetaphil-locion-hidratante;Cetaphil;Loción Hidratante;15.94;H;niacinamida;;no;todas;no
+cetaphil-pro-oil-control-hidratante-spf30;Cetaphil;PRO Oil Control Hidratante SPF 30;14.95;S;ninguno;;no;todas;no
+cetaphil-pro-redness-control-espuma-limpiadora;Cetaphil;PRO Redness Control Espuma Limpiadora;13.79;L;ninguno;;no;todas;sí
+cetaphil-pro-redness-control-hidratante-spf30;Cetaphil;PRO Redness Control Hidratante SPF 30;28.75;S;ninguno;;no;todas;no
+cetaphil-sa-locion-hidratante-exfoliante-suave;Cetaphil;SA Loción Hidratante Exfoliante Suave;15.98;PM;niacinamida;;sí;todas;no
+dr-hauschka-aceite-facial;Dr. Hauschka;Aceite Facial;26.5;AM/PM;ninguno;otro;no;todas;sí
+dr-hauschka-ampollas-calma-equilibra;Dr. Hauschka;Ampollas Calma & Equilibra;74.7;AM/PM;ninguno;otro;no;todas;sí
+dr-hauschka-crema-contorno-de-ojos;Dr. Hauschka;Crema Contorno de Ojos;34;contorno de ojos;ninguno;;no;todas;sí
+dr-hauschka-crema-de-albaricoque;Dr. Hauschka;Crema de Albaricoque;29.5;H;ninguno;;no;todas;sí
+dr-hauschka-crema-de-cydonia;Dr. Hauschka;Crema de Cydonia;28.5;H;ninguno;;no;todas;sí
+dr-hauschka-crema-de-melisa;Dr. Hauschka;Crema de Melisa;30;H;ninguno;;no;todas;sí
+dr-hauschka-crema-de-rosas;Dr. Hauschka;Crema de Rosas;31;H;ninguno;;no;todas;sí
+dr-hauschka-crema-de-rosas-light;Dr. Hauschka;Crema de Rosas Light;31;H;ninguno;;no;todas;sí
+dr-hauschka-crema-facial-de-la-planta-de-la-escarcha;Dr. Hauschka;Crema Facial de la Planta de la Escarcha;39.9;H;ninguno;;no;todas;no
+dr-hauschka-crema-intensiva-de-planta-de-la-escarcha;Dr. Hauschka;Crema Intensiva de Planta de la Escarcha;35.5;H;ninguno;;no;todas;no
+dr-hauschka-crema-limpiadora;Dr. Hauschka;Crema Limpiadora;18;L;ninguno;;no;todas;sí
+dr-hauschka-crema-regeneradora;Dr. Hauschka;Crema Regeneradora;63.5;H;ninguno;;no;todas;sí
+dr-hauschka-crema-regeneradora-contorno-de-ojos;Dr. Hauschka;Crema Regeneradora Contorno de Ojos;66.5;contorno de ojos;ninguno;;no;todas;sí
+dr-hauschka-crema-regeneradora-iluminadora;Dr. Hauschka;Crema Regeneradora Iluminadora;69.9;H;ninguno;;no;todas;sí
+dr-hauschka-crema-solar-facial-con-color-spf-30;Dr. Hauschka;Crema Solar Facial con Color SPF 30;35.5;S;ninguno;;no;todas;sí
+dr-hauschka-desmaquillante-de-ojos;Dr. Hauschka;Desmaquillante de Ojos;26.5;L;ninguno;;no;todas;sí
+dr-hauschka-fluido-contorno-de-ojos;Dr. Hauschka;Fluido Contorno de Ojos;36;contorno de ojos;ninguno;;no;todas;sí
+dr-hauschka-leche-limpiadora;Dr. Hauschka;Leche Limpiadora;28.5;L;ninguno;;no;todas;sí
+dr-hauschka-mascarilla-calmante;Dr. Hauschka;Mascarilla Calmante;38;mascarilla;ninguno;;no;todas;sí
+dr-hauschka-mascarilla-crema-nutritiva;Dr. Hauschka;Mascarilla-Crema nutritiva;48.5;mascarilla;ninguno;;no;todas;sí
+dr-hauschka-mascarilla-purificante;Dr. Hauschka;Mascarilla Purificante;33;mascarilla;ninguno;;no;todas;no
+dr-hauschka-mascarilla-reafirmante;Dr. Hauschka;Mascarilla Reafirmante;45.5;mascarilla;ninguno;;no;todas;sí
+dr-hauschka-mascarilla-rejuvenecedora;Dr. Hauschka;Mascarilla Rejuvenecedora;38;mascarilla;ninguno;;no;todas;sí
+dr-hauschka-revitalizante-ocular;Dr. Hauschka;Revitalizante Ocular;32;contorno de ojos;ninguno;;no;todas;sí
+dr-hauschka-serum-contorno-de-ojos-regenerador-intensiva;Dr. Hauschka;Serum Contorno de Ojos Regenerador Intensiva;77;contorno de ojos;ninguno;;no;todas;sí
+dr-hauschka-serum-hidratante-plus;Dr. Hauschka;Serum Hidratante Plus;42;serum humectante;ninguno;humectante;no;todas;sí
+dr-hauschka-serum-regenerador;Dr. Hauschka;Serum Regenerador;68.5;serum humectante;ninguno;humectante;no;todas;sí
+dr-hauschka-spray-cura-intensiva-01-purificante-25-anos;Dr. Hauschka;Spray Cura Intensiva 01 Purificante - 25 años;56;tonico o bruma;ninguno;;no;todas;sí
+dr-hauschka-spray-cura-intensiva-02-purificante-mas-25;Dr. Hauschka;Spray Cura Intensiva 02 Purificante +25 años;56;tonico o bruma;ninguno;;no;todas;sí
+dr-hauschka-spray-cura-intensiva-03-calmante;Dr. Hauschka;Spray Cura Intensiva 03 Calmante;56;tonico o bruma;ninguno;;no;todas;sí
+dr-hauschka-spray-cura-intensiva-04-regenerador;Dr. Hauschka;Spray Cura Intensiva 04 Regenerador;72;tonico o bruma;ninguno;;no;todas;sí
+dr-hauschka-spray-cura-intensiva-05-menopausia;Dr. Hauschka;Spray Cura Intensiva 05 Menopausia;72;tonico o bruma;ninguno;;no;todas;sí
+dr-hauschka-tonico-facial;Dr. Hauschka;Tónico Facial;29.5;tonico o bruma;ninguno;;no;todas;sí
+dr-hauschka-tonico-facial-especial;Dr. Hauschka;Tónico Facial Especial;31;tonico o bruma;lactico;;no;todas;sí
+ducray-kelual-ds-gel-limpiador;Ducray;Kelual DS Gel limpiador antiescamas;13;L;ninguno;;no;todas;no
+ducray-keracnyl-gel-limpiador;Ducray;Keracnyl Gel limpiador;15.7;L;ninguno;;no;todas;sí
+ducray-keracnyl-mat-gel-crema;Ducray;Keracnyl Mat Gel-crema matificante;14.39;H;niacinamida;;no;todas;sí
+ducray-melascreen-concentrado;Ducray;Melascreen Concentrado antimanchas;31.09;PM;azelaico;;sí;todas;no
+ducray-melascreen-contorno-ojos;Ducray;Melascreen Contorno de ojos antimanchas;22.95;contorno de ojos;vitc_derivados;;no;todas;no
+ducray-melascreen-serum-global;Ducray;Melascreen Fotoenvejecimiento Sérum global;;PM;azelaico;;sí;todas;sí
+ducray-melascreen-serum-luminosidad;Ducray;Melascreen Sérum luminosidad antimanchas;27.98;AM;vitc_derivados;;no;todas;sí
+endocare-age-barrier-hyaluboost-contorno-de-ojos;Endocare;Age Barrier Hyaluboost Contorno de Ojos;15.4;contorno de ojos;niacinamida;;no;todas;sí
+endocare-age-barrier-hyaluboost-gel-cream;Endocare;Age Barrier Hyaluboost Gel Cream;23.8;H;niacinamida;;no;todas;sí
+endocare-age-barrier-hyaluboost-serum;Endocare;Age Barrier Hyaluboost Sérum;44.94;AM/PM;niacinamida;;no;todas;sí
+endocare-age-barrier-niacinal-serum-gel;Endocare;Age Barrier Niacinal Sérum Gel;44.94;AM/PM;niacinamida;;no;todas;sí
+endocare-aquafoam;Endocare;Aquafoam;15.8;L;ninguno;;no;todas;sí
+endocare-cellage-alta-potencia-serum;Endocare;Cellage Alta Potencia Sérum;54.75;AM;vitc_pura;;no;todas;sí
+endocare-cellage-contorno-de-ojos;Endocare;Cellage Contorno de Ojos;33.7;contorno de ojos;ninguno;;no;todas;sí
+endocare-cellage-crema;Endocare;Cellage Crema;48.94;H;hpr;;no;todas;sí
+endocare-cellage-gelcream;Endocare;Cellage Gelcream;37.2;H;hpr;;no;todas;sí
+endocare-essential-contorno-de-ojos-y-labios;Endocare;Essential Contorno de Ojos y Labios;38.19;contorno de ojos;ninguno;;no;todas;sí
+endocare-essential-gelcream;Endocare;Essential Gelcream;37.99;H;ninguno;;no;todas;sí
+endocare-hydractive-agua-micelar;Endocare;Hydractive Agua Micelar;9.95;L;niacinamida;;no;todas;no
+endocare-radiance-c-ferulic-serum-gel;Endocare;Radiance C Ferulic Serum Gel;40.5;AM;vitc_pura;;no;todas;sí
+endocare-radiance-vitamin-c20-serum;Endocare;Radiance Vitamina C20 Sérum;58.94;AM;vitc_pura;;no;todas;sí
+endocare-renewal-comfort-cream;Endocare;Renewal Comfort Cream;32.36;H;hpr;;no;todas;sí
+endocare-renewal-glycoperfect-intensive-serum;Endocare;Renewal Glycoperfect Intensive Sérum;38.9;PM;azelaico;;sí;todas;sí
+endocare-renewal-retinoid-contorno-de-ojos;Endocare;Renewal Retinoid Contorno de Ojos;37.4;contorno de ojos;retinal;;no;todas;no
+endocare-renewal-retinoid-intensive-serum;Endocare;Renewal Retinoid Intensive Sérum;33.4;PM;niacinamida;;no;todas;no
+endocare-renewal-retinoid-serum;Endocare;Renewal Retinoid Sérum;30.1;PM;niacinamida;;no;todas;no
+endocare-renewal-retinol-contorno-de-ojos;Endocare;Renewal Retinol Contorno de Ojos;31.3;contorno de ojos;retinol;;no;todas;no
+endocare-renewal-retinol-intensive-serum;Endocare;Renewal Retinol Intensive Sérum;47.5;PM;retinol;;no;todas;no
+endocare-renewal-retinol-serum;Endocare;Renewal Retinol Sérum;41;PM;retinol;;no;todas;no
+endocare-tensage-contorno-de-ojos-iluminador;Endocare;Tensage Contorno de Ojos Iluminador;30.88;contorno de ojos;ninguno;;no;todas;sí
+endocare-tensage-cream;Endocare;Tensage Cream;48.5;H;ninguno;;no;todas;sí
+esthederm-age-pigment-control-contour-des-yeux;Esthederm;Age Pigment Control Contorno de Ojos;35.99;contorno de ojos;vitc_derivados;;no;todas;no
+esthederm-age-pigment-control-creme;Esthederm;Age Pigment Control Crème;59.99;H;vitc_derivados;;no;todas;sí
+esthederm-age-pigment-control-serum;Esthederm;Age Pigment Control Sérum;63.99;AM;vitc_derivados;;no;todas;sí
+esthederm-concentre-cellulaire-serum-fondamental;Esthederm;Concentré Cellulaire Sérum Fondamental;75.65;serum humectante;ninguno;humectante;no;todas;no
+esthederm-eau-cellulaire-hydra-plumping-creme;Esthederm;Eau Cellulaire Hydra-Plumping Cream;33.99;H;ninguno;;no;todas;sí
+esthederm-eau-cellulaire-hydra-plumping-gel;Esthederm;Eau Cellulaire Hydra-Plumping Gel;63.6;H;ninguno;;no;todas;sí
+esthederm-eve-serum-source;Esthederm;E.V.E. Sérum Source;96;serum humectante;ninguno;humectante;no;todas;sí
+esthederm-excellage-contour-des-yeux;Esthederm;Excellage Contour des Yeux;79;contorno de ojos;niacinamida;;no;todas;no
+esthederm-excellage-huile-de-nuit;Esthederm;Excellage Huile de Nuit;85;PM;lactico;;sí;todas;sí
+esthederm-excellage-serum;Esthederm;Excellage Sérum;85.5;AM/PM;niacinamida;;no;todas;sí
+esthederm-intensive-retinol-huile-serum;Esthederm;Intensive Retinol+ Huile Sérum;55.25;PM;retinol;;no;todas;sí
+esthederm-no-sun-mineral;Esthederm;No Sun Mineral;57;S;ninguno;;no;todas;no
+esthederm-nutri-system-creme-vitale-gelee-royale;Esthederm;Nutri System Crème Vitale Gelée Royale;74;H;ninguno;;no;todas;sí
+esthederm-osmoclean-masque-gomme-clarifiant;Esthederm;Osmoclean Masque Gomme Clarifiant;34.9;mascarilla;vitc_derivados;;no;todas;sí
+esthederm-photo-reverse-crema;Esthederm;Photo Reverse Crema;75.9;S;ninguno;;no;todas;no
+esthederm-pure-system-soin-absolue-purete;Esthederm;Pure System Soin Absolue Pureté;42;H;ninguno;;no;todas;sí
+esthederm-repair-apres-soleil-soin-visage;Esthederm;Repair Après-Soleil Soin Visage;33.99;H;ninguno;;no;todas;sí
+esthederm-sensi-system-creme-desensibilisante;Esthederm;Sensi System Crème Désensibilisante;72;H;ninguno;;no;todas;no
+eucerin-anti-pigment-noche;Eucerin;Anti-Pigment Noche;35.95;H;thiamidol;;no;todas;sí
+eucerin-antiredness-crema-calmante;Eucerin;AntiRedness Crema Calmante;20.61;H;ninguno;;no;todas;no
+eucerin-dermatoclean-agua-micelar;Eucerin;DermatoClean Agua Micelar 3 en 1;11.94;L;ninguno;;no;todas;no
+eucerin-dermatoclean-desmaquillante-de-ojos;Eucerin;DermatoClean Desmaquillante de Ojos;11.94;L;ninguno;;no;todas;no
+eucerin-dermopure-exfoliante-purificante;Eucerin;DermoPure Clinical Exfoliante Purificante;13.98;serum humectante;ninguno;humectante;no;todas;no
+eucerin-dermopure-gel-limpiador-corrector;Eucerin;DermoPure Clinical Gel Limpiador Corrector;18.94;L;salicilico;;no;todas;sí
+eucerin-dermopure-hydra-repair;Eucerin;DermoPure Clinical Hydra Repair;16.3;H;ninguno;;no;todas;no
+eucerin-dermopure-oil-control-gel;Eucerin;DermoPure Clinical Oil Control Gel;17.28;H;salicilico;;no;todas;sí
+eucerin-dermopure-peeling-10;Eucerin;DermoPure Clinical Peeling 10;18.48;PM;glicolico;;sí;todas;no
+eucerin-hyaluron-filler-elasticity-noche;Eucerin;Hyaluron-Filler + Elasticity Noche;37.94;H;thiamidol;;no;todas;sí
+eucerin-hyaluron-filler-epigenetic-serum;Eucerin;Hyaluron-Filler + Longevity Epigenetic Serum;51.94;serum humectante;ninguno;humectante;no;todas;sí
+eucerin-hyaluron-filler-hydrating-booster-noche;Eucerin;Hyaluron-Filler Hydrating Booster Noche;24.95;serum humectante;ninguno;calmante o barrera;no;todas;sí
+eucerin-oil-control-dry-touch-gel-crema;Eucerin;Sun Oil Control Dry Touch Gel-Crema;17.25;S;ninguno;;no;todas;no
+eucerin-photoaging-control-fluido;Eucerin;Sun Photoaging Control Fluido;21.48;S;ninguno;;no;todas;no
+eucerin-pigment-control-con-color-tono-claro;Eucerin;Sun Pigment Control con color tono claro;23.35;S;ninguno;;no;todas;sí
+eucerin-pigment-control-fluido;Eucerin;Sun Pigment Control Fluido;21.48;S;thiamidol;;no;todas;sí
+eucerin-sensitive-protect-crema-facial;Eucerin;Sun Sensitive Protect Crema Facial;16.74;S;ninguno;;no;todas;no
+eucerin-sensitive-protect-fluido-matificante;Eucerin;Sun Sensitive Protect Fluido Matificante;21.85;S;ninguno;;no;todas;no
+eucerin-ultrasensitive-crema-calmante-normal-mixta;Eucerin;UltraSensitive Crema Calmante Piel Normal a Mixta;23.49;H;ninguno;;no;todas;no
+eucerin-ultrasensitive-crema-calmante-piel-seca;Eucerin;UltraSensitive Crema Calmante Piel Seca;23.49;H;ninguno;;no;todas;no
+filorga-global-repair-advanced-eyes-lips;Filorga;Global-Repair Advanced Eyes & Lips;64.99;contorno de ojos;ninguno;;no;todas;sí
+filorga-meso-mask-ncef;Filorga;Meso-Mask NCEF;31.7;mascarilla;niacinamida;;no;todas;sí
+filorga-ncef-essence;Filorga;NCEF-Essence;42.5;tonico o bruma;ninguno;;no;todas;sí
+filorga-ncef-revitalize-eyes;Filorga;NCEF-Revitalize Eyes;56.49;contorno de ojos;niacinamida;;no;todas;no
+filorga-optim-eyes-cryo;Filorga;Optim-Eyes Cryo;45.9;contorno de ojos;niacinamida;;no;todas;no
+filorga-oxygen-glow-eyes;Filorga;Oxygen-Glow [Eyes];33.86;contorno de ojos;ninguno;;no;todas;sí
+filorga-skin-prep-micellar-solution;Filorga;Skin-Prep Micellar Solution;19.9;L;ninguno;;no;todas;no
+filorga-skin-prep-perfecting-cleansing-oil;Filorga;Skin-Prep Perfecting Cleansing Oil;18.3;L;ninguno;;no;todas;no
+filorga-time-filler-essence;Filorga;Time-Filler Essence;30.5;tonico o bruma;ninguno;;no;todas;sí
+filorga-time-filler-eyes-5xp;Filorga;Time-Filler Eyes 5XP;36;contorno de ojos;ninguno;;no;todas;sí
+galenic-n2-retinol;Galénic;Galéniceutiques [N°2] Retinol;110;PM;retinol;;no;todas;sí
+galenic-n3-complejo-vitamina-b;Galénic;Galéniceutiques [N°3] Vitamina B;45;AM/PM;niacinamida;;no;todas;no
+galenic-the-active-soft-cream;Galénic;The Active Soft Cream;260;H;ninguno;;no;todas;sí
+galenic-the-essence;Galénic;The Essence;170;tonico o bruma;niacinamida;;no;todas;sí
+galenic-the-reviving-cream;Galénic;The Reviving Cream;370;H;ninguno;;no;todas;sí
+galenic-the-reviving-essence;Galénic;The Reviving Essence;190;tonico o bruma;ninguno;;no;todas;sí
+galenic-the-reviving-eye-cream;Galénic;The Reviving Eye Cream;210;contorno de ojos;ninguno;;no;todas;no
+galenic-the-uv-multi-protection;Galénic;The UV Multi-Protection;100;S;ninguno;;no;todas;no
+gh-gema-herrerias-10-aza-gz;GH Gema Herrerías;10 AZA-GZ;32.9;H;azelaico;;no;todas;sí
+gh-gema-herrerias-bruma-universal;GH Gema Herrerías;Bruma Universal;22.9;tonico o bruma;ninguno;;no;todas;sí
+gh-gema-herrerias-esencia-4fnh;GH Gema Herrerías;Esencia 4FNH;35.9;tonico o bruma;ninguno;;no;todas;sí
+gh-gema-herrerias-factor-invisible;GH Gema Herrerías;Factor Invisible SPF50;27.9;S;ninguno;;no;todas;sí
+gh-gema-herrerias-funcion-global-contorno-de-ojos;GH Gema Herrerías;Función Global Contorno de ojos;52.9;contorno de ojos;peptidos;;no;todas;sí
+gh-gema-herrerias-k-at-serum-contorno-de-ojos;GH Gema Herrerías;K-AT Sérum Contorno de ojos;32.9;contorno de ojos;tranexamico;;no;todas;sí
+gh-gema-herrerias-limpiador-en-polvo;GH Gema Herrerías;Limpiador en Polvo;19.9;L;ninguno;;no;todas;no
+gh-gema-herrerias-sistema-bifase;GH Gema Herrerías;Sistema Bifase;21.9;L;ninguno;;no;todas;no
+heliocare-360-acnimat;Heliocare;360º Acnimat;25.95;S;niacinamida;;no;todas;sí
+heliocare-360-color-water-gel;Heliocare;360º Color Water Gel (Beige);26.95;S;vitc_pura;;no;todas;sí
+heliocare-360-md-a-r-emulsion;Heliocare;360º MD A-R Emulsion;22.22;S;ninguno;;no;todas;no
+heliocare-360-sensation;Heliocare;360º Sensation;22.39;S;vitc_derivados;;no;todas;sí
+heliocare-360-water-gel;Heliocare;360º Water Gel;21.68;S;vitc_pura;;no;todas;sí
+heliocare-color-gelcream;Heliocare;Color Gelcream (Light);21.95;S;ninguno;;no;todas;sí
+isdin-acniben-control-de-brillos-y-granos;ISDIN;Acniben Control de Brillos y Granos;20.95;H;niacinamida;;no;todas;sí
+isdin-acniben-on-the-spot;ISDIN;Acniben On The Spot;13.95;H;salicilico;;no;todas;no
+isdin-acniben-pore-minimizer-pads;ISDIN;Acniben Pore Minimizer Pads;15.95;PM;ninguno;humectante;sí;todas;sí
+isdin-age-reverse-day;ISDIN;A.G.E. Reverse Day;99.95;H;niacinamida;;no;todas;sí
+isdin-age-reverse-night;ISDIN;A.G.E. Reverse Night;99.95;H;niacinamida;;no;todas;sí
+isdin-auriderm;ISDIN;Auriderm;51.95;H;ninguno;;no;todas;sí
+isdin-essential-cleansing;ISDIN;Essential Cleansing;36.55;L;ninguno;;no;todas;sí
+isdin-essential-purifier;ISDIN;Essential Purifier;24.95;L;ninguno;;no;normal a grasa;sí
+isdin-essential-scrub;ISDIN;Essential Scrub;23.95;serum humectante;ninguno;humectante;no;todas;sí
+isdin-extrem-90-cream;ISDIN;Extrem 90 Cream;26.55;S;ninguno;;no;todas;sí
+isdin-flavo-c;ISDIN;Flavo-C Sérum;64.95;AM;vitc_pura;;no;todas;no
+isdin-flavo-c-forte;ISDIN;Flavo-C Forte;79.95;AM;vitc_pura;;no;todas;sí
+isdin-flavo-c-intense;ISDIN;Flavo-C Intense;79.95;AM;vitc_pura;;no;todas;sí
+isdin-fusion-fluid-mineral;ISDIN;Fusion Fluid Mineral;29.5;S;ninguno;;no;todas;no
+isdin-fusion-water-magic-color-medium;ISDIN;Fusion Water Magic Color Medium;26.95;S;ninguno;;no;todas;sí
+isdin-fusion-water-magic-repair;ISDIN;Fusion Water Magic Repair;30.55;S;ninguno;;no;todas;sí
+isdin-fusion-water-magic-repair-color;ISDIN;Fusion Water Magic Repair Color;30.55;S;ninguno;;no;todas;sí
+isdin-gel-cream-dry-touch;ISDIN;Gel Cream Dry Touch;29.95;S;ninguno;;no;todas;sí
+isdin-glicoisdin-8-soft;ISDIN;Glicoisdin 8 Soft;44.95;PM;glicolico;;sí;todas;no
+isdin-hyaluronic-concentrate;ISDIN;Hyaluronic Concentrate;55.95;serum humectante;ninguno;humectante;no;todas;sí
+isdin-hyaluronic-eyes;ISDIN;Hyaluronic Eyes;39.95;contorno de ojos;ninguno;;no;todas;sí
+isdin-hyaluronic-moisture-oily;ISDIN;Hyaluronic Moisture Oily;47.95;H;niacinamida;;no;todas;sí
+isdin-hyaluronic-moisture-sensitive;ISDIN;Hyaluronic Moisture Sensitive;47.95;H;vitc_derivados;;no;todas;sí
+isdin-instant-flash;ISDIN;Instant Flash;16.55;serum humectante;ninguno;humectante;no;todas;sí
+isdin-k-ox-eyes;ISDIN;K-Ox Eyes;59.95;contorno de ojos;ninguno;;no;todas;sí
+isdin-micellar-solution;ISDIN;Micellar Solution;12.95;L;ninguno;;no;todas;no
+isdin-nutratopic-pro-amp-crema-facial;ISDIN;Nutratopic Pro-AMP Crema Facial;20.95;H;ninguno;;no;todas;no
+isdin-redness;ISDIN;Fotoultra Redness;29.9;S;niacinamida;;no;todas;no
+isdin-retinal-eyes;ISDIN;Retinal Eyes;69.95;contorno de ojos;retinal;;no;todas;sí
+isdin-retinal-intense;ISDIN;Retinal Intense;79.95;PM;retinal;;no;todas;sí
+isdin-retinal-smooth;ISDIN;Retinal Smooth;67.95;PM;retinal;;no;todas;sí
+isdin-salicylic-renewal;ISDIN;Salicylic Renewal;54.95;PM;salicilico;;sí;todas;no
+isdin-spot-prevent;ISDIN;Fotoultra Spot Prevent;29.95;S;niacinamida;;no;todas;no
+isdin-ureadin-fusion-serum;ISDIN;Ureadin Fusion Serum;35.55;serum humectante;ninguno;humectante;no;todas;sí
+la-roche-posay-agua-micelar-oil-infused;La Roche-Posay;Agua Micelar Oil Infused;16.16;L;ninguno;;no;todas;no
+la-roche-posay-agua-micelar-ultra-piel-sensible;La Roche-Posay;Agua Micelar Ultra Piel Sensible;13.69;L;ninguno;;no;todas;sí
+la-roche-posay-agua-micelar-ultra-pieles-reactivas;La Roche-Posay;Agua Micelar Ultra Pieles Reactivas;14.94;L;ninguno;;no;todas;no
+la-roche-posay-anthelios-age-correct;La Roche-Posay;Anthelios Age Correct;19.94;S;niacinamida;;no;todas;sí
+la-roche-posay-anthelios-age-correct-color;La Roche-Posay;Anthelios Age Correct con Color;19.94;S;niacinamida;;no;todas;sí
+la-roche-posay-anthelios-oil-correct;La Roche-Posay;Anthelios Oil Correct;21.49;S;niacinamida;;no;todas;sí
+la-roche-posay-anthelios-uvair-serum;La Roche-Posay;Anthelios UVAir Sérum;16.94;S;ninguno;;no;todas;sí
+la-roche-posay-anthelios-uvair-serum-color;La Roche-Posay;Anthelios UVAir Sérum con Color (Light);31.05;S;ninguno;;no;todas;sí
+la-roche-posay-anthelios-uvmune-400-fluido-antimanchas;La Roche-Posay;Anthelios UVMune 400+ Fluido Antimanchas;17.42;S;ninguno;;no;todas;no
+la-roche-posay-anthelios-uvmune-400-oil-control-gel-crema;La Roche-Posay;Anthelios UVMune 400 Oil Control Gel-Crema;17.41;S;ninguno;;no;todas;no
+la-roche-posay-anthelios-uvmune-400-oil-control-gel-crema-color;La Roche-Posay;Anthelios UVMune 400 Oil Control Gel-Crema con Color;17.41;S;ninguno;;no;todas;sí
+la-roche-posay-desmaquillante-ojos-waterproof;La Roche-Posay;Desmaquillante de Ojos Waterproof;12.95;L;ninguno;;no;todas;no
+la-roche-posay-effaclar-agua-micelar;La Roche-Posay;Effaclar Agua Micelar Ultra;14.94;L;ninguno;;no;todas;sí
+la-roche-posay-effaclar-ai;La Roche-Posay;Effaclar A.I.;12.48;H;niacinamida;;no;todas;sí
+la-roche-posay-effaclar-mat;La Roche-Posay;Effaclar Mat+;13.19;H;ninguno;;no;todas;sí
+la-roche-posay-effaclar-supramolecular-gel-crema;La Roche-Posay;Effaclar Supramolecular Gel-crema;17.94;H;niacinamida;;no;todas;sí
+la-roche-posay-effaclar-supramolecular-gel-limpiador;La Roche-Posay;Effaclar Supramolecular Gel Limpiador;14.76;L;niacinamida;;no;todas;sí
+la-roche-posay-espuma-agua-micelar;La Roche-Posay;Espuma de Agua Micelar;12.94;L;ninguno;;no;todas;sí
+la-roche-posay-hyalu-b5-serum-ojos;La Roche-Posay;Hyalu B5 Sérum de Ojos;27.74;contorno de ojos;vitc_derivados;;no;todas;no
+la-roche-posay-hyalu-b5-suractivated-crema;La Roche-Posay;Hyalu B5 Suractivated Crema;33.63;H;ninguno;;no;todas;sí
+la-roche-posay-hyalu-b5-suractivated-serum;La Roche-Posay;Hyalu B5 Suractivated Sérum;39.4;serum humectante;ninguno;calmante o barrera;no;todas;sí
+la-roche-posay-hydraphase-ha-ligera;La Roche-Posay;Hydraphase HA Ligera;19.94;H;ninguno;;no;todas;sí
+la-roche-posay-hydraphase-ha-ojos;La Roche-Posay;Hydraphase HA Ojos;18.95;contorno de ojos;ninguno;;no;todas;no
+la-roche-posay-hydraphase-ha-rica;La Roche-Posay;Hydraphase HA Rica;19.94;H;ninguno;;no;todas;sí
+la-roche-posay-locion-calmante;La Roche-Posay;Loción Calmante Piel Sensible;14.94;tonico o bruma;ninguno;;no;todas;sí
+la-roche-posay-mela-b3-double-dose;La Roche-Posay;Mela B3 Double Dose;53.95;H;niacinamida;;no;todas;sí
+la-roche-posay-mela-b3-gel-limpiador;La Roche-Posay;Mela B3 Gel Limpiador Exfoliante;16.94;L;niacinamida;;no;todas;sí
+la-roche-posay-mela-b3-ojos;La Roche-Posay;Mela B3 Ojos;26.73;contorno de ojos;niacinamida;;no;todas;no
+la-roche-posay-pigmentclar-ojos;La Roche-Posay;Pigmentclar Ojos;23.95;contorno de ojos;vitc_derivados;;no;todas;no
+la-roche-posay-pure-vitamin-c-crema-ligera;La Roche-Posay;Pure Vitamin C Crema Ligera;31.93;H;vitc_pura;;no;todas;sí
+la-roche-posay-pure-vitamin-c-ojos;La Roche-Posay;Pure Vitamin C Ojos;24.97;contorno de ojos;vitc_pura;;no;todas;no
+la-roche-posay-redermic-retinol-crema;La Roche-Posay;Redermic Retinol Crema;30.98;H;retinol;;no;todas;sí
+la-roche-posay-redermic-retinol-ojos;La Roche-Posay;Redermic Retinol Ojos;23.94;contorno de ojos;retinol;;no;todas;no
+la-roche-posay-toleriane-kerium-ds-concentrado;La Roche-Posay;Toleriane Kerium DS Concentrado;17.94;H;ninguno;;no;todas;sí
+la-roche-posay-toleriane-rosaliac-ar-concentrado;La Roche-Posay;Toleriane Rosaliac AR Concentrado;22.14;H;ninguno;;no;todas;no
+la-roche-posay-toleriane-rosaliac-gel-micelar;La Roche-Posay;Toleriane Rosaliac Gel Micelar;12.09;L;ninguno;;no;todas;no
+la-roche-posay-toleriane-sensitive-rica;La Roche-Posay;Toleriane Sensitive Rica;17.94;H;niacinamida;;no;todas;no
+la-roche-posay-toleriane-ultra-dermallergo-serum;La Roche-Posay;Toleriane Ultra Dermallergo Sérum;;AM/PM;peptidos;;no;todas;no
+lierac-aceite-limpiador-intenso;Lierac;El Aceite Limpiador Intenso;19.9;L;ninguno;;no;todas;sí
+lierac-agua-micelar;Lierac;El Agua Micelar;16.9;L;ninguno;;no;todas;sí
+lierac-arkeskin-crema-de-dia-menopausia;Lierac;Arkéskin La Crema de Día Menopausia;43.9;H;ninguno;;no;todas;sí
+lierac-desmaquillante-de-ojos;Lierac;El Desmaquillante de Ojos;16.9;L;ninguno;;no;todas;no
+lierac-fluido-solar-color-spf30;Lierac;Sunissime Fluido Solar Color SPF30;26.9;S;ninguno;;no;todas;sí
+lierac-fluido-solar-color-spf50;Lierac;Sunissime Fluido Solar Color SPF50+;26.9;S;ninguno;;no;todas;sí
+lierac-glow-fresh-crema-repulpante-luminosidad;Lierac;Glow Fresh La Crema Repulpante Luminosidad;34.9;H;ninguno;;no;todas;sí
+lierac-glow-fresh-gel-crema-refrescante-luminosidad;Lierac;Glow Fresh El Gel Crema Refrescante Luminosidad;34.9;H;ninguno;;no;todas;sí
+lierac-glow-fresh-mascarilla-revitalizante-express;Lierac;Mascarilla Revitalizante Express;23.9;mascarilla;ninguno;;no;todas;sí
+lierac-glow-fresh-serum-booster-luminosidad;Lierac;Glow Fresh El Sérum Booster Luminosidad;38.9;serum humectante;ninguno;humectante;no;todas;sí
+lierac-leche-desmaquillante;Lierac;La Leche Desmaquillante;16.9;L;ninguno;;no;todas;sí
+lierac-lift-integral-crema-de-dia;Lierac;Lift Integral La Crema de Día Reafirmante;49.9;H;ninguno;;no;todas;sí
+lierac-lift-integral-gel-crema-de-dia-reafirmante;Lierac;Lift Integral El Gel-Crema de Día Reafirmante;49.9;H;ninguno;;no;todas;sí
+lierac-lift-integral-tratamiento-lift-de-ojos;Lierac;Lift Integral El Tratamiento Lift de Ojos;39.9;contorno de ojos;ninguno;;no;todas;no
+lierac-mascarilla-exfoliante;Lierac;La Mascarilla Exfoliante;20.9;mascarilla;ninguno;;no;todas;sí
+lierac-premium-crema-de-ojos;Lierac;Premium La Crema de Ojos;55.9;contorno de ojos;niacinamida;;no;todas;no
+lierac-premium-mascarilla-absoluta;Lierac;Premium La Mascarilla Absoluta;55.9;mascarilla;niacinamida;;no;todas;sí
+lierac-protector-uv-longevidad;Lierac;Premium El Protector UV Longevidad SPF50+;39;S;niacinamida;;no;todas;sí
+lierac-protocolo-antiarrugas-crema-retinol;Lierac;Protocolo Antiarrugas La Crema Retinol;42.9;H;retinol;;no;todas;no
+lierac-protocolo-antiarrugas-rellenador-de-arrugas;Lierac;Protocolo Antiarrugas El Rellenador de Arrugas;22.9;serum humectante;ninguno;humectante;no;todas;no
+lierac-protocolo-antiimperfecciones-peeling;Lierac;Protocolo Antiimperfecciones El Peeling;22.9;PM;glicolico;;sí;todas;sí
+lierac-protocolo-antiimperfecciones-stop-granos;Lierac;Protocolo Antiimperfecciones Stop Granos;20;AM/PM;salicilico;;sí;todas;no
+lierac-protocolo-antimanchas-serum;Lierac;Protocolo Antimanchas El Sérum Niacinamida;42.9;AM/PM;niacinamida;;no;todas;sí
+lierac-protocolo-antirrojeces-serum;Lierac;Protocolo Antirrojeces El Sérum;42.9;serum humectante;ninguno;calmante o barrera;no;todas;no
+lierac-protocolo-luminosidad-mascarilla-peeling;Lierac;Protocolo Luminosidad La Mascarilla Peeling;22.9;mascarilla;glicolico;;sí;todas;sí
+medik8-advanced-day-eye-protect;Medik8;Advanced Day Eye Protect;54;S;ninguno;;no;todas;no
+medik8-advanced-night-eye;Medik8;Advanced Night Eye;55;contorno de ojos;ninguno;;no;todas;no
+medik8-advanced-night-restore;Medik8;Advanced Night Restore;76;H;ninguno;;no;todas;no
+medik8-advanced-pro-collagen-peptide-cream;Medik8;Advanced Pro-Collagen+ Peptide Cream;102;H;peptidos;;no;todas;no
+medik8-balance-moisturiser-glycolic-acid-activator;Medik8;Balance Moisturiser & Glycolic Acid Activator;64;H;niacinamida;;no;todas;no
+medik8-c-tetra-cream;Medik8;C-Tetra Cream;64;H;vitc_derivados;;no;todas;no
+medik8-calmwise-serum;Medik8;Calmwise Serum;50;AM/PM;ninguno;otro;no;todas;no
+medik8-calmwise-soothing-cleanser;Medik8;Calmwise Soothing Cleanser;32;L;ninguno;;no;todas;no
+medik8-daily-refresh-balancing-toner;Medik8;Daily Refresh Balancing Toner;26;tonico o bruma;niacinamida;;no;todas;no
+medik8-exo-pdrn-prismatic;Medik8;Exo-PDRN Prismatic+;100;AM/PM;niacinamida;;no;todas;no
+medik8-eyelift-peptides;Medik8;Eyelift Peptides;60;contorno de ojos;peptidos;;no;todas;no
+medik8-intelligent-retinol-3tr;Medik8;Intelligent Retinol 3TR;43;PM;retinol;;no;todas;no
+medik8-intelligent-retinol-eye-tr;Medik8;Intelligent Retinol Eye TR;32;contorno de ojos;retinol;;no;todas;no
+medik8-intelligent-retinol-smoothing-night-cream;Medik8;Intelligent Retinol Smoothing Night Cream;70;H;retinol;tratamiento;no;todas;no
+medik8-lipid-balance-cleansing-oil;Medik8;Lipid-Balance Cleansing Oil;42;L;vitc_derivados;;no;todas;no
+medik8-liquid-peptides;Medik8;Liquid Peptides;75;AM/PM;peptidos;;no;todas;no
+medik8-liquid-peptides-advanced-mp;Medik8;Liquid Peptides Advanced MP;102;AM/PM;peptidos;;no;todas;no
+medik8-pore-cleanse-gel-intense;Medik8;Pore Cleanse Gel Intense;32;L;lactico;;no;todas;no
+medik8-press-glow;Medik8;Press & Glow;42;tonico o bruma;ninguno;;no;todas;no
+medik8-r-retinoate-day-night;Medik8;r-Retinoate Day & Night;189;H;esteres_retinilo;tratamiento;no;todas;no
+medik8-r-retinoate-day-night-eye-serum;Medik8;r-Retinoate Day & Night Eye Serum;129;contorno de ojos;vitc_derivados;;no;todas;no
+medik8-r-retinoate-intense;Medik8;r-Retinoate Intense;279;H;retinal;;no;todas;sí
+medik8-sleep-glycolic;Medik8;Sleep Glycolic;49;PM;glicolico;;sí;todas;no
+medik8-super-c-ferulic;Medik8;Super C Ferulic;85;AM;vitc_derivados;;no;todas;no
+medik8-total-moisture-daily-cleansing-gel;Medik8;Total Moisture Daily Cleansing Gel;38;L;ninguno;;no;todas;no
+medik8-total-moisture-daily-facial-cream;Medik8;Total Moisture Daily Facial Cream;60;H;ninguno;;no;todas;no
+medik8-ultimate-recovery;Medik8;Ultimate Recovery;49;H;ninguno;;no;todas;no
+neoretin-concentrate;Neoretin;Discrom Control Concentrate;42.43;PM;retinol;;sí;todas;sí
+neoretin-gelcream-spf-50;Neoretin;Discrom Control Gelcream SPF 50;32.94;S;hpr;;no;todas;sí
+neoretin-k-contorno-de-ojos;Neoretin;Discrom Control K-Contorno de Ojos;33.94;contorno de ojos;retinol;;no;todas;no
+neoretin-limpiador-microexfoliante;Neoretin;Discrom Control Limpiador Microexfoliante;19.98;L;tranexamico;;no;todas;sí
+neoretin-peeling-despigmentante;Neoretin;Discrom Control Peeling Despigmentante;17.94;PM;retinol;;sí;todas;sí
+neoretin-pigment-neutralizer-serum;Neoretin;Discrom Control Pigment Neutralizer Sérum;36.94;AM/PM;azelaico;;no;todas;sí
+neoretin-transition-cream;Neoretin;Discrom Control Transition Cream;41.99;H;hpr;;no;todas;sí
+neoretin-ultra-emulsion-advanced;Neoretin;Discrom Control Ultra Emulsion Advanced;54.94;PM;retinal;;no;todas;sí
+neostrata-15-vitamin-c-pha-serum;Neostrata;15% Vitamin C + PHA Serum;48.99;AM;vitc_pura;;no;todas;no
+neostrata-bionic-face-serum;Neostrata;Bionic Face Serum;79.35;PM;esteres_retinilo;;no;todas;no
+neostrata-brightening-eye-cream;Neostrata;Brightening Eye Cream;43.1;contorno de ojos;vitc_derivados;;no;todas;no
+neostrata-clarify-sheer-hydration-spf-40;Neostrata;Clarify Sheer Hydration SPF 40;60.95;S;ninguno;;no;todas;no
+neostrata-dark-spot-corrector;Neostrata;Enlighten Dark Spot Corrector;;H;vitc_pura;;no;todas;no
+neostrata-exfoliating-wash;Neostrata;Skin Active Exfoliating Wash;28.89;L;ninguno;;no;todas;no
+neostrata-foaming-glycolic-wash;Neostrata;Resurface Foaming Glycolic Wash;22.22;L;glicolico;;sí;todas;no
+neostrata-gel-plus;Neostrata;Clarify Gel Plus;;H;glicolico;;no;todas;no
+neostrata-glycolic-microdermabrasion-polish;Neostrata;Glycolic Microdermabrasion Polish;80;PM;glicolico;;sí;todas;sí
+neostrata-glycolic-renewal-smoothing-cream;Neostrata;Resurface Glycolic Renewal Smoothing Cream;34.06;H;glicolico;;sí;todas;no
+neostrata-hyaluronic-luminous-lift;Neostrata;Skin Active Hyaluronic Luminous Lift;;H;lactico;;no;todas;no
+neostrata-intensive-eye-therapy;Neostrata;Intensive Eye Therapy;42.73;contorno de ojos;bakuchiol;;no;todas;no
+neostrata-mandelic-clarifying-cleanser;Neostrata;Clarify Mandelic Clarifying Cleanser;21.51;L;salicilico;;no;todas;no
+neostrata-mandelic-clarifying-hydragel;Neostrata;Clarify Mandelic Clarifying Hydragel;29.5;H;salicilico;;no;todas;no
+neostrata-oily-skin-solution;Neostrata;Oily Skin Solution;24.9;tonico o bruma;glicolico;;no;todas;no
+neostrata-pha-barrier-recovery-cream;Neostrata;Restore PHA Barrier Recovery Cream;;H;ninguno;;no;todas;no
+neostrata-pha-daily-moisturizer;Neostrata;Restore PHA Daily Moisturizer;26.5;H;ninguno;;no;todas;no
+neostrata-pha-eye-cream;Neostrata;PHA Eye Cream;31.6;contorno de ojos;ninguno;;no;todas;no
+neostrata-pha-facial-cleanser;Neostrata;Restore PHA Facial Cleanser;21.67;L;ninguno;;no;todas;no
+neostrata-pha-renewal-pads;Neostrata;PHA Renewal Pads;;AM;vitc_derivados;;no;todas;no
+neostrata-pigment-controller;Neostrata;Pigment Controller;33;PM;retinol;;no;todas;no
+neostrata-potent-retinol-complex;Neostrata;Potent Retinol Complex;49.61;PM;retinol;;no;todas;no
+neostrata-rebound-sculpting-cream;Neostrata;Skin Active Rebound Sculpting Cream;63.9;H;glicolico;;no;todas;no
+neostrata-redness-neutralizing-serum;Neostrata;Redness Neutralizing Serum;30;AM/PM;ninguno;otro;no;todas;no
+neostrata-smooth-surface-glycolic-peel;Neostrata;Smooth Surface Glycolic Peel;48.99;PM;glicolico;;sí;todas;no
+neostrata-targeted-clarifying-gel;Neostrata;Clarify Targeted Clarifying Gel;26.74;H;esteres_retinilo;;no;todas;no
+neostrata-tri-therapy-lifting-serum;Neostrata;Tri-Therapy Lifting Serum;50.8;PM;glicolico;;sí;todas;no
+neostrata-ultra-brightening-cleanser;Neostrata;Enlighten Ultra Brightening Cleanser;23;L;ninguno;;no;todas;no
+neostrata-ultra-moisturizing-face-cream;Neostrata;Restore Ultra Moisturizing Face Cream;29;H;ninguno;;no;todas;no
+nuxe-contorno-de-ojos-y-labios;Nuxe;Contorno de Ojos y Labios;49.9;contorno de ojos;ninguno;;no;todas;sí
+nuxe-crema-reafirmante-contorno-de-ojos;Nuxe;Crema Reafirmante Contorno de Ojos;42.5;contorno de ojos;ninguno;;no;todas;sí
+nuxe-crema-solar-fundente-spf30;Nuxe;Crema Solar Fundente SPF30;17.8;S;ninguno;;no;todas;sí
+nuxe-crema-solar-fundente-spf50;Nuxe;Crema Solar Fundente SPF50+;24.5;S;ninguno;;no;todas;sí
+nuxe-eye-flash;Nuxe;Eye Flash;17.5;contorno de ojos;ninguno;;no;todas;no
+nuxe-fluido-ligero-spf50;Nuxe;Fluido ligero SPF50;19.6;S;ninguno;;no;todas;sí
+nuxe-fluido-solar-glow-spf30;Nuxe;Fluido Solar Glow SPF30;26.9;S;ninguno;;no;todas;sí
+nuxe-mascarilla-detox-luminosidad;Nuxe;Mascarilla Detox Luminosidad;24.5;mascarilla;ninguno;;no;todas;sí
+nuxe-serum-corrector-de-manchas;Nuxe;Sérum Corrector de Manchas;69.5;AM;vitc_derivados;;no;todas;sí
+nuxe-serum-iluminador-ojos;Nuxe;Sérum Iluminador Ojos;41.5;contorno de ojos;niacinamida;;no;todas;no
+nuxe-stick-antifatiga-contorno-de-ojos;Nuxe;Stick Antifatiga Contorno de Ojos;27.5;contorno de ojos;ninguno;;no;todas;no
+primaderm-deep-cleansing-oil-to-milk;Primaderm;Deep Cleansing Oil-to-milk;20.9;L;vitc_pura;;no;todas;no
+primaderm-exfoliating-cleansing-cream;Primaderm;Exfoliating Cleansing Cream;18.9;L;glicolico;;sí;todas;sí
+primaderm-retinal-renewal-0-1;Primaderm;Retinal Renewal 0.1% GF & Peptide Serum;54.9;PM;retinal;;no;todas;sí
+primaderm-retinal-renewal-0-3;Primaderm;Retinal Renewal 0.3% GF & Peptide Serum;72.9;PM;retinal;;no;todas;sí
+primaderm-sos-detox-pollution;Primaderm;S.O.S. Detox-Pollution;40.9;AM/PM;peptidos;;no;todas;no
+primaderm-sos-reactive;Primaderm;S.O.S. Reactive;50.9;AM/PM;peptidos;;no;todas;no
+primaderm-sos-shine;Primaderm;S.O.S. Shine;50.9;AM/PM;peptidos;;no;todas;no
+primaderm-xpert-sensitive-eye-contour;Primaderm;Xpert Sensitive Eye Contour;22.32;contorno de ojos;peptidos;;no;todas;no
+primaderm-xpert-sensitive-redless;Primaderm;Xpert Sensitive Redless;19.92;AM/PM;peptidos;;no;todas;no
+rilastil-acido-hialuronico-serum;Rilastil;Ácido Hialurónico Sérum;36.95;PM;vitc_derivados;;no;todas;sí
+rilastil-acnestil-serum-az;Rilastil;Acnestil Serum AZ;27.95;AM/PM;azelaico;;no;todas;sí
+rilastil-aqua-mascarilla-hidratante;Rilastil;Aqua Mascarilla Hidratante;21.95;mascarilla;ninguno;;no;todas;sí
+rilastil-hydrotenseur-contorno-de-ojos;Rilastil;Hydrotenseur Contorno de Ojos;20.98;contorno de ojos;ninguno;;no;todas;no
+rilastil-multirepair-contorno-de-ojos;Rilastil;Multirepair Contorno de Ojos;23.95;contorno de ojos;ninguno;;no;todas;no
+rilastil-summum-rx-ampollas-lift;Rilastil;Summum Rx Ampollas Lift;35.99;AM;vitc_derivados;;no;todas;sí
+rilastil-summum-rx-gel;Rilastil;Summum Rx Gel;43.94;H;ninguno;;no;todas;sí
+rilastil-sun-system-age-repair;Rilastil;Sun System Age Repair SPF50+;15.95;S;ninguno;;no;todas;sí
+rilastil-sun-system-ak-repair-100;Rilastil;Sun System AK-Repair 100;14.93;S;vitc_pura;;no;todas;no
+rilastil-sun-system-allergy-100;Rilastil;Sun System Allergy 100 SPF50+;16.94;S;vitc_derivados;;no;todas;no
+rilastil-sun-system-emulsion-color;Rilastil;Sun System Emulsion Color;13.95;S;ninguno;;no;todas;no
+rilastil-sun-system-superfluid;Rilastil;Sun System Superfluid SPF50;12.97;S;ninguno;;no;todas;sí
+rilastil-vitamina-c;Rilastil;Multirepair Hi-Tech Vit. C;26.94;AM;vitc_derivados;;no;todas;sí
+segle-clinical-aceite-desmaquillante;Segle Clinical;Aceite Desmaquillante;20.5;L;ninguno;;no;todas;sí
+segle-clinical-contorno-flash-serum;Segle Clinical;Contorno de Ojos y Labios Flash Sérum;35.9;contorno de ojos;peptidos;;no;todas;sí
+segle-clinical-contorno-pure-retinol;Segle Clinical;Contorno de Ojos Pure Retinol;40.9;contorno de ojos;retinol;;no;todas;no
+segle-clinical-exfoliante-volcanica-suave;Segle Clinical;Exfoliante Volcánica Suave;16.5;serum humectante;ninguno;humectante;no;todas;sí
+segle-clinical-gel-crema-clear-skin-r;Segle Clinical;Gel Crema Clear Skin R;50.9;H;retinol;;no;todas;sí
+segle-clinical-tonico-glow-hydra-milk;Segle Clinical;Tónico Glow Hydra Milk;20.5;tonico o bruma;ninguno;;no;todas;sí
+sensilis-azelaic-peel;Sensilis;Azelaic Peel;19.95;tonico o bruma;tranexamico;;no;todas;sí
+sensilis-eternalist-age-day-cream;Sensilis;Eternalist A.G.E. Day Cream;41.94;H;ninguno;;no;todas;sí
+sensilis-eternalist-age-eyes;Sensilis;Eternalist A.G.E. Eyes;32.48;contorno de ojos;ninguno;;no;todas;no
+sensilis-eternalist-age-retinol;Sensilis;Eternalist A.G.E. Retinol;39.94;H;niacinamida;;no;todas;sí
+sensilis-eternalist-age-retinol-expert;Sensilis;Eternalist A.G.E. Retinol Expert;44.94;PM;retinol;;no;todas;sí
+sensilis-eternalist-age-retinol-serum;Sensilis;Eternalist A.G.E. Retinol Serum;40.7;PM;esteres_retinilo;;no;todas;sí
+sensilis-hyaluronic-puffy-eyes;Sensilis;Hyaluronic Puffy Eyes;23.46;contorno de ojos;peptidos;;no;todas;no
+sensilis-hydra-essence-cream;Sensilis;Hydra Essence Cream;19.67;tonico o bruma;ninguno;;no;todas;sí
+sensilis-hydra-essence-sorbet-gel;Sensilis;Hydra Essence Sorbet Gel;19.66;tonico o bruma;ninguno;;no;todas;sí
+sensilis-micro-peeling-foam-atx-b3;Sensilis;Micro-Peeling Foam ATX B3;;L;tranexamico;;sí;todas;sí
+sensilis-peptide-ar-balm;Sensilis;Peptide AR Balm;40.13;H;peptidos;;no;todas;sí
+sensilis-peptide-ar-cream;Sensilis;Peptide AR Cream;40.19;H;peptidos;;no;todas;sí
+sensilis-prep4-polish;Sensilis;Prep4+ Polish;22.94;AM;vitc_derivados;;no;todas;sí
+sensilis-pure-age-perfection-cicakn-serum;Sensilis;Pure Age Perfection Cicakn Serum;36.98;PM;peptidos;;sí;todas;sí
+sensilis-pure-iso-relief;Sensilis;Pure Iso-Relief;14.05;H;niacinamida;;no;todas;sí
+sensilis-resurfacing-black-peel;Sensilis;Resurfacing Black Peel;21.98;AM;vitc_derivados;;no;todas;sí
+sensilis-skin-rescue-barrier;Sensilis;Skin Rescue Barrier;34.94;H;ninguno;;no;todas;sí
+sensilis-skin-rescue-sos-mist;Sensilis;Skin Rescue S.O.S Bruma;14.04;tonico o bruma;lactico;;no;todas;no
+sensilis-succinic-jelly-oil-cleanser;Sensilis;Succinic Jelly Oil Cleanser;14.95;L;ninguno;;no;todas;sí
+sensilis-supreme-night-cream;Sensilis;Supreme Night Cream;41.95;H;ninguno;;no;todas;sí
+sensilis-the-cool-rescue;Sensilis;The Cool Rescue;10.98;tonico o bruma;lactico;;no;todas;sí
+sensilis-upgrade-ar;Sensilis;Upgrade AR;40.95;H;ninguno;;no;todas;sí
+sensilis-upgrade-day-cream;Sensilis;Upgrade Day Cream;43.94;H;ninguno;;no;todas;sí
+sensilis-upgrade-high-potency-serum;Sensilis;Upgrade High Potency Serum;;AM/PM;peptidos;;no;todas;sí
+sensilis-upgrade-night-cream;Sensilis;Upgrade Night Cream;37.89;H;ninguno;;no;todas;sí
+sesderma-abradermol-crema-microdermoabrasion;Sesderma;Abradermol Crema microdermoabrasión;26.95;H;niacinamida;;no;todas;sí
+sesderma-abradermol-volcanic-exfoliante;Sesderma;Abradermol Volcanic;29.95;serum humectante;ninguno;humectante;no;todas;sí
+sesderma-azelac-crema;Sesderma;Azelac Crema;39.95;H;azelaico;;no;todas;sí
+sesderma-azelac-gel-hidratante;Sesderma;Azelac Gel hidratante;39.95;H;retinal;;no;todas;sí
+sesderma-azelac-mascarilla-anti-rojeces;Sesderma;Azelac Mascarilla anti-rojeces;;mascarilla;ninguno;;no;todas;no
+sesderma-c-vit-contorno-de-ojos;Sesderma;C-Vit Contorno de ojos;32.95;contorno de ojos;vitc_derivados;;no;todas;no
+sesderma-c-vit-crema-gel;Sesderma;C-Vit Crema gel;50.95;H;vitc_derivados;;no;todas;no
+sesderma-c-vit-crema-hidratante;Sesderma;C-Vit Crema hidratante;50.95;H;vitc_derivados;;no;todas;no
+sesderma-c-vit-radiance-mascarilla;Sesderma;C-Vit Radiance Mascarilla;18.96;mascarilla;ninguno;;no;todas;no
+sesderma-daeses-contorno-de-ojos-y-labios;Sesderma;Daeses Contorno de ojos y labios;36.95;contorno de ojos;lactico;;no;todas;sí
+sesderma-daeses-crema-lifting;Sesderma;Daeses Crema lifting;57.95;H;glicolico;;no;todas;sí
+sesderma-daeses-liposomal-serum;Sesderma;Daeses Liposomal Serum;57.95;PM;lactico;;sí;todas;sí
+sesderma-daeses-mascarilla-reafirmante;Sesderma;Daeses Mascarilla reafirmante;27.95;mascarilla;peptidos;;no;todas;sí
+sesderma-exoses-contorno-de-ojos-y-labios;Sesderma;Exoses Contorno de ojos y labios;55.95;contorno de ojos;hpr;;no;todas;sí
+sesderma-exoses-the-cream;Sesderma;Exoses The Cream;74.95;H;hpr;;no;todas;sí
+sesderma-exoses-the-elixir;Sesderma;Exoses The Elixir;74.95;PM;hpr;;no;todas;sí
+sesderma-factor-g-renew-contorno-de-ojos;Sesderma;Factor G Renew Contorno de ojos;37.95;contorno de ojos;retinal;;no;todas;sí
+sesderma-factor-g-renew-crema;Sesderma;Factor G Renew Crema;61.95;H;peptidos;;no;todas;sí
+sesderma-factor-g-renew-crema-gel;Sesderma;Factor G Renew Crema gel;61.95;H;peptidos;;no;todas;sí
+sesderma-ferulac-crema-antioxidante;Sesderma;Ferulac Crema antioxidante;61.95;H;vitc_derivados;;no;todas;sí
+sesderma-ferulac-liposomal-serum;Sesderma;Ferulac Liposomal Serum;61.95;AM;vitc_derivados;;no;todas;sí
+sesderma-glicare-gel-contorno-de-ojos-y-labios;Sesderma;Glicare Gel Contorno de ojos y labios;41.95;contorno de ojos;peptidos;;no;todas;no
+sesderma-hidraderm-hyal-5-serum;Sesderma;Hidraderm Hyal 5 Serum;52.95;PM;retinal;;no;todas;sí
+sesderma-hidraderm-hyal-contorno-de-ojos;Sesderma;Hidraderm Hyal Contorno de ojos;30.95;contorno de ojos;retinal;;no;todas;sí
+sesderma-hidraderm-hyal-liposomal-serum;Sesderma;Hidraderm Hyal Liposomal Serum;46.95;PM;retinal;;no;todas;sí
+sesderma-hidraderm-trx-crema-gel;Sesderma;Hidraderm TRX Crema gel;50.95;H;tranexamico;;no;todas;sí
+sesderma-hidraderm-trx-liposomal-serum;Sesderma;Hidraderm TRX Liposomal Serum;50.95;PM;tranexamico;;no;todas;sí
+sesderma-hidraloe-contorno-de-ojos;Sesderma;Hidraloe Contorno de ojos;21.95;contorno de ojos;ninguno;;no;todas;no
+sesderma-hidraven-crema-espumosa;Sesderma;Hidraven Crema espumosa;22.95;L;ninguno;;no;todas;sí
+sesderma-k-vit-serum-antiojeras;Sesderma;K-Vit Sérum antiojeras;49.95;contorno de ojos;ninguno;;no;todas;sí
+sesderma-mesoses-mascarilla;Sesderma;Mesoses Mascarilla;;mascarilla;vitc_derivados;;no;todas;sí
+sesderma-repaskin-fluido-invisible;Sesderma;Repaskin Fluido Invisible SPF50+;;S;ninguno;;no;todas;sí
+sesderma-repaskin-toque-seco;Sesderma;Repaskin Toque Seco SPF50+;28.95;S;ninguno;;no;todas;sí
+sesderma-repaskin-urban-365-antiedad;Sesderma;Repaskin Urban 365 Antiedad SPF50;30.95;S;ninguno;;no;todas;sí
+sesderma-repaskin-urban-365-pieles-grasas;Sesderma;Repaskin Urban 365 Pieles Grasas SPF50;30.95;S;salicilico;;no;todas;sí
+sesderma-repaskin-urban-365-pieles-sensibles;Sesderma;Repaskin Urban 365 Pieles Sensibles SPF50+;19.01;S;ninguno;;no;todas;no
+sesderma-resveraderm-liposomal-serum;Sesderma;Resveraderm Liposomal Serum;57.95;PM;vitc_derivados;;no;todas;sí
+sesderma-retiage-5-serum;Sesderma;Retiage 5 Serum;69.95;PM;retinal;;no;todas;sí
+sesderma-retiage-contorno-de-ojos;Sesderma;Retiage Contorno de ojos;38.95;contorno de ojos;retinal;;no;todas;sí
+sesderma-retiage-crema;Sesderma;Retiage Crema;61.95;H;retinal;;no;todas;sí
+sesderma-retiage-liposomal-serum;Sesderma;Retiage Liposomal Serum;61.95;PM;retinal;;no;todas;sí
+sesderma-retises-0-05-contorno-de-ojos;Sesderma;Retises 0.05 Contorno de ojos;37.95;contorno de ojos;retinol;;no;todas;sí
+sesderma-retises-0-25-crema;Sesderma;Retises 0.25 Crema;54.95;H;retinol;;no;todas;sí
+sesderma-retisil-aceite-intensivo;Sesderma;Retisil Aceite intensivo;52.95;PM;hpr;;no;todas;no
+sesderma-retisil-crema-de-ojos-y-labios;Sesderma;Retisil Crema de ojos y labios;49.95;contorno de ojos;hpr;;no;todas;sí
+sesderma-retisil-crema-intensiva;Sesderma;Retisil Crema intensiva;64.95;H;hpr;;no;todas;sí
+sesderma-retisil-serum-intensivo;Sesderma;Retisil Sérum Intensivo;66.95;PM;hpr;;no;todas;sí
+sesderma-salises-mascarilla-astringente;Sesderma;Salises Mascarilla astringente;;mascarilla;niacinamida;;no;todas;no
+sesderma-samay-contorno-de-ojos;Sesderma;Samay Contorno de ojos;28.95;contorno de ojos;bakuchiol;;no;todas;sí
+sesderma-sebovalis-gel-facial;Sesderma;Sebovalis Gel facial;26.95;H;glicolico;;no;todas;sí
+sesderma-sensyses-cleanser-classic;Sesderma;Sensyses Cleanser Classic;13.95;L;ninguno;;no;todas;sí
+sesderma-sensyses-cleanser-desmaquillante-de-ojos;Sesderma;Sensyses Cleanser Desmaquillante de ojos;11.95;L;ninguno;;no;todas;sí
+sesderma-sensyses-cleanser-hyaluronic;Sesderma;Sensyses Cleanser Hyaluronic;13.95;L;ninguno;;no;todas;sí
+sesderma-sensyses-cleanser-lightening;Sesderma;Sensyses Lightening Cleanser;13.95;L;vitc_derivados;;no;todas;sí
+sesderma-sensyses-cleanser-ovalis;Sesderma;Sensyses Cleanser Ovalis;13.95;L;ninguno;;no;todas;sí
+sesderma-sensyses-cleanser-ros;Sesderma;Sensyses Cleanser Ros;13.95;L;retinal;;no;todas;sí
+sesderma-sensyses-cleanser-sebum;Sesderma;Sensyses Cleanser Sebum;13.95;L;ninguno;;no;todas;sí
+sesderma-serenity-mascarilla-de-noche;Sesderma;Serenity Mascarilla de noche;34.95;mascarilla;ninguno;;no;todas;sí
+sesderma-sesbalance-crema-gel;Sesderma;Sesbalance Crema gel;32.95;H;niacinamida;;no;todas;sí
+sesderma-sescacay-contorno-de-ojos;Sesderma;Sescacay Contorno de ojos rejuvenecedor;41.95;contorno de ojos;hpr;;no;todas;sí
+sesderma-sesgen-32-contorno-de-ojos;Sesderma;Sesgen 32 Contorno de ojos;34.95;contorno de ojos;retinal;;no;todas;sí
+sesderma-sesgen-32-crema;Sesderma;Sesgen 32 Crema;54.95;H;peptidos;;no;todas;sí
+sesderma-sesgen-32-crema-gel;Sesderma;Sesgen 32 Crema gel;54.95;H;bakuchiol;;no;todas;sí
+sesderma-sesgen-32-serum;Sesderma;Sesgen 32 Sérum;54.95;PM;ninguno;calmante o barrera;no;todas;sí
+sesderma-sesmahal-b5-panthenol-7-5;Sesderma;Sesmahal B5 Panthenol 7.5%;28.95;AM/PM;salicilico;;sí;todas;sí
+sesderma-sesmahal-egcg;Sesderma;Sesmahal EGCG;28.95;serum humectante;ninguno;humectante;sí;todas;sí
+sesderma-sesmahal-french-maritime-pine;Sesderma;Sesmahal French Maritime Pine;28.95;AM/PM;salicilico;;sí;todas;sí
+sesderma-sespanthenol-liposomal-serum;Sesderma;Sespanthenol Liposomal Serum;44.95;PM;peptidos;;no;todas;sí
+sesderma-sesretinal-mature-skin-gel-contorno-de-ojos;Sesderma;Sesretinal Mature Skin Gel contorno de ojos;38.95;contorno de ojos;retinal;;no;todas;sí
+sesderma-sesretinal-mature-skin-liposomal-serum;Sesderma;Sesretinal Mature Skin Liposomal Serum;58.95;PM;retinal;;sí;todas;sí
+skin-resist-daily-cream;Skin Resist;Daily Cream;22.1;H;niacinamida;;no;todas;no
+skin-resist-daily-fluid;Skin Resist;Daily Fluid;20.8;H;niacinamida;;no;todas;no
+skin-resist-sensage-serum;Skin Resist;Sensage Sérum;43.94;AM/PM;niacinamida;;no;todas;no
+skin-resist-velvet-cleanser;Skin Resist;Velvet Cleanser;12.48;L;niacinamida;;no;todas;no
+skinceuticals-advanced-rgn-6;SkinCeuticals;Advanced RGN-6;155.98;H;niacinamida;;no;todas;no
+skinceuticals-age-advanced-eye;SkinCeuticals;A.G.E. Advanced Eye;94.99;contorno de ojos;ninguno;;no;todas;no
+skinceuticals-clarifying-clay-masque;SkinCeuticals;Clarifying Clay Masque;64.15;mascarilla;ninguno;;no;todas;no
+skinceuticals-eye-balm;SkinCeuticals;Eye Balm;67.45;contorno de ojos;ninguno;;no;todas;no
+skinceuticals-h-a-intensifier;SkinCeuticals;H.A. Intensifier Multi-Glycan;97.96;serum humectante;ninguno;humectante;no;todas;no
+skinceuticals-hydrating-b5;SkinCeuticals;Hydrating B5;70.3;serum humectante;ninguno;humectante;no;todas;no
+skinceuticals-p-tiox-crema;SkinCeuticals;P-TIOX Crema;155.25;H;niacinamida;;no;todas;no
+skinceuticals-phloretin-cf;SkinCeuticals;Phloretin CF;147.59;PM;vitc_pura;;no;todas;no
+skinceuticals-phyto-corrective-essence-mist;SkinCeuticals;Phyto Corrective Essence Mist;55.25;tonico o bruma;ninguno;;no;todas;sí
+skinceuticals-redness-neutralizer;SkinCeuticals;Redness Neutralizer;73.79;H;ninguno;;no;todas;no
+skinceuticals-replenishing-cleanser;SkinCeuticals;Replenishing Cleanser;36.69;L;ninguno;;no;todas;no
+skinceuticals-retexturing-activator;SkinCeuticals;Retexturing Activator;80.95;serum humectante;ninguno;humectante;no;todas;no
+skinceuticals-serum-10;SkinCeuticals;Serum 10;89.9;AM;vitc_pura;;no;todas;no
+skinceuticals-ultra-facial-defense;SkinCeuticals;Ultra Facial Defense SPF 50+;57.5;S;ninguno;;no;todas;no
+svr-ampoule-refresh;SVR;Ampoule Refresh;28.82;contorno de ojos;ninguno;;no;todas;no
+svr-ampoule-relax;SVR;Ampoule Relax;28.82;contorno de ojos;ninguno;;no;todas;no
+svr-b3-essence-hydra;SVR;[B3] Essence Hydra;24.23;tonico o bruma;niacinamida;;no;todas;no
+svr-c-eye-biotic;SVR;[C] Eye Biotic;31.37;contorno de ojos;vitc_derivados;;no;todas;sí
+svr-c20-biotic;SVR;[C20] Biotic;40.72;H;vitc_derivados;;no;todas;sí
+svr-ceramides-biotic;SVR;[CERAMIDES] Biotic;38.32;H;vitc_derivados;;no;todas;sí
+svr-clairial-ampoule;SVR;Clairial Ampoule;45.9;AM;vitc_derivados;;no;todas;sí
+svr-clairial-creme-spf50;SVR;Clairial Crème SPF50+;29.9;S;niacinamida;;no;todas;sí
+svr-collagen-biotic;SVR;[COLLAGEN] Biotic;40.72;H;vitc_derivados;;no;todas;sí
+svr-densitium-contour-des-yeux;SVR;Densitium Contour des Yeux;36.9;contorno de ojos;lactico;;no;todas;sí
+svr-filler-biotic;SVR;[Filler] Biotic;29.67;contorno de ojos;vitc_derivados;;no;todas;sí
+svr-fluide-c20-biotic;SVR;Fluide [C20] Biotic;33.92;H;vitc_derivados;;no;todas;sí
+svr-palpebral-baume;SVR;Palpebral Baume;24.9;H;ninguno;;no;todas;no
+svr-palpebral-creme;SVR;Palpebral Crème;20.9;contorno de ojos;ninguno;;no;todas;no
+svr-palpebral-demaquillant;SVR;Palpebral Démaquillant;14.9;L;niacinamida;;no;todas;no
+svr-physiopure-eau-micellaire;SVR;Physiopure Eau Micellaire;11.6;L;ninguno;;no;todas;sí
+svr-physiopure-huile-demaquillante;SVR;Physiopure Huile Démaquillante;14.32;L;ninguno;;no;todas;sí
+svr-physiopure-tonique;SVR;Physiopure Tonique;13.2;tonico o bruma;ninguno;;no;todas;sí
+svr-sebiaclear-mat-pores;SVR;Sebiaclear Mat+Pores;18.9;H;niacinamida;;no;todas;sí
+svr-sensifine-nutri-baume;SVR;Sensifine Nutri-Baume;21.5;H;ninguno;;no;todas;no
+svr-sun-secure-fluide;SVR;Sun Secure Fluide;19.9;S;niacinamida;;no;todas;sí
+topicrem-ac-control-agua-micelar-purificante;Topicrem;AC Control Agua Micelar Purificante;15.5;L;ninguno;;no;normal a grasa;sí
+topicrem-ac-control-cuidado-equilibrante-antiimperfecciones;Topicrem;AC Control Cuidado Equilibrante Antiimperfecciones;21.3;H;niacinamida;;no;todas;sí
+topicrem-ac-control-fluido-matificante;Topicrem;AC Control Fluido Matificante;21.3;H;niacinamida;;no;todas;sí
+topicrem-ac-control-gel-limpiador-purificante;Topicrem;AC Control Gel Limpiador Purificante;17.95;L;ninguno;;no;normal a grasa;sí
+topicrem-ac-control-serum-intensivo;Topicrem;AC Control Sérum Intensivo;25.25;AM/PM;niacinamida;;no;todas;sí
+topicrem-ah3-contorno-de-ojos-global-antiedad;Topicrem;AH3 Contorno de Ojos Global Antiedad;41.5;contorno de ojos;vitc_derivados;;no;todas;no
+topicrem-ah3-serum-global-antiedad;Topicrem;AH3 Sérum Global Antiedad;49.95;PM;vitc_derivados;;no;todas;sí
+topicrem-cica-crema-calmante-reparadora;Topicrem;Cica+ Crema Calmante Reparadora;13.5;H;ninguno;;no;todas;no
+topicrem-da-protect-crema-emoliente-facial;Topicrem;DA Protect Crema Emoliente Facial;19.95;H;ninguno;;no;todas;no
+topicrem-hydra-agua-micelar-suave;Topicrem;Hydra+ Agua Micelar Suave;15.1;L;ninguno;;no;todas;sí
+topicrem-hydra-contorno-de-ojos;Topicrem;Hydra+ Contorno de Ojos;20.95;contorno de ojos;ninguno;;no;todas;no
+topicrem-hydra-crema-iluminadora-rica;Topicrem;Hydra+ Crema Iluminadora Rica;22.4;H;ninguno;;no;todas;sí
+topicrem-hydra-gel-crema-iluminador;Topicrem;Hydra+ Gel-Crema Iluminador;22.4;H;ninguno;;no;todas;sí
+topicrem-hydra-gel-limpiador-suave;Topicrem;Hydra+ Gel Limpiador Suave;8.5;L;ninguno;;no;todas;sí
+topicrem-hydra-serum-hidratante-iluminador;Topicrem;Hydra+ Sérum Hidratante Iluminador;28.75;serum humectante;ninguno;humectante;no;todas;sí
+topicrem-mela-barra-exfoliante-unificadora;Topicrem;Mela Barra Exfoliante Unificadora;12.3;serum humectante;ninguno;humectante;no;todas;sí
+topicrem-mela-crema-de-dia-antimanchas-spf50;Topicrem;Mela Crema de Día Unificadora Antimanchas SPF50+;35.95;S;niacinamida;;no;todas;sí
+topicrem-mela-mascarilla-antimanchas-iluminadora-instantanea;Topicrem;Mela Mascarilla Antimanchas Iluminadora Instantánea;25.75;mascarilla;niacinamida;;no;todas;sí
+topicrem-mela-serum-iluminador-antimanchas;Topicrem;Mela Sérum Iluminador Antimanchas;37.95;AM;vitc_derivados;;no;todas;sí
+topicrem-primalux-crema-reafirmante;Topicrem;Primalux Crema Reafirmante;47.5;H;ninguno;;no;todas;sí
+topicrem-sun-protect-mousse-crema-mate-spf50;Topicrem;Sun Protect Mousse-Crema Acabado Mate SPF50;17.95;L;ninguno;;no;todas;sí
+topicrem-theavit-crema-renovadora;Topicrem;Theavit Crema Renovadora;41.95;H;glicolico;;sí;todas;sí
+topicrem-theavit-serum-renovador;Topicrem;Theavit Sérum Renovador;43.95;PM;retinol;;sí;todas;sí
+two-poles-brightening-serum;Two Poles;Brightening Serum;47;AM/PM;azelaico;;no;todas;sí
+two-poles-cleansing-oil;Two Poles;Cleansing Oil;29;L;vitc_derivados;;no;todas;sí
+two-poles-luminous-face-mist;Two Poles;Luminous Face Mist;26;tonico o bruma;niacinamida;;no;todas;sí
+two-poles-smart-eye-cream;Two Poles;Smart Eye Cream;47;contorno de ojos;retinol;;no;todas;no
+two-poles-the-ultra-lift-rich-cream;Two Poles;The Ultra-Lift Rich Cream;49;H;ninguno;;no;todas;sí
+two-poles-the-ultra-lift-serum;Two Poles;The Ultra-Lift Serum;52;AM/PM;peptidos;;no;todas;sí
+uriage-age-absolu-contorno-de-ojos;Uriage;Age Absolu Contorno de Ojos;22.98;contorno de ojos;vitc_derivados;;no;todas;no
+uriage-age-absolu-crema-rosa;Uriage;Age Absolu Crema Rosa Redensificante;31.97;H;ninguno;;no;todas;sí
+uriage-age-absolu-mascarilla-de-noche-redensificante;Uriage;Age Absolu Mascarilla de Noche Redensificante;35.94;mascarilla;vitc_derivados;;no;todas;sí
+uriage-age-lift-crema-de-dia;Uriage;Age Lift Crema de Día;30;H;vitc_derivados;;no;todas;sí
+uriage-age-lift-crema-de-noche;Uriage;Age Lift Crema de Noche;30;H;vitc_derivados;;no;todas;sí
+uriage-age-lift-fluido-reafirmante;Uriage;Age Lift Fluido Reafirmante;30;H;vitc_derivados;;no;todas;sí
+uriage-age-lift-peel-crema-de-noche-piel-nueva;Uriage;Age Lift Peel Crema de Noche Piel Nueva;24.53;H;vitc_derivados;;sí;todas;sí
+uriage-age-lift-serum;Uriage;Age Lift Sérum;27.5;PM;esteres_retinilo;;sí;todas;sí
+uriage-depiderm-contorno-de-ojos;Uriage;Dépiderm Contorno de Ojos Corrector;17.97;contorno de ojos;vitc_derivados;;no;todas;no
+uriage-depiderm-serum-antimanchas;Uriage;Dépiderm Sérum Antimanchas;23.94;AM;vitc_derivados;;no;todas;no
+uriage-depiderm-tratamiento-intensivo-antimanchas;Uriage;Dépiderm Tratamiento Intensivo Antimanchas;20.99;H;vitc_derivados;;no;todas;no
+uriage-ds-emulsion;Uriage;DS Emulsión;15.45;H;ninguno;;no;todas;no
+uriage-eau-thermale-contorno-de-ojos;Uriage;Eau Thermale Contorno de Ojos de Agua;12.99;contorno de ojos;ninguno;;no;todas;no
+uriage-eau-thermale-esencia-de-agua;Uriage;Eau Thermale Esencia de Agua Iluminadora;17.95;tonico o bruma;ninguno;;no;todas;sí
+uriage-eau-thermale-mascarilla-de-agua-de-noche;Uriage;Eau Thermale Mascarilla de Agua de Noche;23.9;mascarilla;ninguno;;no;todas;sí
+uriage-hyseac-aceite-purificante;Uriage;Hyséac Aceite Purificante;10.98;L;ninguno;;no;normal a grasa;sí
+uriage-hyseac-fluido;Uriage;Hyséac Fluido SPF50+;13.98;S;ninguno;;no;todas;sí
+uriage-hyseac-hydra;Uriage;Hyséac Hydra;18;H;ninguno;;no;todas;sí
+uriage-hyseac-mascarilla-exfoliante;Uriage;Hyséac Mascarilla Exfoliante;11.97;mascarilla;ninguno;;no;todas;sí
+uriage-hyseac-tonico-purificante;Uriage;Hyséac Tónico Purificante;17;tonico o bruma;glicolico;;no;todas;sí
+uriage-tolederm-control-contorno-de-ojos;Uriage;Toléderm Control Contorno de Ojos;22.5;contorno de ojos;ninguno;;no;todas;no
+uriage-xemose-c8-parpados;Uriage;Xémose C8+ Cuidado para Párpados;18.49;contorno de ojos;ninguno;;no;todas;no
+vichy-collagen-specialist-16-crema-de-dia;Vichy;Liftactiv Collagen Specialist 16 Crema de Día;30.7;H;vitc_derivados;;no;todas;no
+vichy-collagen-specialist-16-crema-de-noche;Vichy;Liftactiv Collagen Specialist 16 Crema de Noche;31.48;H;ninguno;;no;todas;no
+vichy-crema-bb-rostro-tacto-seco-con-color;Vichy;Capital Soleil Crema BB Tacto Seco con color;14.44;S;ninguno;;no;todas;sí
+vichy-crema-rostro-tacto-seco;Vichy;Capital Soleil Crema Rostro Tacto Seco;15.94;S;ninguno;;no;todas;sí
+vichy-crema-untuosa-rostro;Vichy;Capital Soleil Crema Untuosa Rostro;15.94;S;ninguno;;no;todas;sí
+vichy-liftactiv-collagen-specialist-16-ojos;Vichy;Liftactiv Collagen Specialist 16 Contorno de Ojos;26.94;contorno de ojos;vitc_derivados;;no;todas;no
+vichy-liftactiv-ha-crema-de-dia-piel-normal-mixta;Vichy;Liftactiv Hyaluronic Specialist H.A. Crema de Día Piel Normal a Mixta;27.94;H;vitc_derivados;;no;todas;sí
+vichy-liftactiv-ha-crema-de-dia-piel-seca;Vichy;Liftactiv Hyaluronic Specialist H.A. Crema de Día Piel Seca;31.94;H;vitc_derivados;;no;todas;sí
+vichy-liftactiv-ha-ojos;Vichy;Liftactiv H.A. Ojos;24.94;contorno de ojos;vitc_derivados;;no;todas;no
+vichy-mineral-89-crema-100h;Vichy;Minéral 89 Crema Reparadora Hidratante 100H;;H;niacinamida;;no;todas;sí
+vichy-neovadiol-ojos-y-labios;Vichy;Neovadiol Contorno de Ojos y Labios;25.95;contorno de ojos;niacinamida;;no;todas;no
+vichy-neovadiol-rose-platinium-crema-de-dia;Vichy;Neovadiol Rose Platinium Crema de Día;28.98;H;ninguno;;no;todas;sí
+vichy-normaderm-3-en-1;Vichy;Normaderm 3 en 1;12.19;serum humectante;ninguno;humectante;sí;todas;sí
+vichy-normaderm-gel-purificante;Vichy;Normaderm Gel Purificante;17.95;L;salicilico;;no;normal a grasa;sí
+vichy-normaderm-probio-bha-serum;Vichy;Normaderm Probio-BHA Sérum;22.98;PM;salicilico;;sí;todas;no
+vichy-normaderm-sos-pasta;Vichy;Normaderm SOS Pasta Antiimperfecciones;15.48;H;glicolico;;no;todas;no
+vichy-normaderm-tonico-purificante;Vichy;Normaderm Tónico Purificante;11.49;tonico o bruma;glicolico;;no;todas;sí
+vichy-normaderm-tratamiento-corrector-matificante;Vichy;Normaderm Tratamiento Corrector Matificante;;H;salicilico;;no;todas;sí
+vichy-purete-thermale-agua-micelar-3-en-1;Vichy;Pureté Thermale Agua Micelar 3 en 1;16.1;L;ninguno;;no;todas;no
+vichy-purete-thermale-desmaquillante-ojos-bifasico;Vichy;Pureté Thermale Desmaquillante de Ojos Bifásico;8.48;L;salicilico;;no;todas;no
+vichy-purete-thermale-limpiador-integral-3-en-1;Vichy;Pureté Thermale Limpiador Integral 3 en 1;13.5;L;ninguno;;no;todas;sí
+vichy-purete-thermale-tonico-perfeccionador;Vichy;Pureté Thermale Tónico Perfeccionador;14.95;tonico o bruma;ninguno;;no;todas;sí
+vichy-uv-aqua-fluido-con-color-medio;Vichy;Capital Soleil UV-Aqua Fluido con color medio;15.94;S;vitc_derivados;;no;todas;sí
+vichy-uv-aqua-fluido-invisible;Vichy;Capital Soleil UV-Aqua Fluido Invisible;27.6;S;vitc_derivados;;no;todas;sí
+weleda-aceite-limpiador-desmaquillante;Weleda;Aceite Limpiador Desmaquillante;14.95;L;ninguno;;no;todas;no
+weleda-contorno-de-ojos-alisante-rosa-mosqueta-y-te-blanco;Weleda;Contorno de Ojos Alisante Rosa Mosqueta y Té Blanco;22.95;contorno de ojos;ninguno;;no;todas;no
+weleda-contorno-de-ojos-y-labios-redensificante-genciana-azul-y-edelwe;Weleda;Contorno de Ojos y Labios Redensificante Genciana Azul y Edelweiss;31.95;contorno de ojos;ninguno;;no;todas;no
+weleda-crema-de-dia-calmante-de-almendra;Weleda;Crema de Día Calmante de Almendra;19.95;H;ninguno;;no;todas;no
+weleda-crema-de-dia-redensificante-genciana-azul-y-edelweiss;Weleda;Crema de Día Redensificante Genciana Azul y Edelweiss;32.95;H;ninguno;;no;todas;sí
+weleda-crema-de-noche-redensificante-genciana-azul-y-edelweiss;Weleda;Crema de Noche Redensificante Genciana Azul y Edelweiss;33.95;H;ninguno;;no;todas;sí
+weleda-espuma-limpiadora-suave;Weleda;Espuma Limpiadora Suave;14.95;L;ninguno;;no;todas;sí
+weleda-exo-boost-doble-serum-redensificante;Weleda;Exo Boost Doble Sérum Redensificante;39.95;serum humectante;ninguno;calmante o barrera;no;todas;sí
+weleda-for-men-crema-hidratante;Weleda;For Men Crema Hidratante;15.95;H;ninguno;;no;todas;sí
+weleda-for-men-gel-limpiador-2-en-1-rostro-y-barba;Weleda;For Men Gel Limpiador 2 en 1 Rostro y Barba;11.95;L;ninguno;;no;todas;sí
+weleda-gel-limpiador-purificante;Weleda;Gel Limpiador Purificante;;L;ninguno;;no;normal a grasa;sí
+weleda-gel-limpiador-refrescante;Weleda;Gel Limpiador Refrescante;14.95;L;ninguno;;no;todas;sí
+weleda-granada-contorno-de-ojos-reafirmante;Weleda;Granada Contorno de Ojos Reafirmante;26.95;contorno de ojos;ninguno;;no;todas;no
+weleda-granada-exo-night-repair-elixir;Weleda;Granada Exo Night Repair Elixir;35.95;serum humectante;ninguno;calmante o barrera;no;todas;sí
+weleda-granada-exo-sheet-mask-reafirmante;Weleda;Granada Exo Sheet Mask Reafirmante;4.95;mascarilla;ninguno;;no;todas;sí
+weleda-leche-limpiadora-calmante-de-almendra;Weleda;Leche Limpiadora Calmante de Almendra;14.95;L;ninguno;;no;todas;no
+weleda-tonico-perfeccionador;Weleda;Tónico Perfeccionador;13.95;tonico o bruma;ninguno;;no;todas;sí

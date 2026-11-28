@@ -10,16 +10,7 @@ const ROOT = path.join(__dirname, "..", "..");
 const { A, aDosis, ACIDOS, estado } = require(path.join(ROOT, "src/server/motor/activos.js"));
 const BASE = require(path.join(ROOT, "src/server/motor/catalogo.json")).concat(require(path.join(ROOT, "src/server/motor/contornos.json")));
 const enCatalogo = new Set(BASE.map(p => p.id));
-const dir = process.argv[2];
-if(!dir) { console.error("Falta la carpeta de fichas"); process.exit(1); }
-
 const s = v => String(v == null ? "" : v);
-const fichas = new Map();
-for(const f of fs.readdirSync(dir).filter(f => f.endsWith(".json")).sort()){
-  let d; try { d = JSON.parse(fs.readFileSync(path.join(dir, f), "utf8")); } catch { console.error("lote ilegible:", f); continue; }
-  if(!Array.isArray(d)) d = d.fichas || [];
-  for(const x of d) if(x && x.id && !enCatalogo.has(x.id)) fichas.set(x.id, Object.assign({}, x, {_lote: f}));
-}
 
 const fuentePrimaria = i => i && Array.isArray(i.inci_completo) && i.inci_completo.length >= 4 &&
   /web oficial|farmacia|INCI publicado en la p[aá]gina|repaso/i.test(s(i.tipo_fuente)) && !/perfumer|druni|sephora|cat[aá]logo \(|no verificado|en espa[nñ]ol/i.test(s(i.tipo_fuente));
@@ -86,6 +77,18 @@ function clasifica(p, x){
 }
 const CATEG = {L: "limpiador", S: "spf", "contorno de ojos": "tratamiento", posafeitado: "hidratante", mascarilla: "tratamiento", "tonico o bruma": "tratamiento", H: "hidratante", fuera: "tratamiento"};
 
+module.exports = {clasifica, CATEG, activoConocido, pctNum};
+
+if(require.main === module){
+const dir = process.argv[2];
+if(!dir) { console.error("Falta la carpeta de fichas"); process.exit(1); }
+
+const fichas = new Map();
+for(const f of fs.readdirSync(dir).filter(f => f.endsWith(".json")).sort()){
+  let d; try { d = JSON.parse(fs.readFileSync(path.join(dir, f), "utf8")); } catch { console.error("lote ilegible:", f); continue; }
+  if(!Array.isArray(d)) d = d.fichas || [];
+  for(const x of d) if(x && x.id && !enCatalogo.has(x.id)) fichas.set(x.id, Object.assign({}, x, {_lote: f}));
+}
 const out = [], inf = {candidatas: fichas.size, cargadas: 0, sin_inci: [], inci_es: [], no_farmacia: [], bajas: [], duplicados: [], sin_precio: [], huecos: {}, protagonistas: {}};
 for(const [id, x] of fichas){
   const ident = x.identidad || {}, cv = x.canal_venta || {}, car = x.caracteristicas || {};
@@ -132,3 +135,4 @@ const csv = [["id", "marca", "producto", "pvp_eur", "hueco", "protagonista", "ti
 fs.writeFileSync(path.join(ROOT, "scripts/fichas/revision-nuevos.csv"), csv.join("\n") + "\n");
 const corto = Object.assign({}, inf, {sin_inci: inf.sin_inci.length, inci_es: inf.inci_es.length, no_farmacia: inf.no_farmacia.length, bajas: inf.bajas.length, duplicados: inf.duplicados.length, sin_precio: inf.sin_precio.length});
 console.log(JSON.stringify(process.argv.includes("-v") ? inf : corto, null, 1));
+}
