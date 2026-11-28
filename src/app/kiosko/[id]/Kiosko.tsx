@@ -1,13 +1,15 @@
 'use client'
 /* eslint-disable @next/next/no-img-element, @typescript-eslint/no-explicit-any */
-import { MallaFacial, type EstadoCara } from './MallaFacial'
-import { aTrabajar, nivelPiel, notaPiel } from '@/lib/escalaPiel'
+import { MallaFacial, type CajaCara, type EstadoCara } from './MallaFacial'
+import { AVISO, brilloYNitidez, recorteCara } from '@/lib/calidadFoto'
 import { useCallback, useEffect, useRef, useState, useTransition } from 'react'
 import QRCode from 'qrcode'
-import { ArrowLeft, ArrowRight, ArrowsLeftRight, CalendarCheck, Camera, Check, Drop, EnvelopeSimple, Moon, ScanSmiley, ShieldCheck, Sparkle, Sun, Trash, X } from '@phosphor-icons/react'
-import { analizarKiosko, borrarSeguimiento, buscarSeguimiento, enviarInformeEmail, type Seguridad } from './actions'
+import { ArrowLeft, ArrowRight, CalendarCheck, Camera, Check, DeviceMobile, Drop, ScanSmiley, ShieldCheck, Sparkle, Trash, X } from '@phosphor-icons/react'
+import { Esquinas, Informe } from './Resultados'
+import { analizarKiosko, borrarSeguimiento, buscarSeguimiento, type Seguridad } from './actions'
+import { anularEnlaceMovil, crearEnlaceMovil, recogerFotoMovil } from './movil'
 import { Logo } from '@/components/Logo'
-import { AVISO_DETALLE, AVISO_EMAIL, AVISO_FOTO, AVISO_GUARDAR_FOTO, AVISO_INICIO } from '@/lib/privacidad'
+import { AVISO_DETALLE, AVISO_FOTO, AVISO_GUARDAR_FOTO, AVISO_INICIO } from '@/lib/privacidad'
 
 // Recorrido de la clienta en el iPad del mostrador. Dirección visual: clínica, fondo claro,
 // un único acento verde farmacia, Geist + números tabulares, iconos Phosphor.
@@ -19,25 +21,24 @@ type Props = { farmaciaId: string; farmacia: string; precio: string; emailActivo
 type Revision = { id: string; fecha: string; dias: number; conFoto: boolean }
 
 const PREGUNTAS: { id: keyof Seguridad; t: string; nota: string; ops: [string, string][]; si?: (s: Partial<Seguridad>) => boolean }[] = [
-  { id: 'edad', t: '¿Qué edad tienes?', nota: 'Algunos ingredientes dependen de la edad.', ops: [['-14', 'Menos de 14'], ['14-17', '14 a 17'], ['18-24', '18 a 24'], ['25-39', '25 a 39'], ['40-49', '40 a 49'], ['50+', '50 o más']] },
+  { id: 'edad', t: '¿Qué edad tienes?', nota: 'Algunos ingredientes dependen de la edad.', ops: [['-14', 'Menos de 14'], ['14-17', '14 a 17'], ['18-24', '18 a 24'], ['25-34', '25 a 34'], ['35-44', '35 a 44'], ['45-54', '45 a 54'], ['55-64', '55 a 64'], ['65+', '65 o más']] },
   { id: 'sexo', t: '¿Eres mujer u hombre?', nota: 'El análisis de la foto no lo distingue, y cambia algunos productos (por ejemplo, el afeitado).', ops: [['mujer', 'Mujer'], ['hombre', 'Hombre'], ['nd', 'Prefiero no decirlo']] },
-  { id: 'embarazo', si: (s) => s.sexo !== 'hombre' && s.edad !== '50+', t: '¿Estás embarazada o en periodo de lactancia?', nota: 'Hay ingredientes que no se recomiendan en el embarazo ni en la lactancia.', ops: [['si', 'Sí'], ['no', 'No, o no aplica']] },
+  { id: 'embarazo', si: (s) => s.sexo !== 'hombre' && !['55+', '55-64', '65+'].includes(s.edad ?? ''), t: '¿Estás embarazada o dando el pecho?', nota: 'Hay ingredientes que no se recomiendan en el embarazo, y otros que conviene evitar mientras das el pecho.', ops: [['embarazo', 'Estoy embarazada'], ['lactancia', 'Estoy dando el pecho'], ['no', 'No, o no aplica']] },
   { id: 'receta', t: '¿Sigues algún tratamiento para la piel indicado por un médico?', nota: 'Si es así, no añadiremos activos que interfieran con él.', ops: [['no', 'No'], ['si', 'Sí']] },
   { id: 'reactiva', t: '¿Tu piel reacciona cuando pruebas un producto nuevo?', nota: 'Picor, rojez o escozor. Así sabemos si empezar por lo más suave.', ops: [['nunca', 'Casi nunca'], ['a_veces', 'A veces'], ['siempre', 'Casi siempre']] },
+  // Hugo, 24/11: quien empieza con un retinoide va a la concentración baja; quien ya lo tolera sigue con la suya
+  { id: 'retinoide', si: (s) => s.edad !== '14-17' && s.embarazo !== 'embarazo' && s.embarazo !== 'lactancia' && s.receta !== 'si', t: '¿Usas ya retinol o retinal?', nota: 'De esto depende la concentración con la que empiezas y cuántas noches a la semana.', ops: [['nunca', 'No, nunca'], ['reciente', 'Sí, desde hace menos de 3 meses'], ['tolera', 'Sí, y lo tolero bien']] },
+  // Hito 1 (Hugo, 27/11): tratamiento en consulta (cuál y cuándo) y fototipo declarado
+  { id: 'procedimiento', t: '¿Te has hecho algún tratamiento en consulta en las últimas 2 semanas?', nota: 'Después de un peeling, un láser o microagujas, la piel necesita una rutina distinta durante un tiempo.', ops: [['no', 'No'], ['peeling', 'Un peeling'], ['laser', 'Láser o luz pulsada'], ['microagujas', 'Microagujas o radiofrecuencia con agujas'], ['limpieza', 'Una limpieza facial'], ['otro', 'Otro, o no sé cuál']] },
+  { id: 'procedimiento_cuando', si: (s) => !!s.procedimiento && s.procedimiento !== 'no', t: '¿Cuándo te lo hiciste?', nota: 'Lo que puedes usar después depende del tiempo que ha pasado y de lo que te indicaron.', ops: [['semana', 'Hace menos de una semana'], ['dos_semanas', 'Hace una o dos semanas']] },
+  { id: 'fototipo', t: 'El primer día de sol fuerte, sin protección, tu piel…', nota: 'Así sé cuánto te conviene un protector solar con color. El protector 50+ va siempre.', ops: [['I', 'Se quema siempre y nunca se broncea'], ['II', 'Se quema con facilidad y coge poco color'], ['III', 'A veces se quema y se broncea poco a poco'], ['IV', 'Casi nunca se quema y se broncea bien'], ['V', 'Se pone muy morena y rara vez se quema'], ['VI', 'No se quema nunca'], ['nd', 'No lo sé']] },
 ]
 
 const MEJORAR: [string, string][] = [
   ['acne', 'Granitos'], ['poros', 'Poros'], ['brillo', 'Brillo'], ['manchas', 'Manchas'], ['tono', 'Tono apagado'], ['arrugas', 'Arrugas'],
   ['firmeza', 'Firmeza'], ['textura', 'Textura'], ['rojez', 'Rojeces'], ['hidratacion', 'Sequedad'], ['ojeras', 'Ojeras'],
 ]
-const NOMBRE: Record<string, string> = Object.fromEntries(MEJORAR)
-// En el resultado, los mismos nombres que la web y el vídeo
-const NOMBRE_RESULTADO: Record<string, string> = { ...NOMBRE, tono: 'Luminosidad', hidratacion: 'Hidratación' }
 const PASOS_ANALISIS = ['Detectar el rostro', 'Medir poros, textura y brillo', 'Medir manchas, rojeces y ojeras', 'Medir arrugas y firmeza', 'Elegir ingredientes', 'Preparar tu rutina', 'Generar la simulación']
-// "Vitamina C pura" y "vitamina C estable" cuentan como el mismo ingrediente al buscarlo en la rutina
-const raiz = (t: string) => t.toLowerCase().replace(/\s+(pura|estable)$/, '')
-const lista = (l: string[]) => (l.length > 1 ? `${l.slice(0, -1).join(', ')} y ${l[l.length - 1]}` : l[0] ?? '')
-const eur = (n: number | null | undefined) => (n == null ? '' : n.toLocaleString('es-ES', { style: 'currency', currency: 'EUR' }))
 const INACTIVIDAD_MS = 150_000
 
 export function Kiosko({ farmaciaId, farmacia, precio, emailActivo }: Props) {
@@ -49,40 +50,54 @@ export function Kiosko({ farmaciaId, farmacia, precio, emailActivo }: Props) {
   const [error, setError] = useState('')
   const [revision, setRevision] = useState<Revision | null>(null)
   const [guardarFoto, setGuardarFoto] = useState(false)
+  // Hugo, 24/11: las preguntas van justo después de la foto. Antes solo se pregunta la edad (menores de 14, sin foto).
+  const [pend, setPend] = useState<{ b64: string | null; m: string[] } | null>(null)
+  const [listas, setListas] = useState(false)
+  const [conMovil, setConMovil] = useState(false)
   const [, start] = useTransition()
 
   const reiniciar = useCallback(() => {
-    setPaso('reclamo'); setI(0); setSeg({}); setFoto(null); setRes(null); setError(''); setRevision(null); setGuardarFoto(false)
+    setPaso('reclamo'); setI(0); setSeg({}); setFoto(null); setRes(null); setError(''); setRevision(null); setGuardarFoto(false); setPend(null); setListas(false); setConMovil(false)
   }, [])
 
   // Privacidad: sin interacción, vuelve al inicio y descarta todo
   useEffect(() => {
-    if (paso === 'reclamo' || paso === 'analizando') return
+    // Con la foto del móvil en marcha nadie toca esta pantalla: no se reinicia mientras espera (el código caduca a los 10 min)
+    if (paso === 'reclamo' || paso === 'analizando' || conMovil) return
     let t = setTimeout(reiniciar, INACTIVIDAD_MS)
     const tocar = () => { clearTimeout(t); t = setTimeout(reiniciar, INACTIVIDAD_MS) }
     window.addEventListener('pointerdown', tocar)
     return () => { clearTimeout(t); window.removeEventListener('pointerdown', tocar) }
-  }, [paso, reiniciar])
+  }, [paso, reiniciar, conMovil])
 
-  // Siguiente pregunta que aplica (el embarazo no se pregunta a hombres ni a partir de 50 años)
+  // Siguiente pregunta que aplica (el embarazo no se pregunta a hombres ni a partir de 55 años)
   const siguiente = (desde: number, s: Partial<Seguridad>) => { let k = desde; while (k < PREGUNTAS.length && PREGUNTAS[k].si && !PREGUNTAS[k].si!(s)) k++; return k }
   const anterior = (desde: number, s: Partial<Seguridad>) => { let k = desde; while (k >= 0 && PREGUNTAS[k].si && !PREGUNTAS[k].si!(s)) k--; return k }
 
   function responder(id: keyof Seguridad, v: string) {
     const s = { ...seg, [id]: v }
-    if (PREGUNTAS[i + 1]?.si && !PREGUNTAS[i + 1].si!(s)) (s as Partial<Seguridad>).embarazo = 'no'
+    if (PREGUNTAS[i + 1]?.id === 'embarazo' && !PREGUNTAS[i + 1].si!(s)) (s as Partial<Seguridad>).embarazo = 'no'
     setSeg(s)
-    if (id === 'edad' && v === '-14') return setPaso('menor')
+    if (id === 'edad') return setPaso(v === '-14' ? 'menor' : 'consentimiento')
     const k = siguiente(i + 1, s)
-    if (k < PREGUNTAS.length) setI(k)
-    else setPaso('consentimiento')
+    if (k < PREGUNTAS.length) return setI(k)
+    setListas(true)
+    analizar(pend?.b64 ?? null, pend?.m ?? [], s)
   }
 
-  function analizar(fotoB64: string | null, mejorar: string[] = []) {
+  // Con la foto hecha (o los objetivos elegidos), las preguntas; si ya estaban contestadas (repetir foto tras un error), directo al análisis
+  function trasCaptura(b64: string | null, m: string[]) {
+    if (listas) return analizar(b64, m)
+    setPend({ b64, m })
+    setI(siguiente(1, seg))
+    setPaso('preguntas')
+  }
+
+  function analizar(fotoB64: string | null, mejorar: string[] = [], s: Partial<Seguridad> = seg) {
     setError('')
     setPaso('analizando')
     start(async () => {
-      const r = await analizarKiosko(farmaciaId, seg as Seguridad, fotoB64, mejorar, true, { guardarFoto, seguimientoDe: revision?.id })
+      const r = await analizarKiosko(farmaciaId, s as Seguridad, fotoB64, mejorar, true, { guardarFoto, seguimientoDe: revision?.id })
       if ('error' in r) { setError(r.error ?? 'No se ha podido completar el análisis.'); setPaso(fotoB64 ? 'camara' : 'mejorar'); return }
       setRes(r)
       setPaso('resultado')
@@ -101,7 +116,7 @@ export function Kiosko({ farmaciaId, farmacia, precio, emailActivo }: Props) {
           </button>
         )}
       </header>
-      <main key={paso + i} className="flex-1 flex entrar">
+      <main key={paso + i} className={`flex-1 flex ${paso === 'resultado' ? '' : 'entrar'}`}>
         {paso === 'reclamo' && <Reclamo precio={precio} onEmpezar={() => setPaso('aviso')} onRevision={() => setPaso('codigo')} />}
         {paso === 'codigo' && <Codigo farmaciaId={farmaciaId} onSeguir={(r) => { setRevision(r); setPaso('aviso') }} onFin={reiniciar} />}
         {paso === 'aviso' && <Aviso farmacia={farmacia} onAcepta={() => setPaso('preguntas')} onRechaza={() => setPaso('no_acepta')} />}
@@ -112,7 +127,7 @@ export function Kiosko({ farmaciaId, farmacia, precio, emailActivo }: Props) {
             <button onClick={reiniciar} className="boton">Volver al inicio</button>
           </Bloque>
         )}
-        {paso === 'preguntas' && <Pregunta q={PREGUNTAS[i]} n={i} valor={seg[PREGUNTAS[i].id]} onResp={(v) => responder(PREGUNTAS[i].id, v)} onAtras={() => { const k = anterior(i - 1, seg); return k >= 0 ? setI(k) : setPaso('aviso') }} />}
+        {paso === 'preguntas' && <Pregunta q={PREGUNTAS[i]} n={i} valor={seg[PREGUNTAS[i].id]} onResp={(v) => responder(PREGUNTAS[i].id, v)} onAtras={() => { if (i === 0) return setPaso('aviso'); const k = anterior(i - 1, seg); return k >= 1 ? setI(k) : setPaso(pend?.b64 ? 'camara' : 'mejorar') }} />}
         {paso === 'menor' && (
           <Bloque>
             <h2 className="titulo">Para menores de 14 años, mejor en persona</h2>
@@ -121,8 +136,9 @@ export function Kiosko({ farmaciaId, farmacia, precio, emailActivo }: Props) {
           </Bloque>
         )}
         {paso === 'consentimiento' && <Consentimiento revision={!!revision} guardar={guardarFoto} onGuardar={setGuardarFoto} onFoto={() => setPaso('camara')} onSinFoto={() => setPaso('mejorar')} />}
-        {paso === 'camara' && <Camara error={error} onFoto={(b64, url) => { setFoto(url); analizar(b64) }} />}
-        {paso === 'mejorar' && <Mejorar error={error} onListo={(m) => analizar(null, m)} />}
+        {paso === 'camara' && !conMovil && <Camara error={error} onFoto={(b64, url) => { setFoto(url); trasCaptura(b64, []) }} onMovil={() => setConMovil(true)} />}
+        {paso === 'camara' && conMovil && <FotoDesdeMovil farmaciaId={farmaciaId} onFoto={(b64, url) => { setConMovil(false); setFoto(url); trasCaptura(b64, []) }} onCancelar={() => setConMovil(false)} />}
+        {paso === 'mejorar' && <Mejorar error={error} onListo={(m) => trasCaptura(null, m)} />}
         {paso === 'analizando' && <Analizando foto={foto} />}
         {paso === 'resultado' && res && <Informe res={res} foto={foto} farmacia={farmacia} emailActivo={emailActivo} onFin={reiniciar} />}
       </main>
@@ -317,12 +333,22 @@ function Punto({ icono, texto }: { icono: React.ReactNode; texto: string }) {
   return <li className="flex items-center gap-4 py-5 border-b border-[var(--k-line)] text-xl"><span className="text-[var(--k-accent)]">{icono}</span>{texto}</li>
 }
 
-function Camara({ error, onFoto }: { error: string; onFoto: (b64: string, dataUrl: string) => void }) {
+// Foto automática: cuando la cara está bien colocada, cuenta atrás de 3 s vigilando que siga bien;
+// al llegar a 0 espera a un fotograma correcto, comprueba la luz y la nitidez de la foto y solo entonces la envía.
+export function Camara({ error, onFoto, onMovil }: { error: string; onFoto: (b64: string, dataUrl: string) => void; onMovil?: () => void }) {
   const video = useRef<HTMLVideoElement>(null)
-  const [cuenta, setCuenta] = useState<number | null>(null)
+  const [fase, setFase] = useState<'colocando' | 'cuenta' | 'revisando' | 'hecha'>('colocando')
+  const [cuenta, setCuenta] = useState(3)
   const [fallo, setFallo] = useState('')
+  const [aviso, setAviso] = useState('')
   const [cara, setCara] = useState<EstadoCara>('buscando')
-  const hecha = useRef(false)
+  const [hecha, setHecha] = useState<string | null>(null)
+  const [manual, setManual] = useState(false)
+  const caraRef = useRef<EstadoCara>('buscando')
+  const caja = useRef<CajaCara | null>(null)
+  const intentos = useRef(0)
+  const enviada = useRef(false)
+  const alEstado = useCallback((e: EstadoCara) => { caraRef.current = e; setCara(e) }, [])
 
   useEffect(() => {
     let stream: MediaStream | null = null
@@ -334,56 +360,194 @@ function Camara({ error, onFoto }: { error: string; onFoto: (b64: string, dataUr
     return () => { vivo = false; stream?.getTracks().forEach((t) => t.stop()) }
   }, [])
 
+  // Si en 25 s no ha salido, el botón de siempre aparece como plan B
+  useEffect(() => { const t = setTimeout(() => setManual(true), 25000); return () => clearTimeout(t) }, [])
+
+  // 1. Bien colocada durante 0,7 s: empieza la cuenta atrás
   useEffect(() => {
-    if (cuenta == null) return
-    if (cuenta === 0) {
-      const v = video.current
-      if (!v || !v.videoWidth || hecha.current) return
-      hecha.current = true
-      // recorte vertical 3:4 centrado: la cara debe ocupar más del 60 % del ancho
-      const alto = v.videoHeight
-      const ancho = Math.min(v.videoWidth, Math.round((alto * 3) / 4))
-      const x = Math.round((v.videoWidth - ancho) / 2)
-      const escala = Math.min(1, 1280 / alto)
-      const c = document.createElement('canvas')
-      c.width = Math.round(ancho * escala)
-      c.height = Math.round(alto * escala)
-      c.getContext('2d')!.drawImage(v, x, 0, ancho, alto, 0, 0, c.width, c.height)
-      const url = c.toDataURL('image/jpeg', 0.9)
-      onFoto(url.split(',')[1], url)
-      return
-    }
-    const t = setTimeout(() => setCuenta(cuenta - 1), 1000)
+    if (fase !== 'colocando' || cara !== 'lista') return
+    const t = setTimeout(() => { setAviso(''); setCuenta(3); setFase('cuenta') }, 700)
     return () => clearTimeout(t)
-  }, [cuenta, onFoto])
+  }, [fase, cara])
+
+  // 2. Durante la cuenta, si deja de estar bien más de medio segundo, se para y vuelve a esperar
+  useEffect(() => {
+    if (fase !== 'cuenta' || cara === 'lista') return
+    const t = setTimeout(() => { setAviso('Te has movido. Vuelve a colocarte y empezamos otra vez.'); setFase('colocando') }, 500)
+    return () => clearTimeout(t)
+  }, [fase, cara])
+
+  const capturar = useCallback(() => {
+    const v = video.current
+    if (!v || !v.videoWidth) return null
+    // Recorte vertical 3:4 alrededor de la cara, para que ocupe ~72 % del ancho (Perfect Corp pide más del 60 %).
+    // Sin caja (detector sin cargar), el recorte centrado de antes.
+    const r = caja.current ? recorteCara(caja.current, v.videoWidth, v.videoHeight) : null
+    const alto = r?.h ?? v.videoHeight
+    const ancho = r?.w ?? Math.min(v.videoWidth, Math.round((alto * 3) / 4))
+    const x = r?.x ?? Math.round((v.videoWidth - ancho) / 2)
+    const y = r?.y ?? 0
+    const escala = Math.min(1, 1280 / alto)
+    const c = document.createElement('canvas')
+    c.width = Math.round(ancho * escala)
+    c.height = Math.round(alto * escala)
+    c.getContext('2d')!.drawImage(v, x, y, ancho, alto, 0, 0, c.width, c.height)
+    return c
+  }, [])
+
+  const enviar = useCallback((c: HTMLCanvasElement) => {
+    if (enviada.current) return
+    enviada.current = true
+    const url = c.toDataURL('image/jpeg', 0.9)
+    setHecha(url)
+    setFase('hecha')
+    setTimeout(() => onFoto(url.split(',')[1], url), 1100)
+  }, [onFoto])
+
+  // 3. Cuenta atrás
+  useEffect(() => {
+    if (fase !== 'cuenta') return
+    const t = setTimeout(() => { setCuenta(cuenta - 1); if (cuenta <= 1) setFase('revisando') }, 1000)
+    return () => clearTimeout(t)
+  }, [fase, cuenta])
+
+  // 4. Disparo y revisión de la foto
+  useEffect(() => {
+    if (fase !== 'revisando') return
+    let raf = 0
+    const limite = performance.now() + 2500
+    const intentar = () => {
+      // Espera a un fotograma en el que todo esté bien (p. ej., que no esté parpadeando)
+      if (caraRef.current !== 'lista') {
+        if (performance.now() > limite) { setAviso('No ha salido bien. Colócate otra vez y la repetimos.'); setFase('colocando'); return }
+        raf = requestAnimationFrame(intentar); return
+      }
+      const c = capturar()
+      if (!c) { setFase('colocando'); return }
+      // Revisión de la foto ya hecha: luz y nitidez del centro de la cara
+      const m = document.createElement('canvas')
+      m.width = 200; m.height = 200
+      const mc = m.getContext('2d', { willReadFrequently: true })!
+      mc.drawImage(c, c.width * 0.25, c.height * 0.25, c.width * 0.5, c.height * 0.5, 0, 0, 200, 200)
+      const { brillo, nitidez } = brilloYNitidez(mc.getImageData(0, 0, 200, 200).data, 200, 200)
+      intentos.current++
+      const ultima = intentos.current >= 3 // a la tercera se envía la mejor que haya, para no dejarla esperando
+      if (!ultima && brillo < 60) { setAviso('La foto ha salido oscura. Busca más luz de frente y la repetimos.'); setFase('colocando'); return }
+      if (!ultima && brillo > 225) { setAviso('La foto ha salido con demasiada luz. Apártate un poco del foco y la repetimos.'); setFase('colocando'); return }
+      if (!ultima && nitidez < NITIDEZ_MIN) { setAviso('La foto ha salido movida. No te muevas un momento y la repetimos.'); setFase('colocando'); return }
+      enviar(c)
+    }
+    raf = requestAnimationFrame(intentar)
+    return () => cancelAnimationFrame(raf)
+  }, [fase, capturar, enviar])
+
+  const texto = fase === 'hecha' ? 'Foto correcta' : fase === 'revisando' ? 'Comprobando la foto' : AVISO[cara]
 
   return (
     <div className="w-full max-w-6xl mx-auto px-6 md:px-10 py-8 grid md:grid-cols-[minmax(0,1fr)_320px] gap-10 items-center">
       <div className="relative h-[min(72dvh,680px)] aspect-[3/4] max-w-full mx-auto rounded-[var(--radius-card)] overflow-hidden bg-camara">
         <video ref={video} autoPlay playsInline muted className="absolute inset-0 w-full h-full object-cover -scale-x-100" />
         <div className="absolute inset-0 pointer-events-none velo-ovalo" />
-        <div className={`absolute left-[15%] right-[15%] top-[10%] bottom-[13%] rounded-[50%] border-2 pointer-events-none transition-colors duration-300 ${cara === 'lista' ? 'border-cara-lista' : 'border-sobre-marca/70'}`} />
-        <MallaFacial video={video} onEstado={setCara} />
-        {cuenta == null && (
-          <p className="absolute top-4 left-1/2 -translate-x-1/2 rounded-full bg-cristal px-4 py-2 text-sobre-marca text-sm font-medium whitespace-nowrap">
-            {{ buscando: 'Buscando tu cara', lejos: 'Acércate un poco', descentrada: 'Céntrate en el óvalo', lista: 'Perfecto, no te muevas' }[cara]}
-          </p>
+        <div className={`absolute left-[15%] right-[15%] top-[10%] bottom-[13%] rounded-[50%] border-2 pointer-events-none transition-colors duration-300 ${cara === 'lista' || fase === 'hecha' ? 'border-cara-lista' : 'border-sobre-marca/70'}`} />
+        <MallaFacial video={video} onEstado={alEstado} caja={caja} />
+        <p aria-live="polite" className={`absolute top-4 left-1/2 -translate-x-1/2 rounded-full px-4 py-2 text-sm font-medium whitespace-nowrap flex items-center gap-2 transition-colors ${fase === 'hecha' ? 'bg-[var(--k-accent)] text-sobre-marca' : 'bg-cristal text-sobre-marca'}`}>
+          {fase === 'hecha' && <Check size={16} weight="bold" />}{texto}
+        </p>
+        {fase === 'cuenta' && cuenta > 0 && (
+          <div className="absolute inset-0 grid place-items-center pointer-events-none">
+            <div key={cuenta} className="cuenta-atras relative w-40 h-40 grid place-items-center text-sobre-marca text-8xl cifra">
+              <svg viewBox="0 0 100 100" className="absolute inset-0 -rotate-90" aria-hidden>
+                <circle cx="50" cy="50" r="46" fill="none" stroke="currentColor" strokeOpacity=".25" strokeWidth="4" />
+                <circle cx="50" cy="50" r="46" fill="none" stroke="currentColor" strokeWidth="4" strokeLinecap="round" pathLength={100} className="cuenta-arco" />
+              </svg>
+              {cuenta}
+            </div>
+          </div>
         )}
-        {cuenta != null && cuenta > 0 && <div className="absolute inset-0 grid place-items-center text-sobre-marca text-9xl cifra">{cuenta}</div>}
+        {fase === 'revisando' && <span className="absolute inset-0 bg-papel/70 destello pointer-events-none" aria-hidden />}
+        {hecha && <img src={hecha} alt="Tu foto" className="absolute inset-0 w-full h-full object-cover -scale-x-100" />}
       </div>
       <div className="space-y-6">
         <h2 className="text-[2.25rem] leading-[1.05]">Coloca tu cara dentro del óvalo</h2>
+        <p className="texto m-0">La foto se hace sola cuando estés en posición. No hace falta tocar nada.</p>
         <ul className="space-y-3 text-lg text-[var(--k-muted)]">
-          {['Acércate hasta llenarlo', 'Mira de frente, sin sonreír', 'Sin gafas y con la frente despejada', 'Mejor sin maquillaje'].map((t) => (
+          {['Cara lavada, sin maquillaje ni crema', 'Luz de frente, sin una ventana detrás', 'Acércate hasta llenar el óvalo', 'Cabeza recta, mirando a la cámara', 'Cara relajada, sin sonreír ni fruncir', 'Sin gafas, con el flequillo apartado y la frente despejada'].map((t) => (
             <li key={t} className="flex gap-3"><Check size={22} className="text-[var(--k-accent)] shrink-0 mt-0.5" />{t}</li>
           ))}
         </ul>
-        {(error || fallo) && <p role="alert" className="rounded-[var(--radius-input)] bg-[var(--k-warn-soft)] text-[var(--k-warn)] p-4">{fallo || error}</p>}
-        {!fallo && (
-          <button onClick={() => setCuenta(3)} disabled={cuenta != null} className="boton w-full">
-            <Camera size={20} /> {error ? 'Repetir la foto' : 'Hacer la foto'}
+        {(aviso || error || fallo) && <p role="alert" className="rounded-[var(--radius-input)] bg-[var(--k-warn-soft)] text-[var(--k-warn)] p-4">{fallo || aviso || error}</p>}
+        {!fallo && (manual || cara === 'sin_detector') && fase === 'colocando' && (
+          <button onClick={() => { const c = capturar(); if (c) enviar(c) }} className="boton-sec w-full">
+            <Camera size={20} /> Hacer la foto ahora
           </button>
         )}
+        {onMovil && fase === 'colocando' && (
+          <button onClick={onMovil} className="boton-sec w-full">
+            <DeviceMobile size={20} /> Hacerla con tu móvil
+          </button>
+        )}
+      </div>
+    </div>
+  )
+}
+
+const NITIDEZ_MIN = 12
+
+// Foto con el móvil (Hugo, 28/11): QR con un enlace de un solo uso que caduca a los 10 min.
+// El móvil abre la misma cámara automática; esta pantalla espera la foto y sigue el recorrido con ella.
+function FotoDesdeMovil({ farmaciaId, onFoto, onCancelar }: { farmaciaId: string; onFoto: (b64: string, dataUrl: string) => void; onCancelar: () => void }) {
+  const [token, setToken] = useState<string | null>(null)
+  const [qr, setQr] = useState<string | null>(null)
+  const [fallo, setFallo] = useState('')
+  const [vuelta, setVuelta] = useState(0)
+  const [caducado, setCaducado] = useState(false)
+  const alFoto = useRef(onFoto)
+  useEffect(() => { alFoto.current = onFoto }, [onFoto])
+
+  useEffect(() => {
+    let vivo = true
+    crearEnlaceMovil(farmaciaId).then(async (r) => {
+      if (!vivo) return
+      if ('error' in r) { setFallo(r.error); return }
+      setToken(r.token); setCaducado(false)
+      setQr(await QRCode.toDataURL(`${location.origin}/m/${r.token}`, { margin: 1, width: 560, color: { dark: '#14201c', light: '#ffffff' } }))
+    })
+    return () => { vivo = false }
+  }, [farmaciaId, vuelta])
+
+  // Mira cada 2 s si el móvil ya la ha enviado
+  useEffect(() => {
+    if (!token || caducado) return
+    let vivo = true
+    const t = setInterval(async () => {
+      const r = await recogerFotoMovil(farmaciaId, token).catch(() => null)
+      if (!vivo || !r) return
+      if (r.foto) { clearInterval(t); alFoto.current(r.foto, `data:image/jpeg;base64,${r.foto}`) }
+      else if ('caducado' in r && r.caducado) { clearInterval(t); setCaducado(true) }
+    }, 2000)
+    return () => { vivo = false; clearInterval(t) }
+  }, [farmaciaId, token, caducado])
+
+  const cancelar = () => { if (token) anularEnlaceMovil(farmaciaId, token); onCancelar() }
+
+  return (
+    <div className="w-full max-w-5xl mx-auto px-6 md:px-10 py-8 grid md:grid-cols-[minmax(0,1fr)_minmax(0,1fr)] gap-12 items-center">
+      <div className="relative aspect-square w-full max-w-[26rem] mx-auto rounded-[var(--radius-card)] border border-[var(--k-line)] bg-white grid place-items-center p-6">
+        {qr && !caducado ? <img src={qr} alt="Código QR para hacer la foto con el móvil" className="w-full h-full" /> : <p className="texto text-center">{caducado ? 'El código ha caducado' : fallo ? '' : 'Preparando el código…'}</p>}
+        <Esquinas />
+      </div>
+      <div className="space-y-6">
+        <h2 className="text-[2.25rem] leading-[1.05]">Haz la foto con tu móvil</h2>
+        <ol className="space-y-3 text-lg text-[var(--k-muted)]">
+          {['Abre la cámara del móvil y apunta al código', 'Toca el enlace que aparece y permite la cámara', 'Colócate en el óvalo: la foto se hace sola', 'Vuelve aquí: tu análisis sigue en esta pantalla'].map((t, k) => (
+            <li key={t} className="flex gap-3"><span className="w-7 h-7 shrink-0 rounded-full grid place-items-center border border-[var(--k-accent)] text-[var(--k-accent)] text-sm cifra">{k + 1}</span>{t}</li>
+          ))}
+        </ol>
+        <p className="text-sm text-[var(--k-muted)] m-0">El código vale para una sola foto y caduca a los 10 minutos. La foto no se guarda en el móvil.</p>
+        {!fallo && !caducado && token && <p aria-live="polite" className="flex items-center gap-2 text-[var(--k-accent)]"><span className="w-2 h-2 rounded-full bg-[var(--k-accent)] latido" /> Esperando la foto del móvil</p>}
+        {fallo && <p role="alert" className="rounded-[var(--radius-input)] bg-[var(--k-warn-soft)] text-[var(--k-warn)] p-4">{fallo}</p>}
+        {caducado && <button onClick={() => { setToken(null); setQr(null); setVuelta((v) => v + 1) }} className="boton w-full">Crear otro código</button>}
+        <button onClick={cancelar} className="boton-sec w-full"><Camera size={20} /> Usar la cámara de esta pantalla</button>
       </div>
     </div>
   )
@@ -433,291 +597,6 @@ export function Analizando({ foto }: { foto: string | null }) {
   )
 }
 
-export function Informe({ res, foto, farmacia, emailActivo = true, onFin }: { res: any; foto: string | null; farmacia: string; emailActivo?: boolean; onFin: () => void }) {
-  // Resumen para leer en menos de un minuto en el iPad. El detalle completo va en el PDF que se envía por email.
-  const R = res.rutinas
-  const F = res.foto
-  const [nivel, setNivel] = useState<'basica' | 'media' | 'completa'>('media')
-  const [qr, setQr] = useState('')
-  if (R?.sin_rutina) return <Bloque><h2 className="titulo max-w-2xl">{R.sin_rutina}</h2><button onClick={onFin} className="boton">Terminar</button></Bloque>
-
-  const rut = R.rutinas[nivel]
-  const objetivos: any[] = res.lectura?.objetivos ?? []
-  const productos = (rut.productos ?? []).filter((p: any) => p.producto)
-  const conProducto = (g: any) => productos.find((p: any) => p.activo && raiz(p.activo) === raiz(g.nombre))
-  // Los 3 ingredientes clave: primero los que ya van en la rutina de este nivel
-  const clave: any[] = [...(res.lectura?.ingredientes ?? [])].sort((a, b) => Number(!!conProducto(b)) - Number(!!conProducto(a))).slice(0, 3)
-  const marcas: string | undefined = F?.imagenes?.marcas?.find((u: string) => u !== F.imagenes.despues)
-  const manana = productos.filter((p: any) => p.turno === 'AM' || p.turno === 'AMPM')
-  const noche = productos.filter((p: any) => p.turno === 'PM' || p.turno === 'AMPM')
-
-  async function generarQr() {
-    const lineas = [`Mi rutina SkinRead (${farmacia})`, '']
-    if (manana.length) lineas.push('Mañana:', ...manana.map((p: any) => `- ${p.marca} ${p.producto}`), '')
-    if (noche.length) lineas.push('Noche:', ...noche.map((p: any) => `- ${p.marca} ${p.producto}`), '')
-    lineas.push(`Total: ${eur(rut.total)}`, res.codigo ? `Código de revisión: ${res.codigo}. Vuelve en 4 semanas para comparar.` : 'Repite el análisis en 4 semanas para comparar.')
-    setQr(await QRCode.toDataURL(`https://wa.me/?text=${encodeURIComponent(lineas.join('\n'))}`, { margin: 1, width: 400, errorCorrectionLevel: 'L', color: { dark: '#0f1b1d', light: '#ffffff' } }))
-  }
-
-  return (
-    <div className="w-full max-w-6xl mx-auto px-6 md:px-10 py-8 space-y-12">
-      {/* 0. Revisión: el antes y el ahora */}
-      {res.anterior && F && <Evolucion anterior={res.anterior} F={F} foto={foto} />}
-
-      {/* 1. El resultado de un vistazo */}
-      <section className="grid md:grid-cols-[minmax(0,5fr)_minmax(0,7fr)] gap-8 md:gap-12 items-center">
-        <div className="max-w-md w-full mx-auto">
-          {foto && F?.imagenes?.despues ? <AntesDespues antes={foto} despues={F.imagenes.despues} />
-            : marcas ? <img src={marcas} alt="Zonas analizadas" className="w-full rounded-[var(--radius-card)] border border-[var(--k-line)]" />
-            : foto ? <img src={foto} alt="Tu foto" className="w-full rounded-[var(--radius-card)] -scale-x-100" /> : null}
-        </div>
-        <div className="space-y-8">
-          <p className="text-[var(--k-muted)]">Tu resultado</p>
-          {F?.puntuacion_global != null ? (
-            <div className="flex flex-wrap items-end gap-x-10 gap-y-4 -mt-4">
-              <p className="m-0 leading-none"><span className="cifra text-[clamp(5rem,10vw,7.5rem)] tracking-[-0.05em]">{Math.round(F.puntuacion_global)}</span><span className="text-2xl text-[var(--k-muted)]">/100</span></p>
-              {F.edad_piel != null && <p className="m-0 pb-3"><span className="block text-sm text-[var(--k-muted)]">Edad de tu piel</span><span className="cifra text-3xl">{Math.round(F.edad_piel)}</span> <span className="text-[var(--k-muted)]">años</span></p>}
-            </div>
-          ) : <h2 className="titulo">Tu rutina</h2>}
-          {objetivos.length > 0 && (
-            <div className="space-y-3">
-              <p className="text-xl font-medium">Lo primero que conviene trabajar</p>
-              <ul className="grid gap-2.5 list-none p-0 m-0">
-                {objetivos.map((o: any, k: number) => (
-                  <li key={o.aspecto} className="grid grid-cols-[1.5rem_8.5rem_1fr_2.5rem] items-center gap-3">
-                    <span className="cifra text-[var(--k-accent)]">{k + 1}</span>
-                    <span className="text-lg">{o.nombre}</span>
-                    {o.nota != null ? <span className="escala"><i /><b data-alto={aTrabajar(o.nota) ? '' : undefined} style={{ width: `${Math.max(4, o.nota)}%` }} /></span> : <span />}
-                    <span className="cifra text-lg text-right">{o.nota ?? ''}</span>
-                  </li>
-                ))}
-              </ul>
-            </div>
-          )}
-        </div>
-      </section>
-
-      {/* 2. Ingredientes clave, por qué y con qué producto */}
-      {clave.length > 0 && (
-        <section className="space-y-5">
-          <h3 className="text-[2rem] leading-[1.05] tracking-[-0.03em]">Tus ingredientes clave</h3>
-          <ol className="grid md:grid-cols-3 gap-4 list-none p-0 m-0">
-            {clave.map((g: any) => {
-              const pr = conProducto(g)
-              return (
-                <li key={g.nombre} className="rounded-[var(--radius-card)] border border-[var(--k-line)] bg-[var(--k-bg)] p-5 grid grid-rows-[auto_auto_1fr_auto] gap-2">
-                  <span className="inline-flex items-center gap-1.5 text-sm text-[var(--k-muted)]">{g.turno === 'PM' ? <Moon size={16} /> : <Sun size={16} />}{g.turno === 'PM' ? 'Noche' : 'Mañana'}</span>
-                  <span className="text-2xl font-medium tracking-[-0.02em]">{g.nombre}</span>
-                  <span className="text-[var(--k-muted)] leading-snug"><span className="text-[var(--k-accent)] font-medium">Para {lista(g.para.map((n: string) => n.toLowerCase()))}.</span> {g.frase ?? g.por_que}</span>
-                  <span className="mt-2 pt-3 border-t border-[var(--k-line)] flex items-baseline justify-between gap-3">
-                    {pr ? <><span className="leading-snug"><span className="block text-sm text-[var(--k-muted)]">{pr.marca}</span>{pr.producto}</span><span className="cifra text-lg whitespace-nowrap">{eur(pr.precio)}</span></>
-                      : <span className="text-sm text-[var(--k-muted)]">{g.ahora ? 'Pide en el mostrador un producto con este ingrediente.' : g.motivo ?? 'Entra más adelante.'}</span>}
-                  </span>
-                </li>
-              )
-            })}
-          </ol>
-        </section>
-      )}
-
-      {/* 3. La rutina completa, compacta */}
-      <section className="space-y-5">
-        <div className="flex flex-wrap items-center gap-4">
-          <h3 className="text-[2rem] leading-[1.05] tracking-[-0.03em]">Tu rutina</h3>
-          <div role="tablist" aria-label="Nivel de la rutina" className="md:ml-auto inline-flex rounded-[var(--radius-card)] border border-[var(--k-line)] bg-[var(--k-bg)] p-1">
-            {(['basica', 'media', 'completa'] as const).map((k) => (
-              <button key={k} role="tab" aria-selected={nivel === k} onClick={() => { setNivel(k); setQr('') }}
-                className={`h-11 px-4 rounded-lg text-sm ${nivel === k ? 'bg-[var(--k-accent)] text-sobre-marca' : 'text-[var(--k-muted)] hover:text-[var(--k-text)]'}`}>
-                {R.rutinas[k].nombre} <span className="num">{eur(R.rutinas[k].total)}</span>
-              </button>
-            ))}
-          </div>
-        </div>
-        {productos.length ? (
-          <div className="grid md:grid-cols-2 gap-6">
-            <Turno icono={<Sun size={20} />} titulo="Mañana" productos={manana} />
-            <Turno icono={<Moon size={20} />} titulo="Noche" productos={noche} />
-          </div>
-        ) : <p className="texto">Pide al farmacéutico que te enseñe los productos de tu rutina.</p>}
-      </section>
-
-      {/* 4. Llevársela: informe completo por email y rutina en el móvil */}
-      <section className={`grid gap-4 ${emailActivo ? 'md:grid-cols-2' : ''}`}>
-        {emailActivo && <InformeEmail consejo={res.id} foto={foto} nivel={nivel} />}
-        <div className="rounded-[var(--radius-card)] bg-[var(--k-accent-soft)] p-6 grid grid-cols-[1fr_auto] gap-6 items-center">
-          <div className="space-y-2">
-            <p className="text-xl font-medium flex items-center gap-2"><CalendarCheck size={22} className="text-[var(--k-accent)]" /> Llévatela en el móvil</p>
-            <p className="text-[var(--k-muted)] leading-relaxed">Guarda la rutina en WhatsApp y repite el análisis en 4 semanas. Enseña esta pantalla en el mostrador para que te preparen los productos.</p>
-          </div>
-          {qr ? <img src={qr} alt="Código QR con tu rutina" className="w-36 h-36 rounded-[var(--radius-input)] border border-[var(--k-line)]" /> : <button onClick={generarQr} className="boton-sec">Ver código</button>}
-        </div>
-      </section>
-
-      {res.codigo && (
-        <section className="rounded-[var(--radius-card)] border-2 border-[var(--k-accent)] p-6 grid md:grid-cols-[auto_1fr] gap-x-8 gap-y-2 items-center">
-          <p className="cifra text-[3rem] leading-none tracking-[0.12em] text-[var(--k-accent)] m-0">{res.codigo}</p>
-          <div>
-            <p className="text-xl font-medium m-0">Tu código de revisión</p>
-            <p className="text-[var(--k-muted)] leading-relaxed m-0">Vuelve en unas 4 semanas y toca «Vengo a mi revisión». Haz una foto a esta pantalla: también va en WhatsApp y en el informe por email.</p>
-          </div>
-        </section>
-      )}
-
-      <div className="flex justify-center pb-2">
-        <button onClick={onFin} className="boton-sec">Terminar y salir</button>
-      </div>
-      <p className="text-sm text-[var(--k-muted)] text-center pb-6">Análisis cosmético orientativo, no un diagnóstico médico. La simulación está generada con IA y no es una promesa de resultado.</p>
-    </div>
-  )
-}
-
-function InformeEmail({ consejo, foto, nivel }: { consejo: string; foto: string | null; nivel: string }) {
-  const [email, setEmail] = useState('')
-  const [acepta, setAcepta] = useState(false)
-  const [estado, setEstado] = useState<'' | 'enviando' | 'ok' | string>('')
-  const valido = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(email.trim())
-  async function enviar() {
-    setEstado('enviando')
-    const r = await enviarInformeEmail(consejo, email.trim(), foto, nivel)
-    setEstado('error' in r ? (r.error ?? 'error') : 'ok')
-  }
-  return (
-    <div className="rounded-[var(--radius-card)] border border-[var(--k-line)] bg-[var(--k-bg)] p-6 space-y-3">
-      <p className="text-xl font-medium flex items-center gap-2"><EnvelopeSimple size={22} className="text-[var(--k-accent)]" /> Informe completo por email</p>
-      {estado === 'ok' ? <p className="text-[var(--k-muted)] leading-relaxed">Enviado a {email.trim()}. Revisa también la carpeta de spam.</p> : (
-        <>
-          <p className="text-[var(--k-muted)] leading-relaxed">{foto ? 'Un PDF con tus fotos por zona, cada medida explicada, los ingredientes y la rutina paso a paso.' : 'Un PDF con los ingredientes y la rutina paso a paso.'}</p>
-          <div className="flex gap-2">
-            <input type="email" inputMode="email" autoComplete="off" value={email} onChange={(e) => setEmail(e.target.value)} placeholder="tu@email.com"
-              className="flex-1 min-w-0 h-12 px-4 rounded-[var(--radius-input)] border border-[var(--k-line)] bg-[var(--k-bg)] text-lg" />
-            <button onClick={enviar} disabled={!valido || !acepta || estado === 'enviando'} className="boton !h-12">{estado === 'enviando' ? 'Enviando…' : 'Enviar'}</button>
-          </div>
-          <label className="flex items-start gap-2 text-sm text-[var(--k-muted)]">
-            <input type="checkbox" checked={acepta} onChange={(e) => setAcepta(e.target.checked)} className="mt-0.5 w-5 h-5 accent-[var(--k-accent)]" />
-            {AVISO_EMAIL(!!foto)}
-          </label>
-          {estado && estado !== 'enviando' && <p className="text-sm text-[var(--k-warn)]">{estado}</p>}
-        </>
-      )}
-    </div>
-  )
-}
-
-/* ---------- Piezas ---------- */
-
-function Evolucion({ anterior: A, F, foto }: { anterior: any; F: any; foto: string | null }) {
-  const filas = Object.keys(NOMBRE_RESULTADO).filter((a) => A.ui?.[a] != null && F.ui?.[a] != null)
-    .map((a) => ({ a, antes: Math.round(A.ui[a]), ahora: Math.round(F.ui[a]) })).sort((x, y) => (y.ahora - y.antes) - (x.ahora - x.antes))
-  const fecha = new Date(A.fecha).toLocaleDateString('es-ES', { day: 'numeric', month: 'long', timeZone: 'Europe/Madrid' })
-  return (
-    <section className="grid md:grid-cols-[minmax(0,5fr)_minmax(0,7fr)] gap-8 md:gap-12 items-start">
-      <div className="max-w-md w-full mx-auto">
-        {A.foto && foto ? <AntesDespues antes={A.foto} despues={foto} etiquetaAntes={fecha} etiquetaDespues="Hoy" />
-          : foto ? <img src={foto} alt="Tu foto de hoy" className="w-full rounded-[var(--radius-card)] -scale-x-100" /> : null}
-      </div>
-      <div className="space-y-6">
-        <p className="text-[var(--k-muted)] m-0">Tu evolución desde el {fecha} · {A.dias} días</p>
-        {A.global != null && F.puntuacion_global != null && (
-          <p className="m-0 leading-none"><span className="cifra text-[2.5rem] text-[var(--k-muted)]">{Math.round(A.global)}</span><span className="text-2xl text-[var(--k-muted)] px-3">→</span><span className="cifra text-[clamp(4rem,8vw,6rem)] tracking-[-0.05em]">{Math.round(F.puntuacion_global)}</span><span className="text-2xl text-[var(--k-muted)]">/100</span></p>
-        )}
-        <ul className="grid gap-2 list-none p-0 m-0">
-          {filas.map((f) => {
-            const d = f.ahora - f.antes
-            return (
-              <li key={f.a} className="grid grid-cols-[8.5rem_5.5rem_3rem] items-baseline gap-3 py-1.5 border-b border-[var(--k-line)]">
-                <span className="text-lg">{NOMBRE_RESULTADO[f.a]}</span>
-                <span className="cifra text-[var(--k-muted)]">{f.antes} → <span className="text-[var(--k-text)]">{f.ahora}</span></span>
-                <span className={`cifra text-right font-medium ${d >= 3 ? 'text-[var(--k-accent)]' : 'text-[var(--k-muted)]'}`}>{d > 0 ? '+' : ''}{d}</span>
-              </li>
-            )
-          })}
-        </ul>
-        <p className="text-sm text-[var(--k-muted)] m-0">Más alto, piel en mejor estado. Cambios de 1 o 2 puntos pueden deberse a la luz o a la postura.</p>
-      </div>
-    </section>
-  )
-}
-
-function Turno({ icono, titulo, productos }: { icono: React.ReactNode; titulo: string; productos: any[] }) {
-  return (
-    <div className="border-t border-[var(--k-text)] pt-5 space-y-4">
-      <p className="flex items-center gap-2 font-medium text-[var(--k-accent)]">{icono} {titulo}</p>
-      <ol className="space-y-4">
-        {productos.map((p: any, k: number) => (
-          <li key={k} className="grid grid-cols-[1fr_auto] gap-x-4 gap-y-0.5 pb-4 border-b border-[var(--k-line)]">
-            <span className="text-sm text-[var(--k-muted)]">{k + 1}. {p.paso}</span>
-            <span className="row-span-2 self-center cifra text-lg">{eur(p.precio)}</span>
-            <span className="text-lg leading-snug">{p.marca} {p.producto}</span>
-          </li>
-        ))}
-        {!productos.length && <li className="text-[var(--k-muted)]">Sin productos en este turno.</li>}
-      </ol>
-    </div>
-  )
-}
-
-function Dato({ etiqueta, valor, unidad }: { etiqueta: string; valor: string; unidad: string }) {
-  return (
-    <div className="py-5 pr-5 [&+&]:pl-5 [&+&]:border-l border-[var(--k-line)]">
-      <dt className="text-sm text-[var(--k-muted)]">{etiqueta}</dt>
-      <dd className="mt-2 m-0"><span className="cifra text-[3rem] leading-none">{valor}</span> <span className="text-[var(--k-muted)]">{unidad}</span></dd>
-    </div>
-  )
-}
-
-function AntesDespues({ antes, despues, etiquetaAntes = 'Hoy', etiquetaDespues = 'Con tu rutina (simulación IA)' }: { antes: string; despues: string; etiquetaAntes?: string; etiquetaDespues?: string }) {
-  const [x, setX] = useState(50)
-  const [tocado, setTocado] = useState(false)
-  // Al aparecer, el deslizador se mueve solo una vez para que se vea que se puede arrastrar
-  useEffect(() => {
-    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return
-    const pasos = [50, 78, 22, 50]
-    const ini = performance.now() + 700, dur = 2200
-    let id = 0
-    const f = (t: number) => {
-      const k = Math.min(1, Math.max(0, (t - ini) / dur)) * (pasos.length - 1)
-      const i = Math.min(pasos.length - 2, Math.floor(k)), u = k - i, e = u * u * (3 - 2 * u)
-      setX(pasos[i] + (pasos[i + 1] - pasos[i]) * e)
-      if (k < pasos.length - 1) id = requestAnimationFrame(f)
-    }
-    id = requestAnimationFrame(f)
-    const parar = () => cancelAnimationFrame(id)
-    window.addEventListener('pointerdown', parar, { once: true })
-    return () => { parar(); window.removeEventListener('pointerdown', parar) }
-  }, [])
-  const mover = (e: React.PointerEvent<HTMLDivElement>) => {
-    const r = e.currentTarget.getBoundingClientRect()
-    setX(Math.max(0, Math.min(100, ((e.clientX - r.left) / r.width) * 100)))
-  }
-  return (
-    <figure className="space-y-3">
-      <div className="relative w-full aspect-[3/4] rounded-[var(--radius-card)] overflow-hidden bg-[var(--k-soft)] touch-none cursor-ew-resize"
-        onPointerDown={(e) => { e.currentTarget.setPointerCapture(e.pointerId); setTocado(true); mover(e) }}
-        onPointerMove={(e) => { if (e.buttons) mover(e) }}>
-        {/* Las dos en espejo, como la ve la clienta en la cámara; si solo se gira una, no coinciden */}
-        <img src={despues} alt={etiquetaDespues} className="absolute inset-0 w-full h-full object-cover -scale-x-100" />
-        <img src={antes} alt={etiquetaAntes} className="absolute inset-0 w-full h-full object-cover -scale-x-100" style={{ clipPath: `inset(0 ${100 - x}% 0 0)` }} />
-        <div className="absolute top-0 bottom-0 w-px bg-sobre-marca" style={{ left: `${x}%` }}>
-          <span className="absolute top-1/2 -translate-y-1/2 -translate-x-1/2 w-11 h-11 rounded-full bg-papel text-[var(--k-text)] grid place-items-center shadow-pomo"><ArrowsLeftRight size={20} /></span>
-        </div>
-      </div>
-      <figcaption className="flex justify-between text-sm text-[var(--k-muted)]"><span>{etiquetaAntes}</span><span className={`transition-opacity ${tocado ? 'opacity-0' : ''}`}>Desliza para comparar</span><span>{etiquetaDespues}</span></figcaption>
-    </figure>
-  )
-}
-
-function Esquinas() {
-  const c = 'absolute w-8 h-8 border-[var(--k-accent)] pointer-events-none'
-  return (
-    <>
-      <span className={`${c} top-4 left-4 border-t-2 border-l-2 rounded-tl-lg`} />
-      <span className={`${c} top-4 right-4 border-t-2 border-r-2 rounded-tr-lg`} />
-      <span className={`${c} bottom-4 left-4 border-b-2 border-l-2 rounded-bl-lg`} />
-      <span className={`${c} bottom-4 right-4 border-b-2 border-r-2 rounded-br-lg`} />
-    </>
-  )
-}
-
 function Bloque({ children }: { children: React.ReactNode }) {
   return <div className="w-full px-6 md:px-10 py-12 flex flex-col items-center justify-center gap-6 [&>*]:w-full [&>*]:max-w-2xl">{children}</div>
 }
@@ -747,6 +626,13 @@ export function Estilos() {
       .linea-escaneo { position:absolute; left:0; right:0; height:2px; background: var(--k-accent); box-shadow: 0 0 0 1px var(--color-on-accent-muted); animation: escaneo 2.8s cubic-bezier(.45,0,.55,1) infinite; }
       @keyframes escaneo { 0%,100% { top: 10% } 50% { top: 88% } }
       .latido { animation: latido 1.2s ease-in-out infinite; }
+      .cuenta-atras { animation: cuenta 1s cubic-bezier(.16,1,.3,1) both; }
+      .cuenta-arco { stroke-dasharray: 100; animation: arco 1s linear both; }
+      .destello { animation: destello 500ms ease-out both; }
+      @keyframes cuenta { from { opacity: 0; transform: scale(.85) } 20% { opacity: 1; transform: none } to { opacity: 1 } }
+      @keyframes arco { from { stroke-dashoffset: 100 } to { stroke-dashoffset: 0 } }
+      @keyframes destello { from { opacity: 1 } to { opacity: 0 } }
+      @media (prefers-reduced-motion: reduce) { .cuenta-atras, .cuenta-arco, .destello { animation: none } }
       @keyframes latido { 0%,100% { opacity: .35 } 50% { opacity: 1 } }
       .entrar { animation: entrar 220ms cubic-bezier(.23,1,.32,1) both; }
       @keyframes entrar { from { opacity: 0; transform: translateY(6px) } to { opacity: 1; transform: none } }

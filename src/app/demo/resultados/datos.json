@@ -1,0 +1,706 @@
+{
+ "id": "demo",
+ "codigo": "K7P-4QX",
+ "rutinas": {
+  "derivacion": [],
+  "unica": false,
+  "sin_stock": false,
+  "rutinas": {
+   "basica": {
+    "nombre": "Básica",
+    "total": 92.99,
+    "productos": [
+     {
+      "paso": "Limpiador",
+      "turno": "AMPM",
+      "id": "la-roche-posay-toleriane-son-lavant-anti-inconforts",
+      "marca": "La Roche-Posay",
+      "producto": "Toleriane Son Lavant Anti-Inconforts",
+      "precio": 16.49,
+      "activo": null,
+      "para": "Limpia sin resecar.",
+      "frecuencia": null,
+      "bajo_pedido": false,
+      "empate": [
+       {
+        "id": "la-roche-posay-toleriane-caring-wash",
+        "marca": "La Roche-Posay",
+        "producto": "Toleriane Caring Wash / Crema Limpiadora",
+        "precio": 19.35,
+        "bajo_pedido": false
+       },
+       {
+        "id": "la-roche-posay-toleriane",
+        "marca": "La Roche-Posay",
+        "producto": "Toleriane",
+        "precio": 16.99,
+        "bajo_pedido": false
+       }
+      ]
+     },
+     {
+      "paso": "Sérum de noche",
+      "turno": "PM",
+      "id": "medik8-crystal-retinal-1",
+      "marca": "Medik8",
+      "producto": "Crystal Retinal 1",
+      "precio": 56.5,
+      "activo": "retinal",
+      "para": "Para renovar la piel, con retinal.",
+      "frecuencia": "2 noches a la semana (lunes, jueves)",
+      "bajo_pedido": false,
+      "empate": [
+       {
+        "id": "medik8-crystal-retinal-3-serum",
+        "marca": "Medik8",
+        "producto": "Crystal Retinal 3 Serum",
+        "precio": 56,
+        "bajo_pedido": false
+       }
+      ]
+     },
+     {
+      "paso": "Hidratante",
+      "turno": "AMPM",
+      "id": "la-roche-posay-toleriane-sensitive-crema",
+      "marca": "La Roche-Posay",
+      "producto": "Toleriane Sensitive Crema",
+      "precio": 20,
+      "activo": null,
+      "para": "Hidrata y cuida la barrera de la piel.",
+      "frecuencia": null,
+      "bajo_pedido": false,
+      "empate": []
+     },
+     {
+      "paso": "Protector solar",
+      "turno": "AM",
+      "id": "isdin-fotoultra-active-unify-color-spf50",
+      "marca": "ISDIN",
+      "producto": "Fotoprotector ISDIN FotoUltra 100 Active Unify Color Fusion Fluid SPF 50+",
+      "precio": 26.99,
+      "activo": null,
+      "para": "Protege del sol. Es el paso que más cuida tu piel a largo plazo.",
+      "frecuencia": null,
+      "bajo_pedido": false,
+      "empate": []
+     }
+    ],
+    "semana": [
+     {
+      "dia": "L",
+      "noche": [
+       "Limpiador",
+       "Retinoide",
+       "Hidratante"
+      ]
+     },
+     {
+      "dia": "M",
+      "noche": [
+       "Limpiador",
+       "Hidratante"
+      ]
+     },
+     {
+      "dia": "X",
+      "noche": [
+       "Limpiador",
+       "Hidratante"
+      ]
+     },
+     {
+      "dia": "J",
+      "noche": [
+       "Limpiador",
+       "Retinoide",
+       "Hidratante"
+      ]
+     },
+     {
+      "dia": "V",
+      "noche": [
+       "Limpiador",
+       "Hidratante"
+      ]
+     },
+     {
+      "dia": "S",
+      "noche": [
+       "Limpiador",
+       "Hidratante"
+      ]
+     },
+     {
+      "dia": "D",
+      "noche": [
+       "Limpiador",
+       "Hidratante"
+      ]
+     }
+    ],
+    "escalado": "Es tu primer retinoide: empiezas con una concentración baja y subes cuando la piel lo tolere, a partir de unos 3 meses. Piel sensible: 1-2 noches por semana, en sándwich (hidratante, retinoide, hidratante), durante 8 semanas. Techo: 3 noches."
+   },
+   "media": {
+    "nombre": "Media",
+    "total": 132.14,
+    "productos": [
+     {
+      "paso": "Limpiador",
+      "turno": "AMPM",
+      "id": "la-roche-posay-toleriane-son-lavant-anti-inconforts",
+      "marca": "La Roche-Posay",
+      "producto": "Toleriane Son Lavant Anti-Inconforts",
+      "precio": 16.49,
+      "activo": null,
+      "para": "Limpia sin resecar.",
+      "frecuencia": null,
+      "bajo_pedido": false,
+      "empate": [
+       {
+        "id": "la-roche-posay-toleriane-caring-wash",
+        "marca": "La Roche-Posay",
+        "producto": "Toleriane Caring Wash / Crema Limpiadora",
+        "precio": 19.35,
+        "bajo_pedido": false
+       },
+       {
+        "id": "la-roche-posay-toleriane",
+        "marca": "La Roche-Posay",
+        "producto": "Toleriane",
+        "precio": 16.99,
+        "bajo_pedido": false
+       }
+      ]
+     },
+     {
+      "paso": "Sérum de noche",
+      "turno": "PM",
+      "id": "medik8-crystal-retinal-1",
+      "marca": "Medik8",
+      "producto": "Crystal Retinal 1",
+      "precio": 56.5,
+      "activo": "retinal",
+      "para": "Para renovar la piel, con retinal.",
+      "frecuencia": "2 noches a la semana (lunes, jueves)",
+      "bajo_pedido": false,
+      "empate": [
+       {
+        "id": "medik8-crystal-retinal-3-serum",
+        "marca": "Medik8",
+        "producto": "Crystal Retinal 3 Serum",
+        "precio": 56,
+        "bajo_pedido": false
+       }
+      ]
+     },
+     {
+      "paso": "Sérum de mañana",
+      "turno": "AM",
+      "id": "caudalie-vinergetic-c",
+      "marca": "Caudalie",
+      "producto": "Vinergetic C+",
+      "precio": 39.15,
+      "activo": "vitamina C estable",
+      "para": "Para proteger de día como antioxidante, con vitamina C estable.",
+      "frecuencia": null,
+      "bajo_pedido": false,
+      "empate": []
+     },
+     {
+      "paso": "Hidratante",
+      "turno": "AMPM",
+      "id": "la-roche-posay-toleriane-sensitive-crema",
+      "marca": "La Roche-Posay",
+      "producto": "Toleriane Sensitive Crema",
+      "precio": 20,
+      "activo": null,
+      "para": "Hidrata y cuida la barrera de la piel.",
+      "frecuencia": null,
+      "bajo_pedido": false,
+      "empate": []
+     },
+     {
+      "paso": "Protector solar",
+      "turno": "AM",
+      "id": "isdin-fotoultra-active-unify-color-spf50",
+      "marca": "ISDIN",
+      "producto": "Fotoprotector ISDIN FotoUltra 100 Active Unify Color Fusion Fluid SPF 50+",
+      "precio": 26.99,
+      "activo": null,
+      "para": "Protege del sol. Es el paso que más cuida tu piel a largo plazo.",
+      "frecuencia": null,
+      "bajo_pedido": false,
+      "empate": []
+     }
+    ],
+    "semana": [
+     {
+      "dia": "L",
+      "noche": [
+       "Limpiador",
+       "Retinoide",
+       "Hidratante"
+      ]
+     },
+     {
+      "dia": "M",
+      "noche": [
+       "Limpiador",
+       "Hidratante"
+      ]
+     },
+     {
+      "dia": "X",
+      "noche": [
+       "Limpiador",
+       "Hidratante"
+      ]
+     },
+     {
+      "dia": "J",
+      "noche": [
+       "Limpiador",
+       "Retinoide",
+       "Hidratante"
+      ]
+     },
+     {
+      "dia": "V",
+      "noche": [
+       "Limpiador",
+       "Hidratante"
+      ]
+     },
+     {
+      "dia": "S",
+      "noche": [
+       "Limpiador",
+       "Hidratante"
+      ]
+     },
+     {
+      "dia": "D",
+      "noche": [
+       "Limpiador",
+       "Hidratante"
+      ]
+     }
+    ],
+    "escalado": "Es tu primer retinoide: empiezas con una concentración baja y subes cuando la piel lo tolere, a partir de unos 3 meses. Piel sensible: 1-2 noches por semana, en sándwich (hidratante, retinoide, hidratante), durante 8 semanas. Techo: 3 noches."
+   },
+   "completa": {
+    "nombre": "Completa",
+    "total": 132.14,
+    "productos": [
+     {
+      "paso": "Limpiador",
+      "turno": "AMPM",
+      "id": "la-roche-posay-toleriane-son-lavant-anti-inconforts",
+      "marca": "La Roche-Posay",
+      "producto": "Toleriane Son Lavant Anti-Inconforts",
+      "precio": 16.49,
+      "activo": null,
+      "para": "Limpia sin resecar.",
+      "frecuencia": null,
+      "bajo_pedido": false,
+      "empate": [
+       {
+        "id": "la-roche-posay-toleriane-caring-wash",
+        "marca": "La Roche-Posay",
+        "producto": "Toleriane Caring Wash / Crema Limpiadora",
+        "precio": 19.35,
+        "bajo_pedido": false
+       },
+       {
+        "id": "la-roche-posay-toleriane",
+        "marca": "La Roche-Posay",
+        "producto": "Toleriane",
+        "precio": 16.99,
+        "bajo_pedido": false
+       }
+      ]
+     },
+     {
+      "paso": "Sérum de noche",
+      "turno": "PM",
+      "id": "medik8-crystal-retinal-1",
+      "marca": "Medik8",
+      "producto": "Crystal Retinal 1",
+      "precio": 56.5,
+      "activo": "retinal",
+      "para": "Para renovar la piel, con retinal.",
+      "frecuencia": "2 noches a la semana (lunes, jueves)",
+      "bajo_pedido": false,
+      "empate": [
+       {
+        "id": "medik8-crystal-retinal-3-serum",
+        "marca": "Medik8",
+        "producto": "Crystal Retinal 3 Serum",
+        "precio": 56,
+        "bajo_pedido": false
+       }
+      ]
+     },
+     {
+      "paso": "Sérum de mañana",
+      "turno": "AM",
+      "id": "caudalie-vinergetic-c",
+      "marca": "Caudalie",
+      "producto": "Vinergetic C+",
+      "precio": 39.15,
+      "activo": "vitamina C estable",
+      "para": "Para proteger de día como antioxidante, con vitamina C estable.",
+      "frecuencia": null,
+      "bajo_pedido": false,
+      "empate": []
+     },
+     {
+      "paso": "Hidratante",
+      "turno": "AMPM",
+      "id": "la-roche-posay-toleriane-sensitive-crema",
+      "marca": "La Roche-Posay",
+      "producto": "Toleriane Sensitive Crema",
+      "precio": 20,
+      "activo": null,
+      "para": "Hidrata y cuida la barrera de la piel.",
+      "frecuencia": null,
+      "bajo_pedido": false,
+      "empate": []
+     },
+     {
+      "paso": "Protector solar",
+      "turno": "AM",
+      "id": "isdin-fotoultra-active-unify-color-spf50",
+      "marca": "ISDIN",
+      "producto": "Fotoprotector ISDIN FotoUltra 100 Active Unify Color Fusion Fluid SPF 50+",
+      "precio": 26.99,
+      "activo": null,
+      "para": "Protege del sol. Es el paso que más cuida tu piel a largo plazo.",
+      "frecuencia": null,
+      "bajo_pedido": false,
+      "empate": []
+     }
+    ],
+    "semana": [
+     {
+      "dia": "L",
+      "noche": [
+       "Limpiador",
+       "Retinoide",
+       "Hidratante"
+      ]
+     },
+     {
+      "dia": "M",
+      "noche": [
+       "Limpiador",
+       "Hidratante"
+      ]
+     },
+     {
+      "dia": "X",
+      "noche": [
+       "Limpiador",
+       "Hidratante"
+      ]
+     },
+     {
+      "dia": "J",
+      "noche": [
+       "Limpiador",
+       "Retinoide",
+       "Hidratante"
+      ]
+     },
+     {
+      "dia": "V",
+      "noche": [
+       "Limpiador",
+       "Hidratante"
+      ]
+     },
+     {
+      "dia": "S",
+      "noche": [
+       "Limpiador",
+       "Hidratante"
+      ]
+     },
+     {
+      "dia": "D",
+      "noche": [
+       "Limpiador",
+       "Hidratante"
+      ]
+     }
+    ],
+    "escalado": "Es tu primer retinoide: empiezas con una concentración baja y subes cuando la piel lo tolere, a partir de unos 3 meses. Piel sensible: 1-2 noches por semana, en sándwich (hidratante, retinoide, hidratante), durante 8 semanas. Techo: 3 noches."
+   }
+  }
+ },
+ "foto": {
+  "ui": {
+   "arrugas": 61,
+   "manchas": 66,
+   "textura": 64,
+   "rojez": 73,
+   "brillo": 69,
+   "firmeza": 57,
+   "hidratacion": 61,
+   "poros": 67,
+   "ojeras": 77,
+   "acne": 88,
+   "tono": 60
+  },
+  "imagenes": {
+   "marcas": [],
+   "zonas": {
+    "arrugas": "/ejemplos/mapas/arrugas.webp",
+    "brillo": "/ejemplos/mapas/brillo.webp",
+    "firmeza": "/ejemplos/mapas/firmeza.webp",
+    "hidratacion": "/ejemplos/mapas/hidratacion.webp",
+    "manchas": "/ejemplos/mapas/manchas.webp",
+    "rojez": "/ejemplos/mapas/rojez.webp",
+    "textura": "/ejemplos/mapas/textura.webp"
+   }
+  }
+ },
+ "lectura": {
+  "objetivos": [
+   {
+    "aspecto": "firmeza",
+    "nombre": "Firmeza",
+    "nota": 57,
+    "que_es": "La piel ha perdido algo de tensión, sobre todo en el óvalo de la cara.",
+    "alcance": "La cosmética ayuda poco: mejor tener expectativas realistas.",
+    "plazo": "Resultados sutiles en el mejor de los casos.",
+    "ingredientes": [
+     "Retinal",
+     "Vitamina C estable"
+    ]
+   },
+   {
+    "aspecto": "tono",
+    "nombre": "Luminosidad",
+    "nota": 60,
+    "que_es": "Piel apagada o con el tono poco uniforme.",
+    "alcance": "La cosmética lo trata bien.",
+    "plazo": "Unas 12 semanas.",
+    "ingredientes": [
+     "Retinal",
+     "Vitamina C estable",
+     "Exfoliante con ácido"
+    ]
+   },
+   {
+    "aspecto": "arrugas",
+    "nombre": "Arrugas",
+    "nota": 61,
+    "que_es": "Líneas finas y arrugas, sobre todo en la frente y alrededor de los ojos.",
+    "alcance": null,
+    "plazo": null,
+    "ingredientes": []
+   }
+  ],
+  "ingredientes": [
+   {
+    "nombre": "Retinal",
+    "turno": "PM",
+    "para": [
+     "Firmeza",
+     "Luminosidad"
+    ],
+    "ahora": true,
+    "por_que": "Para renovar la piel. Encaja con 2 de tus objetivos.",
+    "motivo": null,
+    "frase": "El retinaldehído es una forma de vitamina A que ayuda a suavizar las arrugas finas y puede irritar al empezar.",
+    "cuando": "Por la noche · primeros cambios en 1–4 meses"
+   },
+   {
+    "nombre": "Vitamina C estable",
+    "turno": "AM",
+    "para": [
+     "Firmeza",
+     "Luminosidad"
+    ],
+    "ahora": true,
+    "por_que": "Para proteger de día como antioxidante. Encaja con 2 de tus objetivos.",
+    "motivo": "Entra cuando lleves al menos dos semanas con el anterior y lo toleres.",
+    "frase": "La vitamina C es la de la comida, puesta en la piel: puede suavizar arrugas finas tras meses de uso.",
+    "cuando": "De día, debajo del protector · primeros cambios en unos 3 meses"
+   },
+   {
+    "nombre": "Exfoliante con ácido",
+    "turno": "PM",
+    "para": [
+     "Luminosidad"
+    ],
+    "ahora": false,
+    "por_que": "Para exfoliar y alisar la textura.",
+    "motivo": "El ácido entra cuando ya toleres el retinoide. Empezar los dos a la vez irrita.",
+    "frase": "El ácido glicólico es un exfoliante que afloja las células muertas de la superficie para que se suelten antes.",
+    "cuando": "Día o noche, con protector solar · cambios medidos en 6–22 semanas"
+   }
+  ],
+  "tarjetas": {
+   "basica": [
+    {
+     "nombre": "Retinal",
+     "turno": "PM",
+     "para": [
+      "Firmeza",
+      "Luminosidad"
+     ],
+     "frase": "El retinaldehído es una forma de vitamina A que ayuda a suavizar las arrugas finas y puede irritar al empezar.",
+     "por_que": "Para renovar la piel. Encaja con 2 de tus objetivos.",
+     "desde": null,
+     "producto": {
+      "marca": "Medik8",
+      "producto": "Crystal Retinal 1",
+      "precio": 56.5,
+      "bajo_pedido": false
+     }
+    },
+    {
+     "nombre": "Vitamina C estable",
+     "turno": "AM",
+     "para": [
+      "Firmeza",
+      "Luminosidad"
+     ],
+     "frase": "La vitamina C es la de la comida, puesta en la piel: puede suavizar arrugas finas tras meses de uso.",
+     "por_que": "Para proteger de día como antioxidante. Encaja con 2 de tus objetivos.",
+     "desde": "Media",
+     "producto": {
+      "marca": "Caudalie",
+      "producto": "Vinergetic C+",
+      "precio": 39.15,
+      "bajo_pedido": false
+     }
+    },
+    {
+     "nombre": "Ceramidas",
+     "turno": "AMPM",
+     "para": [
+      "Reparar la barrera"
+     ],
+     "frase": "Las ceramidas son grasas propias de tu piel que sellan su capa de fuera para que no pierda agua.",
+     "por_que": "",
+     "desde": null,
+     "producto": {
+      "marca": "La Roche-Posay",
+      "producto": "Toleriane Sensitive Crema",
+      "precio": 20,
+      "bajo_pedido": false
+     }
+    }
+   ],
+   "media": [
+    {
+     "nombre": "Retinal",
+     "turno": "PM",
+     "para": [
+      "Firmeza",
+      "Luminosidad"
+     ],
+     "frase": "El retinaldehído es una forma de vitamina A que ayuda a suavizar las arrugas finas y puede irritar al empezar.",
+     "por_que": "Para renovar la piel. Encaja con 2 de tus objetivos.",
+     "desde": null,
+     "producto": {
+      "marca": "Medik8",
+      "producto": "Crystal Retinal 1",
+      "precio": 56.5,
+      "bajo_pedido": false
+     }
+    },
+    {
+     "nombre": "Vitamina C estable",
+     "turno": "AM",
+     "para": [
+      "Firmeza",
+      "Luminosidad"
+     ],
+     "frase": "La vitamina C es la de la comida, puesta en la piel: puede suavizar arrugas finas tras meses de uso.",
+     "por_que": "Para proteger de día como antioxidante. Encaja con 2 de tus objetivos.",
+     "desde": null,
+     "producto": {
+      "marca": "Caudalie",
+      "producto": "Vinergetic C+",
+      "precio": 39.15,
+      "bajo_pedido": false
+     }
+    },
+    {
+     "nombre": "Ceramidas",
+     "turno": "AMPM",
+     "para": [
+      "Reparar la barrera"
+     ],
+     "frase": "Las ceramidas son grasas propias de tu piel que sellan su capa de fuera para que no pierda agua.",
+     "por_que": "",
+     "desde": null,
+     "producto": {
+      "marca": "La Roche-Posay",
+      "producto": "Toleriane Sensitive Crema",
+      "precio": 20,
+      "bajo_pedido": false
+     }
+    }
+   ],
+   "completa": [
+    {
+     "nombre": "Retinal",
+     "turno": "PM",
+     "para": [
+      "Firmeza",
+      "Luminosidad"
+     ],
+     "frase": "El retinaldehído es una forma de vitamina A que ayuda a suavizar las arrugas finas y puede irritar al empezar.",
+     "por_que": "Para renovar la piel. Encaja con 2 de tus objetivos.",
+     "desde": null,
+     "producto": {
+      "marca": "Medik8",
+      "producto": "Crystal Retinal 1",
+      "precio": 56.5,
+      "bajo_pedido": false
+     }
+    },
+    {
+     "nombre": "Vitamina C estable",
+     "turno": "AM",
+     "para": [
+      "Firmeza",
+      "Luminosidad"
+     ],
+     "frase": "La vitamina C es la de la comida, puesta en la piel: puede suavizar arrugas finas tras meses de uso.",
+     "por_que": "Para proteger de día como antioxidante. Encaja con 2 de tus objetivos.",
+     "desde": null,
+     "producto": {
+      "marca": "Caudalie",
+      "producto": "Vinergetic C+",
+      "precio": 39.15,
+      "bajo_pedido": false
+     }
+    },
+    {
+     "nombre": "Ceramidas",
+     "turno": "AMPM",
+     "para": [
+      "Reparar la barrera"
+     ],
+     "frase": "Las ceramidas son grasas propias de tu piel que sellan su capa de fuera para que no pierda agua.",
+     "por_que": "",
+     "desde": null,
+     "producto": {
+      "marca": "La Roche-Posay",
+      "producto": "Toleriane Sensitive Crema",
+      "precio": 20,
+      "bajo_pedido": false
+     }
+    }
+   ]
+  }
+ },
+ "anterior": null
+}

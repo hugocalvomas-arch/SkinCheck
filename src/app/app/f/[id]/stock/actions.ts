@@ -13,6 +13,11 @@ export async function guardarStock(
   programa: string,
 ) {
   const sb = await supabaseServer()
+  // Solo quien pertenece a la farmacia puede cambiar su stock (un admin que no es miembro fallaría a mitad)
+  const { data: u } = await sb.auth.getUser()
+  if (!u.user) return { error: 'Tu sesión ha caducado. Vuelve a entrar.' }
+  const { data: m } = await sb.from('miembros').select('farmacia_id').eq('farmacia_id', farmaciaId).eq('user_id', u.user.id).maybeSingle()
+  if (!m) return { error: 'Tu usuario no pertenece a esta farmacia, así que no puede cambiar su stock.' }
   if (filas.length > 50000) return { error: 'El archivo tiene demasiadas filas (máximo 50.000).' }
 
   // 1. Claves de cada fila: EAN y/o CN (de cualquiera de las dos columnas)
@@ -20,7 +25,7 @@ export async function guardarStock(
     .map((f) => {
       const a = clavesDeCodigo(f.ean)
       const b = clavesDeCodigo(f.cn)
-      return { ...f, keyEan: a.ean ?? b.ean, keyCn: b.cn ?? a.cn, unidades: Math.max(0, f.unidades || 0) }
+      return { ...f, keyEan: a.ean ?? b.ean, keyCn: b.cn ?? a.cn, unidades: Math.max(0, Math.round(f.unidades || 0)), pvp: Number.isFinite(f.pvp) && f.pvp > 0 ? Math.round(f.pvp * 100) / 100 : 0 }
     })
     .filter((f) => f.keyEan || f.keyCn)
 
@@ -37,8 +42,11 @@ export async function guardarStock(
     }
   }
 
+  // Marca de esta subida: lo que no la lleve al final es del stock anterior y se borra
+  const marca = new Date().toISOString()
+
   // 3. Reconocidos (sumando duplicados) y sin clasificar
-  const stock = new Map<string, { farmacia_id: string; producto_id: string; pvp: number; unidades: number }>()
+  const stock = new Map<string, { farmacia_id: string; producto_id: string; pvp: number; unidades: number; actualizado: string }>()
   const sinClasificar = new Map<string, Record<string, unknown>>()
   for (const f of limpias) {
     const id = (f.keyEan && porEan.get(f.keyEan)) || (f.keyCn && porCn.get(f.keyCn))
@@ -49,6 +57,7 @@ export async function guardarStock(
         producto_id: id,
         pvp: Math.max(prev?.pvp ?? 0, f.pvp || 0),
         unidades: (prev?.unidades ?? 0) + f.unidades,
+        actualizado: marca,
       })
     } else {
       const codigo = (f.keyEan ?? f.keyCn)!
@@ -62,24 +71,27 @@ export async function guardarStock(
           marca: f.marca.slice(0, 100) || null,
           pvp: f.pvp || null,
           unidades: f.unidades,
+          visto: marca,
         })
     }
   }
 
-  // 4. Sustituir el stock de la farmacia
-  const del = await sb.from('stock').delete().eq('farmacia_id', farmaciaId)
-  if (del.error) return { error: del.error.message }
+  // 4. Sustituir el stock de la farmacia sin dejarla nunca vacía: primero se escribe el nuevo
+  //    (upsert por farmacia+producto) y solo cuando todo ha entrado se borra lo que no venía en el archivo.
+  //    Si algo falla a mitad, queda el stock anterior más lo ya escrito, nunca una farmacia sin stock.
   const filasStock = [...stock.values()]
   for (let i = 0; i < filasStock.length; i += 500) {
-    const { error } = await sb.from('stock').insert(filasStock.slice(i, i + 500))
-    if (error) return { error: error.message }
+    const { error } = await sb.from('stock').upsert(filasStock.slice(i, i + 500), { onConflict: 'farmacia_id,producto_id' })
+    if (error) return { error: 'No se ha podido guardar el stock. El anterior sigue activo. Vuelve a intentarlo. (' + error.message + ')' }
   }
-  await sb.from('sin_clasificar').delete().eq('farmacia_id', farmaciaId)
   const pendientes = [...sinClasificar.values()]
   for (let i = 0; i < pendientes.length; i += 500) {
-    const { error } = await sb.from('sin_clasificar').insert(pendientes.slice(i, i + 500))
+    const { error } = await sb.from('sin_clasificar').upsert(pendientes.slice(i, i + 500), { onConflict: 'farmacia_id,codigo' })
     if (error) return { error: error.message }
   }
+  const del = await sb.from('stock').delete().eq('farmacia_id', farmaciaId).lt('actualizado', marca)
+  if (del.error) return { error: del.error.message }
+  await sb.from('sin_clasificar').delete().eq('farmacia_id', farmaciaId).lt('visto', marca)
 
   // 5. Recordar las columnas para la próxima vez
   const prog = (PROGRAMAS as readonly string[]).includes(programa) ? programa : null
@@ -92,4 +104,11 @@ export async function guardarStock(
     descartadas: filas.length - limpias.length,
     total: filas.length,
   }
+}
+
+export async function cambiarSinStock(farmaciaId: string, valor: boolean) {
+  const sb = await supabaseServer()
+  const { error } = await sb.rpc('cambiar_recomendar_sin_stock', { p_farmacia: farmaciaId, p_valor: valor })
+  if (error) return { error: error.message.includes('sin_acceso') ? 'Tu usuario no puede cambiar esta farmacia.' : 'Esta opción aún no está activada. Avisa a SkinRead.' }
+  return { ok: true }
 }

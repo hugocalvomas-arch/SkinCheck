@@ -10,7 +10,8 @@ export type ResultadoFoto = {
   ui: Record<string, number>
   edad_piel?: number
   puntuacion_global?: number
-  imagenes: { marcas: string[]; despues?: string; caducan: string }
+  /** zonas: imagen con las marcas de cada aspecto (aspecto -> url), para enseñarlas por separado en el iPad */
+  imagenes: { marcas: string[]; zonas?: Record<string, string>; despues?: string; caducan: string }
 }
 
 /** Aspecto de la foto -> problema del motor de Hugo, con el umbral por defecto (provisional, hay que calibrarlo). */
@@ -125,6 +126,7 @@ async function esperarTarea(api: Api, ruta: string, limiteMs = 45_000) {
 function leerPuntuaciones(d: any) {
   const ui: Record<string, number> = {}
   const urls: string[] = []
+  const zonas: Record<string, string> = {}
   let global: number | undefined, edad: number | undefined
   const porClave = Object.fromEntries(Object.entries(ANALISIS).map(([a, k]) => [k, a]))
   const visitar = (nodo: any, clave?: string) => {
@@ -132,6 +134,11 @@ function leerPuntuaciones(d: any) {
     if (Array.isArray(nodo)) return nodo.forEach((x) => visitar(x, clave))
     const tipo = nodo.type ?? clave
     if (typeof nodo.ui_score === 'number' && tipo && porClave[tipo] && ui[porClave[tipo]] == null) ui[porClave[tipo]] = nodo.ui_score
+    // La primera imagen dentro del resultado de un aspecto es su mapa de zonas
+    if (tipo && porClave[tipo] && !zonas[porClave[tipo]]) {
+      const u = Object.values(nodo).flat().find((v) => typeof v === 'string' && /^https?:\/\//.test(v))
+      if (u) zonas[porClave[tipo]] = u as string
+    }
     if (tipo === 'all' || tipo === 'all_score') global ??= nodo.score ?? nodo.ui_score
     if (tipo === 'skin_age') edad ??= nodo.score ?? nodo.ui_score ?? nodo.value
     for (const [k, v] of Object.entries(nodo)) {
@@ -143,7 +150,7 @@ function leerPuntuaciones(d: any) {
     }
   }
   visitar(d.results ?? d)
-  return { ui, urls: [...new Set(urls)], global, edad }
+  return { ui, urls: [...new Set(urls)], zonas, global, edad }
 }
 
 // Forma del resultado sin enlaces, para calibrar (aparece en los logs de Vercel)
@@ -170,7 +177,7 @@ export async function analizarFoto(jpegBase64: string): Promise<ResultadoFoto | 
     })
     const d = await esperarTarea(api, `/s2s/v2.0/task/skin-analysis/${t.data.task_id}`)
     console.log('[perfectcorp] analisis', JSON.stringify(forma(d)))
-    const { ui, urls, global, edad } = leerPuntuaciones(d)
+    const { ui, urls, zonas, global, edad } = leerPuntuaciones(d)
     if (!Object.keys(ui).length) return { error: 'El servicio de análisis ha respondido en un formato inesperado. Sigue sin foto.' }
     const puntuaciones: Puntuaciones = Object.fromEntries(Object.entries(ui).map(([a, s]) => [a, Math.max(0, Math.min(100, 100 - s))]))
 
@@ -195,7 +202,7 @@ export async function analizarFoto(jpegBase64: string): Promise<ResultadoFoto | 
       ui,
       edad_piel: edad,
       puntuacion_global: global,
-      imagenes: { marcas: urls, despues, caducan: new Date(Date.now() + 2 * 3600_000).toISOString() },
+      imagenes: { marcas: urls, zonas, despues, caducan: new Date(Date.now() + 2 * 3600_000).toISOString() },
     }
   } catch (e) {
     const codigo = e instanceof ErrorProveedor ? e.codigo : (e as Error).message

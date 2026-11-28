@@ -1581,13 +1581,13 @@
  },
  "skinceuticals-silymarin-cf": {
   "hueco": "AM/PM",
-  "protagonista": "salicilico",
+  "protagonista": "vitc_pura",
   "tipo": "",
   "exfoliante": true,
   "piel": "normal a grasa",
   "confianza": "media",
   "origen": "automático",
-  "nota": ""
+  "nota": "Sérum de vitamina C pura al 15 % con algo de salicílico; el protagonista es la vitamina C (ciclo 2)"
  },
  "geek-gorgeous-calm-down-4-pha-bha": {
   "hueco": "PM",
@@ -22022,5 +22022,15 @@
    "ojeras",
    "bolsas"
   ]
+ },
+ "perricone-md-high-potency-hyaluronic-intensive-hydrating-serum": {
+  "hueco": "serum humectante",
+  "protagonista": "ninguno",
+  "tipo": "humectante",
+  "exfoliante": false,
+  "piel": "todas",
+  "confianza": "media",
+  "origen": "revisado",
+  "nota": "Revisado el 28/11 a petición de Hugo: sérum hidratante (siliconas, hialurónico, ceramida). La niacinamida va en 4.º lugar sin % declarado: no es el activo protagonista."
  }
 }
