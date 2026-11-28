@@ -519,7 +519,7 @@
   },
   {
    "id": "ASP-ARR-01",
-   "name": "Arrugas a partir de 25 años",
+   "name": "Arrugas a partir de 18 años",
    "category": "aspecto",
    "conditions": {
     "scores": [
@@ -531,6 +531,7 @@
     ],
     "client": {
      "edad": [
+      "18-24",
       "25-39",
       "40-49",
       "50+"
@@ -551,12 +552,12 @@
      "doi": "10.1001/archderm.143.5.606"
     }
    ],
-   "exceptions": "Embarazo, receta o reactividad cambian el activo.",
+   "exceptions": "Embarazo, receta o reactividad cambian el activo. Hugo (25/11, pregunta 4): con menos de 30 años también puede llevar retinol si hay indicación.",
    "requires_expert_validation": false
   },
   {
    "id": "ASP-ARR-02",
-   "name": "Arrugas por debajo de 25 años = probable deshidratación",
+   "name": "Arrugas por debajo de 18 años = probable deshidratación",
    "category": "aspecto",
    "conditions": {
     "scores": [
@@ -568,8 +569,7 @@
     ],
     "client": {
      "edad": [
-      "14-17",
-      "18-24"
+      "14-17"
      ]
     }
    },
@@ -1297,7 +1297,7 @@
   },
   {
    "id": "PAR-03b",
-   "name": "Arrugas + reactividad frecuente: primero la barrera",
+   "name": "Arrugas + reactividad frecuente: retinoide suave con barrera",
    "category": "pareja",
    "conditions": {
     "scores": [
@@ -1318,33 +1318,29 @@
    },
    "effect": [
     {
-     "action": "veto",
-     "active": "retinol",
-     "message": "Tu piel reacciona a menudo: primero reparamos la barrera y dejamos el retinoide para más adelante."
-    },
-    {
-     "action": "veto",
+     "action": "limit",
+     "slot": "retinoide",
      "active": "retinal",
-     "message": "Tu piel reacciona a menudo: primero reparamos la barrera y dejamos el retinoide para más adelante."
-    },
-    {
-     "action": "veto",
-     "active": "hpr",
-     "message": "Tu piel reacciona a menudo: primero reparamos la barrera y dejamos el retinoide para más adelante."
+     "max_pct": 0.05,
+     "max_nights": 2,
+     "sandwich": true,
+     "moisturizer": {
+      "one_of": [
+       "ceramidas",
+       "pantenol"
+      ],
+      "fragrance_free": true
+     },
+     "message": "Tu piel reacciona a menudo: el retinoide va a dosis baja, en una fórmula sin perfume y con calmantes, 2 noches por semana y entre dos capas de una crema con ceramidas."
     },
     {
      "action": "prefer",
      "active": "ceramidas",
      "weight": 0.3,
      "routine_step": "hidratante"
-    },
-    {
-     "action": "prefer",
-     "active": "bakuchiol",
-     "weight": 0.2
     }
    ],
-   "reason_for_client": "Como tu piel reacciona a menudo, primero reparamos la barrera. El bakuchiol es una alternativa cosmética suave, no un sustituto equivalente del retinoide.",
+   "reason_for_client": "Como tu piel reacciona a menudo, el retinoide entra a dosis baja, sin perfume y con calmantes, 2 noches por semana, y la crema repara la barrera.",
    "evidence_level": "B",
    "sources": [
     {
@@ -1352,7 +1348,7 @@
      "doi": "10.1111/bjd.16918"
     }
    ],
-   "exceptions": "Decisión de Hugo (24/11): el bakuchiol nunca se presenta como equivalente demostrado. Dhaliwal 2019 es un único ensayo de 44 personas frente a retinol 0,5 %; no demuestra equivalencia general ni frente al retinal.",
+   "exceptions": "Hugo (25/11, pregunta 4): con reactividad frecuente no se salta al bakuchiol; hay retinoides pensados para piel intolerante (retinal a dosis baja, sin perfume, con bisabolol, pantenol o ceramidas). Antes (24/11) se vetaban los retinoides y se preferia el bakuchiol. El bakuchiol nunca se presenta como equivalente demostrado.",
    "requires_expert_validation": true
   },
   {

@@ -6,9 +6,10 @@ const { TODOS } = require('./motor/catalogo.js')
 
 type Stock = { producto_id: string; pvp: number | null; unidades: number }
 
+// Sin tope de precio en ningún nivel (Hugo, 24/11): los niveles solo cambian el número de productos.
 export const NIVELES = [
-  { clave: 'basica', nombre: 'Básica', productos: 3, presupuesto: 'bajo' },
-  { clave: 'media', nombre: 'Media', productos: 4, presupuesto: 'medio' },
+  { clave: 'basica', nombre: 'Básica', productos: 3, presupuesto: 'alto' },
+  { clave: 'media', nombre: 'Media', productos: 4, presupuesto: 'alto' },
   { clave: 'completa', nombre: 'Completa', productos: 5, presupuesto: 'alto' },
 ] as const
 
@@ -67,8 +68,10 @@ export function calcularRutinas(respuestas: Record<string, any>, stock: Stock[],
   const bajoPedido = new Set<string>(lista.filter((p) => p.bajo_pedido).map((p) => p.id))
   const rutinas: Record<string, any> = {}
   let comun: any = null
-  for (const n of NIVELES) {
-    const out = motor.calcularCon({ ...respuestas, productos: n.productos, presupuesto: n.presupuesto }, lista)
+  // Escalado (Hugo, 27/11): los tres niveles se calculan encadenados; cada uno parte del anterior y solo suma
+  const outs = motor.calcularNiveles(respuestas, lista, NIVELES.map((n) => ({ productos: n.productos, presupuesto: n.presupuesto })))
+  for (const [i, n] of NIVELES.entries()) {
+    const out = outs[i]
     rutinas[n.clave] = { nombre: n.nombre, ...resumen(out, bajoPedido) }
     comun ??= { perfil: out.perfil, derivacion: out.derivacion, no_recomiendo: out.no_recomiendo }
   }

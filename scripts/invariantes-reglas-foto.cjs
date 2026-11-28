@@ -18,8 +18,9 @@ for(const c of CASOS){
   const rf = aplicarAlMotor(r, c.notas);
   const embOLac = r.embarazo === "si" || r.lactancia === "si";
   const todoBien = Object.values(c.notas).every(v => v >= 75);
-  for(const [n, pres] of NIVELES){
-    const out = motor.calcularCon({ ...r, productos: n, presupuesto: pres }, LISTA);
+  const outs = motor.calcularNiveles(r, LISTA, NIVELES.map(([n, pres]) => ({ productos: n, presupuesto: pres })));   // como en el iPad: niveles encadenados (escalado, 27/11)
+  for(const [i, [n]] of NIVELES.entries()){
+    const out = outs[i];
     rutinas++;
     const prods = out.productos.filter(p => p.id).map(p => POR_ID.get(p.id)).filter(Boolean);
     const tiene = k => prods.some(p => lleva(p, k));
@@ -53,7 +54,7 @@ for(const c of CASOS){
     { const l = out.productos.find(p => p.slot === "L" && p.producto); if(l && /micel|micellar|\bh2o\b/i.test(l.producto) && !/gel|mousse|moussant|espuma|foam/i.test(l.producto)) mal(`agua micelar como limpiador (${l.producto})`); }
     for(const T of ["AM", "PM"]){ const d = out.productos.filter(p => /^serum/.test(p.slot || "") && p.turno === T && p.id && !p.noches && !p.frecuencia); const parAz = d.length === 2 && d.some(p => /azelaico/.test(p.activo || "")) && d.some(p => /vitamina C|niacinamida/.test(p.activo || ""));
       if(d.length > 1 && !parAz) mal(`dos sérums diarios por la ${T === "AM" ? "mañana" : "noche"}`); }
-    if(prods.some(p => RETINOIDES.some(k => lleva(p, k))) && out.productos.some(p => /^serum/.test(p.slot || "") && p.turno === "AM" && p.id && ["glicolico", "lactico"].some(k => lleva(POR_ID.get(p.id), k)))) mal("glicólico o láctico de mañana con retinoide");
+    if(prods.some(p => RETINOIDES.some(k => lleva(p, k))) && out.productos.some(p => /^serum/.test(p.slot || "") && p.turno === "AM" && p.id && ["glicolico", "lactico"].some(k => aDosis(POR_ID.get(p.id), k)))) mal("glicólico o láctico de mañana con retinoide");
     if(c.notas.hidratacion < 55 && out.productos.some(p => /^serum/.test(p.slot || "") && p.id && ["glicolico", "lactico"].some(k => aDosis(POR_ID.get(p.id), k)))) mal("AHA sin aclarado con la hidratación por debajo de 55");
     // P-03 (Hugo, 24/11): con arrugas y rojez 30-49, retinal solo si nunca reacciona y la hidratación es ≥50; hasta 0,05 %, 2 noches, sándwich y crema reparadora
     if(c.notas.arrugas <= 49 && c.notas.rojez >= 30 && c.notas.rojez <= 49){

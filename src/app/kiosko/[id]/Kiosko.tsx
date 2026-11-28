@@ -27,6 +27,10 @@ const PREGUNTAS: { id: keyof Seguridad; t: string; nota: string; ops: [string, s
   { id: 'reactiva', t: '¿Tu piel reacciona cuando pruebas un producto nuevo?', nota: 'Picor, rojez o escozor. Así sabemos si empezar por lo más suave.', ops: [['nunca', 'Casi nunca'], ['a_veces', 'A veces'], ['siempre', 'Casi siempre']] },
   // Hugo, 24/11: quien empieza con un retinoide va a la concentración baja; quien ya lo tolera sigue con la suya
   { id: 'retinoide', si: (s) => s.edad !== '14-17' && s.embarazo !== 'embarazo' && s.embarazo !== 'lactancia' && s.receta !== 'si', t: '¿Usas ya retinol o retinal?', nota: 'De esto depende la concentración con la que empiezas y cuántas noches a la semana.', ops: [['nunca', 'No, nunca'], ['reciente', 'Sí, desde hace menos de 3 meses'], ['tolera', 'Sí, y lo tolero bien']] },
+  // Hito 1 (Hugo, 27/11): tratamiento en consulta (cuál y cuándo) y fototipo declarado
+  { id: 'procedimiento', t: '¿Te has hecho algún tratamiento en consulta en las últimas 2 semanas?', nota: 'Después de un peeling, un láser o microagujas, la piel necesita una rutina distinta durante un tiempo.', ops: [['no', 'No'], ['peeling', 'Un peeling'], ['laser', 'Láser o luz pulsada'], ['microagujas', 'Microagujas o radiofrecuencia con agujas'], ['limpieza', 'Una limpieza facial'], ['otro', 'Otro, o no sé cuál']] },
+  { id: 'procedimiento_cuando', si: (s) => !!s.procedimiento && s.procedimiento !== 'no', t: '¿Cuándo te lo hiciste?', nota: 'Lo que puedes usar después depende del tiempo que ha pasado y de lo que te indicaron.', ops: [['semana', 'Hace menos de una semana'], ['dos_semanas', 'Hace una o dos semanas']] },
+  { id: 'fototipo', t: 'El primer día de sol fuerte, sin protección, tu piel…', nota: 'Así sé cuánto te conviene un protector solar con color. El protector 50+ va siempre.', ops: [['I', 'Se quema siempre y nunca se broncea'], ['II', 'Se quema con facilidad y coge poco color'], ['III', 'A veces se quema y se broncea poco a poco'], ['IV', 'Casi nunca se quema y se broncea bien'], ['V', 'Se pone muy morena y rara vez se quema'], ['VI', 'No se quema nunca'], ['nd', 'No lo sé']] },
 ]
 
 const MEJORAR: [string, string][] = [
@@ -38,7 +42,6 @@ const NOMBRE: Record<string, string> = Object.fromEntries(MEJORAR)
 const NOMBRE_RESULTADO: Record<string, string> = { ...NOMBRE, tono: 'Luminosidad', hidratacion: 'Hidratación' }
 const PASOS_ANALISIS = ['Detectar el rostro', 'Medir poros, textura y brillo', 'Medir manchas, rojeces y ojeras', 'Medir arrugas y firmeza', 'Elegir ingredientes', 'Preparar tu rutina', 'Generar la simulación']
 // "Vitamina C pura" y "vitamina C estable" cuentan como el mismo ingrediente al buscarlo en la rutina
-const raiz = (t: string) => t.toLowerCase().replace(/\s+(pura|estable)$/, '')
 const lista = (l: string[]) => (l.length > 1 ? `${l.slice(0, -1).join(', ')} y ${l[l.length - 1]}` : l[0] ?? '')
 const eur = (n: number | null | undefined) => (n == null ? '' : n.toLocaleString('es-ES', { style: 'currency', currency: 'EUR' }))
 const INACTIVIDAD_MS = 150_000
@@ -460,9 +463,8 @@ export function Informe({ res, foto, farmacia, onFin }: { res: any; foto: string
   const consultas = textosConsulta(R.derivacion)
   const objetivos: any[] = res.lectura?.objetivos ?? []
   const productos = (rut.productos ?? []).filter((p: any) => p.producto)
-  const conProducto = (g: any) => productos.find((p: any) => p.activo && raiz(p.activo) === raiz(g.nombre))
-  // Los 3 ingredientes clave: primero los que ya van en la rutina de este nivel
-  const clave: any[] = [...(res.lectura?.ingredientes ?? [])].sort((a, b) => Number(!!conProducto(b)) - Number(!!conProducto(a))).slice(0, 3)
+  // Los ingredientes clave, siempre con su producto: de este nivel o del nivel en que entra (Hugo, 25/11)
+  const clave: any[] = res.lectura?.tarjetas?.[nivel] ?? []
   const marcas: string | undefined = F?.imagenes?.marcas?.find((u: string) => u !== F.imagenes.despues)
   const manana = productos.filter((p: any) => p.turno === 'AM' || p.turno === 'AMPM')
   const noche = productos.filter((p: any) => p.turno === 'PM' || p.turno === 'AMPM')
@@ -530,15 +532,14 @@ export function Informe({ res, foto, farmacia, onFin }: { res: any; foto: string
           <h3 className="text-[2rem] leading-[1.05] tracking-[-0.03em]">Tus ingredientes clave</h3>
           <ol className="grid md:grid-cols-3 gap-4 list-none p-0 m-0">
             {clave.map((g: any) => {
-              const pr = conProducto(g)
+              const pr = g.producto
               return (
                 <li key={g.nombre} className="rounded-[var(--radius-card)] border border-[var(--k-line)] bg-[var(--k-bg)] p-5 grid grid-rows-[auto_auto_1fr_auto] gap-2">
-                  <span className="inline-flex items-center gap-1.5 text-sm text-[var(--k-muted)]">{g.turno === 'PM' ? <Moon size={16} /> : <Sun size={16} />}{g.turno === 'PM' ? 'Noche' : 'Mañana'}</span>
+                  <span className="inline-flex items-center gap-1.5 text-sm text-[var(--k-muted)]">{g.turno === 'PM' ? <Moon size={16} /> : <Sun size={16} />}{g.turno === 'PM' ? 'Noche' : g.turno === 'AMPM' ? 'Mañana y noche' : 'Mañana'}</span>
                   <span className="text-2xl font-medium tracking-[-0.02em]">{g.nombre}</span>
                   <span className="text-[var(--k-muted)] leading-snug"><span className="text-[var(--k-accent)] font-medium">Para {lista(g.para.map((n: string) => n.toLowerCase()))}.</span> {g.frase ?? g.por_que}</span>
                   <span className="mt-2 pt-3 border-t border-[var(--k-line)] flex items-baseline justify-between gap-3">
-                    {pr ? <><span className="leading-snug"><span className="block text-sm text-[var(--k-muted)]">{pr.marca}{pr.bajo_pedido ? ' · Bajo pedido' : ''}</span>{pr.producto}</span><span className="cifra text-lg whitespace-nowrap">{eur(pr.precio)}</span></>
-                      : <span className="text-sm text-[var(--k-muted)]">{g.ahora ? 'Pide en el mostrador un producto con este ingrediente.' : g.motivo ?? 'Entra más adelante.'}</span>}
+                    <span className="leading-snug"><span className="block text-sm text-[var(--k-muted)]">{g.desde ? `En la rutina ${g.desde.toLowerCase()} · ` : ''}{pr.marca}{pr.bajo_pedido ? ' · Bajo pedido' : ''}</span>{pr.producto}</span><span className="cifra text-lg whitespace-nowrap">{eur(pr.precio)}</span>
                   </span>
                 </li>
               )

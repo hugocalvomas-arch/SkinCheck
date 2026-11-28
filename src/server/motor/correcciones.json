@@ -10280,6 +10280,16 @@
    {
     "fuente": "limpieza",
     "nota": "Lista limpiada: de 23 a 22 entradas"
+   },
+   {
+    "fuente": "https://farmaciajimenez.com/nuestras-marcas/skinceuticals/skinceuticals-retinol-03-crema-facial-30-ml",
+    "nota": "Retinol al 0,3 % en el nombre comercial ('Retinol 0.3'); confirmado en la ficha verificada (lote15, 25/11/2026)."
+   }
+  ],
+  "activos_declarados": [
+   {
+    "inci": "Retinol",
+    "pct_declarado": 0.3
    }
   ]
  },

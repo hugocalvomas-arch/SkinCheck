@@ -1,0 +1,525 @@
+{
+ "version": "1.0.0",
+ "fecha": "2026-11-24",
+ "referencia_sana": 88,
+ "exponente": 1.5,
+ "banda_duda": 3,
+ "metodo": "puntos(ingrediente) = Σ peso(ingrediente, aspecto) × necesidad(aspecto) × penalizaciones. necesidad = ((88 − nota) / (88 − nota más baja de la persona)) ^ 1,5, de 0 a 1. Los vetos del motor ponen el ingrediente a 0.",
+ "ingredientes": {
+  "retinal": {
+   "nombre": "Retinal",
+   "clase": "tratamiento",
+   "pesos": {
+    "arrugas": 3,
+    "firmeza": 2,
+    "textura": 2,
+    "manchas": 2,
+    "poros": 2,
+    "acne": 2,
+    "tono": 1.5,
+    "brillo": 1
+   },
+   "porque": {
+    "arrugas": "Retinoide: la evidencia más sólida en fotoenvejecimiento; el retinal actúa más rápido que el retinol a igual dosis.",
+    "firmeza": "Estimula colágeno; mejora la firmeza más despacio que la arruga fina.",
+    "textura": "Acelera la renovación: alisa la textura en 8-12 semanas.",
+    "manchas": "Reduce la pigmentación por renovación y por dispersión de melanina; más lento que los despigmentantes.",
+    "poros": "Reduce el aspecto del poro al normalizar la queratinización.",
+    "acne": "Comedolítico; el retinal además tiene acción antibacteriana leve. En cosmética, por detrás del medicamento.",
+    "tono": "Unifica el tono como efecto de la renovación.",
+    "brillo": "Efecto indirecto y modesto sobre el sebo."
+   }
+  },
+  "retinol": {
+   "nombre": "Retinol",
+   "clase": "tratamiento",
+   "pesos": {
+    "arrugas": 3,
+    "firmeza": 2,
+    "textura": 2,
+    "manchas": 2,
+    "poros": 1.5,
+    "acne": 1.5,
+    "tono": 1.5
+   },
+   "porque": {
+    "arrugas": "Retinoide con ensayos controlados frente a vehículo en arruga fina.",
+    "firmeza": "Estimula colágeno a 12-24 semanas.",
+    "textura": "Mejora la aspereza por renovación.",
+    "manchas": "Mejora la pigmentación del fotoenvejecimiento, despacio.",
+    "poros": "Mejora modesta del aspecto del poro.",
+    "acne": "Comedolítico suave; menos estudiado en acné que el retinal y el adapaleno.",
+    "tono": "Unifica el tono como efecto de la renovación."
+   }
+  },
+  "esteres_retinilo": {
+   "nombre": "Ésteres de retinilo",
+   "clase": "soporte",
+   "pesos": {
+    "arrugas": 1,
+    "textura": 1,
+    "tono": 0.5
+   },
+   "porque": {
+    "arrugas": "Se convierten poco en ácido retinoico: efecto limitado.",
+    "textura": "Renovación leve.",
+    "tono": "Efecto indirecto."
+   }
+  },
+  "bakuchiol": {
+   "nombre": "Bakuchiol",
+   "clase": "soporte",
+   "pesos": {
+    "arrugas": 1.5,
+    "manchas": 1,
+    "firmeza": 1
+   },
+   "porque": {
+    "arrugas": "Un ensayo frente a retinol con resultados parecidos, pagado por el proveedor.",
+    "manchas": "Mejora leve de la pigmentación en el mismo ensayo.",
+    "firmeza": "Datos escasos."
+   }
+  },
+  "salicilico": {
+   "nombre": "Ácido salicílico (BHA)",
+   "clase": "tratamiento",
+   "pesos": {
+    "acne": 3,
+    "poros": 2.5,
+    "brillo": 2,
+    "textura": 2,
+    "tono": 0.5
+   },
+   "porque": {
+    "acne": "Lipófilo: entra en el poro; evidencia buena en comedones y granos leves.",
+    "poros": "Desobstruye el poro y reduce su aspecto.",
+    "brillo": "Reduce el sebo visible en piel grasa.",
+    "textura": "Exfolia y alisa.",
+    "tono": "Efecto indirecto."
+   }
+  },
+  "lha": {
+   "nombre": "LHA",
+   "clase": "soporte",
+   "pesos": {
+    "acne": 1.5,
+    "textura": 1.5,
+    "poros": 1
+   },
+   "porque": {
+    "acne": "Derivado del salicílico; estudios casi todos de la marca.",
+    "textura": "Exfoliación suave y progresiva.",
+    "poros": "Desobstruye de forma suave."
+   }
+  },
+  "glicolico": {
+   "nombre": "Ácido glicólico (AHA)",
+   "clase": "tratamiento",
+   "pesos": {
+    "textura": 3,
+    "tono": 2.5,
+    "manchas": 2,
+    "arrugas": 1.5,
+    "poros": 0.5
+   },
+   "porque": {
+    "textura": "El AHA con más evidencia en aspereza y renovación.",
+    "tono": "Aporta luminosidad y unifica.",
+    "manchas": "Ayuda a aclarar al acelerar la renovación.",
+    "arrugas": "Mejora la arruga fina a concentraciones altas, sobre todo en peeling.",
+    "poros": "Efecto indirecto."
+   }
+  },
+  "lactico": {
+   "nombre": "Ácido láctico (AHA)",
+   "clase": "tratamiento",
+   "pesos": {
+    "textura": 2.5,
+    "tono": 2,
+    "hidratacion": 1,
+    "manchas": 1.5,
+    "arrugas": 1
+   },
+   "porque": {
+    "textura": "AHA más suave que el glicólico.",
+    "tono": "Luminosidad.",
+    "hidratacion": "Es humectante y forma parte del factor hidratante natural.",
+    "manchas": "Aclarado leve.",
+    "arrugas": "Efecto leve."
+   }
+  },
+  "mandelico": {
+   "nombre": "Ácido mandélico",
+   "clase": "soporte",
+   "pesos": {
+    "textura": 2,
+    "acne": 1.5,
+    "manchas": 1.5,
+    "tono": 1.5
+   },
+   "porque": {
+    "textura": "AHA de molécula grande: más tolerable, menos estudiado.",
+    "acne": "Algo de acción antibacteriana; datos limitados.",
+    "manchas": "Aclarado leve.",
+    "tono": "Luminosidad."
+   }
+  },
+  "pha": {
+   "nombre": "PHA (gluconolactona, lactobiónico)",
+   "clase": "soporte",
+   "pesos": {
+    "textura": 1.5,
+    "tono": 1,
+    "hidratacion": 1
+   },
+   "porque": {
+    "textura": "Exfoliante suave; estudios casi todos del fabricante.",
+    "tono": "Luminosidad leve.",
+    "hidratacion": "Humectante."
+   }
+  },
+  "azelaico": {
+   "nombre": "Ácido azelaico",
+   "clase": "soporte",
+   "tratamiento_desde": 15,
+   "pesos": {
+    "acne": 2.5,
+    "manchas": 2.5,
+    "rojez": 2,
+    "tono": 1.5,
+    "textura": 1
+   },
+   "porque": {
+    "acne": "Antiinflamatorio y comedolítico; la evidencia fuerte es del medicamento al 15-20 %.",
+    "manchas": "Inhibe la tirosinasa; útil en marcas y manchas, también en embarazo.",
+    "rojez": "Reduce la rojez de la piel reactiva (datos del medicamento).",
+    "tono": "Unifica.",
+    "textura": "Efecto queratolítico leve."
+   }
+  },
+  "niacinamida": {
+   "nombre": "Niacinamida",
+   "clase": "tratamiento",
+   "pesos": {
+    "brillo": 2.5,
+    "poros": 2,
+    "rojez": 2,
+    "manchas": 2,
+    "acne": 1,
+    "tono": 1.5,
+    "hidratacion": 1,
+    "textura": 1,
+    "arrugas": 1
+   },
+   "porque": {
+    "brillo": "Reduce el sebo en ensayos al 2-4 %.",
+    "poros": "Mejora el aspecto del poro.",
+    "rojez": "Refuerza la barrera y calma; bien tolerada al 2-5 %.",
+    "manchas": "Frena la transferencia de melanina al 4-5 %.",
+    "acne": "Apoyo, no tratamiento principal: Cochrane CD011368 no tiene datos para valorar su eficacia en el acné (Hito 1, propuesta 21, Hugo 27/11; antes pesaba 2).",
+    "tono": "Unifica el tono; por detrás de la vitamina C en luminosidad.",
+    "hidratacion": "Mejora la barrera y reduce la pérdida de agua.",
+    "textura": "Mejora leve.",
+    "arrugas": "Efecto leve en arruga fina."
+   }
+  },
+  "vitc_pura": {
+   "nombre": "Vitamina C pura (ácido ascórbico)",
+   "clase": "tratamiento",
+   "pesos": {
+    "tono": 3,
+    "manchas": 2.5,
+    "arrugas": 2,
+    "firmeza": 1.5,
+    "textura": 0.5
+   },
+   "porque": {
+    "tono": "El activo de referencia para luminosidad y tono apagado.",
+    "manchas": "Inhibe la tirosinasa y protege del daño solar.",
+    "arrugas": "Estimula colágeno; antioxidante de día.",
+    "firmeza": "Colágeno a largo plazo.",
+    "textura": "Efecto indirecto."
+   }
+  },
+  "vitc_derivados": {
+   "nombre": "Vitamina C estable (derivados)",
+   "clase": "soporte",
+   "pesos": {
+    "tono": 1.5,
+    "manchas": 1.5,
+    "arrugas": 0.5
+   },
+   "porque": {
+    "tono": "Menos evidencia que la pura; el etil ascórbico es el mejor estudiado.",
+    "manchas": "Aclarado leve.",
+    "arrugas": "Datos escasos."
+   }
+  },
+  "tranexamico": {
+   "nombre": "Ácido tranexámico",
+   "clase": "soporte",
+   "pesos": {
+    "manchas": 1.5,
+    "tono": 1,
+    "rojez": 0.5
+   },
+   "porque": {
+    "manchas": "Tópico: el ensayo frente a vehículo no vio diferencia; es la vía más lenta.",
+    "tono": "Unifica.",
+    "rojez": "Efecto vascular leve."
+   }
+  },
+  "thiamidol": {
+   "nombre": "Thiamidol",
+   "clase": "tratamiento",
+   "pesos": {
+    "manchas": 3,
+    "tono": 1.5
+   },
+   "porque": {
+    "manchas": "Inhibidor potente de la tirosinasa humana; estudios de la propia marca.",
+    "tono": "Unifica."
+   }
+  },
+  "arbutina": {
+   "nombre": "Arbutina",
+   "clase": "soporte",
+   "pesos": {
+    "manchas": 1.5,
+    "tono": 1
+   },
+   "porque": {
+    "manchas": "Despigmentante suave.",
+    "tono": "Unifica."
+   }
+  },
+  "kojico": {
+   "nombre": "Ácido kójico",
+   "clase": "soporte",
+   "pesos": {
+    "manchas": 1,
+    "tono": 0.5
+   },
+   "porque": {
+    "manchas": "Despigmentante suave; puede sensibilizar.",
+    "tono": "Efecto leve."
+   }
+  },
+  "peptidos": {
+   "nombre": "Péptidos",
+   "clase": "soporte",
+   "pesos": {
+    "arrugas": 1,
+    "firmeza": 1,
+    "ojeras": 0.5
+   },
+   "porque": {
+    "arrugas": "Ensayos pequeños y casi todos de proveedor.",
+    "firmeza": "Datos limitados.",
+    "ojeras": "Algunos péptidos en contorno; evidencia baja."
+   }
+  },
+  "ceramidas": {
+   "nombre": "Ceramidas",
+   "clase": "soporte",
+   "pesos": {
+    "hidratacion": 2,
+    "rojez": 1.5,
+    "textura": 0.5
+   },
+   "porque": {
+    "hidratacion": "Reparan la barrera y reducen la pérdida de agua.",
+    "rojez": "La barrera reparada se irrita menos.",
+    "textura": "Efecto indirecto."
+   }
+  },
+  "pantenol": {
+   "nombre": "Pantenol",
+   "clase": "soporte",
+   "pesos": {
+    "rojez": 1.5,
+    "hidratacion": 1.5
+   },
+   "porque": {
+    "rojez": "Calma y repara.",
+    "hidratacion": "Humectante y reparador."
+   }
+  },
+  "hialuronico": {
+   "nombre": "Ácido hialurónico",
+   "clase": "soporte",
+   "pesos": {
+    "hidratacion": 2,
+    "arrugas": 0.5
+   },
+   "porque": {
+    "hidratacion": "Humectante; efecto inmediato y temporal.",
+    "arrugas": "Rellena la arruga fina por hidratación, de forma temporal."
+   }
+  },
+  "glicerina": {
+   "nombre": "Glicerina",
+   "clase": "soporte",
+   "pesos": {
+    "hidratacion": 1.5
+   },
+   "porque": {
+    "hidratacion": "Humectante de referencia, barata y muy estudiada."
+   }
+  },
+  "urea": {
+   "nombre": "Urea",
+   "clase": "soporte",
+   "tratamiento_desde": 10,
+   "pesos": {
+    "hidratacion": 2.5,
+    "textura": 2
+   },
+   "porque": {
+    "hidratacion": "Humectante y queratolítica; al 10 % o más es tratamiento de la sequedad.",
+    "textura": "Alisa la aspereza."
+   }
+  },
+  "centella": {
+   "nombre": "Centella asiática",
+   "clase": "soporte",
+   "pesos": {
+    "rojez": 1.5,
+    "hidratacion": 0.5
+   },
+   "porque": {
+    "rojez": "Calmante y reparadora.",
+    "hidratacion": "Efecto leve."
+   }
+  },
+  "ectoina": {
+   "nombre": "Ectoína",
+   "clase": "soporte",
+   "pesos": {
+    "rojez": 1,
+    "hidratacion": 1
+   },
+   "porque": {
+    "rojez": "Calmante; estudios pequeños.",
+    "hidratacion": "Humectante."
+   }
+  },
+  "bisabolol": {
+   "nombre": "Bisabolol",
+   "clase": "soporte",
+   "pesos": {
+    "rojez": 1
+   },
+   "porque": {
+    "rojez": "Calmante."
+   }
+  },
+  "zinc": {
+   "nombre": "Zinc (PCA o gluconato)",
+   "clase": "soporte",
+   "pesos": {
+    "brillo": 1.5,
+    "acne": 1
+   },
+   "porque": {
+    "brillo": "Reduce el sebo; datos limitados en tópico.",
+    "acne": "Antiinflamatorio leve."
+   }
+  },
+  "escualano": {
+   "nombre": "Escualano",
+   "clase": "soporte",
+   "pesos": {
+    "hidratacion": 1
+   },
+   "porque": {
+    "hidratacion": "Emoliente que reduce la pérdida de agua."
+   }
+  },
+  "cafeina": {
+   "nombre": "Cafeína",
+   "clase": "soporte",
+   "pesos": {
+    "ojeras": 1
+   },
+   "porque": {
+    "ojeras": "Vasoconstrictor; mejora leve de la ojera vascular y la bolsa."
+   }
+  }
+ },
+ "penalizaciones": [
+  {
+   "si": "reactiva_a_veces",
+   "texto": "Tu piel reacciona a veces: los activos que más irritan pierden puntos.",
+   "factor": {
+    "retinol": 0.7,
+    "retinal": 0.9,
+    "glicolico": 0.6,
+    "lactico": 0.8,
+    "salicilico": 0.8,
+    "vitc_pura": 0.8,
+    "kojico": 0.7
+   }
+  },
+  {
+   "si": "reactiva_siempre",
+   "texto": "Tu piel reacciona casi siempre: primero calmar y reparar.",
+   "factor": {
+    "retinol": 0.4,
+    "retinal": 0.5,
+    "glicolico": 0.3,
+    "lactico": 0.5,
+    "salicilico": 0.5,
+    "vitc_pura": 0.5,
+    "azelaico": 0.8,
+    "kojico": 0.5,
+    "ceramidas": 1.3,
+    "pantenol": 1.3,
+    "centella": 1.3
+   }
+  },
+  {
+   "si": "rojez_baja",
+   "texto": "Con rojez (nota por debajo de 58), el retinol, los ácidos y la vitamina C pura pierden puntos; el retinal suave y los calmantes ganan.",
+   "factor": {
+    "retinol": 0.6,
+    "retinal": 0.85,
+    "glicolico": 0.5,
+    "lactico": 0.7,
+    "salicilico": 0.7,
+    "vitc_pura": 0.7,
+    "urea": 0.5,
+    "niacinamida": 1.1,
+    "ceramidas": 1.2,
+    "pantenol": 1.2,
+    "centella": 1.2
+   }
+  },
+  {
+   "si": "hidratacion_baja",
+   "texto": "Con la piel deshidratada (nota por debajo de 58), primero hidratar: los exfoliantes pierden puntos.",
+   "factor": {
+    "glicolico": 0.6,
+    "salicilico": 0.6,
+    "lactico": 0.85
+   }
+  },
+  {
+   "si": "menor_25",
+   "texto": "Con menos de 25 años, los antiedad no hacen falta.",
+   "factor": {
+    "retinol": 0.7,
+    "bakuchiol": 0.5,
+    "peptidos": 0.5,
+    "esteres_retinilo": 0.5
+   }
+  },
+  {
+   "si": "brillo_alto",
+   "texto": "Con brillo (nota 63 o menos), los emolientes densos pierden puntos.",
+   "factor": {
+    "escualano": 0.5
+   }
+  }
+ ]
+}
