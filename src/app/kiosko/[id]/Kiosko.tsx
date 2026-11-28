@@ -1,7 +1,7 @@
 'use client'
 /* eslint-disable @next/next/no-img-element, @typescript-eslint/no-explicit-any */
-import { MallaFacial, type EstadoCara } from './MallaFacial'
-import { AVISO, brilloYNitidez } from '@/lib/calidadFoto'
+import { MallaFacial, type CajaCara, type EstadoCara } from './MallaFacial'
+import { AVISO, brilloYNitidez, recorteCara } from '@/lib/calidadFoto'
 import { useCallback, useEffect, useRef, useState, useTransition } from 'react'
 import { ArrowLeft, ArrowRight, CalendarCheck, Camera, Check, Drop, ScanSmiley, ShieldCheck, Sparkle, Trash, X } from '@phosphor-icons/react'
 import { Esquinas, Informe } from './Resultados'
@@ -340,6 +340,7 @@ export function Camara({ error, onFoto }: { error: string; onFoto: (b64: string,
   const [hecha, setHecha] = useState<string | null>(null)
   const [manual, setManual] = useState(false)
   const caraRef = useRef<EstadoCara>('buscando')
+  const caja = useRef<CajaCara | null>(null)
   const intentos = useRef(0)
   const enviada = useRef(false)
   const alEstado = useCallback((e: EstadoCara) => { caraRef.current = e; setCara(e) }, [])
@@ -374,15 +375,18 @@ export function Camara({ error, onFoto }: { error: string; onFoto: (b64: string,
   const capturar = useCallback(() => {
     const v = video.current
     if (!v || !v.videoWidth) return null
-    // recorte vertical 3:4 centrado: la cara debe ocupar más del 60 % del ancho
-    const alto = v.videoHeight
-    const ancho = Math.min(v.videoWidth, Math.round((alto * 3) / 4))
-    const x = Math.round((v.videoWidth - ancho) / 2)
+    // Recorte vertical 3:4 alrededor de la cara, para que ocupe ~72 % del ancho (Perfect Corp pide más del 60 %).
+    // Sin caja (detector sin cargar), el recorte centrado de antes.
+    const r = caja.current ? recorteCara(caja.current, v.videoWidth, v.videoHeight) : null
+    const alto = r?.h ?? v.videoHeight
+    const ancho = r?.w ?? Math.min(v.videoWidth, Math.round((alto * 3) / 4))
+    const x = r?.x ?? Math.round((v.videoWidth - ancho) / 2)
+    const y = r?.y ?? 0
     const escala = Math.min(1, 1280 / alto)
     const c = document.createElement('canvas')
     c.width = Math.round(ancho * escala)
     c.height = Math.round(alto * escala)
-    c.getContext('2d')!.drawImage(v, x, 0, ancho, alto, 0, 0, c.width, c.height)
+    c.getContext('2d')!.drawImage(v, x, y, ancho, alto, 0, 0, c.width, c.height)
     return c
   }, [])
 
@@ -424,6 +428,7 @@ export function Camara({ error, onFoto }: { error: string; onFoto: (b64: string,
       intentos.current++
       const ultima = intentos.current >= 3 // a la tercera se envía la mejor que haya, para no dejarla esperando
       if (!ultima && brillo < 60) { setAviso('La foto ha salido oscura. Busca más luz de frente y la repetimos.'); setFase('colocando'); return }
+      if (!ultima && brillo > 225) { setAviso('La foto ha salido con demasiada luz. Apártate un poco del foco y la repetimos.'); setFase('colocando'); return }
       if (!ultima && nitidez < NITIDEZ_MIN) { setAviso('La foto ha salido movida. No te muevas un momento y la repetimos.'); setFase('colocando'); return }
       enviar(c)
     }
@@ -439,7 +444,7 @@ export function Camara({ error, onFoto }: { error: string; onFoto: (b64: string,
         <video ref={video} autoPlay playsInline muted className="absolute inset-0 w-full h-full object-cover -scale-x-100" />
         <div className="absolute inset-0 pointer-events-none velo-ovalo" />
         <div className={`absolute left-[15%] right-[15%] top-[10%] bottom-[13%] rounded-[50%] border-2 pointer-events-none transition-colors duration-300 ${cara === 'lista' || fase === 'hecha' ? 'border-cara-lista' : 'border-sobre-marca/70'}`} />
-        <MallaFacial video={video} onEstado={alEstado} />
+        <MallaFacial video={video} onEstado={alEstado} caja={caja} />
         <p aria-live="polite" className={`absolute top-4 left-1/2 -translate-x-1/2 rounded-full px-4 py-2 text-sm font-medium whitespace-nowrap flex items-center gap-2 transition-colors ${fase === 'hecha' ? 'bg-[var(--k-accent)] text-sobre-marca' : 'bg-cristal text-sobre-marca'}`}>
           {fase === 'hecha' && <Check size={16} weight="bold" />}{texto}
         </p>
@@ -461,7 +466,7 @@ export function Camara({ error, onFoto }: { error: string; onFoto: (b64: string,
         <h2 className="text-[2.25rem] leading-[1.05]">Coloca tu cara dentro del óvalo</h2>
         <p className="texto m-0">La foto se hace sola cuando estés en posición. No hace falta tocar nada.</p>
         <ul className="space-y-3 text-lg text-[var(--k-muted)]">
-          {['Cara lavada, sin maquillaje ni crema', 'Luz de frente, sin una ventana detrás', 'Acércate hasta llenar el óvalo', 'Cabeza recta, mirando a la cámara', 'Cara relajada, sin sonreír ni fruncir', 'Sin gafas y con la frente despejada'].map((t) => (
+          {['Cara lavada, sin maquillaje ni crema', 'Luz de frente, sin una ventana detrás', 'Acércate hasta llenar el óvalo', 'Cabeza recta, mirando a la cámara', 'Cara relajada, sin sonreír ni fruncir', 'Sin gafas, con el flequillo apartado y la frente despejada'].map((t) => (
             <li key={t} className="flex gap-3"><Check size={22} className="text-[var(--k-accent)] shrink-0 mt-0.5" />{t}</li>
           ))}
         </ul>

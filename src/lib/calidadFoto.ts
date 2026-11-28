@@ -3,7 +3,7 @@
 
 export type EstadoCara =
   | 'buscando' | 'lejos' | 'cerca' | 'descentrada' | 'girada' | 'inclinada' | 'barbilla_arriba' | 'barbilla_abajo'
-  | 'oscura' | 'sombra' | 'ojos' | 'sonrisa' | 'moviendo' | 'lista' | 'sin_detector'
+  | 'oscura' | 'quemada' | 'sombra' | 'ojos' | 'sonrisa' | 'moviendo' | 'lista' | 'sin_detector'
 
 export const AVISO: Record<EstadoCara, string> = {
   buscando: 'Buscando tu cara',
@@ -15,6 +15,7 @@ export const AVISO: Record<EstadoCara, string> = {
   barbilla_arriba: 'Baja un poco la barbilla',
   barbilla_abajo: 'Sube un poco la barbilla',
   oscura: 'Falta luz: ponte con la luz de frente',
+  quemada: 'Demasiada luz: apártate un poco del foco',
   sombra: 'La luz te da de lado: gírate hacia ella',
   ojos: 'Abre los ojos y mira a la cámara',
   sonrisa: 'Relaja la cara, sin sonreír',
@@ -34,15 +35,19 @@ export type Medidas = {
   movimiento: number
   /** Blendshapes de MediaPipe por nombre, de 0 a 1 */
   gestos: Record<string, number>
+  /** Ancho mínimo de la cara (fracción de W) para que el recorte final tenga resolución suficiente */
+  anchoMin?: number
 }
 
-// Umbrales. Están del lado permisivo: mejor una foto buena que una clienta esperando.
+// Umbrales, ajustados a lo que pide Perfect Corp (docs de AI Skin Analysis y del Camera Kit, nivel MODERATE):
+// cara de frente (giro e inclinación de unos ±10°), luz suficiente y pareja, sin sobreexponer, sin movimiento.
+// El "60 % del ancho" de Perfect Corp no se le pide a la clienta: se consigue recortando la foto (recorteCara).
 export const UMBRAL = {
-  anchoMin: 0.38, anchoMax: 0.78,
+  anchoMin: 0.42, anchoMax: 0.8,
   centro: 0.15,
-  giro: 0.09, inclinacion: 8, // fracción del ancho / grados
+  giro: 0.06, inclinacion: 8, // fracción del ancho (≈10°) / grados
   barbillaMin: 0.33, barbillaMax: 0.6,
-  luzMin: 70, sombra: 0.3,
+  luzMin: 70, luzMax: 215, sombra: 0.25,
   ojos: 0.55, sonrisa: 0.5,
   movimiento: 0.012,
 }
@@ -53,7 +58,7 @@ export function evaluarCara(m: Medidas): EstadoCara {
   const izq = Math.min(...xs), der = Math.max(...xs), arr = Math.min(...ys), aba = Math.max(...ys)
   const ancho = der - izq, cx = (izq + der) / 2, cy = (arr + aba) / 2
 
-  if (ancho < W * UMBRAL.anchoMin) return 'lejos'
+  if (ancho < W * Math.max(UMBRAL.anchoMin, m.anchoMin ?? 0)) return 'lejos'
   if (ancho > W * UMBRAL.anchoMax) return 'cerca'
   if (Math.abs(cx - W / 2) > W * UMBRAL.centro || Math.abs(cy - H * 0.48) > H * UMBRAL.centro) return 'descentrada'
 
@@ -76,6 +81,7 @@ export function evaluarCara(m: Medidas): EstadoCara {
   if (m.luz) {
     const media = (m.luz.izq + m.luz.der) / 2
     if (media < UMBRAL.luzMin) return 'oscura'
+    if (media > UMBRAL.luzMax) return 'quemada'
     if (Math.abs(m.luz.izq - m.luz.der) / Math.max(1, Math.max(m.luz.izq, m.luz.der)) > UMBRAL.sombra) return 'sombra'
   }
 
@@ -103,4 +109,27 @@ export function brilloYNitidez(px: Uint8ClampedArray, w: number, h: number) {
   }
   const media = s / (n || 1)
   return { brillo: suma / (w * h || 1), nitidez: s2 / (n || 1) - media * media }
+}
+
+/** Ancho de la cara en el recorte que se envía: Perfect Corp exige más del 60 % (error_src_face_too_small) */
+export const CARA_EN_RECORTE = 0.72
+/** Lado corto mínimo del recorte (SD de Perfect Corp: 480 px) */
+export const LADO_MIN = 480
+
+/**
+ * Recorte 3:4 en vertical alrededor de la cara, en píxeles del vídeo, para que la cara ocupe ~72 % del ancho.
+ * caja: extremos de la cara en coordenadas normalizadas del vídeo (sin espejo). null si no cabe con resolución suficiente.
+ */
+export function recorteCara(caja: { x0: number; x1: number; y0: number; y1: number }, vw: number, vh: number) {
+  const anchoCara = (caja.x1 - caja.x0) * vw
+  let w = anchoCara / CARA_EN_RECORTE
+  let h = (w * 4) / 3
+  if (h > vh) { h = vh; w = (h * 3) / 4 }
+  if (w > vw) { w = vw; h = (w * 4) / 3 }
+  if (w < LADO_MIN) return null
+  const cx = ((caja.x0 + caja.x1) / 2) * vw
+  const cy = ((caja.y0 + caja.y1) / 2) * vh - h * 0.04 // un poco de aire para la frente
+  const x = Math.max(0, Math.min(vw - w, cx - w / 2))
+  const y = Math.max(0, Math.min(vh - h, cy - h / 2))
+  return { x: Math.round(x), y: Math.round(y), w: Math.round(w), h: Math.round(h) }
 }

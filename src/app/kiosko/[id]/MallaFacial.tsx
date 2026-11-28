@@ -2,7 +2,9 @@
 import { useEffect, useRef } from 'react'
 import type { FaceLandmarker, NormalizedLandmark } from '@mediapipe/tasks-vision'
 import { ESTILO, aPares, dibujarMallaClinica, type EstiloMalla, type Uniones } from '@/lib/mallaClinica'
-import { evaluarCara, type EstadoCara } from '@/lib/calidadFoto'
+import { CARA_EN_RECORTE, LADO_MIN, evaluarCara, type EstadoCara } from '@/lib/calidadFoto'
+
+export type CajaCara = { x0: number; x1: number; y0: number; y1: number }
 
 export { ESTILOS, type EstiloMalla } from '@/lib/mallaClinica'
 
@@ -30,7 +32,7 @@ function cargar() {
 }
 
 
-export function MallaFacial({ video, onEstado, estilo = 'clinica' }: { video: React.RefObject<HTMLVideoElement | null>; onEstado?: (e: EstadoCara) => void; estilo?: EstiloMalla }) {
+export function MallaFacial({ video, onEstado, caja, estilo = 'clinica' }: { video: React.RefObject<HTMLVideoElement | null>; onEstado?: (e: EstadoCara) => void; caja?: React.MutableRefObject<CajaCara | null>; estilo?: EstiloMalla }) {
   const lienzo = useRef<HTMLCanvasElement>(null)
   const estiloRef = useRef(estilo)
   useEffect(() => { estiloRef.current = estilo }, [estilo])
@@ -124,7 +126,13 @@ export function MallaFacial({ video, onEstado, estilo = 'clinica' }: { video: Re
         opacidad = Math.min(1, opacidad + 0.06)
         ctx.globalAlpha = opacidad
         dibujarMallaClinica(ctx, suave, uniones, ESTILO[estiloRef.current] ?? ESTILO.clinica, { t, quieto })
-        fijar(evaluarCara({ Q: crudo, W, H, luz, movimiento, gestos }))
+        // Caja de la cara en el vídeo (sin espejo), para recortar la foto alrededor de ella
+        const nx = puntos.map((p) => p.x), ny = puntos.map((p) => p.y)
+        if (caja) caja.current = { x0: Math.min(...nx), x1: Math.max(...nx), y0: Math.min(...ny), y1: Math.max(...ny) }
+        // Con una cámara de poca resolución hay que acercarse más para que el recorte tenga al menos 480 px
+        // (cara en px del vídeo = cara en pantalla / s; hace falta LADO_MIN × CARA_EN_RECORTE)
+        const anchoMin = (LADO_MIN * CARA_EN_RECORTE * s) / W
+        fijar(evaluarCara({ Q: crudo, W, H, luz, movimiento, gestos, anchoMin }))
         ctx.globalAlpha = 1
       }
       bucle()
