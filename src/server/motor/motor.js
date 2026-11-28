@@ -474,13 +474,17 @@ function pauta(r, P, c, veto, modo){
     // el segundo sérum va al turno contrario
     if(serums.length >= 1 && d.flexible){ const am = serums.filter(s => s.turno === "AM").length, pm = serums.length - am; d.turno = am > pm ? "PM" : am < pm ? "AM" : d.k === "despigmentante" ? "PM" : (serums[serums.length - 1].turno === "AM" ? "PM" : "AM");
       // misma noche que el retinoide: despigmentante suave, no azelaico (el azelaico iría de mañana)
-      if(d.turno === "PM" && serums.some(s => s.k === "retinoide") && d.activos) d.activos = d.activos.filter(a => a !== "azelaico"); }
+      if(d.turno === "PM" && serums.some(s => s.k === "retinoide") && d.activos) d.activos = d.activos.filter(a => a !== "azelaico");
+      // R35 y pregunta 10: con manchas <60, si el azelaico mixto llega detrás del despigmentante, el azelaico va de mañana y el despigmentante de noche (T1-27, catálogo del PR #17)
+      if(d.k === "azelaico_mixto" && d.turno === "PM" && nb("manchas") < 60 && !serums.some(s => s.k === "retinoide")){ const dp = serums.find(s => s.k === "despigmentante" && s.turno === "AM" && s.flexible); if(dp && serums.filter(s => s.turno === "AM").length === 1){ dp.turno = "PM"; d.turno = "AM"; } } }
     if(serums.length >= 1 && !d.flexible && serums.some(s => s.turno === d.turno) && !(["aha", "pha"].includes(d.k) && serums.some(s => s.k === "retinoide")) && !(d.k === "retinoide" && serums.some(s => ["aha", "pha"].includes(s.k)))){
       // mismo turno y no se puede mover: solo si el que estaba es flexible
       // el salicílico sin retinoide va de noche (regla de abajo): se puede mover ya, para no dejar fuera la vitamina C de la mañana (ciclo 20, C20-10)
       const otro = serums.find(s => s.turno === d.turno && (s.flexible || (s.k === "salicilico" && d.turno === "AM" && !serums.some(q => q.k === "retinoide"))));
       // la vitamina C comparte la mañana con un tratamiento suave antes que mandarlo a la noche del retinoide
       if(otro && d.k === "vitc" && serums.some(s => s.k === "retinoide")){ /* los dos de mañana */ }
+      // R35: el exfoliante no empuja un paso de manchas (<60) a un turno que ya tiene sérum; el exfoliante es el último en entrar (T1-27, catálogo del PR #17)
+      else if(otro && ["aha", "pha", "salicilico"].includes(d.k) && nb("manchas") < 60 && otro.k === "despigmentante" && serums.some(s => s.k === "azelaico_mixto" && s.turno === (d.turno === "AM" ? "PM" : "AM"))){ fuera.push({k: x.k, que: nombreDeseo(x.k), por: "Un sérum por momento del día: más capas no suman y pueden hacer bolitas."}); continue; }
       else if(otro) otro.turno = d.turno === "AM" ? "PM" : "AM";
       else { fuera.push({k: x.k, que: nombreDeseo(x.k), por: "Ocuparía el mismo turno que otro activo fuerte."}); continue; }
     }
@@ -974,7 +978,9 @@ function candidatos(h, ctx){
   const fuertes = out.filter(x => !x.dosis || x.dosis.tipo !== "no_declarada"), flojos = out.filter(x => x.dosis && x.dosis.tipo === "no_declarada");
   // desempate estable por id de producto (Hugo, 24/11): nada de semillas calculadas con las notas
   const ord = a => a.sort((x, y) => (Math.round(y.score * 1e6) - Math.round(x.score * 1e6)) || x.p.id.localeCompare(y.p.id));
-  return {principales: ord(fuertes), sin_dosis: ord(flojos)};
+  // producto nuevo con la clasificación sin revisar por Hugo (catálogo del PR #17): dentro del margen de empate, gana el revisado (T1-30)
+  const sinRev = x => !!(x.p.ficha_nueva && /^propuesta/.test((x.p.v2 || {}).origen || "")), revisadoPrimero = a => { if(a.length > 1 && sinRev(a[0])){ const i = a.findIndex(x => !sinRev(x) && a[0].score - x.score <= EMPATE); if(i > 0) a.unshift(a.splice(i, 1)[0]); } return a; };
+  return {principales: revisadoPrimero(ord(fuertes)), sin_dosis: revisadoPrimero(ord(flojos))};
 }
 
 const TOPE = {bajo: 30, medio: 60, alto: Infinity};
@@ -985,7 +991,10 @@ function elegir(pa, ctx){
   const tope = TOPE[ctx.r.presupuesto] || 60;
   const cand = {}, sel = {}, usados = new Set(), sinProducto = [], repetidos = new Set();
   for(const h of pa.huecos){ cand[h.slot] = candidatos(h, ctx); }
-  for(const h of pa.huecos){
+  // el azelaico mixto se elige antes que el despigmentante: tiene menos productos donde elegir, y así el despigmentante no le repite el tranexámico (T1-27, catálogo del PR #17)
+  const orden = pa.huecos.slice(), iAz = orden.findIndex(h => h.deseo && h.deseo.k === "azelaico_mixto"), iDp = orden.findIndex(h => h.deseo && h.deseo.k === "despigmentante");
+  if(iAz > iDp && iDp >= 0) orden.splice(iDp, 0, orden.splice(iAz, 1)[0]);
+  for(const h of orden){
     let l = cand[h.slot].principales.filter(x => !usados.has(x.p.id));
     // un sérum no repite el activo de otro sérum, ni uno que otro sérum ya lleva a dosis (p. ej. niacinamida dentro del glicólico)
     if(h.deseo && l.length){ const prev = Object.entries(sel).filter(([s]) => /^serum/.test(s)).map(([, e]) => e); const ya = prev.map(e => e.activo);
