@@ -991,7 +991,10 @@ function elegir(pa, ctx){
   const tope = TOPE[ctx.r.presupuesto] || 60;
   const cand = {}, sel = {}, usados = new Set(), sinProducto = [], repetidos = new Set();
   for(const h of pa.huecos){ cand[h.slot] = candidatos(h, ctx); }
-  for(const h of pa.huecos){
+  // el azelaico mixto se elige antes que el despigmentante: tiene menos productos donde elegir, y así el despigmentante no le repite el tranexámico (T1-27, catálogo del PR #17)
+  const orden = pa.huecos.slice(), iAz = orden.findIndex(h => h.deseo && h.deseo.k === "azelaico_mixto"), iDp = orden.findIndex(h => h.deseo && h.deseo.k === "despigmentante");
+  if(iAz > iDp && iDp >= 0) orden.splice(iDp, 0, orden.splice(iAz, 1)[0]);
+  for(const h of orden){
     let l = cand[h.slot].principales.filter(x => !usados.has(x.p.id));
     // un sérum no repite el activo de otro sérum, ni uno que otro sérum ya lleva a dosis (p. ej. niacinamida dentro del glicólico)
     if(h.deseo && l.length){ const prev = Object.entries(sel).filter(([s]) => /^serum/.test(s)).map(([, e]) => e); const ya = prev.map(e => e.activo);
