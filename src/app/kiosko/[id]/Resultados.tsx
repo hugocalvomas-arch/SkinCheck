@@ -23,12 +23,12 @@ const eur = (n: number | null | undefined) => (n == null ? '' : n.toLocaleString
 const primeraFrase = (t?: string | null) => { const f = (t ?? '').split(/(?<=\.)\s/)[0]?.trim() ?? ''; return f && !f.endsWith('.') ? `${f}.` : f }
 const sinMovimiento = () => typeof window !== 'undefined' && window.matchMedia('(prefers-reduced-motion: reduce)').matches
 
-type Clave = 'evolucion' | 'piel' | 'ingredientes' | 'productos' | 'semana' | 'llevar'
-const ETIQUETA: Record<Clave, string> = { evolucion: 'Tu evolución', piel: 'Tu piel', ingredientes: 'Ingredientes', productos: 'Tu rutina', semana: 'Tu semana', llevar: 'Llévatela' }
-const SIGUIENTE: Record<Clave, string> = { evolucion: 'Ver tu piel hoy', piel: 'Ver tus ingredientes', ingredientes: 'Ver tus productos', productos: 'Ver tu semana', semana: 'Llévatela', llevar: 'Terminar' }
+type Clave = 'evolucion' | 'piel' | 'ingredientes' | 'productos' | 'semana' | 'futuro' | 'llevar'
+const ETIQUETA: Record<Clave, string> = { evolucion: 'Tu evolución', piel: 'Tu piel', ingredientes: 'Ingredientes', productos: 'Tu rutina', semana: 'Tu semana', futuro: 'Antes y después', llevar: 'Llévatela' }
+const SIGUIENTE: Record<Clave, string> = { evolucion: 'Ver tu piel hoy', piel: 'Ver tus ingredientes', ingredientes: 'Ver tus productos', productos: 'Ver tu semana', semana: 'Ver tu antes y después', futuro: 'Llévatela', llevar: 'Terminar' }
 type Nivel = 'basica' | 'media' | 'completa'
 
-export function Informe({ res, foto, farmacia, emailActivo = true, onFin }: { res: any; foto: string | null; farmacia: string; emailActivo?: boolean; onFin: () => void }) {
+export function Informe({ res, foto, farmacia, emailActivo = true, onFin, simulacion }: { res: any; foto: string | null; farmacia: string; emailActivo?: boolean; onFin: () => void; simulacion?: { antes: string; despues: string } }) {
   const R = res.rutinas
   const F = res.foto
   const [k, setK] = useState(0)
@@ -44,7 +44,9 @@ export function Informe({ res, foto, farmacia, emailActivo = true, onFin }: { re
       </div>
     )
 
-  const pasos: Clave[] = [...(res.anterior && F ? ['evolucion' as const] : []), 'piel', 'ingredientes', 'productos', 'semana', 'llevar']
+  // El antes y el después necesita la foto de hoy y la simulación de Perfect Corp
+  const sim = simulacion ?? (foto && F?.imagenes?.despues ? { antes: foto, despues: F.imagenes.despues } : null)
+  const pasos: Clave[] = [...(res.anterior && F ? ['evolucion' as const] : []), 'piel', 'ingredientes', 'productos', 'semana', ...(sim ? ['futuro' as const] : []), 'llevar']
   const actual = pasos[k]
   const ir = (n: number) => {
     if (n < 0) return
@@ -68,6 +70,7 @@ export function Informe({ res, foto, farmacia, emailActivo = true, onFin }: { re
         {actual === 'ingredientes' && <PasoIngredientes R={R} lectura={res.lectura} nivel={nivel} conProducto={conProducto} />}
         {actual === 'productos' && <PasoProductos R={R} nivel={nivel} onNivel={setNivel} ingredientes={res.lectura?.ingredientes ?? []} />}
         {actual === 'semana' && <PasoSemana rut={rut} />}
+        {actual === 'futuro' && sim && <PasoFuturo sim={sim} objetivos={res.lectura?.objetivos ?? []} />}
         {actual === 'llevar' && <PasoLlevar res={res} rut={rut} foto={foto} farmacia={farmacia} nivel={nivel} emailActivo={emailActivo} />}
       </div>
       <footer className="sticky bottom-0 z-10 border-t border-[var(--k-line)] bg-papel/95 backdrop-blur-sm">
@@ -148,7 +151,6 @@ function PasoPiel({ F, foto, objetivos }: { F: any; foto: string | null; objetiv
   const conMapa = filas.filter((f) => zonas[f.a])
   const [activo, setActivo] = useState(-1)
   const [fijo, setFijo] = useState(false)
-  const [vista, setVista] = useState<'analisis' | 'simulacion'>('analisis')
 
   useEffect(() => {
     if (!conMapa.length || fijo) return
@@ -174,12 +176,11 @@ function PasoPiel({ F, foto, objetivos }: { F: any; foto: string | null; objetiv
 
   const base = foto ?? F?.imagenes?.marcas?.[0]
   const mostrado = activo >= 0 ? conMapa[activo] : null
-  const despues = foto && F?.imagenes?.despues
 
   return (
     <div className="grid md:grid-cols-[minmax(0,5fr)_minmax(0,7fr)] gap-8 md:gap-12 items-start">
       <div className="w-full max-w-md mx-auto grid gap-3">
-        {vista === 'simulacion' && despues ? <AntesDespues antes={foto!} despues={despues} /> : (
+        {(
           <figure className="m-0 relative aspect-[4/5] rounded-[var(--radius-card)] overflow-hidden bg-[var(--k-soft)] r-foto">
             {base && <img src={base} alt="Tu foto" className={`absolute inset-0 w-full h-full object-cover ${foto ? '-scale-x-100' : ''}`} />}
             {conMapa.map((f, n) => (
@@ -194,15 +195,6 @@ function PasoPiel({ F, foto, objetivos }: { F: any; foto: string | null; objetiv
             )}
           </figure>
         )}
-        {despues && (
-          <div role="tablist" className="inline-flex justify-self-center rounded-[var(--radius-card)] border border-[var(--k-line)] p-1 r-sube" style={{ ['--d' as any]: '900ms' }}>
-            {(['analisis', 'simulacion'] as const).map((v) => (
-              <button key={v} role="tab" aria-selected={vista === v} onClick={() => setVista(v)} className={`h-11 px-4 rounded-lg text-sm ${vista === v ? 'bg-[var(--k-accent)] text-sobre-marca' : 'text-[var(--k-muted)]'}`}>
-                {v === 'analisis' ? 'Tu análisis' : 'Con tu rutina'}
-              </button>
-            ))}
-          </div>
-        )}
       </div>
 
       <div className="grid gap-6">
@@ -216,7 +208,7 @@ function PasoPiel({ F, foto, objetivos }: { F: any; foto: string | null; objetiv
             const resaltada = mostrado?.a === f.a
             return (
               <li key={f.a} className="r-sube" style={{ ['--d' as any]: `${600 + n * 70}ms` }}>
-                <button disabled={conM < 0} onClick={() => { setActivo(conM); setFijo(true); setVista('analisis') }}
+                <button disabled={conM < 0} onClick={() => { setActivo(conM); setFijo(true) }}
                   className={`w-full grid grid-cols-[8.5rem_minmax(0,1fr)_2.25rem_5.5rem] items-center gap-3 rounded-lg px-2 py-[3px] text-left transition-colors duration-300 ${resaltada ? 'bg-[var(--k-accent-soft)]' : ''} disabled:cursor-default`}>
                   <span className={`text-lg ${prioridad.has(f.a) ? 'font-medium' : ''}`}>{f.nombre}</span>
                   <span className="escala"><i /><b className="r-barra" data-alto={aTrabajar(f.nota) || prioridad.has(f.a) ? '' : undefined} style={{ width: `${Math.max(4, f.nota)}%`, ['--d' as any]: `${750 + n * 70}ms` }} /></span>
@@ -460,6 +452,36 @@ function diasDeNoche(p: any, noche: any[], semana: any[] | undefined): Record<st
   return todos
 }
 
+function PasoFuturo({ sim, objetivos }: { sim: { antes: string; despues: string }; objetivos: any[] }) {
+  return (
+    <div className="grid md:grid-cols-[minmax(0,6fr)_minmax(0,5fr)] gap-8 md:gap-12 items-center">
+      <div className="w-full max-w-[25rem] mx-auto r-foto">
+        <AntesDespues antes={sim.antes} despues={sim.despues} />
+      </div>
+      <div className="grid gap-6">
+        <div className="grid gap-3">
+          <Titulo texto="Así podría verse tu piel con tu rutina" retraso={150} />
+          <p className="texto m-0 r-sube" style={{ ['--d' as any]: '500ms' }}>Desliza sobre la foto para comparar tu piel de hoy con la simulación.</p>
+        </div>
+        {objetivos.length > 0 && (
+          <div className="grid gap-3">
+            <span className="text-sm text-[var(--k-muted)] r-sube" style={{ ['--d' as any]: '800ms' }}>Lo que trabaja tu rutina</span>
+            <ul className="flex flex-wrap gap-2 list-none p-0 m-0">
+              {objetivos.map((o: any, n: number) => (
+                <li key={o.aspecto} className="r-chip rounded-full border border-[var(--k-line)] bg-[var(--k-bg)] pl-4 pr-2 py-2 flex items-center gap-3 text-lg" style={{ ['--d' as any]: `${1000 + n * 220}ms` }}>
+                  {o.nombre}
+                  {o.nota != null && <span className="cifra rounded-full bg-[var(--k-soft)] px-2.5 py-0.5 text-base">{o.nota}</span>}
+                </li>
+              ))}
+            </ul>
+          </div>
+        )}
+        <p className="text-sm text-[var(--k-muted)] m-0 r-sube" style={{ ['--d' as any]: '1600ms' }}>Simulación orientativa hecha con inteligencia artificial. No es una promesa de resultado: depende de la constancia y de cada piel.</p>
+      </div>
+    </div>
+  )
+}
+
 function PasoSemana({ rut }: { rut: any }) {
   const productos: any[] = (rut.productos ?? []).filter((p: any) => p.producto)
   const manana = productos.filter((p: any) => p.turno === 'AM' || p.turno === 'AMPM')
@@ -670,9 +692,9 @@ export function AntesDespues({ antes, despues, etiquetaAntes = 'Hoy', etiquetaDe
       <div className="relative w-full aspect-[4/5] rounded-[var(--radius-card)] overflow-hidden bg-[var(--k-soft)] touch-none cursor-ew-resize"
         onPointerDown={(e) => { e.currentTarget.setPointerCapture(e.pointerId); setTocado(true); mover(e) }}
         onPointerMove={(e) => { if (e.buttons) mover(e) }}>
-        {/* Las dos en espejo, como la ve la clienta en la cámara; si solo se gira una, no coinciden */}
+        {/* Las dos en espejo, como la ve la clienta en la cámara; si solo se gira una, no coinciden. El recorte se hace antes del giro: se recorta la derecha para que "hoy" quede a la izquierda */}
         <img src={despues} alt={etiquetaDespues} className="absolute inset-0 w-full h-full object-cover -scale-x-100" />
-        <img src={antes} alt={etiquetaAntes} className="absolute inset-0 w-full h-full object-cover -scale-x-100" style={{ clipPath: `inset(0 ${100 - x}% 0 0)` }} />
+        <img src={antes} alt={etiquetaAntes} className="absolute inset-0 w-full h-full object-cover -scale-x-100" style={{ clipPath: `inset(0 0 0 ${100 - x}%)` }} />
         <div className="absolute top-0 bottom-0 w-px bg-sobre-marca" style={{ left: `${x}%` }}>
           <span className="absolute top-1/2 -translate-y-1/2 -translate-x-1/2 w-11 h-11 rounded-full bg-papel text-[var(--k-text)] grid place-items-center shadow-pomo"><ArrowsLeftRight size={20} /></span>
         </div>

@@ -15,7 +15,7 @@ export function Demo() {
         <span className="text-[var(--k-muted)] pl-3 border-l border-[var(--k-line)]">Farmacia de ejemplo</span>
       </header>
       <main className="flex-1 flex">
-        <Informe key={vuelta} res={datos} foto="/ejemplos/mapas/foto.webp" farmacia="Farmacia de ejemplo" emailActivo onFin={() => setVuelta((v) => v + 1)} />
+        <Informe key={vuelta} res={datos} foto="/ejemplos/mapas/foto.webp" simulacion={{ antes: '/ejemplos/antes.jpg', despues: '/ejemplos/despues.jpg' }} farmacia="Farmacia de ejemplo" emailActivo onFin={() => setVuelta((v) => v + 1)} />
       </main>
     </div>
   )
