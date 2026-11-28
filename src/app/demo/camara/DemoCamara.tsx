@@ -3,6 +3,7 @@ import { useState } from 'react'
 import { Logo } from '@/components/Logo'
 import { Camara, Estilos } from '@/app/kiosko/[id]/Kiosko'
 
+/* eslint-disable @next/next/no-img-element */
 export function DemoCamara() {
   const [foto, setFoto] = useState<string | null>(null)
   const [vuelta, setVuelta] = useState(0)

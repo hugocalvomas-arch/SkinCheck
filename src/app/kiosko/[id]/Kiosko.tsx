@@ -395,14 +395,16 @@ export function Camara({ error, onFoto }: { error: string; onFoto: (b64: string,
     setTimeout(() => onFoto(url.split(',')[1], url), 1100)
   }, [onFoto])
 
-  // 3. Cuenta atrás y disparo
+  // 3. Cuenta atrás
   useEffect(() => {
     if (fase !== 'cuenta') return
-    if (cuenta > 0) {
-      const t = setTimeout(() => setCuenta(cuenta - 1), 1000)
-      return () => clearTimeout(t)
-    }
-    setFase('revisando')
+    const t = setTimeout(() => { setCuenta(cuenta - 1); if (cuenta <= 1) setFase('revisando') }, 1000)
+    return () => clearTimeout(t)
+  }, [fase, cuenta])
+
+  // 4. Disparo y revisión de la foto
+  useEffect(() => {
+    if (fase !== 'revisando') return
     let raf = 0
     const limite = performance.now() + 2500
     const intentar = () => {
@@ -427,7 +429,7 @@ export function Camara({ error, onFoto }: { error: string; onFoto: (b64: string,
     }
     raf = requestAnimationFrame(intentar)
     return () => cancelAnimationFrame(raf)
-  }, [fase, cuenta, capturar, enviar])
+  }, [fase, capturar, enviar])
 
   const texto = fase === 'hecha' ? 'Foto correcta' : fase === 'revisando' ? 'Comprobando la foto' : AVISO[cara]
 
