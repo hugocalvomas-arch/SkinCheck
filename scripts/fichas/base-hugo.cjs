@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-require-imports */
 /* Productos de marcas de farmacia que están en la base de Hugo (data/catalogo.json, 3.413 productos) y no en el motor
    (Hugo, 28/11: «si faltan más productos para meter en el motor ponlos, no solo estos sino todos los de su marca»).
-   Usa el INCI y el precio de la base de Hugo tal cual, sin contrastar en la web. La clasificación v2 es una propuesta
+   Usa el INCI y el precio de la base de Hugo tal cual: el INCI lo sacó de la web (Hugo, 28/11), es fiable. La clasificación v2 es una propuesta
    automática (la misma de scripts/fichas/nuevos.cjs), marcada para que Hugo la revise: hasta entonces el motor la penaliza.
    Uso: node scripts/fichas/base-hugo.cjs   → src/server/motor/nuevos-base.json + scripts/fichas/revision-base.csv */
 "use strict";
@@ -56,7 +56,7 @@ for(const p of base){
     id: motorIds.has(p.id) ? p.id + "-base" : p.id, marca: p.marca, producto: nombre.slice(0, 140), categoria: null, estado_legal: "cosmetico",
     formato_ml: +p.formato_ml || null, pvp_eur: pvp, textura: TEXTURA(p.textura), fragancia: /parfum|fragrance/.test(lower), alergenos_declarados: [],
     alcohol_denat: /alcohol denat/.test(lower), spf: +p.spf || (/\bspf\s*(\d{2})/i.exec(nombre) ? +/\bspf\s*(\d{2})/i.exec(nombre)[1] : null), flags: [],
-    url_producto: url, url_inci_fuente: url, inci_confianza: "base de Hugo (sin contrastar)", inci_completo: inci, activos,
+    url_producto: url, url_inci_fuente: url, inci_confianza: "alta (base de Hugo, sacado de la web)", inci_completo: inci, activos,
     subtitulo: s((p.datos_extra || {}).subtitulo) || undefined, ficha_nueva: "base-hugo", precio_fuente: pvp ? "base de Hugo" : null
   };
   if(!pvp){ q.sin_precio_es = true; inf.sin_precio++; }
