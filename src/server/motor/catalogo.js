@@ -66,11 +66,13 @@ function aplicar(p0){
 /* Productos con ficha verificada que no estaban en el catálogo (scripts/fichas/nuevos.cjs, 27/11/2026): marcas nuevas y gamas que faltaban.
    Su clasificación v2 es una propuesta automática (confianza baja) hasta que Hugo la revise; si fichas.json trae una revisada, manda esa. */
 const NUEVOS_F = require("./nuevos-fichas.json"), NUEVOS_B = require("./nuevos-base.json");
+// Hugo, 28/11: «si ya los has clasificado y solo tengo que revisarlos, dalos por revisados». La clasificación propuesta cuenta como revisada (sin la penalización del motor)
+const revisada = v => v && v.hueco !== "fuera" ? Object.assign({}, v, {origen: "revisado (Hugo da por buena la propuesta automática, 28/11)"}) : null;
 const conocidos = new Set(BASE.map(p => p.id).concat(NUEVOS.map(p => p.id)));
 const TODOS = BASE.map(aplicar).concat(NUEVOS.map(p => Object.assign({}, p, {v2: FICHAS[p.id] || null}, {inci_completo: limpiaInci(p.inci_completo)})))
-  .concat(NUEVOS_F.filter(p => !conocidos.has(p.id)).map(p => Object.assign({}, p, {v2: FICHAS[p.id] || (p.v2_propuesta && p.v2_propuesta.hueco !== "fuera" ? p.v2_propuesta : null)}, {inci_completo: limpiaInci(p.inci_completo)})))
+  .concat(NUEVOS_F.filter(p => !conocidos.has(p.id)).map(p => Object.assign({}, p, {v2: FICHAS[p.id] || revisada(p.v2_propuesta)}, {inci_completo: limpiaInci(p.inci_completo)})))
   // y los de marcas de farmacia que solo estaban en la base de Hugo (scripts/fichas/base-hugo.cjs, 28/11): INCI de su base, sacado de la web (fiable, Hugo 28/11); clasificación propuesta
-  .concat(NUEVOS_B.filter(p => !conocidos.has(p.id) && !NUEVOS_F.some(q => q.id === p.id)).map(p => Object.assign({}, p, {v2: FICHAS[p.id] || (p.v2_propuesta && p.v2_propuesta.hueco !== "fuera" ? p.v2_propuesta : null)}, {inci_completo: limpiaInci(p.inci_completo)})));
+  .concat(NUEVOS_B.filter(p => !conocidos.has(p.id) && !NUEVOS_F.some(q => q.id === p.id)).map(p => Object.assign({}, p, {v2: FICHAS[p.id] || revisada(p.v2_propuesta)}, {inci_completo: limpiaInci(p.inci_completo)})));
 // Marcas que no se venden en farmacia (Hugo, 24/11): no se recomiendan. Cruce con el filtro Facial de Atida/Mifarma y el índice de Farmacia Jiménez.
 // Se excluyen aquí y no se borran de la base, para poder deshacerlo.
 /* Solo dermofarmacia (lista de Hugo, 24/11): el motor recomienda únicamente estas marcas. Las demás quedan en TODOS con fuera_farmacia. */
